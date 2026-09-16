@@ -1,0 +1,16 @@
+{
+  "name": "work-transformation-suite",
+  "description": "Marketplace der Work-Transformation-Suite",
+  "owner": {
+    "name": "Mark Zimmermann"
+  },
+  "plugins": [
+    {
+      "name": "work-transformation-suite",
+      "description": "Fünf Claude-Skills für die KI-Transformationsanalyse eines Bereichs: Arbeitsgraph, Aufgabenbewertung, Agentenbibliothek, Dashboard.",
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/GodModeAI2025/Work-Transformation-Suite"
+    }
+  ]
+}

@@ -78,8 +78,8 @@ alle Neuberechnungen. Wenn du selbst eine Bewertung ändern willst, ändere `sco
 rechne mit `--force`; wenn ein Experte sie ändert, gehört es in die Overrides. So bleibt
 nachvollziehbar, was Maschine und was Mensch entschieden hat.
 
-`python3 <skill>/scripts/check_suite.py` prüft, ob alle Skills vorhanden und die gemeinsamen
-Bibliotheksdateien identisch sind.
+`python3 <skill>/scripts/check_suite.py` prüft, ob alle Skills vorhanden, die gemeinsamen
+Bibliotheksdateien identisch und die Frontmatter-Blöcke gültig sind.
 
 ### Was du am Ende lieferst
 
