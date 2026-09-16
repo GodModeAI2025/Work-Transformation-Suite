@@ -2,8 +2,8 @@
 """
 check_suite.py — prüft die Installation der Suite: sind alle vier Skills da,
 sind die gemeinsamen Bibliotheksdateien in allen Kopien identisch, läuft Python 3.9+,
-ist der Frontmatter jeder SKILL.md gültig (name = Ordnername, description höchstens
-1024 Zeichen, sonst lädt Claude den Skill nicht). Liegt neben dem Skill-Ordner ein
+ist der Frontmatter jeder SKILL.md gültig (name = Ordnername ohne „anthropic“/„claude“,
+description höchstens 1024 Zeichen; so verlangt es die Skill-Spezifikation von Anthropic). Liegt neben dem Skill-Ordner ein
 Ordner dist/ (so im Repository), wird zusätzlich geprüft, dass jedes .skill-Paket
 denselben Inhalt hat wie der Skill-Ordner.
 
@@ -36,6 +36,7 @@ REQUIRED = {
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 MAX_NAME = 64
 MAX_DESCRIPTION = 1024
+RESERVED = ("anthropic", "claude")
 
 
 def sha(p: Path) -> str:
@@ -70,6 +71,8 @@ def check_frontmatter(skill_dir: Path) -> list[str]:
         errors.append(f"{name}/SKILL.md: name '{meta.get('name')}' passt nicht zum Ordnernamen")
     elif len(name) > MAX_NAME or not NAME_RE.match(name):
         errors.append(f"{name}/SKILL.md: name nur Kleinbuchstaben, Ziffern, Bindestriche, höchstens {MAX_NAME} Zeichen")
+    elif any(word in name for word in RESERVED):
+        errors.append(f"{name}/SKILL.md: name darf 'anthropic' und 'claude' nicht enthalten")
     desc = meta.get("description", "")
     if not desc:
         errors.append(f"{name}/SKILL.md: description fehlt")
