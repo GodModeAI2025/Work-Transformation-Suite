@@ -42,7 +42,8 @@ Netzanschluss". Das Muster (Spalte `pattern`) muss aus dieser Liste stammen; der
   Agenten. Ein Agent kann beliebig viele Aufgaben aus beliebig vielen Rollen abdecken.
 - Manuelle Aufgaben bekommen keinen Agenten. Ausnahme: keine.
 - Lieber wenige Agenten mit vielen Aufgaben als einer je Aufgabe. Richtwert: 6–15 Agenten für
-  einen Bereich mit 20–40 Rollen. Wenn du über 20 kommst, fasse nach Muster zusammen.
+  einen Bereich mit 20–40 Rollen; die Zahl wächst deutlich langsamer als die Rollenzahl, bei über
+  100 Rollen sind es typischerweise 15–30. Kommst du über diesen Rahmen, fasse nach Muster zusammen.
 - Bereits laufende KI-Anwendungen des Unternehmens (Liste vom Nutzer) als Agenten mit
   `status: live` (oder `pilot`) und Feld `existing_system` anlegen; Aufgaben, die sie schon
   abdecken, zuordnen. Deckt ein bestehendes System eine Aufgabe nur teilweise ab, entscheidet der
