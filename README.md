@@ -5,9 +5,6 @@ machen: Rollen, Aufgaben, Skills, KI-Automatisierbarkeit je Aufgabe, Disruptions
 Agentenbibliothek mit Rollenabdeckung und ein Dashboard. Das entspricht dem, was kommerzielle
 Work-Orchestration-Plattformen als Rollen- und Aufgabenmodell mit KI-Bewertung anbieten, für Pilotbereiche mit 20–40 Rollen.
 
-Überblicksseite: `docs/index.html` — als GitHub Pages veröffentlichbar (Settings → Pages → Branch
-`main`, Ordner `/docs`), dann unter <https://godmodeai2025.github.io/Work-Transformation-Suite/>.
-
 ## Was drin ist
 
 ```
