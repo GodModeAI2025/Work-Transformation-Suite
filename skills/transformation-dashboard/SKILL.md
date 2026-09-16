@@ -57,13 +57,15 @@ widersprechen können.
 
 ## Gestaltung
 
-Farben und Schriften kommen aus `assets/theme.json`; für ein Corporate Design eine Kopie anlegen,
+Farben und Schriften kommen aus `assets/theme.json`. Für ein Corporate Design eine Kopie anlegen,
 Primär- und Akzentfarbe, Schriftstacks und bei Bedarf die Typfarben ändern und mit
-`--theme ./mein-theme.json` übergeben. Standard: Primärblau `#000099`, Akzentorange `#FE8F11`
-(Delegation, Transformiert); Disruptionstypen Eliminiert `#D32F2F`, Transformiert `#FE8F11`,
-Augmentiert `#1195EB`, Entstehend `#6FA832`, Stabil `#7B5CB8`, mit einem Palettenvalidator
-geprüft (CVD-Abstand aller Nachbarpaare ≥ 19, Normalsicht ≥ 21). Orange und Grün liegen unter
-3:1 Kontrast zur Fläche, deshalb tragen alle Punkte Textlabels und es gibt die Tabellenansicht.
+`--theme ./mein-theme.json` übergeben. Standard: Primärton `#0F5F57`, Akzent `#852BCA`
+(Delegation, Transformiert). Disruptionstypen Eliminiert `#931F29`, Transformiert `#852BCA`,
+Augmentiert `#2287A0`, Entstehend `#647B0A`, Stabil `#455663`, Ohne Bewertung `#9A9A9A`.
+Geprüft mit CIEDE2000 über Normalsicht, Deuteranopie, Protanopie und Tritanopie: der kleinste
+Abstand zwischen zwei Typfarben ist 8,6 (engstes Paar Augmentiert/Entstehend unter Tritanopie).
+Alle fünf Typfarben liegen über 3:1 Kontrast zur Fläche, die graue Fläche für unbewertete Rollen
+bei 2,7. Punkte tragen zusätzlich Textlabels, dazu gibt es die Tabellenansicht.
 Wer Typfarben ändert, sollte sie erneut validieren. Schriften: System-Stack (Segoe UI/system-ui);
 Corporate-Fonts müssen auf dem Zielrechner installiert sein, da keine Webfonts geladen werden.
 Keine externen Skripte, keine Webfonts, kein Tracking.
