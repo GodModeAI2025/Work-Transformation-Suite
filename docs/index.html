@@ -119,8 +119,8 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
     <p class="lead">
       Rollen, Aufgaben und Skills eines Bereichs, jede Aufgabe auf KI-Automatisierbarkeit bewertet,
       jede Rolle als eliminiert, transformiert, augmentiert, entstehend oder stabil klassifiziert,
-      dazu eine Agentenbibliothek mit Rollenabdeckung und ein Dashboard — vom Pilotbereich mit
-      20–40 Rollen bis zu Analysen mit über 200 Rollen in einem Lauf.
+      dazu eine Agentenbibliothek mit Rollenabdeckung und ein Dashboard. Angefangen hat das mit
+      Pilotbereichen von 20 bis 40 Rollen. Inzwischen läuft es mit über 200 Rollen in einem Durchgang.
     </p>
     <div class="cta">
       <a class="btn btn-primary" href="https://github.com/GodModeAI2025/Work-Transformation-Suite">Repository auf GitHub</a>
@@ -144,9 +144,9 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
     <h2>Claude urteilt, Skripte rechnen</h2>
     <p class="sub">
       Die Trennung ist die eigentliche Idee der Suite. Claude liest Quellen und schreibt drei
-      JSON-Dateien: Extraktion, Bewertung, Agentenbündelung. Alles andere — IDs, Zusammenführung,
-      Normalisierung, Klassifikation, Abdeckung, Dashboard — machen Python-Skripte ohne Zufall und
-      ohne Zeitstempel.
+      JSON-Dateien: Extraktion, Bewertung, Agentenbündelung. Alles andere machen Python-Skripte, ohne
+      Zufall und ohne Zeitstempel: IDs, Zusammenführung, Normalisierung, Klassifikation, Abdeckung,
+      Dashboard.
     </p>
     <div class="grid g3">
       <div class="card">
@@ -157,7 +157,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <div class="card">
         <p class="num">02</p>
         <h3>Regeln statt Bauchgefühl</h3>
-        <p>Modus, HAS-Level, Horizont, Disruptionstyp, Abdeckung und Priorität sind Formeln mit Konstanten am Kopf von <code>score_roles.py</code> — nachlesbar, diskutierbar, kalibrierbar.</p>
+        <p>Modus, HAS-Level, Horizont, Disruptionstyp, Abdeckung und Priorität sind Formeln mit Konstanten am Kopf von <code>score_roles.py</code>. Wer kalibrieren will, verschiebt dort die Konstanten und nicht einzelne Bewertungen.</p>
       </div>
       <div class="card">
         <p class="num">03</p>
@@ -171,7 +171,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 <section id="ablauf">
   <div class="wrap">
     <h2>Vier Schritte, ein Datenformat</h2>
-    <p class="sub">Alle Schritte arbeiten auf derselben <code>work-graph.json</code> in einem Projektordner. Jeder Schritt, der etwas ändert, legt eine neue Version an; ein Schritt ohne Änderung meldet „Unverändert“.</p>
+    <p class="sub">Alle Schritte arbeiten auf derselben <code>work-graph.json</code> in einem Projektordner. Jeder Schritt, der etwas ändert, legt eine neue Version an. Ein Schritt ohne Änderung meldet „Unverändert“.</p>
     <div class="pipe">
       <div class="step">
         <p class="who">Claude + Skript</p>
@@ -205,7 +205,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
    ▼  compute_coverage.py → v004_mapper
    ▼  build_dashboard.py  → 40_output/dashboard.html, CSV, report.md</div>
     <div class="note">
-      <p><b>Alles auf einmal:</b> <code>python3 skills/work-transformation/scripts/run_pipeline.py --project projekte/kundenservice</code> führt alle Skript-Schritte aus und stoppt mit Exit-Code 3 und klarer Meldung, sobald eine Claude-Eingabe fehlt. Derselbe Befehl ist auch das „weiter machen“ nach jeder Korrektur.</p>
+      <p><code>python3 skills/work-transformation/scripts/run_pipeline.py --project projekte/kundenservice</code> führt alle Skript-Schritte hintereinander aus. Fehlt eine Claude-Eingabe, stoppt der Lauf mit Exit-Code 3 und einer klaren Meldung. Derselbe Befehl ist das „weiter machen“ nach jeder Korrektur.</p>
     </div>
   </div>
 </section>
@@ -213,7 +213,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 <section id="skills">
   <div class="wrap">
     <h2>Die fünf Skills</h2>
-    <p class="sub">Jeder Skill bringt <code>SKILL.md</code>, deterministische Skripte und Referenzen mit. Gemeinsame Bibliotheken liegen als identische Kopien in jedem Skill, damit keiner vom anderen abhängt; <code>check_suite.py</code> prüft die Kopien.</p>
+    <p class="sub">Jeder Skill bringt <code>SKILL.md</code>, deterministische Skripte und Referenzen mit. Gemeinsame Bibliotheken liegen als identische Kopien in jedem Skill, damit keiner vom anderen abhängt. <code>check_suite.py</code> prüft die Kopien.</p>
     <div class="scroller">
       <table class="tbl">
         <thead><tr><th>Skill</th><th>Aufgabe</th><th>Ergebnis</th></tr></thead>
@@ -243,11 +243,11 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
     <div class="grid g2">
       <div class="card">
         <h3>Belastbarkeit je Rolle</h3>
-        <p>Jede Rolle trägt eine Stufe: belastbar, teilweise geprüft, ungeprüft — abgeleitet aus Quelle der Zeitanteile, Expertenprüfung, Anteil abgeleiteter Aufgaben und bekanntem Headcount. Eine Rollenkarte, in der alles „ungeprüft“ ist, ist ein Gesprächsangebot, kein Ergebnis.</p>
+        <p>Jede Rolle trägt eine Stufe: belastbar, teilweise geprüft, ungeprüft. Sie folgt aus der Quelle der Zeitanteile, der Expertenprüfung, dem Anteil abgeleiteter Aufgaben und dem bekannten Headcount. Eine Rollenkarte, in der alles „ungeprüft“ ist, ist ein Gesprächsangebot, kein Ergebnis.</p>
       </div>
       <div class="card">
         <h3>Kipp-Analyse</h3>
-        <p>Maschinenanteil, Urteilsbedarf und Fehlergewicht werden je Aufgabe um ±1 variiert. Das Ergebnis sagt, ob eine Einstufung stabil, grenznah oder wackelig ist — und nennt die Aufgabe, an der sie hängt. Genau die prüft der Experte zuerst.</p>
+        <p>Maschinenanteil, Urteilsbedarf und Fehlergewicht werden je Aufgabe um ±1 variiert. Das Ergebnis sagt, ob eine Einstufung stabil, grenznah oder wackelig ist, und nennt die Aufgabe, an der sie hängt. Genau die prüft der Experte zuerst.</p>
       </div>
       <div class="card">
         <h3>Stellen statt Prozessrollen</h3>
@@ -272,7 +272,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       </div>
       <div class="card">
         <h3>In Claude Code</h3>
-        <p>Ordner <code>skills/</code> nach <code>~/.claude/skills/</code> kopieren oder projektbezogen nach <code>&lt;repo&gt;/.claude/skills/</code>. Zusammen in einen Ordner legen — die Skills finden sich über den Geschwister-Pfad.</p>
+        <p>Ordner <code>skills/</code> nach <code>~/.claude/skills/</code> kopieren oder projektbezogen nach <code>&lt;repo&gt;/.claude/skills/</code>. Zusammen in einen Ordner legen, damit die Skills sich über den Geschwister-Pfad finden.</p>
       </div>
       <div class="card">
         <h3>Ohne Claude</h3>
@@ -288,7 +288,7 @@ python3 skills/work-graph-builder/scripts/init_project.py \
   --name "Kundenservice Pilot" --organization "Meine Firma" \
   --scope "Kundenservice – Vertrag und Abrechnung"</pre>
     <div class="note">
-      <p><b>Größe:</b> Der Ablauf ist am Pilotbereich mit 20–40 Rollen entwickelt und bereits mit über 200 Rollen in einem Dashboard gelaufen. Projektdaten liegen außerhalb des Repositories; dort stehen nur die Skills.</p>
+      <p>Der Ablauf ist am Pilotbereich mit 20 bis 40 Rollen entstanden und bereits mit über 200 Rollen in einem Dashboard gelaufen. Projektdaten liegen außerhalb des Repositories. Dort stehen nur die Skills.</p>
     </div>
   </div>
 </section>
@@ -301,12 +301,12 @@ python3 skills/work-graph-builder/scripts/init_project.py \
       <li>Kein Freigabeworkflow mit Rollen und Rechten.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
       <li>Kein Tracking der Agentennutzung nach dem Rollout.</li>
-      <li>Ein umbenannter Task bekommt eine neue ID und verliert Bewertung und Overrides — Namen stabil halten.</li>
+      <li>Ein umbenannter Task bekommt eine neue ID und verliert Bewertung und Overrides. Namen also stabil halten.</li>
     </ul>
     <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:16px 0 0">
       Für genau die ersten drei Punkte verkaufen kommerzielle Plattformen ihr Produkt. Für die Frage,
       ob eine solche Analyse für einen Bereich überhaupt belastbare Ergebnisse liefert, reicht die
-      Suite — in der Größe bisher bis über 200 Rollen.
+      Suite. Bis über 200 Rollen ist sie bisher gelaufen.
     </p>
   </div>
 </section>
@@ -314,11 +314,11 @@ python3 skills/work-graph-builder/scripts/init_project.py \
 <section id="quellen">
   <div class="wrap">
     <h2>Methodische Quellen</h2>
-    <p class="sub">Die Metriken sind nicht erfunden, sondern aus veröffentlichter Forschung und aus dem, was kommerzielle Transformationsdashboards messen.</p>
+    <p class="sub">Die Metriken stammen aus veröffentlichter Forschung und aus dem, was kommerzielle Transformationsdashboards messen.</p>
     <ul class="plain">
       <li>Stanford, „Future of Work with AI Agents“ (Shao et al. 2025, WORKBank, Human Agency Scale H1–H5, arXiv 2506.06576)</li>
-      <li>Anthropic Economic Index — Automation vs. Augmentation auf O*NET-Task-Ebene</li>
-      <li>ESCO v1.2 — EU-Skill-Taxonomie</li>
+      <li>Anthropic Economic Index, Automation gegen Augmentation auf O*NET-Task-Ebene</li>
+      <li>ESCO v1.2, die EU-Skill-Taxonomie</li>
       <li>Metriken kommerzieller AI-Transformation-Dashboards: Automation Potential, Human Judgment, Disruption Score, Rollentypen</li>
     </ul>
   </div>
