@@ -1,0 +1,21 @@
+{
+  "_hint": "Farben und Schriften des Dashboards. Kopie anlegen, Werte ändern, mit --theme <datei> übergeben. Kategorische Farben nach Änderung mit einem Palettenvalidator (CVD-Abstand) prüfen.",
+  "primary": "#000099",
+  "accent": "#FE8F11",
+  "surface": "#fcfcfb",
+  "font_headline": "'Segoe UI', system-ui, sans-serif",
+  "font_text": "'Segoe UI', system-ui, sans-serif",
+  "type_colors": {
+    "eliminated": "#D32F2F",
+    "transformed": "#FE8F11",
+    "augmented": "#1195EB",
+    "emerging": "#6FA832",
+    "stable": "#7B5CB8",
+    "unscored": "#9A9A9A"
+  },
+  "mode_colors": {
+    "manual": "#000099",
+    "ai_assisted": "#1195EB",
+    "agent_delegated": "#FE8F11"
+  }
+}

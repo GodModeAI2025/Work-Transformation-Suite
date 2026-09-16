@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Work-Transformation-Suite</title>
+<meta name="description" content="Fünf Claude-Skills, die aus Stellenbeschreibungen einen bewerteten Arbeitsgraphen machen: Rollen, Aufgaben, Skills, KI-Automatisierbarkeit, Agentenbibliothek, Dashboard.">
+<meta property="og:title" content="Work-Transformation-Suite">
+<meta property="og:description" content="Aus Stellenbeschreibungen wird ein bewerteter Arbeitsgraph: Rollen, Aufgaben, KI-Automatisierbarkeit, Agenten, Dashboard. Claude urteilt, Skripte rechnen.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23000099'/><circle cx='32' cy='34' r='11' fill='%23fff'/><circle cx='68' cy='66' r='11' fill='%23FE8F11'/><path d='M40 41 L60 59' stroke='%23fff' stroke-width='6'/></svg>">
+<style>
+:root{
+  --blue:#000099; --blue-lift:#1a1ab8; --orange:#FE8F11; --sky:#1195EB;
+  --green:#6FA832; --violet:#7B5CB8; --red:#D32F2F;
+  --ink:#111; --ink2:#4a4a4a; --ink3:#7a7a7a;
+  --surface:#fcfcfb; --card:#fff; --line:#e6e2de; --code-bg:#f4f3f1;
+  --f-head:'Segoe UI', system-ui, -apple-system, sans-serif;
+  --f-text:'Segoe UI', system-ui, -apple-system, sans-serif;
+  --f-mono:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#8f8fff; --blue-lift:#a9a9ff; --ink:#f2f1ef; --ink2:#c3c1bd; --ink3:#95928d;
+    --surface:#14141a; --card:#1d1d25; --line:#33333f; --code-bg:#12121a;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--f-text);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--blue)}
+code,pre{font-family:var(--f-mono);font-size:13.5px}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:0 0 14px}
+p code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 16px}
+
+/* Header */
+header{background:linear-gradient(160deg,#000099 0%,#1a1a6e 100%);color:#fff;padding:56px 0 48px}
+header .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.75;margin:0 0 14px}
+header h1{font-family:var(--f-head);font-size:clamp(26px,5.6vw,46px);line-height:1.14;margin:0 0 16px;font-weight:700;max-width:24ch;overflow-wrap:break-word;hyphens:auto}
+header h1 b{color:var(--orange);font-weight:700}
+header .lead{font-size:clamp(16px,2.2vw,19px);max-width:62ch;opacity:.92;margin:0 0 26px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
+.btn{display:inline-block;padding:11px 20px;border-radius:7px;text-decoration:none;font-weight:600;font-size:15px;border:1px solid transparent;transition:transform .12s ease,background .12s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--orange);color:#1a1200}
+.btn-ghost{border-color:rgba(255,255,255,.45);color:#fff}
+.btn-ghost:hover{background:rgba(255,255,255,.12)}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badge{font-size:12.5px;padding:4px 11px;border:1px solid rgba(255,255,255,.35);border-radius:999px;opacity:.9}
+
+/* Sections */
+main{padding:8px 0 0}
+section{padding:52px 0;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+h2{font-family:var(--f-head);color:var(--blue);font-size:clamp(21px,3vw,27px);margin:0 0 8px;line-height:1.2}
+h2+.sub{color:var(--ink2);margin:0 0 26px;max-width:70ch}
+h3{font-family:var(--f-head);font-size:17px;margin:0 0 6px}
+
+.grid{display:grid;gap:14px}
+.g3{grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card p{margin:0;color:var(--ink2);font-size:14.5px}
+.card .num{font-family:var(--f-head);font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--orange);margin:0 0 8px}
+
+/* Pipeline */
+.pipe{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));counter-reset:step}
+.step{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:10px;padding:16px 18px;position:relative}
+.step:nth-child(2){border-left-color:var(--sky)}
+.step:nth-child(3){border-left-color:var(--orange)}
+.step:nth-child(4){border-left-color:var(--green)}
+.step .who{font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin:0 0 6px}
+.step h3{margin:0 0 6px;font-size:15.5px;font-family:var(--f-mono);color:var(--ink)}
+.step p{margin:0;font-size:14px;color:var(--ink2)}
+.flow{font-family:var(--f-mono);font-size:13px;color:var(--ink2);background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:20px 0 0;white-space:pre}
+
+/* Skills table */
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px}
+.tbl th,.tbl td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{font-family:var(--f-head);color:var(--blue);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.tbl td:first-child{font-family:var(--f-mono);white-space:nowrap;color:var(--ink)}
+.tbl tr:last-child td{border-bottom:0}
+.scroller{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+.note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:10px;padding:16px 20px;margin:22px 0 0}
+.note p{margin:0;font-size:14.5px;color:var(--ink2)}
+.note b{color:var(--ink)}
+
+ul.plain{margin:0;padding-left:20px;color:var(--ink2);font-size:14.5px}
+ul.plain li{margin:0 0 6px}
+
+footer{background:var(--card);border-top:1px solid var(--line);padding:34px 0;color:var(--ink3);font-size:14px}
+footer a{color:var(--blue)}
+footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
+@media (max-width:640px){
+  header{padding:40px 0 36px}
+  section{padding:38px 0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="kicker">Fünf Claude-Skills · Python 3.9+ · keine Abhängigkeiten</p>
+    <h1>Aus Stellenbeschreibungen wird ein <b>bewerteter Arbeitsgraph</b>.</h1>
+    <p class="lead">
+      Rollen, Aufgaben und Skills eines Bereichs, jede Aufgabe auf KI-Automatisierbarkeit bewertet,
+      jede Rolle als eliminiert, transformiert, augmentiert, entstehend oder stabil klassifiziert,
+      dazu eine Agentenbibliothek mit Rollenabdeckung und ein Dashboard. Für Pilotbereiche mit 20–40 Rollen.
+    </p>
+    <div class="cta">
+      <a class="btn btn-primary" href="https://github.com/GodModeAI2025/Work-Transformation-Suite">Repository auf GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/GodModeAI2025/Work-Transformation-Suite#installation">Anleitung lesen</a>
+      <a class="btn btn-ghost" href="https://github.com/GodModeAI2025/Work-Transformation-Suite/tree/main/dist">.skill-Pakete</a>
+    </div>
+    <div class="badges">
+      <span class="badge">deterministisch</span>
+      <span class="badge">offline</span>
+      <span class="badge">HAS H1–H5</span>
+      <span class="badge">ESCO-kompatible Skills</span>
+      <span class="badge">Apache 2.0</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section id="idee">
+  <div class="wrap">
+    <h2>Claude urteilt, Skripte rechnen</h2>
+    <p class="sub">
+      Die Trennung ist die eigentliche Idee der Suite. Claude liest Quellen und schreibt drei
+      JSON-Dateien: Extraktion, Bewertung, Agentenbündelung. Alles andere — IDs, Zusammenführung,
+      Normalisierung, Klassifikation, Abdeckung, Dashboard — machen Python-Skripte ohne Zufall und
+      ohne Zeitstempel.
+    </p>
+    <div class="grid g3">
+      <div class="card">
+        <p class="num">01</p>
+        <h3>Gleiche Eingabe, gleiche Ausgabe</h3>
+        <p>IDs sind SHA1-Hashes normalisierter Namen, Listen sortiert, JSON-Schlüssel sortiert. Zwei unabhängige Läufe des Beispiels erzeugen byteidentische Dateien.</p>
+      </div>
+      <div class="card">
+        <p class="num">02</p>
+        <h3>Regeln statt Bauchgefühl</h3>
+        <p>Modus, HAS-Level, Horizont, Disruptionstyp, Abdeckung und Priorität sind Formeln mit Konstanten am Kopf von <code>score_roles.py</code> — nachlesbar, diskutierbar, kalibrierbar.</p>
+      </div>
+      <div class="card">
+        <p class="num">03</p>
+        <h3>Menschen korrigieren an einer Stelle</h3>
+        <p>Fachexperten schreiben Zeilen in <code>overrides.csv</code>. Die gewinnen dauerhaft und überleben jeden Neulauf. Im Graphen selbst wird nie von Hand editiert.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ablauf">
+  <div class="wrap">
+    <h2>Vier Schritte, ein Datenformat</h2>
+    <p class="sub">Alle Schritte arbeiten auf derselben <code>work-graph.json</code> in einem Projektordner. Jeder Schritt, der etwas ändert, legt eine neue Version an; ein Schritt ohne Änderung meldet „Unverändert“.</p>
+    <div class="pipe">
+      <div class="step">
+        <p class="who">Claude + Skript</p>
+        <h3>work-graph-builder</h3>
+        <p>Liest Stellenbeschreibungen aus <code>00_input/</code>, extrahiert Rollen, Aufgaben, Zeitanteile und Skills, erzeugt den Graphen und die Review-Liste für Fachexperten.</p>
+      </div>
+      <div class="step">
+        <p class="who">Claude + Skript</p>
+        <h3>task-scorer</h3>
+        <p>Bewertet jede Aufgabe nach sechs Werten der Rubrik und leitet ab: Modus, HAS-Level, Zeithorizont, Disruptionsscore und -typ je Rolle, bleibende und sinkende Skills.</p>
+      </div>
+      <div class="step">
+        <p class="who">Claude + Skript</p>
+        <h3>agent-mapper</h3>
+        <p>Bündelt Aufgaben zu 6–15 wiederverwendbaren Agenten und rechnet Abdeckung je Rolle, FTE-Äquivalent, Build/Buy/Hybrid, Horizont und Priorität.</p>
+      </div>
+      <div class="step">
+        <p class="who">Nur Skript</p>
+        <h3>transformation-dashboard</h3>
+        <p>Baut ein einzelnes, offline lauffähiges HTML-Dashboard, drei CSV-Dateien und einen Bericht. Farben kommen aus einer Theme-Datei.</p>
+      </div>
+    </div>
+<div class="flow">00_input/            Quellen (Mensch)
+   │  Claude extrahiert   → 10_extraction/extract_*.json
+   ▼  build_graph.py      → 20_graph/work-graph_v001_builder.json
+   │  make_review_list.py → 30_review/review_v001.md  ← Fachexperten → overrides.csv
+   ▼  apply_overrides.py  → v002_review
+   │  Claude bewertet     → 20_graph/scores.json
+   ▼  score_roles.py      → v003_scorer
+   │  Claude bündelt      → 20_graph/agents.json
+   ▼  compute_coverage.py → v004_mapper
+   ▼  build_dashboard.py  → 40_output/dashboard.html, CSV, report.md</div>
+    <div class="note">
+      <p><b>Alles auf einmal:</b> <code>python3 skills/work-transformation/scripts/run_pipeline.py --project projekte/kundenservice</code> führt alle Skript-Schritte aus und stoppt mit Exit-Code 3 und klarer Meldung, sobald eine Claude-Eingabe fehlt. Derselbe Befehl ist auch das „weiter machen“ nach jeder Korrektur.</p>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <h2>Die fünf Skills</h2>
+    <p class="sub">Jeder Skill bringt <code>SKILL.md</code>, deterministische Skripte und Referenzen mit. Gemeinsame Bibliotheken liegen als identische Kopien in jedem Skill, damit keiner vom anderen abhängt; <code>check_suite.py</code> prüft die Kopien.</p>
+    <div class="scroller">
+      <table class="tbl">
+        <thead><tr><th>Skill</th><th>Aufgabe</th><th>Ergebnis</th></tr></thead>
+        <tbody>
+          <tr><td>work-transformation</td><td>Orchestrator: sagt, welcher Schritt dran ist, und hält die Arbeitsteilung sauber</td><td>Pipeline-Lauf, Suite-Check</td></tr>
+          <tr><td>work-graph-builder</td><td>Extraktion aus Quellen, Zusammenführung, Review-Liste, Overrides, Stellen-Import</td><td><code>work-graph.json</code>, <code>review.md</code></td></tr>
+          <tr><td>task-scorer</td><td>Aufgabenbewertung nach Rubrik, Rollenaggregation, Kipp-Analyse, Kalibrierung</td><td>Modus, HAS, Horizont, Disruptionstyp</td></tr>
+          <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung</td><td><code>agents.json</code>, Abdeckung je Rolle</td></tr>
+          <tr><td>transformation-dashboard</td><td>Visualisierung und Export</td><td>HTML, 3× CSV, Bericht</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chips">
+      <span class="chip"><i style="background:#D32F2F"></i>eliminiert</span>
+      <span class="chip"><i style="background:#FE8F11"></i>transformiert</span>
+      <span class="chip"><i style="background:#1195EB"></i>augmentiert</span>
+      <span class="chip"><i style="background:#6FA832"></i>entstehend</span>
+      <span class="chip"><i style="background:#7B5CB8"></i>stabil</span>
+    </div>
+  </div>
+</section>
+
+<section id="ehrlichkeit">
+  <div class="wrap">
+    <h2>Sagt, wie belastbar das Ergebnis ist</h2>
+    <p class="sub">Vier Ergänzungen aus dem ersten echten Einsatz, damit aus einer Analyse kein Scheinergebnis wird.</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Belastbarkeit je Rolle</h3>
+        <p>Jede Rolle trägt eine Stufe: belastbar, teilweise geprüft, ungeprüft — abgeleitet aus Quelle der Zeitanteile, Expertenprüfung, Anteil abgeleiteter Aufgaben und bekanntem Headcount. Eine Rollenkarte, in der alles „ungeprüft“ ist, ist ein Gesprächsangebot, kein Ergebnis.</p>
+      </div>
+      <div class="card">
+        <h3>Kipp-Analyse</h3>
+        <p>Maschinenanteil, Urteilsbedarf und Fehlergewicht werden je Aufgabe um ±1 variiert. Das Ergebnis sagt, ob eine Einstufung stabil, grenznah oder wackelig ist — und nennt die Aufgabe, an der sie hängt. Genau die prüft der Experte zuerst.</p>
+      </div>
+      <div class="card">
+        <h3>Stellen statt Prozessrollen</h3>
+        <p><code>positions.csv</code> ordnet Stellen mit Anteilen den Rollen zu und rechnet Vollzeitäquivalente und Headcounts. Ohne Personennamen.</p>
+      </div>
+      <div class="card">
+        <h3>Kalibrierung</h3>
+        <p><code>calibrate.py</code> vergleicht Expertenkorrekturen mit den generierten Werten. Wenn die Experten systematisch anders liegen, verschiebt man den Anker in der Rubrik statt weiter einzeln zu korrigieren.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="installation">
+  <div class="wrap">
+    <h2>Installation</h2>
+    <p class="sub">Voraussetzung: Python 3.9 oder neuer, keine zusätzlichen Pakete.</p>
+    <div class="grid g3">
+      <div class="card">
+        <h3>In Claude (Cowork / claude.ai)</h3>
+        <p>Die fünf <code>.skill</code>-Dateien aus <code>dist/</code> einzeln in den Chat ziehen und auf „Skill speichern“ klicken. Reihenfolge egal.</p>
+      </div>
+      <div class="card">
+        <h3>In Claude Code</h3>
+        <p>Ordner <code>skills/</code> nach <code>~/.claude/skills/</code> kopieren oder projektbezogen nach <code>&lt;repo&gt;/.claude/skills/</code>. Zusammen in einen Ordner legen — die Skills finden sich über den Geschwister-Pfad.</p>
+      </div>
+      <div class="card">
+        <h3>Ohne Claude</h3>
+        <p>Alles läuft auch als reines Kommandozeilenwerkzeug. Die Urteilsschritte macht dann ein Mensch, indem er die drei JSON-Vorlagen ausfüllt.</p>
+      </div>
+    </div>
+<pre>git clone https://github.com/GodModeAI2025/Work-Transformation-Suite.git
+cd Work-Transformation-Suite
+python3 skills/work-transformation/scripts/check_suite.py        # → Suite OK
+
+python3 skills/work-graph-builder/scripts/init_project.py \
+  --project projekte/kundenservice \
+  --name "Kundenservice Pilot" --organization "Meine Firma" \
+  --scope "Kundenservice – Vertrag und Abrechnung"</pre>
+    <div class="note">
+      <p><b>Beispielprojekt:</b> Der durchgerechnete Kundenservice-Pilot (4 Rollen, 25 Aufgaben, 9 Agenten) liegt im Auslieferungspaket, nicht im Repository — dort stehen nur die Skills. Er ist zugleich die Vorlage dafür, wie die drei Claude-Dateien aussehen sollen.</p>
+    </div>
+  </div>
+</section>
+
+<section id="grenzen">
+  <div class="wrap">
+    <h2>Grenzen</h2>
+    <p class="sub">Was die Suite nicht kann, steht hier, damit niemand es im Piloten herausfinden muss.</p>
+    <ul class="plain">
+      <li>Kein Freigabeworkflow mit Rollen und Rechten.</li>
+      <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
+      <li>Kein Tracking der Agentennutzung nach dem Rollout.</li>
+      <li>Ein umbenannter Task bekommt eine neue ID und verliert Bewertung und Overrides — Namen stabil halten.</li>
+    </ul>
+    <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:16px 0 0">
+      Für genau die ersten drei Punkte verkaufen kommerzielle Plattformen ihr Produkt. Für die Frage,
+      ob eine solche Analyse für einen Bereich überhaupt belastbare Ergebnisse liefert, und für
+      Pilotbereiche bis etwa 40 Rollen, reicht die Suite.
+    </p>
+  </div>
+</section>
+
+<section id="quellen">
+  <div class="wrap">
+    <h2>Methodische Quellen</h2>
+    <p class="sub">Die Metriken sind nicht erfunden, sondern aus veröffentlichter Forschung und aus dem, was kommerzielle Transformationsdashboards messen.</p>
+    <ul class="plain">
+      <li>Stanford, „Future of Work with AI Agents“ (Shao et al. 2025, WORKBank, Human Agency Scale H1–H5, arXiv 2506.06576)</li>
+      <li>Anthropic Economic Index — Automation vs. Augmentation auf O*NET-Task-Ebene</li>
+      <li>ESCO v1.2 — EU-Skill-Taxonomie</li>
+      <li>Metriken kommerzieller AI-Transformation-Dashboards: Automation Potential, Human Judgment, Disruption Score, Rollentypen</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <strong style="color:var(--ink)">Work-Transformation-Suite</strong><br>
+      Lizenz: Apache 2.0 · <a href="https://github.com/GodModeAI2025/Work-Transformation-Suite">github.com/GodModeAI2025/Work-Transformation-Suite</a>
+    </div>
+    <div>
+      <a href="https://github.com/GodModeAI2025/Work-Transformation-Suite#readme">Anleitung</a> ·
+      <a href="https://github.com/GodModeAI2025/Work-Transformation-Suite/tree/main/dist">.skill-Pakete</a> ·
+      <a href="https://github.com/GodModeAI2025/Work-Transformation-Suite/tree/main/skills">Skills</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

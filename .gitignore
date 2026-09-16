@@ -1,0 +1,19 @@
+# Projekt- und Beispieldaten gehören nicht ins Repository
+examples/
+projekte/
+projects/
+
+# Von der Pipeline erzeugte Stände
+20_graph/
+30_review/
+40_output/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
