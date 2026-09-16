@@ -1,0 +1,34 @@
+name: Suite prüfen
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Skripte kompilieren
+        run: python -m py_compile skills/*/scripts/*.py
+      - name: Suite-Check (Skills, Bibliothekskopien, Frontmatter, dist-Pakete)
+        run: python skills/work-transformation/scripts/check_suite.py
+      - name: Leeres Projekt anlegen, Pipeline muss an der ersten Claude-Eingabe anhalten
+        run: |
+          python skills/work-graph-builder/scripts/init_project.py --project "$RUNNER_TEMP/ci" \
+            --name "CI" --organization "CI" --scope "CI"
+          set +e
+          python skills/work-transformation/scripts/run_pipeline.py --project "$RUNNER_TEMP/ci"
+          rc=$?
+          set -e
+          if [ "$rc" -ne 3 ]; then echo "Erwartet Exit-Code 3 (STOPP), erhalten $rc"; exit 1; fi

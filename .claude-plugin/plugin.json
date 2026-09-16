@@ -1,0 +1,11 @@
+{
+  "name": "work-transformation-suite",
+  "description": "Fünf Claude-Skills: aus Stellenbeschreibungen eines Bereichs ein bewerteter Arbeitsgraph mit Rollen, Aufgaben, Skills, KI-Automatisierbarkeit, Disruptionstyp je Rolle, Agentenbibliothek und Dashboard.",
+  "author": {
+    "name": "Mark Zimmermann"
+  },
+  "homepage": "https://github.com/GodModeAI2025/Work-Transformation-Suite",
+  "repository": "https://github.com/GodModeAI2025/Work-Transformation-Suite",
+  "license": "Apache-2.0",
+  "keywords": ["work-architecture", "workforce-transformation", "ki-agenten", "rollenanalyse", "dashboard"]
+}

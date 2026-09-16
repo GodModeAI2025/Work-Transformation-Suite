@@ -13,6 +13,8 @@ Durchgang gelaufen.
 Work-Transformation-Suite/
 ├── README.md                     diese Anleitung
 ├── docs/index.html               Landingpage (GitHub Pages)
+├── .claude-plugin/               Plugin- und Marketplace-Manifest für Claude Code
+├── .github/workflows/check.yml   Suite-Check bei Push und Pull Request
 ├── skills/
 │   ├── work-transformation/      Orchestrator: Pipeline, Suite-Check
 │   ├── work-graph-builder/       Schritt 1: Extraktion → work-graph.json, Review-Liste, Overrides
@@ -41,16 +43,27 @@ Reihenfolge egal.
 
 ### In Claude Code
 
-Den Ordner `skills/` (oder die fünf Unterordner) nach `~/.claude/skills/` kopieren, projektbezogen
-auch nach `<repo>/.claude/skills/`. Die Skills finden sich gegenseitig über den Geschwister-Pfad
-`../<skillname>`, deshalb zusammen in einen Ordner legen.
+Als Plugin, direkt aus diesem Repository:
+
+```
+/plugin marketplace add GodModeAI2025/Work-Transformation-Suite
+/plugin install work-transformation-suite@work-transformation-suite
+```
+
+Oder von Hand: Den Ordner `skills/` (oder die fünf Unterordner) nach `~/.claude/skills/` kopieren,
+projektbezogen auch nach `<repo>/.claude/skills/`. Die Skills finden sich gegenseitig über den
+Geschwister-Pfad `../<skillname>`, deshalb zusammen in einen Ordner legen.
 
 ### Ohne Claude, mit den Skripten allein
 
 Alles funktioniert auch als reines Kommandozeilenwerkzeug. Die Urteilsschritte (Extraktion,
 Bewertung, Agentenbündelung) macht dann ein Mensch, indem er die JSON-Vorlagen ausfüllt.
 
-Prüfen: `python3 skills/work-transformation/scripts/check_suite.py` → „Suite OK“.
+Prüfen: `python3 skills/work-transformation/scripts/check_suite.py` → „Suite OK“. Der Check prüft
+außer den Bibliothekskopien auch den Frontmatter jeder `SKILL.md` (Name gleich Ordnername,
+Beschreibung höchstens 1024 Zeichen) und, im Repository, ob die Pakete in `dist/` zum Stand in
+`skills/` passen. Wer einen Skill ändert, packt danach dessen Ordner neu als `dist/<skill>.skill`.
+Die GitHub Action `.github/workflows/check.yml` führt den Check bei jedem Push und Pull Request aus.
 
 ## Pfade
 
