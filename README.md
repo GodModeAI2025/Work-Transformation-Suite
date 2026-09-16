@@ -3,7 +3,8 @@
 Fünf Claude-Skills, die aus Stellenbeschreibungen eines Bereichs einen bewerteten Arbeitsgraphen
 machen: Rollen, Aufgaben, Skills, KI-Automatisierbarkeit je Aufgabe, Disruptionstyp je Rolle,
 Agentenbibliothek mit Rollenabdeckung und ein Dashboard. Das entspricht dem, was kommerzielle
-Work-Orchestration-Plattformen als Rollen- und Aufgabenmodell mit KI-Bewertung anbieten, für Pilotbereiche mit 20–40 Rollen.
+Work-Orchestration-Plattformen als Rollen- und Aufgabenmodell mit KI-Bewertung anbieten — vom
+Pilotbereich mit 20–40 Rollen bis zu Analysen mit über 200 Rollen in einem Lauf.
 
 Überblicksseite: `docs/index.html` — als GitHub Pages veröffentlichbar (Settings → Pages → Branch
 `main`, Ordner `/docs`), dann unter <https://godmodeai2025.github.io/Work-Transformation-Suite/>.
@@ -23,10 +24,8 @@ Work-Transformation-Suite/
 └── dist/                         .skill-Pakete zum Speichern in Claude
 ```
 
-Der durchgerechnete Beispielordner `examples/kundenservice-pilot/` (4 Rollen, 25 Aufgaben,
-9 Agenten) gehört bewusst nicht ins Repository — es enthält nur die Skills. Das Beispiel kommt mit
-dem Auslieferungspaket; ein lokal daneben gelegter Ordner `examples/` wird von `.gitignore`
-ferngehalten, ebenso `projekte/` mit echten Projektdaten.
+Projektdaten gehören nicht ins Repository: `.gitignore` hält `projekte/` und die erzeugten Stände
+(`20_graph/`, `30_review/`, `40_output/`) fern. Im Repository stehen nur die Skills.
 
 Jeder Skill: `SKILL.md` (Anweisungen für Claude), `scripts/` (Python, deterministisch), `references/`
 (Rubrik, Taxonomie, Formate). Die Skills sind einzeln lauffähig; gemeinsame Bibliotheksdateien
@@ -75,7 +74,7 @@ Die Suite trennt strikt: **Claude urteilt, Skripte rechnen.** Claude liest Quell
 JSON-Dateien (Extraktion, Bewertung, Agenten). Alles andere, also IDs, Zusammenführung,
 Normalisierung, Klassifikation, Abdeckung, Dashboard, machen Skripte ohne Zufall und ohne
 Zeitstempel. Gleiche Eingaben ergeben byteidentische Ausgaben; das wurde mit zwei unabhängigen
-Läufen des Beispiels geprüft.
+Läufen geprüft.
 
 ### Schritt 0: Projekt anlegen
 
@@ -194,26 +193,13 @@ mit Freigabeworkflow, aber es reicht für einen Piloten und lässt sich in Git v
   Namen wiederzuverwenden. Für die Bewertung gilt: Wer Werte ändern will, ändert `scores.json` (Claude)
   oder `overrides.csv` (Mensch), nie beides für dasselbe Feld.
 
-## Das Beispiel nachvollziehen
-
-Das Beispiel liegt nicht im Repository (siehe oben). Wer es aus dem Auslieferungspaket daneben
-legt, rechnet es so nach:
-
-```
-python3 skills/work-transformation/scripts/run_pipeline.py --project examples/kundenservice-pilot
-open examples/kundenservice-pilot/40_output/dashboard_v003.html
-```
-
-Das Beispiel enthält Extraktion, Bewertung und Agenten für einen fiktiven Kundenservice
-(Vertragsmanagement, Abrechnung, Telefonie, Teamleitung). Es ist auch die Vorlage dafür, wie die drei
-Claude-Dateien aussehen sollen.
-
 ## Grenzen
 
 Kein Freigabeworkflow mit Rollen und Rechten, keine Integration in SuccessFactors oder andere
 HR-Systeme, kein Tracking der Agentennutzung nach dem Rollout. Für genau diese drei Dinge verkaufen
-kommerzielle Plattformen ihr Produkt. Für die Frage, ob eine solche Analyse für einen Bereich überhaupt belastbare
-Ergebnisse liefert, und für Pilotbereiche bis etwa 40 Rollen, ist die Suite ausreichend.
+kommerzielle Plattformen ihr Produkt. Für die Frage, ob eine solche Analyse für einen Bereich überhaupt
+belastbare Ergebnisse liefert, reicht die Suite: Der Ablauf ist am Pilotbereich mit 20–40 Rollen
+entwickelt und bis zu über 200 Rollen in einem Dashboard erfolgreich gelaufen.
 
 ## Weiterentwicklung
 

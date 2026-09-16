@@ -93,5 +93,6 @@ den Projektordner dort ab; er ist die eigentliche Arbeitsgrundlage, nicht das HT
 
 Die Suite liefert Stände, keine lebende Datenbank; keine Integration in SuccessFactors oder
 andere HR-Systeme; kein Tracking, ob Agenten nach dem Rollout tatsächlich genutzt werden.
-Für einen Bereich mit 20–40 Rollen ist sie ein vollständiges Analysewerkzeug; für einen
-Konzernrollout ist sie die Machbarkeitsstudie, die vor einem Kauf steht.
+Für einen Bereich ist sie ein vollständiges Analysewerkzeug, vom Piloten mit 20–40 Rollen bis zu
+über 200 Rollen in einem Lauf; für einen Konzernrollout ist sie die Machbarkeitsstudie, die vor
+einem Kauf steht.
