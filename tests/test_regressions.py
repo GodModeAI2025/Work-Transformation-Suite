@@ -370,5 +370,66 @@ class TestPipelineWithDraftBlueprintsOnly(unittest.TestCase):
             shutil.rmtree(tmp, ignore_errors=True)
 
 
+class TestNumbersAreReadableGerman(unittest.TestCase):
+    """Im Dashboard standen deutsche und englische Zahlen in derselben Zelle, und die drei
+    Zeitzeilen einer Tabelle in zwei verschiedenen Einheiten. Beides machte die Tabelle
+    schwerer lesbar, als die Daten es hergeben."""
+
+    def setUp(self):
+        self.dash = load("transformation-dashboard", "build_dashboard")
+
+    def test_thousands_and_decimals_are_german(self):
+        self.assertEqual(self.dash.fmt(20940.0, 1), "20.940,0")
+        self.assertEqual(self.dash.fmt(667.2, 1), "667,2")
+        self.assertEqual(self.dash.fmt(None), "–")
+
+    def test_deltas_keep_the_decimals_of_their_row(self):
+        """%g warf die Nachkommastelle weg, sobald sie 0 war: +298 neben +444.7."""
+        self.assertEqual(self.dash.signed(298.0, 1), "+298,0")
+        self.assertEqual(self.dash.signed(444.7, 1), "+444,7")
+        self.assertEqual(self.dash.signed(-2.0, 0), "-2")
+        self.assertEqual(self.dash.signed(0.0, 1), "0,0")
+        self.assertEqual(self.dash.signed(-0.04, 1), "0,0", "Minus-Null ist keine Verschlechterung")
+        self.assertEqual(self.dash.signed_pct(44.7), "+44,7 %")
+
+    def test_time_rows_share_one_unit(self):
+        """Arbeit + Warten = Durchlauf. In gemischten Einheiten ist diese Addition unsichtbar."""
+        unit, per_unit, nd = self.dash.time_scale([667.2, 20940.0, 21607.2])
+        self.assertEqual(unit, "h")
+        self.assertEqual(per_unit, 60.0)
+        self.assertEqual(self.dash.fmt(667.2 / per_unit, nd), "11,1")
+        self.assertEqual(self.dash.fmt(20940.0 / per_unit, nd), "349,0")
+        self.assertEqual(self.dash.fmt(21607.2 / per_unit, nd), "360,1")
+
+    def test_short_processes_stay_in_minutes(self):
+        unit, per_unit, nd = self.dash.time_scale([12.0, 45.0, 57.0])
+        self.assertEqual((unit, per_unit, nd), ("min", 1.0, 0))
+
+    def test_a_small_value_next_to_a_large_one_keeps_a_digit(self):
+        """5 min Arbeit neben 200 h Warten darf nicht zu 0,0 h werden."""
+        unit, per_unit, nd = self.dash.time_scale([5.0, 12000.0, 12005.0])
+        self.assertEqual(unit, "h")
+        self.assertNotEqual(float(self.dash.fmt(5.0 / per_unit, nd).replace(",", ".")), 0.0)
+
+    def test_standalone_durations_pick_their_own_unit(self):
+        self.assertEqual(self.dash.dur(45), "45 min")
+        self.assertEqual(self.dash.dur(667.2), "11,1 h")
+        self.assertEqual(self.dash.dur(20940), "14,5 Tage")
+        self.assertEqual(self.dash.dur(None), "–")
+
+    def test_rendered_dashboard_has_no_english_numbers_left(self):
+        graph = wl.read_json(EXAMPLE / "expected" / "work-graph_final.json")
+        self.dash.load_theme(None)
+        html = self.dash.build_html(graph, self.dash.prepare(graph),
+                                    self.dash.kpis(graph, self.dash.prepare(graph)), "T", "")
+        self.assertIn("Bearbeitungszeit (h)", html)
+        self.assertNotIn("Bearbeitungszeit (min)", html)
+        self.assertNotIn("Durchlaufzeit (min)", html)
+        import re
+        # Eine Ziffer, Punkt, Ziffer außerhalb von Tags und CSS wäre ein englisches Dezimalkomma.
+        body = re.sub(r"<style.*?</style>|<svg.*?</svg>", "", html, flags=re.S)
+        body = re.sub(r"<[^>]+>", " ", body)
+        self.assertEqual([], re.findall(r"[+-]\d+\.\d", body), "englische Dezimalpunkte im Text")
+
 if __name__ == "__main__":
     unittest.main()

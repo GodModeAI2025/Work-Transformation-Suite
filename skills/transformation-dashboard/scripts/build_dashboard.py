@@ -104,12 +104,16 @@ FLOW_METRICS = [
     ("steps", "Schritte", 0),
     ("human_touches", "Human Touchpoints", 0),
     ("handovers", "Übergaben", 0),
-    ("handling_time_min", "Bearbeitungszeit (min)", 1),
-    ("wait_time_min", "Wartezeit (min)", 1),
-    ("lead_time_hours", "Durchlaufzeit (h)", 1),
+    ("handling_time_min", "Bearbeitungszeit", 1),
+    ("wait_time_min", "Wartezeit", 1),
+    ("lead_time_hours", "Durchlaufzeit", 1),
     ("rework_pct", "Nacharbeit (%)", 1),
     ("automated_steps", "automatisierte Schritte", 0),
 ]
+
+# Zeitkennzahlen und ihr Umrechnungsfaktor in Minuten. Die Einheit im Namen ist die
+# des Datenmodells und bleibt dort auch — umgerechnet wird erst bei der Darstellung.
+TIME_TO_MINUTES = {"handling_time_min": 1.0, "wait_time_min": 1.0, "lead_time_hours": 60.0}
 
 ARCH_LABEL = {
     "control-heavy": "Kontrolle", "knowledge-heavy": "Wissen", "process-heavy": "Prozess",
@@ -122,13 +126,72 @@ def esc(x: Any) -> str:
 
 
 def fmt(x: Any, nd: int = 1) -> str:
+    """Zahl in deutscher Schreibweise: Komma als Dezimaltrenner, Punkt als Tausendertrenner."""
     if x is None:
         return "–"
-    return f"{float(x):.{nd}f}".replace(".", ",")
+    s = f"{float(x):,.{nd}f}"
+    return s.replace(",", "\u0000").replace(".", ",").replace("\u0000", ".")
+
+
+def signed(x: Any, nd: int = 1) -> str:
+    """Wie fmt, aber mit Vorzeichen — im Dashboard heißt Plus immer Verbesserung."""
+    if x is None:
+        return "–"
+    v = round(float(x), nd) or 0.0
+    return ("+" if v > 0 else "") + fmt(v, nd)
+
+
+def signed_pct(x: Any) -> str:
+    return "–" if x is None else signed(x, 1) + " %"
 
 
 def pct(x: Any) -> str:
     return "–" if x is None else f"{float(x):.0f} %"
+
+
+def dur(minutes: Any) -> str:
+    """Eine einzelne Dauer in der Einheit, in der ein Mensch sie noch liest.
+
+    Freistehende Dauern haben keine Nachbarzelle, mit der sie vergleichbar bleiben
+    müssen, also darf hier jede ihre eigene Einheit bekommen. In Tabellenspalten ist
+    das anders — dort entscheidet time_scale einmal für alle Zeitzeilen.
+    """
+    if minutes is None:
+        return "–"
+    m = float(minutes)
+    a = abs(m)
+    if a < 90:
+        return f"{fmt(m, 0)} min"
+    if a < 48 * 60:
+        return f"{fmt(m / 60.0, 1)} h"
+    return f"{fmt(m / 1440.0, 1)} Tage"
+
+
+def time_scale(values: list) -> tuple:
+    """Eine gemeinsame Einheit für alle Zeitzeilen einer Vergleichstabelle.
+
+    Bearbeitungszeit, Wartezeit und Durchlaufzeit sind dieselbe Größe: Arbeit,
+    Warten, Summe. Stehen sie in verschiedenen Einheiten nebeneinander, ist die
+    Addition unsichtbar und fünfstellige Minutenzahlen liest ohnehin niemand.
+    Der größte Wert entscheidet über die Einheit, der kleinste über die
+    Nachkommastellen, und die Einheit steht einmal in der Zeilenbeschriftung.
+    Rückgabe: Einheitenkürzel, Minuten je Einheit, Nachkommastellen.
+    """
+    mins = [abs(float(v)) for v in values if v is not None]
+    mx = max(mins or [0.0])
+    unit, per_unit = ("h", 60.0) if mx >= 90.0 else ("min", 1.0)
+    small = min([v / per_unit for v in mins if v] or [1.0])
+    if small < 0.1:
+        nd = 2
+    elif unit == "h" or small < 10:
+        nd = 1
+    else:
+        nd = 0
+    return unit, per_unit, nd
+
+
+def _scaled(x: Any, scale: float) -> Any:
+    return None if x is None else float(x) * scale
 
 
 # ---------------------------------------------------------------------------
@@ -571,30 +634,33 @@ def process_tiles(pk: dict[str, Any]) -> str:
         (str(pk["approved"]), "Blueprints freigegeben"),
         (str(pk["experiments"]), "Piloten geplant"),
         (pct(pk["avg_lead_gain"]) if pk["avg_lead_gain"] is not None else "–", "Ø Durchlaufzeitgewinn"),
-        (f"{pk['touch_gain']:+g}", "Human Touchpoints"),
-        (f"{pk['handover_gain']:+g}", "Übergaben"),
+        (signed(pk["touch_gain"], 0), "Human Touchpoints"),
+        (signed(pk["handover_gain"], 0), "Übergaben"),
     ]
     return '<div class="tiles">' + "".join(
         f'<div class="tile"><div class="v">{esc(v)}</div><div class="l">{esc(l)}</div></div>'
         for v, l in items) + "</div>"
 
 
-def _delta_cell(d: dict[str, Any], nd: int = 1) -> str:
+def _delta_cell(d: dict[str, Any], nd: int = 1, scale: float = 1.0, unit: str = "") -> str:
     """Eine Deltazelle: Soll-Wert, Veränderung und der Ist-Wert als Tooltip.
 
     Das Vorzeichen ist immer als Verbesserung gelesen — bei Kennzahlen, bei denen
     weniger besser ist, wurde es vorher gedreht. Sonst müsste man in jeder Zeile neu
-    überlegen, ob ein Minus gut oder schlecht ist.
+    überlegen, ob ein Minus gut oder schlecht ist. scale rechnet in die Einheit der
+    Zeile um; der Prozentwert bleibt davon unberührt, weil er ein Verhältnis ist.
     """
     if not d:
         return '<td class="n">–</td>'
     imp = d.get("improvement")
     cls = "delta-flat" if not imp else ("delta-up" if imp > 0 else "delta-down")
     pctv = d.get("improvement_pct")
-    extra = f" ({pctv:+g} %)" if pctv is not None else ""
-    title = f"Ist {fmt(d.get('ist'), nd)} → Soll {fmt(d.get('soll'), nd)}"
-    return (f'<td class="n" title="{esc(title)}">{fmt(d.get("soll"), nd)} '
-            f'<span class="{cls}">{imp:+g}{extra}</span></td>')
+    extra = f" ({signed_pct(pctv)})" if pctv is not None else ""
+    u = f" {unit}" if unit else ""
+    title = (f"Ist {fmt(_scaled(d.get('ist'), scale), nd)}{u}"
+             f" → Soll {fmt(_scaled(d.get('soll'), scale), nd)}{u}")
+    return (f'<td class="n" title="{esc(title)}">{fmt(_scaled(d.get("soll"), scale), nd)} '
+            f'<span class="{cls}">{signed(_scaled(imp, scale), nd)}{extra}</span></td>')
 
 
 def flow_html(graph: dict[str, Any], steps: list, names: dict, removed: set = frozenset()) -> str:
@@ -611,7 +677,7 @@ def flow_html(graph: dict[str, Any], steps: list, names: dict, removed: set = fr
         t = st.get("handling_time_min")
         wv = st.get("wait_time_min")
         if t is not None or wv is not None:
-            bits.append(f'<div>{fmt(t, 0)} min Arbeit · {fmt(wv, 0)} min Warten</div>')
+            bits.append(f'<div>{dur(t)} Arbeit · {dur(wv)} Warten</div>')
         if st.get("operator"):
             bits.append(f'<div>{esc(OPERATOR_LABEL.get(st["operator"], st["operator"]))}</div>')
         if st.get("value_type"):
@@ -699,10 +765,15 @@ def provenance_block(graph: dict[str, Any], pr: dict[str, Any], bps: list, names
     out = [f'<details class="herkunft" id="herkunft-pr{n}">'
            f'<summary>Woher diese Zahlen kommen und was sie voraussetzen</summary>']
 
+    # Dieselbe Einheit wie in der Vergleichstabelle darüber: der Satz nennt genau die
+    # Summen, die dort in den Zeitzeilen stehen.
+    unit, per_unit, tnd = time_scale([ist.get("handling_time_min"), ist.get("wait_time_min"),
+                                      _scaled(ist.get("lead_time_hours"), 60.0)])
     out.append(f'<p class="note">Die Ist-Werte sind Summen über die {ist["steps"]} modellierten '
-               f'Schritte: {fmt(ist["handling_time_min"], 0)} min Arbeit und '
-               f'{fmt(ist["wait_time_min"], 0)} min Warten. Die Soll-Werte entstehen genauso '
-               'aus den Schritten des jeweiligen Entwurfs — keine der Zahlen ist zugesagt.</p>')
+               f'Schritte: {fmt(_scaled(ist["handling_time_min"], 1.0 / per_unit), tnd)} {unit} '
+               f'Arbeit und {fmt(_scaled(ist["wait_time_min"], 1.0 / per_unit), tnd)} {unit} Warten. '
+               'Die Soll-Werte entstehen genauso aus den Schritten des jeweiligen Entwurfs — '
+               'keine der Zahlen ist zugesagt.</p>')
     gap = wl.lead_time_gap(graph, pr["id"])
     if gap:
         out.append(f'<p class="note"><b>Einschränkung:</b> Das Modell erklärt '
@@ -780,18 +851,34 @@ def process_card(graph: dict[str, Any], pr: dict[str, Any], names: dict, n: int)
     if gap:
         head.append(f'<div class="warnbox">Das Prozessmodell erklärt {fmt(gap["modelled_hours"])} h '
                     f'von {fmt(gap["measured_hours"])} h gemessener Durchlaufzeit '
-                    f'({gap["deviation_pct"]:+g} %). Es fehlen vermutlich Schritte oder Liegezeiten; '
+                    f'({signed_pct(gap["deviation_pct"])}). Es fehlen vermutlich Schritte oder Liegezeiten; '
                     'die Deltas unten rechnen auf der modellierten Grundmenge.</div>')
     if v and not (v.get("sensitivity") or {}).get("band_stable", True):
         flips = ", ".join(sorted({f["factor"] for f in v["sensitivity"]["flips"]}))
         head.append(f'<div class="warnbox">Prioritätsband kippt schon bei ±1 in: {esc(flips)}. '
                     'Die Einordnung ist eine Richtung, keine Rangfolge.</div>')
 
-    # Vergleichstabelle Ist gegen alle Szenarien
+    # Vergleichstabelle Ist gegen alle Szenarien. Die drei Zeitzeilen teilen sich eine
+    # Einheit, die aus allen Werten der Tabelle bestimmt wird — sonst stehen Minuten
+    # und Stunden nebeneinander und die Summe Arbeit + Warten = Durchlauf verschwindet.
+    time_values = []
+    for key, f_min in TIME_TO_MINUTES.items():
+        time_values.append(_scaled(ist.get(key), f_min))
+        for b in bps:
+            time_values.append(_scaled(((b.get("delta") or {}).get(key) or {}).get("soll"), f_min))
+    unit, per_unit, time_nd = time_scale(time_values)
+
     cmp_rows = []
     for key, label, nd in FLOW_METRICS:
-        cells = "".join(_delta_cell((b.get("delta") or {}).get(key), nd) for b in bps)
-        cmp_rows.append(f'<tr><td>{esc(label)}</td><td class="n">{fmt(ist.get(key), nd)}</td>{cells}</tr>')
+        if key in TIME_TO_MINUTES:
+            scale, nd = TIME_TO_MINUTES[key] / per_unit, time_nd
+            label, row_unit = f"{label} ({unit})", unit
+        else:
+            scale, row_unit = 1.0, ""
+        cells = "".join(_delta_cell((b.get("delta") or {}).get(key), nd, scale, row_unit)
+                        for b in bps)
+        cmp_rows.append(f'<tr><td>{esc(label)}</td>'
+                        f'<td class="n">{fmt(_scaled(ist.get(key), scale), nd)}</td>{cells}</tr>')
     head_cells = "".join(
         f'<th class="n"><a href="#herkunft-pr{n}-{i}" '
         f'title="Annahmen und Begründungen dieses Szenarios">'
@@ -802,8 +889,10 @@ def process_card(graph: dict[str, Any], pr: dict[str, Any], names: dict, n: int)
              + head_cells + "</tr>" + "".join(cmp_rows) + "</table>"
              + provenance_block(graph, pr, bps, names, n)
              + '<p class="note">Der Wert in Klammern ist die Verbesserung gegenüber dem Ist; '
-               'positiv heißt immer besser. Die Spaltenköpfe führen zu den Annahmen, auf denen '
-               'die jeweilige Zahl beruht.</p>') if bps else ""
+               'positiv heißt immer besser. Bearbeitungszeit, Wartezeit und Durchlaufzeit stehen '
+               'in derselben Einheit, damit die ersten beiden sich sichtbar zur dritten addieren. '
+               'Die Spaltenköpfe führen zu den Annahmen, auf denen die jeweilige Zahl '
+               'beruht.</p>') if bps else ""
 
     # Umschaltbare Tafeln: Ist plus je Szenario eine
     tid = f"pr{n}"
@@ -1166,7 +1255,7 @@ def report_md(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], ti
                   + (f" Durchschnittlicher Durchlaufzeitgewinn im jeweils besten Szenario: "
                      f"{fmt(pk['avg_lead_gain'], 0)} %." if pk["avg_lead_gain"] is not None else ""),
                   "",
-                  "| # | Prozess | Band | Wert | Ist-Durchlauf | Bestes Szenario | Soll-Durchlauf | Human Touchpoints | Übergaben |",
+                  "| # | Prozess | Band | Wert | Ist-Durchlauf (h) | Bestes Szenario | Soll-Durchlauf (h) | Human Touchpoints | Übergaben |",
                   "|---:|---|---|---:|---:|---|---:|---|---|"]
         for pr in sorted(graph["processes"],
                          key=lambda x: (-(x.get("value", {}) or {}).get("score", 0), x["name"])):
@@ -1177,14 +1266,14 @@ def report_md(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], ti
             if best:
                 d = best["delta"]
                 lines.append(f"| {v.get('rank', '–')} | {pr['name']} | {BAND_LABEL.get(v.get('band'), '–')}{flag} "
-                             f"| {fmt(v.get('score'))} | {fmt(t['lead_time_hours'])} h "
+                             f"| {fmt(v.get('score'))} | {fmt(t['lead_time_hours'])} "
                              f"| {SCENARIO_LABEL.get(best['scenario'], '–')} "
-                             f"| {fmt(best['soll_totals']['lead_time_hours'])} h "
+                             f"| {fmt(best['soll_totals']['lead_time_hours'])} "
                              f"| {t['human_touches']} → {best['soll_totals']['human_touches']} "
                              f"| {t['handovers']} → {best['soll_totals']['handovers']} |")
             else:
                 lines.append(f"| {v.get('rank', '–')} | {pr['name']} | {BAND_LABEL.get(v.get('band'), '–')}{flag} "
-                             f"| {fmt(v.get('score'))} | {fmt(t['lead_time_hours'])} h | noch keins "
+                             f"| {fmt(v.get('score'))} | {fmt(t['lead_time_hours'])} | noch keins "
                              f"| – | {t['human_touches']} | {t['handovers']} |")
         # Drei Eimer, nicht zwei. Eine Kennzahl ganz ohne Ausgangswert ist weder geschätzt
         # noch belegt — sie als „bestätigt oder gemessen" zu zählen, würde genau die Aussage

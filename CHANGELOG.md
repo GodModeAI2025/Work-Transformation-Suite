@@ -152,6 +152,29 @@ noch nicht erfüllt waren:
   prüft, dass Tag, Version im Plugin-Manifest und Changelog-Abschnitt zusammenpassen — und
   läuft auch im normalen CI, damit die drei nicht auseinanderlaufen.
 
+### Lesbarkeit der Zahlen im Dashboard
+
+Die Vergleichstabelle war rechnerisch richtig und trotzdem schwer zu lesen. Zwei Ursachen,
+beide behoben:
+
+- **Die drei Zeitzeilen teilen sich jetzt eine Einheit.** Bearbeitungszeit und Wartezeit
+  standen in Minuten, die Durchlaufzeit in Stunden — obwohl die ersten beiden sich zur
+  dritten addieren. Aus `667,2 min` Arbeit und `20.940,0 min` Warten neben `360,1 h`
+  Durchlauf wird `11,1 h`, `349,0 h`, `360,1 h`; die Addition ist wieder zu sehen, und
+  fünfstellige Minutenzahlen verschwinden. Die Einheit ergibt sich aus dem größten Wert
+  der Tabelle und steht einmal in der Zeilenbeschriftung, nicht in jeder Zelle. Kurze
+  Prozesse bleiben in Minuten. Das Datenmodell ändert sich nicht: in Graph und CSV stehen
+  weiterhin Minuten und Stunden, umgerechnet wird erst bei der Darstellung.
+- **Zahlen sind durchgehend deutsch geschrieben.** In derselben Zelle standen `369,2` mit
+  Komma und `+444.7` mit Punkt, weil die Deltas mit `%g` formatiert wurden. Das warf
+  außerdem die Nachkommastelle weg, sobald sie null war, sodass `+298` neben `+444.7`
+  stand. Deltas, Prozentwerte und Basiswerte laufen jetzt durch dieselben Formatierer,
+  mit Tausenderpunkt und mit so vielen Nachkommastellen, wie die Zeile führt.
+
+Freistehende Dauern — die Zeitangaben auf den Schrittkacheln — wählen ihre Einheit weiter
+einzeln, weil sie keine Nachbarzelle haben, mit der sie vergleichbar bleiben müssen: aus
+`1.440 min Warten` wird `24,0 h Warten`.
+
 ### Bekannte Grenzen
 
 Ein Soll-Prozess aus Interviews und Stellenbeschreibungen ist ein Entwurf, keine Prognose.
