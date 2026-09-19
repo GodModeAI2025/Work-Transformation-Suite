@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-check_suite.py — prüft die Installation der Suite: sind alle vier Skills da,
+check_suite.py — prüft die Installation der Suite: sind alle Skills da,
 sind die gemeinsamen Bibliotheksdateien in allen Kopien identisch, läuft Python 3.9+,
 ist der Frontmatter jeder SKILL.md gültig (name = Ordnername ohne „anthropic“/„claude“,
 description höchstens 1024 Zeichen; so verlangt es die Skill-Spezifikation von Anthropic). Liegt neben dem Skill-Ordner ein
@@ -21,16 +21,34 @@ import zipfile
 from pathlib import Path
 
 SHARED = {
-    "workgraph_lib.py": ["work-graph-builder", "task-scorer", "agent-mapper", "transformation-dashboard", "work-transformation"],
-    "validate_graph.py": ["work-graph-builder", "task-scorer", "agent-mapper", "transformation-dashboard"],
+    "workgraph_lib.py": ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner",
+                         "transformation-dashboard", "work-transformation"],
+    "validate_graph.py": ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner",
+                          "transformation-dashboard"],
     "apply_overrides.py": ["work-graph-builder", "task-scorer"],
 }
 REQUIRED = {
-    "work-graph-builder": ["init_project.py", "build_graph.py", "make_review_list.py", "apply_overrides.py", "validate_graph.py", "import_positions.py"],
+    "work-graph-builder": ["init_project.py", "build_graph.py", "build_processes.py", "migrate_graph.py",
+                           "make_review_list.py", "apply_overrides.py", "apply_governance.py",
+                           "validate_graph.py", "import_positions.py"],
     "task-scorer": ["export_scoring_sheet.py", "score_roles.py", "calibrate.py"],
-    "agent-mapper": ["export_agent_candidates.py", "compute_coverage.py"],
+    "agent-mapper": ["export_agent_candidates.py", "compute_coverage.py", "validate_contracts.py",
+                     "export_contracts.py"],
+    "process-redesigner": ["export_process_candidates.py", "build_blueprints.py",
+                           "validate_blueprints.py", "compare_scenarios.py", "score_processes.py",
+                           "make_experiments.py", "redesign_lib.py"],
     "transformation-dashboard": ["build_dashboard.py"],
     "work-transformation": ["run_pipeline.py", "check_suite.py"],
+}
+# Dateien, die ein Skill zusätzlich zu scripts/ braucht (Referenzen, Konfiguration).
+REQUIRED_FILES = {
+    "work-graph-builder": ["references/extraction-format.md", "references/process-format.md"],
+    "task-scorer": ["references/rubric.md"],
+    "agent-mapper": ["references/agent-patterns.md", "references/contract-format.md"],
+    "process-redesigner": ["references/redesign-rules.md", "references/blueprint-format.md",
+                           "references/experiment-format.md", "references/value-rubric.md",
+                           "assets/value-weights.json"],
+    "transformation-dashboard": ["assets/theme.json"],
 }
 
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
@@ -129,6 +147,10 @@ def main() -> int:
         for f in files:
             if not (d / "scripts" / f).exists():
                 print(f"FEHLER   {skill}/scripts/{f} fehlt")
+                ok = False
+        for f in REQUIRED_FILES.get(skill, []):
+            if not (d / f).exists():
+                print(f"FEHLER   {skill}/{f} fehlt")
                 ok = False
         for e in check_frontmatter(d):
             print(f"FEHLER   {e}")

@@ -1,0 +1,62 @@
+[
+  {
+    "process": "Rechnung bis Zahlungseingang",
+    "blueprint_scenario": "balanced",
+    "name": "Pilot Zahlungszuordnung und Vorklärung",
+    "hypothesis": "Wenn Zuordnung und Vorklärung von Zahlungseingängen in einem agentengestützten Schritt zusammenfallen, sinkt die Durchlaufzeit bis zur geklärten Zuordnung von 36 auf unter 12 Stunden, ohne dass die Quote unklarer Zahlungseingänge steigt oder mehr zahlende Kunden gemahnt werden.",
+    "design": "ab_test",
+    "design_rationale": "A/B-Test möglich: rund 21.000 Fälle im Jahr, keine Aufsicht, keine irreversiblen Entscheidungen. Die Zuteilung erfolgt über die Prüfziffer der Belegnummer, damit sie nicht mit Kundengröße oder Region korreliert.",
+    "population": "Alle Zahlungseingänge auf den Inlandskonten. Ausgenommen sind Konzernverrechnungen und Fälle mit laufendem Inkasso.",
+    "control_group": "Belegnummern mit gerader Prüfziffer laufen unverändert über den Ist-Prozess",
+    "duration_days": 42,
+    "sample_size": 1208,
+    "primary_metric": "Durchlaufzeit bis geklärte Zuordnung",
+    "target_value": 12,
+    "guardrail_metrics": [
+      {"metric": "Quote unklarer Zahlungseingänge", "limit": 14, "direction": "max"},
+      {"metric": "Mahnungen an zahlende Kunden", "limit": 2.5, "direction": "max"}
+    ],
+    "stop_rules": [
+      "Quote unklarer Zahlungseingänge über zwei aufeinanderfolgende Wochen über 14 Prozent: Pilot anhalten",
+      "Eine Fehlzuordnung, die zu einer Mahnung an einen zahlenden Kunden führt: sofort anhalten und Ursache klären",
+      "Mehr als 5 Prozent der Fälle brauchen eine manuelle Korrektur der automatischen Zuordnung"
+    ],
+    "rollback": "Zuteilung auf 100 Prozent Ist-Prozess stellen. Automatisch gesetzte Zuordnungen der letzten 24 Stunden werden gesammelt zurückgenommen; der Schalter wirkt innerhalb einer Stunde.",
+    "owner_role": "Teamleitung Order-to-Cash",
+    "status": "completed",
+    "results": [
+      {"metric": "Durchlaufzeit bis geklärte Zuordnung", "value": 11.4, "as_of": "2026-05-31",
+       "note": "Median über 1.184 ausgewertete Fälle der Testgruppe; Kontrollgruppe im selben Zeitraum 34,8 Stunden."},
+      {"metric": "Quote unklarer Zahlungseingänge", "value": 9.2, "as_of": "2026-05-31",
+       "note": "Gegenüber 14 Prozent im Ausgangswert; der Guardrail wurde zu keinem Zeitpunkt berührt."},
+      {"metric": "Mahnungen an zahlende Kunden", "value": 1.8, "as_of": "2026-05-31",
+       "note": "Zwei Fälle in Woche 3, beide durch die Ausschlussregel für kürzlich berührte Posten aufgefangen."}
+    ]
+  },
+  {
+    "process": "Auftrag bis Rechnung",
+    "blueprint_scenario": "balanced",
+    "name": "Schattenbetrieb Auftragserfassung und Rechnungsvorbereitung",
+    "hypothesis": "Wenn der Auftragserfassungs-Agent und der Fakturierungs-Agent im Schattenbetrieb mitlaufen, erreichen ihre Vorschläge auf Positionsebene eine Übereinstimmung von mindestens 97 Prozent mit der menschlichen Bearbeitung — genug, um im nächsten Schritt die getrennte Prüfung entfallen zu lassen.",
+    "design": "shadow",
+    "design_rationale": "Schattenbetrieb vorgeschlagen, weil der Prozess eine irreversible Entscheidung enthält (die Rechnungsfreigabe). Die Agenten rechnen mit und entscheiden nichts; ihre Vorschläge werden gegen die tatsächliche Bearbeitung gehalten. Das kostet keine Freigabe und kein Risiko.",
+    "population": "Alle Aufträge mit gültigem Rahmenvertrag. Einzelaufträge ohne Rahmenvertrag sind ausgenommen, weil dort die Preisfindung manuell ist.",
+    "duration_days": 42,
+    "sample_size": 2071,
+    "primary_metric": "Rechnungskorrekturquote",
+    "target_value": 5,
+    "guardrail_metrics": [
+      {"metric": "Aufträge über Kreditlimit ohne Freigabe", "limit": 1.5, "direction": "max"},
+      {"metric": "Durchlaufzeit Auftrag bis Rechnung", "limit": 42, "direction": "max"}
+    ],
+    "stop_rules": [
+      "Positionsgenauigkeit der Agentenvorschläge unter 95 Prozent in zwei aufeinanderfolgenden Wochen: Pilot anhalten und Fähigkeitsprofil prüfen",
+      "Der Schattenbetrieb verlängert die reale Bearbeitung messbar: sofort abschalten, er darf den Ist-Prozess nicht stören",
+      "Eine stille Preisabweichung, die der Agent nicht als solche gemeldet hätte: anhalten"
+    ],
+    "rollback": "Agenten abschalten. Da im Schattenbetrieb nichts geschrieben wird, ist kein Rückbau nötig; der Ist-Prozess läuft unverändert weiter.",
+    "owner_role": "Teamleitung Order-to-Cash",
+    "status": "ready",
+    "results": []
+  }
+]

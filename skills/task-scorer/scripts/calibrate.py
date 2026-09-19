@@ -119,7 +119,7 @@ def main() -> int:
     out += ["", "## Rollen, deren Wirkung sich durch Korrekturen geändert hat", ""] + (changed or ["- keine"])
     out += ["", "## Empfehlung", ""] + (suggestions or [f"- Noch keine Systematik erkennbar (Schwelle: mindestens {MIN_N} Korrekturen je Feld mit mittlerer Abweichung ≥ {MIN_BIAS}). Weiter über Overrides korrigieren."])
     path = project / wl.DIR_REVIEW / f"calibration_v{version:03d}.md"
-    path.write_text("\n".join(out) + "\n", encoding="utf-8")
+    wl.write_text(path, "\n".join(out) + "\n")
     print(f"Geschrieben: {wl.relpath(path)} | Korrekturen={len(lines_detail)} Felder mit Systematik={len(suggestions)} Rollen mit geänderter Wirkung={len([c for c in changed if not c.startswith('- keine')])}")
     return 0
 

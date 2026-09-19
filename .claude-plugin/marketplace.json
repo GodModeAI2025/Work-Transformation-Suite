@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "work-transformation-suite",
-      "description": "Fünf Claude-Skills für die KI-Transformationsanalyse eines Bereichs: Arbeitsgraph, Aufgabenbewertung, Agentenbibliothek, Dashboard.",
+      "description": "Sechs Claude-Skills für die KI-Transformation eines Bereichs: Arbeitsgraph, Aufgabenbewertung, Agentenbibliothek mit Capability Contracts, KI-native Soll-Prozesse in drei Szenarien, Pilotplan und Dashboard.",
       "source": "./",
       "category": "productivity",
       "homepage": "https://github.com/GodModeAI2025/Work-Transformation-Suite"

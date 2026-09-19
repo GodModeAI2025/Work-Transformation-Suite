@@ -1,0 +1,38 @@
+{
+  "counts": {
+    "agents": 8,
+    "blueprints": 6,
+    "controls": 4,
+    "decisions": 5,
+    "experiments": 2,
+    "job_clusters": 1,
+    "job_families": 1,
+    "metrics": 6,
+    "outcomes": 2,
+    "process_edges": 15,
+    "process_steps": 16,
+    "processes": 2,
+    "provenance": 7,
+    "roles": 5,
+    "skills": 11,
+    "systems": 4,
+    "tasks": 21
+  },
+  "description": "Erwartete Ausgaben eines vollständigen Laufs dieses Beispielprojekts. Die Prüfsummen belegen, dass die Pipeline deterministisch ist: gleiche Eingaben, gleiche Bytes. Ein Unterschied hier ist entweder ein Fehler oder eine bewusste Änderung, die mit aktualisierten Prüfsummen festgehalten wird.",
+  "files": {
+    "20_graph/work-graph_latest.json": "b75d1029844bc1f587e6eee894ff92a4e89937f9d25b99eacbcc357a7788f25b",
+    "40_output/agents_v008.csv": "a6e32c3fff219d2634ffa0a37ab7df31563f42e17d26325f26fd273e02ebff33",
+    "40_output/blueprints_v008.csv": "7467081ee725a2750d7566935342f98c722a6c7dc2a95de69a9fbbb5ef81c311",
+    "40_output/contracts_v007.json": "9216542f99ea92576286169c8c6039cfa6b07ed4f630809286c54b5ec0ec62db",
+    "40_output/contracts_v007.md": "4f385fcf16f29a227b3d7a77895edc97f843544a37a2810b743f9f09c2530e42",
+    "40_output/dashboard_v008.html": "32caec56ce9627aa0638d1a6a13bd2968632db3ccd37a11db6a7e0d673f00163",
+    "40_output/processes_v008.csv": "7d131f72a0d91dfd81fd8c81b00a92dbfc23e759647395ccc1208c1f39832e9e",
+    "40_output/report_v008.md": "b1606277732cca5cba0b003af8fa12e5c1fb66c78c0e83ee404dafc8bfc0e737",
+    "40_output/roles_v008.csv": "cf52a6682e4090af7bfffc95a6371f724e8ce2e8076e99c9c018cc04ee2daee4",
+    "40_output/scenarios_v007.csv": "67ae55300be55492521f52ac0dfa11bd4e44e06af281507669f94f9d1a0ed5c3",
+    "40_output/scenarios_v007.md": "37d24d19d838bfc94443229ceab8d5260f0f86c625703fc08e7614d8fe61985f",
+    "40_output/tasks_v008.csv": "439bf26bd47e42ce43cd3f7f82a43ed08ebfbe923b76ea70df284dc1d7ca3a65"
+  },
+  "graph_version": 8,
+  "schema_version": "1.1"
+}

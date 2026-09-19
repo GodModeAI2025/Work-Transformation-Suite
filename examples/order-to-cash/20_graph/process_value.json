@@ -1,0 +1,28 @@
+[
+  {
+    "process": "Auftrag bis Rechnung",
+    "customer_impact": 8,
+    "financial_impact": 7,
+    "cycle_time_reduction": 9,
+    "quality_impact": 7,
+    "risk_reduction": 5,
+    "learning_value": 8,
+    "integration_effort": 6,
+    "change_effort": 6,
+    "reversibility": 7,
+    "rationale": "Der Kunde bekommt seine Auftragsbestätigung am selben Tag statt nach zwei Tagen und eine Rechnung, die seltener korrigiert werden muss — beides ist im Vertrieb unmittelbar spürbar. Der Hebel bei der Durchlaufzeit ist der größte im ganzen Bereich, weil neun von zehn Stunden heute Liegezeit sind. Der Aufwand ist mittel: Das ERP hat Schnittstellen, aber der Archivzugang fehlt und die Kreditvollmacht muss geregelt werden. Der Lernwert ist hoch, weil dasselbe Muster (Erfassung, Prüfung, Beleg) in Einkauf und Personalverwaltung wiederkehrt."
+  },
+  {
+    "process": "Rechnung bis Zahlungseingang",
+    "customer_impact": 5,
+    "financial_impact": 8,
+    "cycle_time_reduction": 8,
+    "quality_impact": 8,
+    "risk_reduction": 6,
+    "learning_value": 5,
+    "integration_effort": 3,
+    "change_effort": 4,
+    "reversibility": 9,
+    "rationale": "Der Kunde merkt vor allem, dass er seltener zu Unrecht gemahnt wird; das ist wichtig, aber weniger sichtbar als eine schnellere Auftragsbestätigung. Finanziell ist der Hebel groß, weil ungeklärte Posten direkt auf die Außenstände durchschlagen. Der Aufwand ist gering: alles spielt sich im ERP ab, es braucht keine neue Systemanbindung, und die Zuordnung lässt sich jederzeit auf manuell zurückstellen — deshalb die hohe Umkehrbarkeit."
+  }
+]

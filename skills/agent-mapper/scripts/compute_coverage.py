@@ -6,7 +6,17 @@ Rollenabdeckung, Sourcing, Horizont und Priorität, und schreibt eine neue
 Graph-Version (Stage "mapper").
 
 Aufruf:
-    python3 <skill>/scripts/compute_coverage.py --project ./mein-projekt
+    python3 <skill>/scripts/compute_coverage.py --project ./mein-projekt [--shared-tasks]
+
+--shared-tasks  erlaubt, dass mehrere Agenten dieselbe Aufgabe abdecken. Standard ist
+                weiterhin genau ein Agent je nicht-manueller Aufgabe: für eine Opportunity
+                Map ist das die ehrlichere Darstellung, weil sich Abdeckung dann addieren
+                lässt. Im Redesignmodus stimmt die Annahme nicht mehr — ein Prozessschritt
+                kann menschliche, regelbasierte, systemische und agentische Fähigkeiten
+                kombinieren, und ein Orchestrator koordiniert mehrere Spezialagenten.
+                Mit --shared-tasks werden Überschneidungen zugelassen, je Agent ausgewiesen
+                (overlap_task_ids) und am Ende als bereinigte Gesamtabdeckung gemeldet,
+                damit niemand FTE doppelt zählt.
 
 Eingabe 20_graph/agents.json:
 [
@@ -60,6 +70,8 @@ ALLOWED_PATTERNS = {
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", required=True)
+    ap.add_argument("--shared-tasks", action="store_true",
+                    help="mehrere Agenten dürfen dieselbe Aufgabe abdecken (Redesignmodus)")
     args = ap.parse_args()
     project = wl.resolve_project(args.project)
     graph = wl.load_latest_graph(project)
@@ -81,6 +93,7 @@ def main() -> int:
         t["agent_ids"] = []
     agents: dict[str, dict[str, Any]] = {}
     assigned: dict[str, str] = {}
+    shared: dict[str, list[str]] = {}
     for a in sorted(raw, key=lambda a: str(a.get("name", ""))):
         name = str(a.get("name", "")).strip()
         if not name:
@@ -111,11 +124,14 @@ def main() -> int:
                 problems.append(f"{name}: Task {tid} ({tasks[tid]['name']}) ist manuell, nicht zugeordnet")
                 continue
             if tid in assigned:
-                problems.append(f"{name}: Task {tid} schon bei {assigned[tid]} zugeordnet, ignoriert")
-                continue
-            assigned[tid] = name
+                if not args.shared_tasks:
+                    problems.append(f"{name}: Task {tid} schon bei {assigned[tid]} zugeordnet, "
+                                    "ignoriert (mit --shared-tasks erlaubt)")
+                    continue
+                shared.setdefault(tid, [assigned[tid]]).append(name)
+            assigned.setdefault(tid, name)
             tids.append(tid)
-            tasks[tid]["agent_ids"] = [aid]
+            tasks[tid]["agent_ids"] = sorted(set(tasks[tid].get("agent_ids", []) + [aid]))
         agents[aid] = {
             "id": aid,
             "name": name,
@@ -130,6 +146,14 @@ def main() -> int:
             "prerequisites": sorted({str(p).strip() for p in a.get("prerequisites", []) if str(p).strip()}),
             "task_ids": sorted(tids),
         }
+        # Der Capability Contract wird unverändert übernommen; geprüft wird er im Validator
+        # (validate_graph.validate_contract) und tiefer in validate_contracts.py.
+        if isinstance(a.get("contract"), dict):
+            agents[aid]["contract"] = a["contract"]
+        if a.get("capability_profile"):
+            agents[aid]["capability_profile"] = a["capability_profile"]
+        if a.get("orchestrates"):
+            agents[aid]["orchestrates"] = sorted({str(x).strip() for x in a["orchestrates"] if str(x).strip()})
 
     # Nicht zugeordnete automatisierbare Aufgaben melden
     unassigned = [t for t in graph["tasks"] if t.get("mode") in ("ai_assisted", "agent_delegated") and not t["agent_ids"]]
@@ -188,6 +212,32 @@ def main() -> int:
     for i, a in enumerate(sequence, start=1):
         a["sequence_rank"] = i
 
+    # Orchestrator-Verweise von Namen auf IDs heben, jetzt wo alle Agenten IDs haben.
+    by_name = {wl.normalize_name(a["name"]): a["id"] for a in agents.values()}
+    for ag in agents.values():
+        if ag.get("orchestrates"):
+            resolved = []
+            for nm in ag["orchestrates"]:
+                target = by_name.get(wl.normalize_name(nm))
+                if target is None:
+                    problems.append(f"{ag['name']}: orchestriert unbekannten Agenten {nm!r}")
+                elif target == ag["id"]:
+                    problems.append(f"{ag['name']}: orchestriert sich selbst, ignoriert")
+                else:
+                    resolved.append(target)
+            ag["orchestrates"] = sorted(set(resolved))
+
+    for tid, names in sorted(shared.items()):
+        for ag in agents.values():
+            if tid in ag["task_ids"]:
+                ag.setdefault("overlap_task_ids", []).append(tid)
+        problems.append(f"Aufgabe {tid} ({tasks[tid]['name']}) wird von mehreren Agenten "
+                        f"abgedeckt: {', '.join(sorted(set(names)))}. Abdeckungen dieser "
+                        "Agenten überschneiden sich, ihre FTE-Werte dürfen nicht addiert werden")
+    for ag in agents.values():
+        if ag.get("overlap_task_ids"):
+            ag["overlap_task_ids"] = sorted(set(ag["overlap_task_ids"]))
+
     graph["agents"] = list(agents.values())
     for p in problems:
         print(f"HINWEIS  {p}")
@@ -198,8 +248,23 @@ def main() -> int:
         wl.fail("Ungültiger Graph, nicht geschrieben")
     path, version, changed = wl.save_graph_version(project, graph, "mapper")
     verb = "Geschrieben" if changed else "Unverändert"
+    # Bereinigte Gesamtabdeckung: jede Aufgabe genau einmal, egal wie viele Agenten sie
+    # anfassen. Das ist die Zahl, die in eine Portfoliodiskussion gehört.
+    net_fte = 0.0
+    net_known = False
+    for tid in sorted(assigned):
+        t = tasks[tid]
+        r = roles[t["role_id"]]
+        if r.get("headcount") is None:
+            continue
+        net_known = True
+        net_fte += float(t["share_of_time"]) * float(t.get("automation_potential", 0)) / 10.0 / 100.0 \
+            * float(r["headcount"])
     print(f"{verb}: {wl.relpath(path)} (Version {version}) | Agenten={len(agents)} "
           f"zugeordnete Aufgaben={len(assigned)} offen={len(unassigned)} Hinweise={len(problems)}")
+    if net_known:
+        print(f"Bereinigte Gesamtabdeckung: {wl.round1(net_fte)} VZÄ über {len(assigned)} Aufgaben "
+              f"(überschneidungsfrei gerechnet, nicht die Summe der Einzelagenten)")
     return 0
 
 

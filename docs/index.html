@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Work-Transformation-Suite</title>
-<meta name="description" content="Fünf Claude-Skills, die aus Stellenbeschreibungen einen bewerteten Arbeitsgraphen machen: Rollen, Aufgaben, Skills, KI-Automatisierbarkeit, Agentenbibliothek, Dashboard.">
+<meta name="description" content="Sechs Claude-Skills: aus Stellenbeschreibungen ein bewerteter Arbeitsgraph — und daraus KI-native Soll-Prozesse in drei Szenarien, mit gerechneten Deltas, Capability Contracts und messbarem Pilotplan.">
 <meta property="og:title" content="Work-Transformation-Suite">
-<meta property="og:description" content="Aus Stellenbeschreibungen wird ein bewerteter Arbeitsgraph: Rollen, Aufgaben, KI-Automatisierbarkeit, Agenten, Dashboard. Claude urteilt, Skripte rechnen.">
+<meta property="og:description" content="Nicht nur: welche Arbeit kann KI übernehmen. Sondern: wie sähe der Prozess aus, wenn man ihn vom Ergebnis her neu bauen würde. Claude urteilt, Skripte rechnen.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230d3b39'/><circle cx='32' cy='34' r='11' fill='%23fff'/><circle cx='68' cy='66' r='11' fill='%235FD9C6'/><path d='M40 41 L60 59' stroke='%23fff' stroke-width='6'/></svg>">
 <style>
@@ -114,13 +114,21 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 
 <header>
   <div class="wrap">
-    <p class="kicker">Fünf Claude-Skills · Python 3.9+ · keine Abhängigkeiten</p>
-    <h1>Aus Stellenbeschreibungen wird ein <b>bewerteter Arbeitsgraph</b>.</h1>
+    <p class="kicker">Sechs Claude-Skills · Python 3.9+ · keine Abhängigkeiten</p>
+    <h1>Erst der <b>bewertete Arbeitsgraph</b>. Dann der <b>Prozess, neu gebaut</b>.</h1>
     <p class="lead">
       Rollen, Aufgaben und Skills eines Bereichs, jede Aufgabe auf KI-Automatisierbarkeit bewertet,
       jede Rolle als eliminiert, transformiert, augmentiert, entstehend oder stabil klassifiziert,
       dazu eine Agentenbibliothek mit Rollenabdeckung und ein Dashboard. Angefangen hat das mit
       Pilotbereichen von 20 bis 40 Rollen. Inzwischen läuft es mit über 200 Rollen in einem Durchgang.
+    </p>
+    <p class="lead">
+      Seit 0.2 kommt die zweite Hälfte dazu: Aus derselben Datenbasis plus einer Prozessaufnahme
+      entstehen KI-native Soll-Prozesse — je Prozess drei vergleichbare Szenarien, gerechnete
+      Deltas bei Durchlaufzeit, Übergaben und Human Touchpoints, ausführbare Capability Contracts
+      und ein messbarer Pilotplan. Denn wenn fünf Rollen nacheinander dieselben Daten prüfen,
+      findet eine Aufgabenanalyse fünf automatisierbare Aufgaben. Ein Redesign streicht vier
+      Prüfungen und drei Übergaben — und der Rest braucht gar keinen Agenten mehr.
     </p>
     <div class="cta">
       <a class="btn btn-primary" href="https://github.com/GodModeAI2025/Work-Transformation-Suite">Repository auf GitHub</a>
@@ -143,10 +151,11 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
   <div class="wrap">
     <h2>Claude urteilt, Skripte rechnen</h2>
     <p class="sub">
-      Die Trennung ist die eigentliche Idee der Suite. Claude liest Quellen und schreibt drei
-      JSON-Dateien: Extraktion, Bewertung, Agentenbündelung. Alles andere machen Python-Skripte, ohne
-      Zufall und ohne Zeitstempel: IDs, Zusammenführung, Normalisierung, Klassifikation, Abdeckung,
-      Dashboard.
+      Die Trennung ist die eigentliche Idee der Suite. Claude liest Quellen und urteilt: Extraktion,
+      Prozessaufnahme, Bewertung, Agentenbündelung, Soll-Entwürfe, Prozesswert, Pilotpläne. Alles
+      andere machen Python-Skripte, ohne Zufall und ohne Zeitstempel: IDs, Zusammenführung,
+      Normalisierung, Klassifikation, Abdeckung, Deltas, Dashboard. Auch die Deltas eines
+      Soll-Szenarios schreibt niemand von Hand — sie fallen aus den Schritten des Entwurfs an.
     </p>
     <div class="grid g3">
       <div class="card">
@@ -161,8 +170,8 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       </div>
       <div class="card">
         <p class="num">03</p>
-        <h3>Menschen korrigieren an einer Stelle</h3>
-        <p>Fachexperten schreiben Zeilen in <code>overrides.csv</code>. Die gewinnen dauerhaft und überleben jeden Neulauf. Im Graphen selbst wird nie von Hand editiert.</p>
+        <h3>Menschen korrigieren und entscheiden an je einer Stelle</h3>
+        <p>Fachexperten schreiben Korrekturen in <code>overrides.csv</code>, Freigaben in <code>decisions.csv</code> — mit Name, Datum und Begründung. Beide gewinnen dauerhaft und überleben jeden Neulauf. Im Graphen selbst wird nie von Hand editiert, auch kein Status.</p>
       </div>
     </div>
   </div>
@@ -170,7 +179,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 
 <section id="ablauf">
   <div class="wrap">
-    <h2>Vier Schritte, ein Datenformat</h2>
+    <h2>Fünf Schritte, ein Datenformat</h2>
     <p class="sub">Alle Schritte arbeiten auf derselben <code>work-graph.json</code> in einem Projektordner. Jeder Schritt, der etwas ändert, legt eine neue Version an. Ein Schritt ohne Änderung meldet „Unverändert“.</p>
     <div class="pipe">
       <div class="step">
@@ -189,21 +198,34 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
         <p>Bündelt Aufgaben zu 6–15 wiederverwendbaren Agenten und rechnet Abdeckung je Rolle, FTE-Äquivalent, Build/Buy/Hybrid, Horizont und Priorität.</p>
       </div>
       <div class="step">
+        <p class="who">Claude + Skript</p>
+        <h3>process-redesigner</h3>
+        <p>Entwirft je Prozess drei Szenarien — konservativ, ausgewogen, agent-nativ — mit sechs Operatoren, rechnet die Deltas gegen den Ist-Prozess, priorisiert mehrdimensional statt nach FTE und erzeugt Pilotkarten mit Guardrails.</p>
+      </div>
+      <div class="step">
         <p class="who">Nur Skript</p>
         <h3>transformation-dashboard</h3>
-        <p>Baut ein einzelnes, offline lauffähiges HTML-Dashboard, drei CSV-Dateien und einen Bericht. Farben kommen aus einer Theme-Datei.</p>
+        <p>Baut ein einzelnes, offline lauffähiges HTML-Dashboard mit Ist/Soll-Vergleich, die CSV-Exporte und einen Bericht. Farben kommen aus einer Theme-Datei.</p>
       </div>
     </div>
-<div class="flow">00_input/            Quellen (Mensch)
-   │  Claude extrahiert   → 10_extraction/extract_*.json
-   ▼  build_graph.py      → 20_graph/work-graph_v001_builder.json
-   │  make_review_list.py → 30_review/review_v001.md  ← Fachexperten → overrides.csv
-   ▼  apply_overrides.py  → v002_review
-   │  Claude bewertet     → 20_graph/scores.json
-   ▼  score_roles.py      → v003_scorer
-   │  Claude bündelt      → 20_graph/agents.json
-   ▼  compute_coverage.py → v004_mapper
-   ▼  build_dashboard.py  → 40_output/dashboard.html, CSV, report.md</div>
+<div class="flow">00_input/              Quellen (Mensch)
+   │  Claude extrahiert     → 10_extraction/extract_*.json
+   ▼  build_graph.py        → 20_graph/work-graph_vNNN_builder.json
+   │  make_review_list.py   → 30_review/review_vNNN.md ← Fachexperten → overrides.csv
+   ▼  apply_overrides.py
+   │  Claude nimmt Prozesse auf → 10_extraction/process_*.json        [optional]
+   ▼  build_processes.py    → Prozesse, Schritte, Kanten, Kontrollen, Kennzahlen
+   │  Claude bewertet       → 20_graph/scores.json
+   ▼  score_roles.py        → Modus, HAS, Horizont, Disruptionstyp
+   │  Claude bündelt        → 20_graph/agents.json (+ Capability Contracts)
+   ▼  compute_coverage.py   → Abdeckung, FTE, Sourcing, Priorität
+   │  Claude entwirft       → 20_graph/blueprints.json (3 Szenarien je Prozess)
+   ▼  build_blueprints.py   → Soll-Kennzahlen und Deltas
+   │  Claude bewertet Wert  → 20_graph/process_value.json
+   ▼  score_processes.py    → Prioritätsbänder mit Sensitivität
+   │  Claude plant Piloten  → 20_graph/experiments.json
+   ▼  make_experiments.py · compare_scenarios.py · apply_governance.py
+   ▼  build_dashboard.py    → 40_output/dashboard.html, CSV, report.md</div>
     <div class="note">
       <p><code>python3 skills/work-transformation/scripts/run_pipeline.py --project projekte/kundenservice</code> führt alle Skript-Schritte hintereinander aus. Fehlt eine Claude-Eingabe, stoppt der Lauf mit Exit-Code 3 und einer klaren Meldung. Derselbe Befehl ist das „weiter machen“ nach jeder Korrektur.</p>
     </div>
@@ -212,7 +234,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 
 <section id="skills">
   <div class="wrap">
-    <h2>Die fünf Skills</h2>
+    <h2>Die sechs Skills</h2>
     <p class="sub">Jeder Skill bringt <code>SKILL.md</code>, deterministische Skripte und Referenzen mit. Gemeinsame Bibliotheken liegen als identische Kopien in jedem Skill, damit keiner vom anderen abhängt. <code>check_suite.py</code> prüft die Kopien.</p>
     <div class="scroller">
       <table class="tbl">
@@ -221,8 +243,9 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
           <tr><td>work-transformation</td><td>Orchestrator: sagt, welcher Schritt dran ist, und hält die Arbeitsteilung sauber</td><td>Pipeline-Lauf, Suite-Check</td></tr>
           <tr><td>work-graph-builder</td><td>Extraktion aus Quellen, Zusammenführung, Review-Liste, Overrides, Stellen-Import</td><td><code>work-graph.json</code>, <code>review.md</code></td></tr>
           <tr><td>task-scorer</td><td>Aufgabenbewertung nach Rubrik, Rollenaggregation, Kipp-Analyse, Kalibrierung</td><td>Modus, HAS, Horizont, Disruptionstyp</td></tr>
-          <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung</td><td><code>agents.json</code>, Abdeckung je Rolle</td></tr>
-          <tr><td>transformation-dashboard</td><td>Visualisierung und Export</td><td>HTML, 3× CSV, Bericht</td></tr>
+          <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung, Capability Contracts</td><td><code>agents.json</code>, Verträge als JSON und Markdown</td></tr>
+          <tr><td>process-redesigner</td><td>Drei Soll-Szenarien je Prozess, sechs Operatoren, Prozesswert, Pilotkarten</td><td>Blueprints mit Deltas, Prioritätsbänder, Experimente</td></tr>
+          <tr><td>transformation-dashboard</td><td>Visualisierung und Export, Ist/Soll-Vergleich</td><td>HTML, CSV-Exporte, Bericht</td></tr>
         </tbody>
       </table>
     </div>
@@ -233,13 +256,21 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <span class="chip"><i style="background:var(--t-emerging)"></i>entstehend</span>
       <span class="chip"><i style="background:var(--t-stable)"></i>stabil</span>
     </div>
+    <div class="chips">
+      <span class="chip">eliminieren</span>
+      <span class="chip">vereinfachen</span>
+      <span class="chip">zusammenführen</span>
+      <span class="chip">parallelisieren</span>
+      <span class="chip">automatisieren</span>
+      <span class="chip">Human Gate erhalten</span>
+    </div>
   </div>
 </section>
 
 <section id="ehrlichkeit">
   <div class="wrap">
     <h2>Sagt, wie belastbar das Ergebnis ist</h2>
-    <p class="sub">Vier Ergänzungen aus dem ersten echten Einsatz, damit aus einer Analyse kein Scheinergebnis wird.</p>
+    <p class="sub">Sechs Vorkehrungen, damit aus einer Analyse kein Scheinergebnis wird.</p>
     <div class="grid g2">
       <div class="card">
         <h3>Belastbarkeit je Rolle</h3>
@@ -257,6 +288,14 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
         <h3>Kalibrierung</h3>
         <p><code>calibrate.py</code> vergleicht Expertenkorrekturen mit den generierten Werten. Wenn die Experten systematisch anders liegen, verschiebt man den Anker in der Rubrik statt weiter einzeln zu korrigieren.</p>
       </div>
+      <div class="card">
+        <h3>Geschätzt, bestätigt, gemessen</h3>
+        <p>Jede Kennzahl trägt ihre Belastbarkeit mit und eine Fundstelle. Wer „gemessen“ behauptet, ohne sie zu belegen, kommt am Validator nicht vorbei. Ein im Pilot gemessener Wert überschreibt den Ist-Ausgangswert ausdrücklich nicht — sonst vergliche sich der Soll-Zustand mit sich selbst.</p>
+      </div>
+      <div class="card">
+        <h3>Bänder statt Rangliste</h3>
+        <p>Prozesse landen in „Jetzt“, „Als Nächstes“, „Später“ oder „Zurückstellen“. Zu jedem wird geprüft, ob das Band schon kippt, wenn ein einzelner Faktor um ±1 danebenliegt. Wenn ja, steht das im Dashboard — eine Reihenfolge auf zwei Nachkommastellen wäre hier eine Lüge.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -268,7 +307,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
     <div class="grid g3">
       <div class="card">
         <h3>In Claude (Cowork / claude.ai)</h3>
-        <p>Die fünf <code>.skill</code>-Dateien aus <code>dist/</code> einzeln in den Chat ziehen und auf „Skill speichern“ klicken. Reihenfolge egal.</p>
+        <p>Die sechs <code>.skill</code>-Dateien aus <code>dist/</code> einzeln in den Chat ziehen und auf „Skill speichern“ klicken. Reihenfolge egal.</p>
       </div>
       <div class="card">
         <h3>In Claude Code</h3>
@@ -276,12 +315,16 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       </div>
       <div class="card">
         <h3>Ohne Claude</h3>
-        <p>Alles läuft auch als reines Kommandozeilenwerkzeug. Die Urteilsschritte macht dann ein Mensch, indem er die drei JSON-Vorlagen ausfüllt.</p>
+        <p>Alles läuft auch als reines Kommandozeilenwerkzeug. Die Urteilsschritte macht dann ein Mensch, indem er die JSON-Vorlagen ausfüllt.</p>
       </div>
     </div>
 <pre>git clone https://github.com/GodModeAI2025/Work-Transformation-Suite.git
 cd Work-Transformation-Suite
 python3 skills/work-transformation/scripts/check_suite.py        # → Suite OK
+python3 -m unittest discover                                     # → 83 Tests, OK
+
+# Referenzbeispiel vollständig durchrechnen
+python3 skills/work-transformation/scripts/run_pipeline.py --project examples/order-to-cash
 
 python3 skills/work-graph-builder/scripts/init_project.py \
   --project projekte/kundenservice \
@@ -298,15 +341,17 @@ python3 skills/work-graph-builder/scripts/init_project.py \
     <h2>Grenzen</h2>
     <p class="sub">Was die Suite nicht kann, steht hier, damit niemand es im Piloten herausfinden muss.</p>
     <ul class="plain">
-      <li>Kein Freigabeworkflow mit Rollen und Rechten.</li>
+      <li>Kein Freigabeworkflow mit Rollen und Rechten. Freigaben sind ein nachvollziehbares Log mit Name, Datum und Begründung — mehr nicht.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
-      <li>Kein Tracking der Agentennutzung nach dem Rollout.</li>
+      <li>Kein Tracking der Agentennutzung nach dem Rollout, keine Prozess-Mining-Anbindung.</li>
       <li>Ein umbenannter Task bekommt eine neue ID und verliert Bewertung und Overrides. Namen also stabil halten.</li>
+      <li><b>Ein Soll-Prozess aus Interviews und Stellenbeschreibungen ist ein Entwurf, keine Prognose.</b> Aus Rollendaten allein lässt sich kein Unternehmen verlässlich „neu bauen“. Dafür braucht es Prozessbeobachtungen, Systemdaten und gemessene Ausgangswerte.</li>
     </ul>
     <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:16px 0 0">
-      Für genau die ersten drei Punkte verkaufen kommerzielle Plattformen ihr Produkt. Für die Frage,
+      Für die ersten drei Punkte verkaufen kommerzielle Plattformen ihr Produkt. Für die Frage,
       ob eine solche Analyse für einen Bereich überhaupt belastbare Ergebnisse liefert, reicht die
-      Suite. Bis über 200 Rollen ist sie bisher gelaufen.
+      Suite. Bis über 200 Rollen ist sie bisher gelaufen. Und wo Zahlen geschätzt sind, steht das
+      dran — in jeder Ausgabe.
     </p>
   </div>
 </section>
@@ -320,6 +365,11 @@ python3 skills/work-graph-builder/scripts/init_project.py \
       <li>Anthropic Economic Index, Automation gegen Augmentation auf O*NET-Task-Ebene</li>
       <li>ESCO v1.2, die EU-Skill-Taxonomie</li>
       <li>Metriken kommerzieller AI-Transformation-Dashboards: Automation Potential, Human Judgment, Disruption Score, Rollentypen</li>
+      <li>ESIA-Schule der Prozessneugestaltung (eliminieren, vereinfachen, zusammenführen, automatisieren), hier um Parallelisierung und den ausdrücklichen Kontrollpunkt erweitert</li>
+      <li><a href="https://mitsloan.mit.edu/ideas-made-to-matter/how-ai-reshaping-workflows-and-redefining-jobs">MIT Sloan zur Verkettung von Aufgaben</a> (Demirer, Horton, Immorlica, Lucier): Wert entsteht auf der Ebene des Ablaufs, nicht der Einzelaufgabe</li>
+      <li><a href="https://mitsloan.mit.edu/ideas-made-to-matter/how-generative-ai-can-boost-highly-skilled-workers-productivity">MIT Sloan zur Produktivität hochqualifizierter Arbeit</a>: außerhalb ihrer Fähigkeitsgrenze verschlechtert KI Ergebnisse — deshalb sind Human Gates Teil des Entwurfs</li>
+      <li><a href="https://www.sap.com/blogs/ext-generative-ai-for-business-process-excellence">SAP zu generativer KI in der Prozessexzellenz</a>: vom Geschäftsziel und der Wertschöpfungskette aus entwerfen</li>
+      <li><a href="https://artificialintelligenceact.eu/article/14/">Artikel 14 der EU-KI-Verordnung</a>, wirksame menschliche Aufsicht — Vorbild für die Regel, dass ein irreversibler automatisierter Schritt einen benannten Kontrollpunkt braucht</li>
     </ul>
   </div>
 </section>

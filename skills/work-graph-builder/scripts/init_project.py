@@ -69,12 +69,11 @@ def main() -> int:
         wl.save_project_meta(project, meta)
     readme = project / "README.md"
     if not readme.exists():
-        readme.write_text(README.format(name=meta["name"]), encoding="utf-8")
+        wl.write_text(readme, README.format(name=meta["name"]))
     overrides = project / wl.DIR_REVIEW / "overrides.csv"
     if not overrides.exists():
-        overrides.write_text(
-            "entity_type;entity_id;field;value;reviewer;comment\n", encoding="utf-8"
-        )
+        wl.write_text(overrides, "entity_type;entity_id;field;value;reviewer;comment\n",
+                      newline="")
     print(f"Projekt angelegt: {wl.relpath(project)}")
     for d in wl.project_dirs(project).values():
         print(f"  {wl.relpath(d)}/")

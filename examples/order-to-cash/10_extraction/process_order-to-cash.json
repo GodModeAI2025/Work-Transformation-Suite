@@ -1,0 +1,780 @@
+{
+  "source": "Prozessaufnahme Order-to-Cash, Workshop und ERP-Export, 2026-02",
+  "outcomes": [
+    {
+      "name": "Auftrag korrekt abgerechnet",
+      "description": "Der Kunde hat eine sachlich richtige Rechnung, die er ohne Rückfrage bezahlen kann.",
+      "beneficiary": "Geschäftskunde"
+    },
+    {
+      "name": "Forderung ausgeglichen",
+      "description": "Die offene Forderung ist zugeordnet und ausgeglichen, strittige Fälle sind geklärt.",
+      "beneficiary": "Geschäftskunde und Finanzbuchhaltung"
+    }
+  ],
+  "systems": [
+    {
+      "name": "ERP",
+      "kind": "application",
+      "system_of_record": true,
+      "api_available": true,
+      "data_classes": [
+        "confidential"
+      ]
+    },
+    {
+      "name": "Bonitätsauskunft",
+      "kind": "external_service",
+      "system_of_record": false,
+      "api_available": true,
+      "data_classes": [
+        "confidential"
+      ]
+    },
+    {
+      "name": "Archiv",
+      "kind": "application",
+      "system_of_record": true,
+      "api_available": false,
+      "data_classes": [
+        "confidential"
+      ]
+    },
+    {
+      "name": "E-Mail",
+      "kind": "application",
+      "system_of_record": false,
+      "api_available": true,
+      "data_classes": [
+        "internal"
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "name": "Kreditlimitprüfung",
+      "kind": "financial",
+      "mode": "preventive",
+      "mandatory": true,
+      "evidence": "Limitvermerk im ERP mit Prüfer und Datum"
+    },
+    {
+      "name": "Vier-Augen-Prinzip Rechnungsfreigabe",
+      "kind": "financial",
+      "mode": "preventive",
+      "mandatory": true,
+      "evidence": "Freigabevermerk im ERP, zweite Person"
+    },
+    {
+      "name": "Rechnungsarchivierung GoBD",
+      "kind": "regulatory",
+      "mode": "detective",
+      "mandatory": true,
+      "legal_basis": "GoBD, § 147 AO",
+      "evidence": "Archivprotokoll mit unveränderbarem Zeitstempel"
+    },
+    {
+      "name": "Mahnfreigabe ab Stufe 3",
+      "kind": "contractual",
+      "mode": "preventive",
+      "mandatory": true,
+      "evidence": "Freigabevermerk der Teamleitung"
+    }
+  ],
+  "processes": [
+    {
+      "name": "Auftrag bis Rechnung",
+      "trigger": "Kundenbestellung geht per E-Mail, Portal oder EDI ein",
+      "outcome": "Auftrag korrekt abgerechnet",
+      "beneficiary": "Geschäftskunde",
+      "owner_role": "Teamleitung Order-to-Cash",
+      "volume_per_year": 18000,
+      "variants": [
+        "Standardauftrag aus Rahmenvertrag",
+        "Einzelauftrag ohne Rahmenvertrag",
+        "Auftrag mit Teillieferungen"
+      ],
+      "data_classes": [
+        "confidential"
+      ],
+      "baseline_metrics": [
+        {
+          "name": "Durchlaufzeit Auftrag bis Rechnung",
+          "kind": "time",
+          "unit": "Stunden",
+          "direction": "lower_is_better",
+          "baseline": {
+            "value": 42,
+            "basis": "observed",
+            "as_of": "2026-01",
+            "source": "ERP-Export Auftragsdurchlauf 2025"
+          },
+          "target": {
+            "value": 12,
+            "basis": "estimated",
+            "as_of": "2026-12"
+          },
+          "provenance": [
+            {
+              "field": "baseline",
+              "source_kind": "system_export",
+              "source_ref": "ERP-Export Auftragsdurchlauf 2025",
+              "locator": "o2c_durchlauf_2025.csv, Spalte lead_time_h, Median",
+              "author": "Controlling",
+              "reviewer": "Teamleitung Order-to-Cash",
+              "confidence": 0.9,
+              "status": "verified",
+              "as_of": "2026-01-20"
+            }
+          ]
+        },
+        {
+          "name": "Rechnungskorrekturquote",
+          "kind": "quality",
+          "unit": "Prozent",
+          "direction": "lower_is_better",
+          "baseline": {
+            "value": 9,
+            "basis": "observed",
+            "as_of": "2026-01",
+            "source": "ERP-Export Gutschriften 2025"
+          },
+          "target": {
+            "value": 4,
+            "basis": "estimated",
+            "as_of": "2026-12"
+          },
+          "provenance": [
+            {
+              "field": "baseline",
+              "source_kind": "system_export",
+              "source_ref": "ERP-Export Gutschriften 2025",
+              "locator": "gutschriften_2025.csv, Anteil an Ausgangsrechnungen",
+              "author": "Controlling",
+              "reviewer": "Teamleitung Order-to-Cash",
+              "confidence": 0.85,
+              "status": "verified",
+              "as_of": "2026-01-20"
+            }
+          ]
+        },
+        {
+          "name": "Aufträge über Kreditlimit ohne Freigabe",
+          "kind": "risk",
+          "unit": "Prozent",
+          "direction": "lower_is_better",
+          "baseline": {
+            "value": 1.5,
+            "basis": "estimated",
+            "as_of": "2026-01"
+          },
+          "target": {
+            "value": 0,
+            "basis": "estimated",
+            "as_of": "2026-12"
+          }
+        }
+      ],
+      "steps": [
+        {
+          "name": "Auftrag erfassen",
+          "role": "Auftragssachbearbeiter",
+          "tasks": [
+            "Auftrag aus Bestellung erfassen"
+          ],
+          "inputs": [
+            "Kundenbestellung"
+          ],
+          "outputs": [
+            "Auftragskopf",
+            "Auftragspositionen"
+          ],
+          "systems": [
+            "ERP",
+            "E-Mail"
+          ],
+          "data_classes": [
+            "confidential"
+          ],
+          "handling_time_min": 18,
+          "wait_time_min": 60,
+          "rework_pct": 12,
+          "value_type": "business_required",
+          "next": [
+            {
+              "to": "Auftragsdaten prüfen",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Auftragsdaten prüfen",
+          "role": "Auftragssachbearbeiter",
+          "tasks": [
+            "Auftragsdaten gegen Rahmenvertrag prüfen",
+            "Rückfragen mit Vertrieb klären"
+          ],
+          "inputs": [
+            "Auftragskopf",
+            "Auftragspositionen"
+          ],
+          "outputs": [
+            "geprüfter Auftrag"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "handling_time_min": 12,
+          "wait_time_min": 240,
+          "rework_pct": 18,
+          "value_type": "business_required",
+          "next": [
+            {
+              "to": "Auftrag in Nachverfolgungsliste eintragen",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Auftrag in Nachverfolgungsliste eintragen",
+          "role": "Auftragssachbearbeiter",
+          "tasks": [
+            "Auftragsänderungen einpflegen"
+          ],
+          "inputs": [
+            "geprüfter Auftrag"
+          ],
+          "outputs": [
+            "Listeneintrag"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "handling_time_min": 4,
+          "wait_time_min": 120,
+          "rework_pct": 8,
+          "value_type": "waste",
+          "description": "Der Auftrag wird zusätzlich in einer Excel-Liste geführt, weil das ERP den Bearbeitungsstand über Bereichsgrenzen hinweg nicht ausweist.",
+          "next": [
+            {
+              "to": "Bonität prüfen",
+              "handover": "email",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Bonität prüfen",
+          "role": "Kreditprüfer",
+          "tasks": [
+            "Bonitätsauskunft einholen",
+            "Kreditlimit festlegen"
+          ],
+          "inputs": [
+            "geprüfter Auftrag"
+          ],
+          "outputs": [
+            "Bonitätsurteil",
+            "Kreditlimit"
+          ],
+          "systems": [
+            "Bonitätsauskunft",
+            "ERP"
+          ],
+          "controls": [
+            "Kreditlimitprüfung"
+          ],
+          "data_classes": [
+            "confidential"
+          ],
+          "handling_time_min": 25,
+          "wait_time_min": 480,
+          "rework_pct": 6,
+          "value_type": "business_required",
+          "decision": {
+            "scope": "execute_reversible",
+            "accountable_role": "Teamleitung Order-to-Cash",
+            "escalation": "Limitüberschreitung über 50.000 EUR an die Teamleitung"
+          },
+          "next": [
+            {
+              "to": "Limit freigeben",
+              "handover": "email",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Limit freigeben",
+          "role": "Teamleitung Order-to-Cash",
+          "tasks": [
+            "Ausnahmen und Eskalationen entscheiden"
+          ],
+          "inputs": [
+            "Bonitätsurteil",
+            "Kreditlimit"
+          ],
+          "outputs": [
+            "Freigabe"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "controls": [
+            "Kreditlimitprüfung"
+          ],
+          "handling_time_min": 10,
+          "wait_time_min": 360,
+          "rework_pct": 3,
+          "value_type": "business_required",
+          "human_gate": {
+            "when": "Auftragswert über dem Kreditlimit",
+            "role": "Teamleitung Order-to-Cash"
+          },
+          "next": [
+            {
+              "to": "Auftragsbestätigung senden",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Auftragsbestätigung senden",
+          "role": "Auftragssachbearbeiter",
+          "tasks": [
+            "Auftragsbestätigung versenden"
+          ],
+          "inputs": [
+            "Freigabe"
+          ],
+          "outputs": [
+            "Auftragsbestätigung"
+          ],
+          "systems": [
+            "ERP",
+            "E-Mail"
+          ],
+          "handling_time_min": 6,
+          "wait_time_min": 120,
+          "rework_pct": 4,
+          "value_type": "customer_value",
+          "next": [
+            {
+              "to": "Leistungsnachweis zusammenstellen",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Leistungsnachweis zusammenstellen",
+          "role": "Fakturierungssachbearbeiter",
+          "tasks": [
+            "Leistungsnachweise zusammenstellen"
+          ],
+          "inputs": [
+            "Auftragsbestätigung",
+            "Lieferscheine"
+          ],
+          "outputs": [
+            "Abrechnungsgrundlage"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "handling_time_min": 20,
+          "wait_time_min": 600,
+          "rework_pct": 22,
+          "value_type": "business_required",
+          "next": [
+            {
+              "to": "Rechnung erstellen",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Rechnung erstellen",
+          "role": "Fakturierungssachbearbeiter",
+          "tasks": [
+            "Rechnung erstellen"
+          ],
+          "inputs": [
+            "Abrechnungsgrundlage"
+          ],
+          "outputs": [
+            "Rechnungsentwurf"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "handling_time_min": 15,
+          "wait_time_min": 180,
+          "rework_pct": 9,
+          "value_type": "customer_value",
+          "next": [
+            {
+              "to": "Rechnung freigeben",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Rechnung freigeben",
+          "role": "Fakturierungssachbearbeiter",
+          "tasks": [
+            "Rechnung prüfen und freigeben"
+          ],
+          "inputs": [
+            "Rechnungsentwurf"
+          ],
+          "outputs": [
+            "freigegebene Rechnung"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "controls": [
+            "Vier-Augen-Prinzip Rechnungsfreigabe"
+          ],
+          "handling_time_min": 8,
+          "wait_time_min": 240,
+          "rework_pct": 5,
+          "value_type": "business_required",
+          "decision": {
+            "scope": "execute_irreversible",
+            "accountable_role": "Fakturierungssachbearbeiter",
+            "escalation": "Abweichung über 5 Prozent an die Teamleitung"
+          },
+          "human_gate": {
+            "when": "immer, zweite Person",
+            "role": "Fakturierungssachbearbeiter"
+          },
+          "next": [
+            {
+              "to": "Rechnung versenden und archivieren",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Rechnung versenden und archivieren",
+          "role": "Fakturierungssachbearbeiter",
+          "tasks": [
+            "Rechnung versenden und archivieren"
+          ],
+          "inputs": [
+            "freigegebene Rechnung"
+          ],
+          "outputs": [
+            "versendete Rechnung",
+            "Archivbeleg"
+          ],
+          "systems": [
+            "ERP",
+            "Archiv",
+            "E-Mail"
+          ],
+          "controls": [
+            "Rechnungsarchivierung GoBD"
+          ],
+          "handling_time_min": 3,
+          "wait_time_min": 30,
+          "rework_pct": 2,
+          "value_type": "customer_value"
+        }
+      ]
+    },
+    {
+      "name": "Rechnung bis Zahlungseingang",
+      "trigger": "Kontoauszug mit Zahlungseingang wird eingelesen",
+      "outcome": "Forderung ausgeglichen",
+      "beneficiary": "Geschäftskunde und Finanzbuchhaltung",
+      "owner_role": "Teamleitung Order-to-Cash",
+      "volume_per_year": 21000,
+      "variants": [
+        "Vollzahlung",
+        "Teilzahlung",
+        "Zahlung mit Abzug",
+        "Zahlungsverzug"
+      ],
+      "data_classes": [
+        "confidential"
+      ],
+      "baseline_metrics": [
+        {
+          "name": "Durchlaufzeit bis geklärte Zuordnung",
+          "kind": "time",
+          "unit": "Stunden",
+          "direction": "lower_is_better",
+          "baseline": {
+            "value": 36,
+            "basis": "observed",
+            "as_of": "2026-01",
+            "source": "ERP-Export offene Posten 2025"
+          },
+          "target": {
+            "value": 8,
+            "basis": "estimated",
+            "as_of": "2026-12"
+          },
+          "provenance": [
+            {
+              "field": "baseline",
+              "source_kind": "system_export",
+              "source_ref": "ERP-Export offene Posten 2025",
+              "locator": "op_klaerung_2025.csv, Median Klärdauer",
+              "author": "Controlling",
+              "reviewer": "Teamleitung Order-to-Cash",
+              "confidence": 0.85,
+              "status": "verified",
+              "as_of": "2026-01-20"
+            }
+          ]
+        },
+        {
+          "name": "Quote unklarer Zahlungseingänge",
+          "kind": "quality",
+          "unit": "Prozent",
+          "direction": "lower_is_better",
+          "baseline": {
+            "value": 14,
+            "basis": "observed",
+            "as_of": "2026-01",
+            "source": "ERP-Export offene Posten 2025"
+          },
+          "target": {
+            "value": 5,
+            "basis": "estimated",
+            "as_of": "2026-12"
+          },
+          "provenance": [
+            {
+              "field": "baseline",
+              "source_kind": "system_export",
+              "source_ref": "ERP-Export offene Posten 2025",
+              "locator": "op_klaerung_2025.csv, Anteil ohne automatische Zuordnung",
+              "author": "Controlling",
+              "reviewer": "Teamleitung Order-to-Cash",
+              "confidence": 0.9,
+              "status": "verified",
+              "as_of": "2026-01-20"
+            }
+          ]
+        },
+        {
+          "name": "Mahnungen an zahlende Kunden",
+          "kind": "risk",
+          "unit": "Prozent",
+          "direction": "lower_is_better",
+          "baseline": {
+            "value": 2.5,
+            "basis": "estimated",
+            "as_of": "2026-01"
+          },
+          "target": {
+            "value": 0.5,
+            "basis": "estimated",
+            "as_of": "2026-12"
+          }
+        }
+      ],
+      "steps": [
+        {
+          "name": "Zahlungseingang zuordnen",
+          "role": "Forderungsmanager",
+          "tasks": [
+            "Zahlungseingänge zuordnen"
+          ],
+          "inputs": [
+            "Kontoauszug",
+            "offene Posten"
+          ],
+          "outputs": [
+            "Zuordnung",
+            "Restdifferenz"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "data_classes": [
+            "confidential"
+          ],
+          "handling_time_min": 6,
+          "wait_time_min": 240,
+          "rework_pct": 14,
+          "value_type": "business_required",
+          "next": [
+            {
+              "to": "Differenz klären",
+              "condition": "Restdifferenz größer 0",
+              "handover": "system",
+              "share_pct": 35
+            },
+            {
+              "to": "Mahnstufe bestimmen",
+              "condition": "keine Zahlung eingegangen",
+              "handover": "system",
+              "share_pct": 65
+            }
+          ]
+        },
+        {
+          "name": "Differenz klären",
+          "role": "Forderungsmanager",
+          "tasks": [
+            "Offene Posten klären"
+          ],
+          "inputs": [
+            "Restdifferenz"
+          ],
+          "outputs": [
+            "geklärte Zuordnung"
+          ],
+          "systems": [
+            "ERP",
+            "E-Mail"
+          ],
+          "handling_time_min": 22,
+          "wait_time_min": 720,
+          "rework_pct": 25,
+          "value_type": "customer_value",
+          "next": [
+            {
+              "to": "Zahlungsvereinbarung abstimmen",
+              "condition": "Kunde meldet Zahlungsschwierigkeit",
+              "handover": "call",
+              "share_pct": 20
+            }
+          ]
+        },
+        {
+          "name": "Mahnstufe bestimmen",
+          "role": "Forderungsmanager",
+          "tasks": [
+            "Mahnlauf vorbereiten und prüfen"
+          ],
+          "inputs": [
+            "offene Posten"
+          ],
+          "outputs": [
+            "Mahnvorschlag"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "handling_time_min": 8,
+          "wait_time_min": 180,
+          "rework_pct": 10,
+          "value_type": "business_required",
+          "decision": {
+            "scope": "execute_reversible",
+            "accountable_role": "Teamleitung Order-to-Cash",
+            "escalation": "Ab Stufe 3 immer an die Teamleitung"
+          },
+          "next": [
+            {
+              "to": "Mahnung freigeben",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Mahnung freigeben",
+          "role": "Teamleitung Order-to-Cash",
+          "tasks": [
+            "Ausnahmen und Eskalationen entscheiden"
+          ],
+          "inputs": [
+            "Mahnvorschlag"
+          ],
+          "outputs": [
+            "freigegebene Mahnung"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "controls": [
+            "Mahnfreigabe ab Stufe 3"
+          ],
+          "handling_time_min": 5,
+          "wait_time_min": 300,
+          "rework_pct": 4,
+          "value_type": "business_required",
+          "human_gate": {
+            "when": "Mahnstufe 3 oder höher",
+            "role": "Teamleitung Order-to-Cash"
+          },
+          "next": [
+            {
+              "to": "Mahnung versenden",
+              "handover": "system",
+              "share_pct": 100
+            }
+          ]
+        },
+        {
+          "name": "Mahnung versenden",
+          "role": "Forderungsmanager",
+          "tasks": [
+            "Mahnlauf vorbereiten und prüfen"
+          ],
+          "inputs": [
+            "freigegebene Mahnung"
+          ],
+          "outputs": [
+            "versendete Mahnung"
+          ],
+          "systems": [
+            "ERP",
+            "E-Mail"
+          ],
+          "handling_time_min": 2,
+          "wait_time_min": 60,
+          "rework_pct": 1,
+          "value_type": "business_required",
+          "next": [
+            {
+              "to": "Zahlungsvereinbarung abstimmen",
+              "condition": "Kunde reagiert mit Zahlungsschwierigkeit",
+              "handover": "call",
+              "share_pct": 15
+            }
+          ]
+        },
+        {
+          "name": "Zahlungsvereinbarung abstimmen",
+          "role": "Forderungsmanager",
+          "tasks": [
+            "Zahlungsvereinbarungen abstimmen"
+          ],
+          "inputs": [
+            "offene Posten"
+          ],
+          "outputs": [
+            "Ratenplan"
+          ],
+          "systems": [
+            "ERP"
+          ],
+          "handling_time_min": 25,
+          "wait_time_min": 480,
+          "rework_pct": 12,
+          "value_type": "customer_value",
+          "decision": {
+            "scope": "execute_reversible",
+            "accountable_role": "Teamleitung Order-to-Cash",
+            "escalation": "Stundung über 90 Tage an die Teamleitung"
+          }
+        }
+      ]
+    }
+  ]
+}

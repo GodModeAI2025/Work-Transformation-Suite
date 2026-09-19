@@ -1,0 +1,191 @@
+{
+  "ta_1c3f2f2b05a5": {
+    "automation_ai": 8,
+    "automation_physical": 0,
+    "consequence_of_error": 5,
+    "data_readiness": 7,
+    "human_judgment": 2,
+    "productivity_boost": 6,
+    "rationale": "Revisionssichere Protokollierung aus den Entscheidungsdaten."
+  },
+  "ta_229b5a36a9be": {
+    "automation_ai": 7,
+    "automation_physical": 0,
+    "consequence_of_error": 3,
+    "data_readiness": 7,
+    "human_judgment": 4,
+    "productivity_boost": 6,
+    "rationale": "Aufbereitung aus Systemdaten, Interpretation bleibt bei der Führung."
+  },
+  "ta_29d3bbba9966": {
+    "automation_ai": 6,
+    "automation_physical": 0,
+    "consequence_of_error": 5,
+    "data_readiness": 6,
+    "human_judgment": 3,
+    "productivity_boost": 6,
+    "rationale": "Änderungen sind strukturiert, aber Folgewirkungen auf Belege brauchen Prüfung."
+  },
+  "ta_2bb0fb48a3f5": {
+    "automation_ai": 6,
+    "automation_physical": 0,
+    "consequence_of_error": 7,
+    "data_readiness": 6,
+    "human_judgment": 5,
+    "productivity_boost": 5,
+    "rationale": "Erkennung und Aufbereitung automatisierbar, die Entscheidung nicht."
+  },
+  "ta_2d4a03b5c486": {
+    "automation_ai": 4,
+    "automation_physical": 0,
+    "consequence_of_error": 5,
+    "data_readiness": 5,
+    "human_judgment": 6,
+    "productivity_boost": 6,
+    "rationale": "Recherche und Kundenkontakt. KI kann Hypothesen liefern, die Klärung bleibt menschlich."
+  },
+  "ta_4ad99613ac35": {
+    "automation_ai": 8,
+    "automation_physical": 0,
+    "consequence_of_error": 4,
+    "data_readiness": 7,
+    "human_judgment": 2,
+    "productivity_boost": 8,
+    "rationale": "Strukturierte Übernahme aus Bestellungen in mehreren Formaten. Datenlage gut, Fehler fallen in der Folgeprüfung auf."
+  },
+  "ta_55bea77e0a98": {
+    "automation_ai": 8,
+    "automation_physical": 0,
+    "consequence_of_error": 6,
+    "data_readiness": 7,
+    "human_judgment": 2,
+    "productivity_boost": 8,
+    "rationale": "Erzeugung aus geprüfter Abrechnungsgrundlage, Steuerkennzeichen regelbasiert."
+  },
+  "ta_5a2c259ad1d4": {
+    "automation_ai": 5,
+    "automation_physical": 0,
+    "consequence_of_error": 8,
+    "data_readiness": 6,
+    "human_judgment": 6,
+    "productivity_boost": 6,
+    "rationale": "Ableitung aus Kennzahlen möglich, aber die Folgen eines zu hohen Limits sind erheblich."
+  },
+  "ta_5ecf0745976d": {
+    "automation_ai": 4,
+    "automation_physical": 0,
+    "consequence_of_error": 4,
+    "data_readiness": 4,
+    "human_judgment": 6,
+    "productivity_boost": 5,
+    "rationale": "Abstimmung mit wechselnden Ansprechpartnern, viel Kontextwissen. KI kann vorbereiten, nicht klären."
+  },
+  "ta_7ceba3598bd3": {
+    "automation_ai": 2,
+    "automation_physical": 0,
+    "consequence_of_error": 7,
+    "data_readiness": 4,
+    "human_judgment": 8,
+    "productivity_boost": 4,
+    "rationale": "Verhandlung mit Ermessensspielraum und rechtlicher Bindung."
+  },
+  "ta_7f89abd945b0": {
+    "automation_ai": 5,
+    "automation_physical": 0,
+    "consequence_of_error": 8,
+    "data_readiness": 7,
+    "human_judgment": 5,
+    "productivity_boost": 5,
+    "rationale": "Prüfung teilweise automatisierbar, die Freigabe ist eine Kontrolle mit Außenwirkung."
+  },
+  "ta_8a4b6cdac553": {
+    "automation_ai": 8,
+    "automation_physical": 0,
+    "consequence_of_error": 4,
+    "data_readiness": 8,
+    "human_judgment": 2,
+    "productivity_boost": 9,
+    "rationale": "Abgleich Kontoauszug gegen offene Posten, sehr gute Datenlage, hoher Hebel."
+  },
+  "ta_8f4b9538fdd7": {
+    "automation_ai": 3,
+    "automation_physical": 0,
+    "consequence_of_error": 6,
+    "data_readiness": 4,
+    "human_judgment": 7,
+    "productivity_boost": 5,
+    "rationale": "Abstimmung über Bereichsgrenzen, viel implizites Wissen."
+  },
+  "ta_ac35d9860588": {
+    "automation_ai": 2,
+    "automation_physical": 0,
+    "consequence_of_error": 8,
+    "data_readiness": 5,
+    "human_judgment": 9,
+    "productivity_boost": 4,
+    "rationale": "Ermessensentscheidungen mit Außenwirkung und Verantwortung."
+  },
+  "ta_b21bca1cbb28": {
+    "automation_ai": 7,
+    "automation_physical": 0,
+    "consequence_of_error": 5,
+    "data_readiness": 6,
+    "human_judgment": 3,
+    "productivity_boost": 7,
+    "rationale": "Regelbasierter Abgleich gegen Vertragskonditionen. Auslegungsfälle bleiben, sind aber die Minderheit."
+  },
+  "ta_c3dfbf2863f9": {
+    "automation_ai": 9,
+    "automation_physical": 0,
+    "consequence_of_error": 3,
+    "data_readiness": 8,
+    "human_judgment": 1,
+    "productivity_boost": 6,
+    "rationale": "Erzeugung und Versand aus geprüften Daten, vollständig regelbar."
+  },
+  "ta_d4e8ee45590f": {
+    "automation_ai": 7,
+    "automation_physical": 0,
+    "consequence_of_error": 5,
+    "data_readiness": 6,
+    "human_judgment": 3,
+    "productivity_boost": 8,
+    "rationale": "Zuordnung von Nachweisen zu Aufträgen. Hoher Hebel, weil hier die meiste Nacharbeit entsteht."
+  },
+  "ta_f209fed482e7": {
+    "automation_ai": 9,
+    "automation_physical": 0,
+    "consequence_of_error": 5,
+    "data_readiness": 8,
+    "human_judgment": 1,
+    "productivity_boost": 6,
+    "rationale": "Versand und Archivierung sind technische Schritte mit klaren Regeln."
+  },
+  "ta_f3d9de4013f4": {
+    "automation_ai": 1,
+    "automation_physical": 0,
+    "consequence_of_error": 6,
+    "data_readiness": 3,
+    "human_judgment": 9,
+    "productivity_boost": 3,
+    "rationale": "Führung, Beziehung, Entwicklung. Kein sinnvoller Automatisierungsgegenstand."
+  },
+  "ta_f8667a3d51a4": {
+    "automation_ai": 9,
+    "automation_physical": 0,
+    "consequence_of_error": 4,
+    "data_readiness": 8,
+    "human_judgment": 2,
+    "productivity_boost": 7,
+    "rationale": "Anfrage an einen Dienst mit Schnittstelle, Zusammenführung mit interner Historie."
+  },
+  "ta_fbea64b998cc": {
+    "automation_ai": 7,
+    "automation_physical": 0,
+    "consequence_of_error": 6,
+    "data_readiness": 7,
+    "human_judgment": 4,
+    "productivity_boost": 7,
+    "rationale": "Vorschlagsliste ist regelbasiert; die Ausnahmen brauchen Kenntnis der Kundenbeziehung."
+  }
+}

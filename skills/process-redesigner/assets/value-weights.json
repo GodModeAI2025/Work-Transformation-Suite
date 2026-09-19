@@ -1,0 +1,82 @@
+{
+  "config_version": "1.0",
+  "description": "Gewichtung der Prozesspriorisierung. Wer eine Zahl hier ändert, ändert die Rangfolge aller Prozesse im Projekt — deshalb ist diese Datei versioniert und wird mit dem Ergebnis zusammen ausgeliefert.",
+  "factors": {
+    "customer_impact": {
+      "weight": 1.4,
+      "direction": "benefit",
+      "label": "Kundenwirkung",
+      "anchor_0": "Kunde merkt nichts",
+      "anchor_10": "Kunde erlebt einen spürbar anderen Service"
+    },
+    "financial_impact": {
+      "weight": 1.3,
+      "direction": "benefit",
+      "label": "Finanzielle Wirkung",
+      "anchor_0": "kein messbarer Effekt auf Kosten oder Erlös",
+      "anchor_10": "Effekt in der Größenordnung eines Budgetpostens"
+    },
+    "cycle_time_reduction": {
+      "weight": 1.1,
+      "direction": "benefit",
+      "label": "Durchlaufzeitgewinn",
+      "anchor_0": "Durchlaufzeit bleibt",
+      "anchor_10": "Tage werden zu Minuten"
+    },
+    "quality_impact": {
+      "weight": 1.0,
+      "direction": "benefit",
+      "label": "Qualitätswirkung",
+      "anchor_0": "Fehlerquote unverändert",
+      "anchor_10": "Nacharbeit und Fehler weitgehend weg"
+    },
+    "risk_reduction": {
+      "weight": 0.9,
+      "direction": "benefit",
+      "label": "Risikominderung",
+      "anchor_0": "Risikolage unverändert",
+      "anchor_10": "bekannte Compliance- oder Ausfallrisiken entfallen"
+    },
+    "learning_value": {
+      "weight": 0.5,
+      "direction": "benefit",
+      "label": "Lernwert",
+      "anchor_0": "Einzelfall ohne Übertragbarkeit",
+      "anchor_10": "Muster, das viele weitere Prozesse trägt"
+    },
+    "integration_effort": {
+      "weight": 1.2,
+      "direction": "effort",
+      "label": "Integrationsaufwand",
+      "anchor_0": "vorhandene Schnittstellen reichen",
+      "anchor_10": "neue Systemanbindung an ein führendes System nötig"
+    },
+    "change_effort": {
+      "weight": 1.0,
+      "direction": "effort",
+      "label": "Veränderungsaufwand",
+      "anchor_0": "eine Rolle, eine Schulung",
+      "anchor_10": "mehrere Bereiche, Mitbestimmung, neue Arbeitsweise"
+    }
+  },
+  "modifier": {
+    "reversibility": {
+      "weight": 1.0,
+      "label": "Umkehrbarkeit",
+      "anchor_0": "einmal umgestellt, kein Weg zurück",
+      "anchor_10": "jederzeit per Schalter zurückdrehbar"
+    }
+  },
+  "composite": {
+    "benefit": 0.6,
+    "ease": 0.3,
+    "reversibility": 0.1
+  },
+  "bands": [
+    {"band": "now", "min_score": 7.0, "label": "Jetzt", "meaning": "Pilot starten"},
+    {"band": "next", "min_score": 5.5, "label": "Als Nächstes", "meaning": "vorbereiten, Daten schärfen"},
+    {"band": "later", "min_score": 4.0, "label": "Später", "meaning": "beobachten, Voraussetzungen schaffen"},
+    {"band": "hold", "min_score": 0.0, "label": "Zurückstellen", "meaning": "Aufwand steht nicht im Verhältnis"}
+  ],
+  "sensitivity_delta": 1
+}

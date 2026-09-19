@@ -117,6 +117,67 @@ Agenten und die Punktgrößen der Rollenkarte belastbar. `run_pipeline.py` ruft 
 automatisch auf, wenn die Datei existiert. Frage nach dieser Liste, sobald der Nutzer Aussagen
 über Stellen oder Kapazitäten erwartet; ohne sie beschreibt die Analyse Rollen, nicht Menschen.
 
+### 5c. Prozesse aufnehmen (nur für den Redesignmodus)
+
+Stellenbeschreibungen sagen, **wer was tut**. Sie sagen nicht, **wie ein Fall durch die
+Organisation läuft**. Für Soll-Prozesse braucht die Suite das zweite: Auslöser, Schritte,
+Übergaben, Bearbeitungs- und Wartezeiten, Systeme, Kontrollen, Ergebnis und Ausgangskennzahlen.
+
+Lies `references/process-format.md` und schreibe je Quelle
+`10_extraction/process_<quelle>.json`, dann:
+
+```
+python3 <skill>/scripts/build_processes.py --project ./projekte/<name>
+```
+
+Drei Dinge entscheiden über die Qualität:
+
+1. **Bearbeitungszeit und Wartezeit trennen.** In den meisten Prozessen ist die Liegezeit der
+   eigentliche Hebel. Wer beides in eine Zahl schreibt, verliert ihn.
+2. **Übergaben mitschreiben.** Jeder Wechsel der ausführenden Rolle ist eine Kante mit
+   `handover`. Übergaben per E-Mail oder Meeting sind die typischen Wartezeitquellen — und
+   später die lohnendsten Redesign-Ziele.
+3. **Belastbarkeit angeben.** `estimated`, `expert_confirmed` oder `observed`. Wer
+   `observed` schreibt, liefert einen `provenance`-Eintrag mit; sonst lehnt der Validator ab.
+   Das ist Absicht: Eine behauptete Messung ohne Fundstelle ist schlechter als eine ehrliche
+   Schätzung, weil sie sich nicht widerlegen lässt.
+
+Wenn das Skript meldet, dass das Modell die gemessene Durchlaufzeit nicht erklärt, fehlen
+Schritte oder Liegezeiten. Schließe die Lücke, bevor jemand darauf ein Redesign rechnet.
+
+Kein Prozess erfasst? Dann bleibt das Projekt im Diagnosemodus, und das ist ein vollständiges
+Ergebnis, keine halbe Sache.
+
+### 5d. Freigaben festhalten
+
+Freigabestände gehören nicht in ein Feld im Graphen, sondern in `30_review/decisions.csv`:
+
+```
+subject_type;subject_id;decision;rationale;decided_by;role;date;supersedes
+blueprints;Auftrag bis Rechnung — Übergaben entfallen;approve;Pilot bestätigt;M. Berger;Leitung Finanzen;2026-06-08;
+```
+
+```
+python3 <skill>/scripts/apply_governance.py --project ./projekte/<name>
+```
+
+`approve`, `reject`, `defer` und `revoke` setzen die Status von Blueprints, Prozessen, Rollen,
+Aufgaben und Experimenten. `decided_by` und `date` sind Pflicht — eine Freigabe ohne Namen und
+Datum ist keine Freigabe. Die Datei wird bei jedem Lauf erneut angewendet und überlebt jede
+Neuberechnung.
+
+### 5e. Ein altes Projekt migrieren
+
+```
+python3 <skill>/scripts/migrate_graph.py --project ./projekte/<name> [--dry-run]
+```
+
+Hebt ein Projekt vom Schema 1.0 auf 1.1: additiv, verlustfrei, idempotent. Die Migration rät
+nichts — sie erzeugt insbesondere keine Prozesse aus `workflow_steps`. Diese Textliste
+beschreibt den Ablauf innerhalb einer Rolle, nicht den Fluss über Rollen und Systeme hinweg;
+daraus einen End-to-End-Prozess zu generieren, würde eine Genauigkeit vortäuschen, die die
+Quelle nicht hergibt.
+
 ### 6. Prüfen und übergeben
 
 ```
@@ -124,7 +185,9 @@ python3 <skill>/scripts/validate_graph.py --project ./projekte/<name>
 ```
 
 Nenne dem Nutzer: Version, Anzahl Rollen/Aufgaben/Skills, Anteil `inferred`, offene Warnungen,
-und dass der nächste Schritt der Skill `task-scorer` ist.
+und dass der nächste Schritt der Skill `task-scorer` ist. Wenn Prozesse erfasst sind, nenne
+zusätzlich je Prozess Schritte, Human Touchpoints, Übergaben und Durchlaufzeit — und sag dazu,
+wie viele der Ausgangswerte gemessen und wie viele geschätzt sind.
 
 ## Determinismus, kurz
 
@@ -140,3 +203,8 @@ an das Format, die Taxonomie und vorhandene Namen hältst.
 - 20 Aufgaben mit je 5 %: nichts ist mehr relevant. Zusammenfassen.
 - Skills als Firmenjargon („IS-U-Kenner"): nicht vergleichbar. Taxonomienamen.
 - Manuell in `20_graph/` editiert: geht beim nächsten Lauf verloren. Overrides benutzen.
+- Prozessschritte als Klickfolgen modelliert („Maske öffnen", „Feld füllen"): das ist
+  Bildschirmarbeit, kein Prozess. Fünf bis fünfzehn Schritte je Prozess.
+- Wartezeit in die Bearbeitungszeit gerechnet: verdeckt den größten Hebel.
+- Prozess ohne `outcome`: dann lässt er sich nicht redesignen, weil unklar ist, was erhalten
+  bleiben muss.
