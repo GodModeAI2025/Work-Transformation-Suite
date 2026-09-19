@@ -151,10 +151,11 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
   <div class="wrap">
     <h2>Claude urteilt, Skripte rechnen</h2>
     <p class="sub">
-      Die Trennung ist die eigentliche Idee der Suite. Claude liest Quellen und schreibt drei
-      JSON-Dateien: Extraktion, Bewertung, Agentenbündelung. Alles andere machen Python-Skripte, ohne
-      Zufall und ohne Zeitstempel: IDs, Zusammenführung, Normalisierung, Klassifikation, Abdeckung,
-      Dashboard.
+      Die Trennung ist die eigentliche Idee der Suite. Claude liest Quellen und urteilt: Extraktion,
+      Prozessaufnahme, Bewertung, Agentenbündelung, Soll-Entwürfe, Prozesswert, Pilotpläne. Alles
+      andere machen Python-Skripte, ohne Zufall und ohne Zeitstempel: IDs, Zusammenführung,
+      Normalisierung, Klassifikation, Abdeckung, Deltas, Dashboard. Auch die Deltas eines
+      Soll-Szenarios schreibt niemand von Hand — sie fallen aus den Schritten des Entwurfs an.
     </p>
     <div class="grid g3">
       <div class="card">
@@ -169,8 +170,8 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       </div>
       <div class="card">
         <p class="num">03</p>
-        <h3>Menschen korrigieren an einer Stelle</h3>
-        <p>Fachexperten schreiben Zeilen in <code>overrides.csv</code>. Die gewinnen dauerhaft und überleben jeden Neulauf. Im Graphen selbst wird nie von Hand editiert.</p>
+        <h3>Menschen korrigieren und entscheiden an je einer Stelle</h3>
+        <p>Fachexperten schreiben Korrekturen in <code>overrides.csv</code>, Freigaben in <code>decisions.csv</code> — mit Name, Datum und Begründung. Beide gewinnen dauerhaft und überleben jeden Neulauf. Im Graphen selbst wird nie von Hand editiert, auch kein Status.</p>
       </div>
     </div>
   </div>

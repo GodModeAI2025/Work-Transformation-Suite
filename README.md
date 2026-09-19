@@ -254,9 +254,11 @@ laufen lassen, alles Nachgelagerte wird neu gerechnet, unveränderte Stände erz
 überspringt die Soll-Entwürfe, auch wenn Prozesse erfasst sind. Ohne Prozesse sagt die Pipeline, dass
 sie im Diagnosemodus bleibt, und läuft normal durch.
 
-## Belastbarkeit, Kipp-Analyse, Stellen und Kalibrierung
+## Damit aus der Analyse kein Scheinergebnis wird
 
-Vier Ergänzungen aus dem ersten echten Einsatz:
+Sechs Vorkehrungen. Die ersten vier stammen aus dem ersten echten Einsatz, die letzten beiden kamen
+mit dem Redesignmodus dazu — dort ist die Versuchung größer, weil jede Zahl über einen Prozess, den
+es noch nicht gibt, eine Schätzung ist.
 
 ### Belastbarkeit je Rolle
 
@@ -285,6 +287,32 @@ Prozessrollen sind keine Stellen. `00_input/positions.csv`
 `scores.*`) mit den generierten Werten und meldet je Feld, ob die Experten systematisch anders
 liegen. Ab fünf Korrekturen mit mittlerer Abweichung ≥ 0,75 sollte man den Anker in der Rubrik
 verschieben statt weiter einzeln zu korrigieren.
+
+### Geschätzt, bestätigt, gemessen
+
+Jede Kennzahl trägt ihre Belastbarkeit (`estimated`, `expert_confirmed`, `observed`) und, sobald
+sie Evidenz behauptet, einen `provenance`-Eintrag mit Quelle, Fundstelle, Ersteller, Reviewer und
+Konfidenz. Wer `observed` schreibt, ohne die Fundstelle zu liefern, kommt am Validator nicht
+vorbei — eine behauptete Messung ohne Beleg ist schlechter als eine ehrliche Schätzung, weil sie
+sich nicht widerlegen lässt.
+
+Die drei Stufen einer Kennzahl sind strikt getrennt: `baseline` ist der heutige Wert, `target` die
+Zusage eines Entwurfs, `observed` das Ergebnis eines Piloten. Ein gemessener Pilotwert überschreibt
+den Ausgangswert ausdrücklich **nicht**; sonst verglichen sich Soll und Soll, und jedes Redesign
+sähe gut aus. Dashboard und Bericht zeigen beide Spalten nebeneinander.
+
+Dazu kommt eine Plausibilitätsprüfung, die erfahrungsgemäß oft anschlägt: Liegt die Summe der
+modellierten Prozessschritte deutlich unter einer gemessenen Durchlaufzeit, sagt das Skript es. Dann
+fehlen Schritte oder Liegezeiten — und jedes Delta darunter rechnet auf zu kleiner Grundmenge.
+
+### Bänder statt Rangliste
+
+Prozesse landen in „Jetzt“, „Als Nächstes“, „Später“ oder „Zurückstellen“, nicht auf Platz 1 bis n.
+Zu jedem Prozess wird zusätzlich geprüft, ob das Band schon kippt, wenn ein einzelner Faktor um ±1
+danebenliegt; wenn ja, steht das im Dashboard und im Bericht. Ein Score von 6,8 gegenüber 6,9
+bedeutet nichts, solange die Eingaben Schätzungen auf einer Zehnerskala sind. Ein kippeliges Band
+ist auch kein Mangel, sondern ein Befund: Es zeigt, welchen einen Faktor man mit einem Fachexperten
+klären sollte, statt über die Reihenfolge zu streiten.
 
 ## Versionierung
 
