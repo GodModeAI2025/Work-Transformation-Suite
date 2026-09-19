@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Ein Tag darf nur auf einem Stand liegen, der die volle Prüfung besteht.
+      # Sonst steht am Ende ein Release, das niemand nachbauen kann.
+      - name: Suite-Check
+        run: python skills/work-transformation/scripts/check_suite.py
+
+      - name: Bibliothekskopien und Pakete
+        run: |
+          python tools/sync_shared.py --check
+          python tools/pack_skills.py --check
+
+      - name: Testsuite
+        run: python -m unittest discover
+
+      - name: Referenzbeispiel ergibt den hinterlegten Stand
+        run: python tools/refresh_example.py --check
+
+      - name: Version, Changelog und Prüfsummen
+        run: |
+          python tools/check_release.py --tag "${GITHUB_REF_NAME}" --checksums dist/SHA256SUMS
+          cat dist/SHA256SUMS
+
+      - name: Changelog-Abschnitt dieser Version herausschneiden
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v v="[$VERSION]" '
+            $0 ~ "^## " && index($0, v) { found=1; print; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+          echo "## Prüfsummen der .skill-Pakete" >> RELEASE_NOTES.md
+          echo '```' >> RELEASE_NOTES.md
+          cat dist/SHA256SUMS >> RELEASE_NOTES.md
+          echo '```' >> RELEASE_NOTES.md
+
+      - name: Release anlegen
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: RELEASE_NOTES.md
+          files: |
+            dist/*.skill
+            dist/SHA256SUMS

@@ -39,6 +39,9 @@ jobs:
       - name: Referenzbeispiel ergibt den hinterlegten Stand
         run: python tools/refresh_example.py --check
 
+      - name: Version und Changelog passen zusammen
+        run: python tools/check_release.py
+
       - name: Leeres Projekt anlegen, Pipeline muss an der ersten Claude-Eingabe anhalten
         run: |
           python skills/work-graph-builder/scripts/init_project.py --project "$RUNNER_TEMP/ci" \

@@ -255,6 +255,92 @@ class TestHandoversAreComparable(unittest.TestCase):
                          "Der Medienbruch bleibt als eigener Befund erhalten")
 
 
+class TestApprovalNeedsACheckpoint(unittest.TestCase):
+    """Akzeptanzkriterium aus dem Feedback: Prozesse mit hoher Fehlerfolge dürfen nicht ohne
+    Kontrollpunkt freigegeben werden. Das war zunächst nur für Blueprint-Schritte umgesetzt,
+    nicht für die Freigabe des Prozesses selbst."""
+
+    def graph(self, **process):
+        g = wl.empty_graph()
+        g["job_families"] = [{"id": "jf_1", "name": "F", "description": ""}]
+        g["job_clusters"] = [{"id": "jc_1", "name": "C", "family_id": "jf_1", "description": ""}]
+        g["roles"] = [{"id": "ro_1", "name": "R", "cluster_id": "jc_1", "status": "generated",
+                       "skills": [], "task_ids": [], "source_refs": []}]
+        g["outcomes"] = [{"id": "ou_1", "name": "Erg", "beneficiary": "K", "metric_ids": []}]
+        base = {"id": "pr_1", "name": "P", "trigger": "T", "outcome_id": "ou_1",
+                "owner_role_id": "ro_1", "status": "approved", "volume_per_year": 10,
+                "baseline_metric_ids": [], "step_ids": ["ps_1"], "data_classes": []}
+        base.update(process)
+        g["processes"] = [base]
+        g["process_steps"] = [{"id": "ps_1", "process_id": "pr_1", "name": "S",
+                               "executor": {"type": "human", "id": "ro_1"},
+                               "value_type": "business_required", "task_ids": [],
+                               "handling_time_min": 5, "wait_time_min": 0, "rework_pct": 0,
+                               "system_ids": [], "control_ids": [], "data_classes": []}]
+        return g
+
+    def blocked(self, g):
+        return [e for e in validate_graph.validate(g)[0] if "Human Gate" in e]
+
+    def test_regulated_process_needs_a_checkpoint(self):
+        self.assertTrue(self.blocked(self.graph(regulated=True)))
+
+    def test_personal_data_process_needs_a_checkpoint(self):
+        self.assertTrue(self.blocked(self.graph(data_classes=["personal"])))
+
+    def test_irreversible_decision_needs_a_checkpoint(self):
+        g = self.graph()
+        g["process_steps"][0]["decision"] = {"scope": "execute_irreversible",
+                                             "accountable_role_id": "ro_1",
+                                             "escalation": "an die Leitung"}
+        g["process_steps"][0]["control_ids"] = []
+        errors = validate_graph.validate(g)[0]
+        self.assertTrue(any("Human Gate" in e or "irreversible" in e for e in errors))
+
+    def test_a_human_gate_satisfies_the_rule(self):
+        g = self.graph(regulated=True)
+        g["process_steps"][0]["human_gate"] = {"when": "immer", "role_id": "ro_1"}
+        self.assertEqual(self.blocked(g), [])
+
+    def test_harmless_process_may_be_approved_without_a_control(self):
+        self.assertEqual(self.blocked(self.graph()), [])
+
+    def test_the_rule_only_bites_on_approval(self):
+        self.assertEqual(self.blocked(self.graph(regulated=True, status="reviewed")), [],
+                         "Vor der Freigabe ist ein fehlender Kontrollpunkt ein offener Punkt, "
+                         "kein Fehler")
+
+
+class TestEveryDeltaLeadsToItsAssumption(unittest.TestCase):
+    """Akzeptanzkriterium: Jede Delta-Zahl muss auf Ausgangswert und Annahme führen. Die
+    Begründungen lagen zunächst in den Szenario-Tafeln — also hinter einem Reiter und damit
+    faktisch unauffindbar."""
+
+    @classmethod
+    def setUpClass(cls):
+        dash = load("transformation-dashboard", "build_dashboard")
+        dash.load_theme(None)  # Farben kommen sonst aus einem leeren Theme
+        graph = wl.read_json(EXAMPLE / "expected" / "work-graph_final.json")
+        data = dash.prepare(graph)
+        cls.html = dash.build_html(graph, data, dash.kpis(graph, data), "T", "")
+
+    def test_no_dead_anchors(self):
+        import re
+        targets = set(re.findall(r'id="(herkunft-[^"]+)"', self.html))
+        links = set(re.findall(r'href="#(herkunft-[^"]+)"', self.html))
+        self.assertTrue(links, "Die Vergleichstabelle muss auf die Herkunft verlinken")
+        self.assertEqual(links - targets, set(), "Toter Anker in der Vergleichstabelle")
+
+    def test_assumptions_are_outside_the_hidden_tabs(self):
+        import re
+        block = re.search(r'<details class="herkunft".*?</details>', self.html, re.S)
+        self.assertIsNotNone(block, "Der Herkunftsblock fehlt")
+        self.assertNotIn('class="pane"', block.group(),
+                         "Der Block darf nicht in einer umschaltbaren Tafel liegen")
+        self.assertIn("Annahme", block.group())
+        self.assertIn("Fundstelle", block.group())
+
+
 class TestPipelineWithDraftBlueprintsOnly(unittest.TestCase):
     """Beim ersten Redesign-Durchgang stehen alle Entwürfe auf "draft". Die Pipeline brach
     dann mit Code 2 ab und baute weder Szenarienvergleich noch Dashboard."""

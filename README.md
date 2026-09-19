@@ -84,6 +84,12 @@ Beschreibung höchstens 1024 Zeichen) und, im Repository, ob die Pakete in `dist
 `skills/` passen. Wer einen Skill ändert, ruft danach `python3 tools/pack_skills.py` auf; das baut die Pakete
 deterministisch neu. `python3 tools/sync_shared.py` gleicht die Bibliothekskopien ab.
 
+Release: Ein Tag `vX.Y.Z` löst `.github/workflows/release.yml` aus. Der Workflow lässt die
+gesamte Prüfung laufen, vergleicht Tag, Version in `.claude-plugin/plugin.json` und den
+Changelog-Abschnitt (`tools/check_release.py`), und hängt die sechs `.skill`-Pakete mit
+einer `SHA256SUMS`-Datei an das Release. Die Prüfsummen sind der einzige Beleg dafür, dass
+eine heruntergeladene Paketdatei dem Stand des Tags entspricht.
+
 Tests: `python3 -m unittest discover` führt die gesamte Suite aus, einschließlich eines vollständigen
 Laufs des Referenzbeispiels unter `examples/order-to-cash/`. Die GitHub Action
 `.github/workflows/check.yml` führt Check und Tests bei jedem Push und Pull Request auf Python 3.9,

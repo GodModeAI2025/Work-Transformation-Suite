@@ -436,6 +436,28 @@ def validate_process_layer(graph: dict, ids: dict, errors: list, warnings: list)
             warnings.append(f"{w}: keine Schritte")
         if _num(pr.get("volume_per_year")) is None:
             warnings.append(f"{w}: volume_per_year fehlt — ohne Menge keine Wertschätzung")
+        # Governance: Ein Prozess mit hoher Fehlerfolge darf nicht ohne Kontrollpunkt
+        # freigegeben werden. „Hohe Fehlerfolge" heißt hier: unter Aufsicht, oder mit einer
+        # nicht umkehrbaren Entscheidung, oder mit personenbezogenen Daten. Die Freigabe ist
+        # der Moment, in dem jemand die Verantwortung übernimmt — ohne eine Kontrolle oder
+        # ein Human Gate im Ablauf gibt es dafür nichts, woran man sich halten könnte.
+        own_steps = steps_by_process.get(pr["id"], [])
+        sensitive_data = {"personal", "special_category"} & set(pr.get("data_classes", []))
+        irreversible = any((st.get("decision") or {}).get("scope") == "execute_irreversible"
+                           for st in own_steps)
+        high_consequence = bool(pr.get("regulated")) or irreversible or bool(sensitive_data)
+        has_checkpoint = any(st.get("control_ids") or st.get("human_gate") for st in own_steps)
+        if high_consequence and pr.get("status") == "approved" and not has_checkpoint:
+            grund = []
+            if pr.get("regulated"):
+                grund.append("steht unter Aufsicht")
+            if irreversible:
+                grund.append("enthält eine nicht umkehrbare Entscheidung")
+            if sensitive_data:
+                grund.append(f"verarbeitet {sorted(sensitive_data)}")
+            errors.append(f"{w}: Status 'approved', aber kein einziger Schritt trägt eine "
+                          f"Kontrolle oder ein Human Gate — der Prozess {' und '.join(grund)}")
+
         v = pr.get("value")
         if v:
             check_enum(errors, w, "value.band", v.get("band"), wl.ENUM_PRIORITY_BAND)

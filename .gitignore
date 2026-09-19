@@ -11,6 +11,10 @@ projects/
 30_review/redesign_briefing_v*.md
 40_output/
 
+# Beim Release erzeugt, nicht eingecheckt
+dist/SHA256SUMS
+RELEASE_NOTES.md
+
 # Python
 __pycache__/
 *.py[cod]

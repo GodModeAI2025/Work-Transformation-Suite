@@ -268,6 +268,10 @@ footer{padding:20px 32px;color:var(--ink3);font-size:12px;border-top:1px solid v
 .band{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;color:#fff;font-weight:600}
 .note{font-size:12px;color:var(--ink3);margin:6px 0 0}
 .warnbox{margin:10px 0;padding:10px 12px;border:1px solid #E6B800;background:#FFF8DB;border-radius:6px;font-size:13px;color:#5a4a00}
+.herkunft{margin:10px 0 4px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;background:#fbfaf9}
+.herkunft h4{margin:14px 0 6px;font-size:14px;color:var(--primary);font-family:var(--f-head)}
+.herkunft ul{margin:0;padding-left:18px;font-size:13px}.herkunft li{margin:4px 0}
+th a{color:inherit;text-decoration:underline dotted;text-underline-offset:3px}
 @media(max-width:800px){main,header,nav,footer{padding-left:16px;padding-right:16px}.cols{grid-template-columns:1fr}.rows{grid-template-columns:1fr}}
 """
 
@@ -669,26 +673,83 @@ def scenario_pane(graph: dict[str, Any], bp: dict[str, Any], names: dict) -> str
                    '<p class="note">gesch. = geschätzt, best. = vom Fachexperten bestätigt, '
                    'gem. = im Pilot gemessen.</p></details>')
 
-    facts = []
-    for st in bp.get("steps", []):
-        if st.get("rationale"):
-            met = metrics.get(st.get("metric_id"), {}).get("name")
-            facts.append(f'<li><b>{esc(st["name"])}</b> ({esc(OPERATOR_LABEL.get(st["operator"], ""))}): '
-                         f'{esc(st["rationale"])}'
-                         + (f' · Kennzahl: {esc(met)}' if met else "")
-                         + (f' · Annahme: {esc(st["assumption"])}' if st.get("assumption") else "") + '</li>')
-    if facts:
-        out.append(f'<details><summary>Begründungen und Annahmen je Änderung ({len(facts)})</summary>'
-                   f'<ul>{"".join(facts)}</ul></details>')
-    if bp.get("open_assumptions"):
-        out.append('<div class="warnbox"><b>Offene Annahmen:</b><ul>'
-                   + "".join(f'<li>{esc(a)}</li>' for a in bp["open_assumptions"]) + '</ul></div>')
+    # Begründungen und Annahmen stehen nicht hier, sondern im Block „Woher die Zahlen
+    # kommen" unter der Vergleichstabelle. Dort sind sie immer sichtbar und von jeder
+    # Delta-Zahl aus verlinkt — in einer versteckten Tafel wären sie faktisch unauffindbar.
     if bp.get("risks"):
         out.append('<details><summary>Risiken</summary><ul>'
                    + "".join(f'<li>{esc(r)}</li>' for r in bp["risks"]) + '</ul></details>')
     if bp.get("proposed_agents"):
         out.append('<p class="note">Noch anzulegende Agenten: '
                    + esc(", ".join(bp["proposed_agents"])) + '</p>')
+    return "".join(out)
+
+
+def provenance_block(graph: dict[str, Any], pr: dict[str, Any], bps: list, names: dict,
+                     n: int) -> str:
+    """Woher die Zahlen eines Prozesses kommen und worauf sie beruhen.
+
+    Bewusst außerhalb der Szenario-Reiter: Eine Delta-Zahl ohne erreichbare Herkunft ist in
+    einer Transformationsdiskussion gefährlicher als gar keine. Jede Spalte der
+    Vergleichstabelle verlinkt hierher.
+    """
+    metrics = wl.index_by_id(graph["metrics"])
+    prov = {(x["entity_type"], x["entity_id"], x["field"]): x for x in graph["provenance"]}
+    ist = wl.process_totals(graph, pr["id"])
+    out = [f'<details class="herkunft" id="herkunft-pr{n}">'
+           f'<summary>Woher diese Zahlen kommen und was sie voraussetzen</summary>']
+
+    out.append(f'<p class="note">Die Ist-Werte sind Summen über die {ist["steps"]} modellierten '
+               f'Schritte: {fmt(ist["handling_time_min"], 0)} min Arbeit und '
+               f'{fmt(ist["wait_time_min"], 0)} min Warten. Die Soll-Werte entstehen genauso '
+               'aus den Schritten des jeweiligen Entwurfs — keine der Zahlen ist zugesagt.</p>')
+    gap = wl.lead_time_gap(graph, pr["id"])
+    if gap:
+        out.append(f'<p class="note"><b>Einschränkung:</b> Das Modell erklärt '
+                   f'{fmt(gap["modelled_hours"])} h von {fmt(gap["measured_hours"])} h '
+                   'gemessener Durchlaufzeit. Die Deltas rechnen auf der modellierten '
+                   'Grundmenge, nicht auf der gemessenen.</p>')
+
+    rows = []
+    for mid in pr.get("baseline_metric_ids", []):
+        m = metrics.get(mid)
+        if not m:
+            continue
+        value, basis = wl.metric_value(m, "baseline")
+        quelle = prov.get(("metrics", mid, "baseline"))
+        rows.append(f'<tr><td>{esc(m["name"])}</td>'
+                    f'<td class="n">{fmt(value)} {esc(m.get("unit") or "")}</td>'
+                    f'<td>{esc(BASIS_LABEL.get(basis, "—"))}</td>'
+                    f'<td>{esc(quelle.get("source_ref") if quelle else "keine Fundstelle")}</td></tr>')
+    if rows:
+        out.append('<h4>Ausgangswerte</h4><table><tr><th>Kennzahl</th><th class="n">Wert</th>'
+                   f'<th>Belastbarkeit</th><th>Fundstelle</th></tr>{"".join(rows)}</table>')
+
+    for i, bp in enumerate(bps, start=1):
+        label = SCENARIO_LABEL.get(bp["scenario"], bp["scenario"])
+        out.append(f'<h4 id="herkunft-pr{n}-{i}">{esc(label)}</h4>')
+        if bp.get("open_assumptions"):
+            out.append('<div class="warnbox"><b>Offene Annahmen, die dieses Szenario trägt:'
+                       '</b><ul>' + "".join(f'<li>{esc(a)}</li>' for a in bp["open_assumptions"])
+                       + '</ul></div>')
+        facts = []
+        for st in bp.get("steps", []):
+            if not st.get("rationale"):
+                continue
+            met = metrics.get(st.get("metric_id"), {}).get("name")
+            facts.append(f'<li><b>{esc(st["name"])}</b> '
+                         f'({esc(OPERATOR_LABEL.get(st["operator"], ""))}): {esc(st["rationale"])}'
+                         + (f' · Kennzahl: {esc(met)}' if met else "")
+                         + (f' · <i>Annahme: {esc(st["assumption"])}</i>'
+                            if st.get("assumption") else "") + '</li>')
+        for r in bp.get("removed_steps") or []:
+            name = names.get(r["step_id"], {}).get("name", r["step_id"])
+            facts.append(f'<li><b>{esc(name)}</b> (gestrichen): {esc(r.get("rationale", ""))}'
+                         + (f' · <i>Annahme: {esc(r["assumption"])}</i>'
+                            if r.get("assumption") else "") + '</li>')
+        out.append(f'<ul>{"".join(facts)}</ul>' if facts
+                   else '<p class="note">Keine Änderung begründet.</p>')
+    out.append('</details>')
     return "".join(out)
 
 
@@ -731,10 +792,18 @@ def process_card(graph: dict[str, Any], pr: dict[str, Any], names: dict, n: int)
     for key, label, nd in FLOW_METRICS:
         cells = "".join(_delta_cell((b.get("delta") or {}).get(key), nd) for b in bps)
         cmp_rows.append(f'<tr><td>{esc(label)}</td><td class="n">{fmt(ist.get(key), nd)}</td>{cells}</tr>')
-    head_cells = "".join(f'<th class="n">{esc(SCENARIO_LABEL.get(b["scenario"], b["scenario"]))}</th>'
-                         for b in bps)
-    table = ('<table><tr><th>Kennzahl</th><th class="n">Ist</th>' + head_cells + "</tr>"
-             + "".join(cmp_rows) + "</table>") if bps else ""
+    head_cells = "".join(
+        f'<th class="n"><a href="#herkunft-pr{n}-{i}" '
+        f'title="Annahmen und Begründungen dieses Szenarios">'
+        f'{esc(SCENARIO_LABEL.get(b["scenario"], b["scenario"]))}</a></th>'
+        for i, b in enumerate(bps, start=1))
+    table = ('<table><tr><th>Kennzahl</th>'
+             f'<th class="n"><a href="#herkunft-pr{n}" title="Herkunft der Ist-Werte">Ist</a></th>'
+             + head_cells + "</tr>" + "".join(cmp_rows) + "</table>"
+             + provenance_block(graph, pr, bps, names, n)
+             + '<p class="note">Der Wert in Klammern ist die Verbesserung gegenüber dem Ist; '
+               'positiv heißt immer besser. Die Spaltenköpfe führen zu den Annahmen, auf denen '
+               'die jeweilige Zahl beruht.</p>') if bps else ""
 
     # Umschaltbare Tafeln: Ist plus je Szenario eine
     tid = f"pr{n}"

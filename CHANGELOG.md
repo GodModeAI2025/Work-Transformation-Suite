@@ -132,6 +132,26 @@ Kennzahl jetzt −2 aus statt +3: Es setzt einen Agenten an beide Enden einer so
 unveränderten Menschenkette und erzeugt damit zwei zusätzliche Wechsel. Dieses Ergebnis
 bleibt so stehen — es ist der Befund, um den es geht.
 
+### Nachgezogene Akzeptanzkriterien
+
+Eine Gegenprobe gegen die Akzeptanzkriterien des Feedbacks hat drei Punkte gefunden, die
+noch nicht erfüllt waren:
+
+- **Freigabe setzt einen Kontrollpunkt voraus.** Ein Prozess mit hoher Fehlerfolge — unter
+  Aufsicht, mit einer nicht umkehrbaren Entscheidung oder mit personenbezogenen Daten —
+  lässt sich nicht mehr auf `approved` setzen, wenn kein einziger Schritt eine Kontrolle
+  oder ein Human Gate trägt. Bisher galt diese Regel nur für Blueprint-Schritte, nicht für
+  die Freigabe des Prozesses selbst.
+- **Jede Delta-Zahl führt zu ihrer Annahme.** Begründungen und Annahmen lagen in den
+  Szenario-Tafeln, also hinter einem Reiter und damit faktisch unauffindbar. Sie stehen
+  jetzt in einem immer sichtbaren Block „Woher diese Zahlen kommen" mit Ausgangswerten,
+  Belastbarkeit und Fundstelle; die Spaltenköpfe der Vergleichstabelle verlinken dorthin.
+- **Release mit Prüfsummen und Changelog-Eintrag.** `.github/workflows/release.yml` prüft
+  auf einem Tag die gesamte Suite, schneidet den Changelog-Abschnitt der Version heraus und
+  hängt die `.skill`-Pakete samt `SHA256SUMS` an das Release. `tools/check_release.py`
+  prüft, dass Tag, Version im Plugin-Manifest und Changelog-Abschnitt zusammenpassen — und
+  läuft auch im normalen CI, damit die drei nicht auseinanderlaufen.
+
 ### Bekannte Grenzen
 
 Ein Soll-Prozess aus Interviews und Stellenbeschreibungen ist ein Entwurf, keine Prognose.
