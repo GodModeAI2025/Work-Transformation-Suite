@@ -49,6 +49,17 @@ Ein Schritt bleibt, kostet aber weniger Arbeit oder erzeugt weniger Nacharbeit.
 Mehrere Ist-Schritte werden zu einem. Der eigentliche Gewinn ist selten die Arbeitszeit,
 sondern die Übergabe dazwischen.
 
+> **Was als Übergabe zählt.** Ein Wechsel des Ausführenden, bei dem mindestens eine Seite
+> ein Mensch ist. Zwei Agenten, die innerhalb desselben Systems weiterreichen, sind keine
+> Übergabe — sie kosten Millisekunden, kein Warten. Ist und Soll werden nach derselben
+> Regel gezählt, sonst wäre der Vergleich wertlos.
+>
+> Daraus folgt etwas Unbequemes, das die Suite absichtlich sichtbar macht: Ein Agent, der
+> mitten in einer Menschenkette einen einzelnen Schritt übernimmt, **erhöht** die Zahl der
+> Übergaben. Im Referenzbeispiel weist das konservative Szenario deshalb −2 aus. Das ist
+> kein Rechenfehler, sondern genau der Befund, um den es hier geht: KI auf den Altprozess
+> zu setzen, ohne den Zuschnitt zu ändern, bringt strukturell nichts.
+
 | | |
 |---|---|
 | Wann | Aufeinanderfolgende Schritte arbeiten auf denselben Eingaben, oder derselbe Ausführende macht sie ohnehin hintereinander, oder mehrere Rollen prüfen nacheinander dieselben Daten. |

@@ -11,7 +11,7 @@ Je Prozess: der heutige Ablauf, die entworfenen Szenarien und was sich zwischen 
 |---|---|---|---|---|
 | Schritte | 6 | 6 (+0) | 4 (+2) | 3 (+3) |
 | Human Touchpoints | 6 | 6 (+0) | 3 (+3) | 3 (+3) |
-| Übergaben | 6 | 3 (+3) | 3 (+3) | 2 (+4) |
+| Übergaben | 2 | 3 (-1) | 2 (+0) | 1 (+1) |
 | Bearbeitungszeit (min) | 68 | 48 (+20) | 26 (+42) | 17 (+51) |
 | Wartezeit (min) | 1980 | 1350 (+630) | 470 (+1510) | 205 (+1775) |
 | Durchlaufzeit (h) | 34.1 | 23.3 (+10.8) | 8.3 (+25.8) | 3.5 (+30.6) |
@@ -117,7 +117,7 @@ Zuordnung, Klärung und Mahnvorbereitung laufen gleichzeitig statt nacheinander;
 |---|---|---|---|---|
 | Schritte | 10 | 10 (+0) | 6 (+4) | 4 (+6) |
 | Human Touchpoints | 10 | 9 (+1) | 3 (+7) | 3 (+7) |
-| Übergaben | 9 | 6 (+3) | 5 (+4) | 3 (+6) |
+| Übergaben | 4 | 6 (-2) | 3 (+1) | 1 (+3) |
 | Bearbeitungszeit (min) | 121 | 75 (+46) | 20 (+101) | 10 (+111) |
 | Wartezeit (min) | 2430 | 1720 (+710) | 325 (+2105) | 90 (+2340) |
 | Durchlaufzeit (h) | 42.5 | 29.9 (+12.6) | 5.8 (+36.7) | 1.5 (+41) |
@@ -163,7 +163,7 @@ Der Ablauf bleibt wie er ist. Erfassung und Versand übernimmt ein Agent, alle �
 
 - Die Zeitgewinne entstehen überwiegend aus kürzerer Bearbeitung, nicht aus kürzerer Liegezeit. Wenn die Liegezeiten bleiben, bleibt auch die Durchlaufzeit weitgehend.
 
-### Ausgewogen: Auftrag bis Rechnung — Übergaben entfallen, Menschen entscheiden Ausnahmen
+### Ausgewogen: Auftrag bis Rechnung — Schritte zusammengelegt, Menschen entscheiden Ausnahmen
 
 Erfassung und Prüfung werden zu einem Schritt, die Nachverfolgungsliste entfällt, Bonität und Bestätigung laufen agentengestützt. Die Kreditfreigabe wandert in der Regelarbeit vom Teamleiter zum Kreditprüfer, die Rechnungsfreigabe bleibt im Vier-Augen-Prinzip. Aus zehn Schritten werden sechs, aus neun Übergaben fünf.
 

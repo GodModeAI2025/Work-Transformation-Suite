@@ -864,7 +864,12 @@ def governance_html(graph: dict[str, Any], names: dict) -> str:
 METHOD_PROCESS = (
     "<p><b>Prozessebene.</b> Die Ist-Kennzahlen eines Prozesses sind Summen über seine "
     "Schritte: Bearbeitungszeit und Wartezeit werden addiert, Übergaben aus den Kanten "
-    "gezählt, Human Touchpoints aus ausführender Rolle und Human Gates. Bewusst keine "
+    "gezählt, Human Touchpoints aus ausführender Rolle und Human Gates. Als Übergabe zählt "
+    "ein Wechsel des Ausführenden, bei dem mindestens eine Seite ein Mensch ist — ein "
+    "Postkorb kostet Stunden, zwei Agenten im selben System reichen in Millisekunden weiter. "
+    "Ist und Soll zählen nach derselben Regel; Medienbrüche (E-Mail, Telefon, Papier) stehen "
+    "getrennt als Ist-Befund, weil ein Soll-Entwurf keine Übergabemedien modelliert. "
+    "Bewusst keine "
     "Simulation — ohne Prozess-Mining-Daten wäre jede Verteilungsannahme Scheingenauigkeit. "
     "Im Soll-Szenario wird nur dort nicht addiert, wo Schritte ausdrücklich einer gemeinsamen "
     "Parallelgruppe zugeordnet sind; dann zählt für die Durchlaufzeit der längste von ihnen, "
@@ -1112,11 +1117,27 @@ def report_md(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], ti
                 lines.append(f"| {v.get('rank', '–')} | {pr['name']} | {BAND_LABEL.get(v.get('band'), '–')}{flag} "
                              f"| {fmt(v.get('score'))} | {fmt(t['lead_time_hours'])} h | noch keins "
                              f"| – | {t['human_touches']} | {t['handovers']} |")
-        estimated = sum(1 for m in graph["metrics"] if wl.metric_value(m, "baseline")[1] == "estimated")
-        lines += ["", f"Belastbarkeit der Kennzahlen: {len(graph['metrics']) - estimated} von "
-                      f"{len(graph['metrics'])} Ausgangswerten sind bestätigt oder gemessen, "
-                      f"{estimated} {'ist eine Schätzung' if estimated == 1 else 'sind Schätzungen'}. Jede Delta-Zahl in diesem Bericht ist aus den "
-                      "Soll-Schritten der Blueprints gerechnet, nicht zugesagt.", ""]
+        # Drei Eimer, nicht zwei. Eine Kennzahl ganz ohne Ausgangswert ist weder geschätzt
+        # noch belegt — sie als „bestätigt oder gemessen" zu zählen, würde genau die Aussage
+        # umkehren, für die dieser Satz da ist.
+        buckets = {"belegt": 0, "geschätzt": 0, "ohne Ausgangswert": 0}
+        for m in graph["metrics"]:
+            _value, basis = wl.metric_value(m, "baseline")
+            if basis in ("observed", "expert_confirmed"):
+                buckets["belegt"] += 1
+            elif basis == "estimated":
+                buckets["geschätzt"] += 1
+            else:
+                buckets["ohne Ausgangswert"] += 1
+        total = len(graph["metrics"])
+        satz = (f"Belastbarkeit der Kennzahlen: {buckets['belegt']} von {total} Ausgangswerten "
+                f"sind bestätigt oder gemessen, {buckets['geschätzt']} geschätzt")
+        if buckets["ohne Ausgangswert"]:
+            satz += (f", {buckets['ohne Ausgangswert']} ohne Ausgangswert (für diese lässt sich "
+                     "kein Delta belegen)")
+        satz += ". Jede Delta-Zahl in diesem Bericht ist aus den Soll-Schritten der Blueprints "
+        satz += "gerechnet, nicht zugesagt."
+        lines += ["", satz, ""]
 
     lines += ["", "## Hinweise", "",
               "Bewertungen sind KI-generiert nach einer festen Rubrik und durch Expertenkorrekturen überschreibbar. "

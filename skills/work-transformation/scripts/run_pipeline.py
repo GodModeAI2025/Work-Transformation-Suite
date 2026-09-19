@@ -134,10 +134,6 @@ def main() -> int:
         cmd.append("--shared-tasks")
     if run(cmd, cwd):
         return 2
-    graph = wl.load_latest_graph(project)
-    if any(isinstance(a.get("contract"), dict) for a in graph.get("agents", [])):
-        run([py, script("agent-mapper", "validate_contracts.py"), "--project", proj], cwd)
-        run([py, script("agent-mapper", "export_contracts.py"), "--project", proj], cwd)
     if stop == 3:
         return 0
 
@@ -182,6 +178,16 @@ def main() -> int:
         elif rc:
             return 2
         run([py, script("process-redesigner", "compare_scenarios.py"), "--project", proj], cwd)
+
+    # Verträge erst hier prüfen, nicht schon beim Mapper: validate_contracts.py hält einen
+    # Vertrag gegen die Schritte, die der Agent ausführt — und Blueprint-Schritte gibt es
+    # erst nach dem Redesign. Beim ersten Lauf eines Projekts meldete die Prüfung sonst für
+    # jeden Pilot-Agenten, ihm sei keine Arbeit zugewiesen, obwohl der Entwurf das gleich
+    # darauf tut.
+    graph = wl.load_latest_graph(project)
+    if any(isinstance(a.get("contract"), dict) for a in graph.get("agents", [])):
+        run([py, script("agent-mapper", "validate_contracts.py"), "--project", proj], cwd)
+        run([py, script("agent-mapper", "export_contracts.py"), "--project", proj], cwd)
 
     # Freigaben zuletzt: decisions.csv ist die Wahrheit über Status, und build_blueprints.py
     # baut die Blueprints vorher aus blueprints.json neu auf. Liefe die Governance davor,

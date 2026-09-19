@@ -168,7 +168,8 @@ def build(project: Path) -> tuple:
     steps: dict[str, dict] = {}
     edges: dict[str, dict] = {}
     provenance: dict[str, dict] = {}
-    stats = {"files": 0, "processes": 0, "steps": 0, "edges": 0, "metrics": 0}
+    stats = {"files": 0, "processes": 0, "steps": 0, "edges": 0, "metrics": 0,
+             "provenance_dropped": 0}
 
     def system_id(name: str) -> str:
         sid = wl.make_id("system", name)
@@ -192,13 +193,19 @@ def build(project: Path) -> tuple:
             if not name:
                 continue
             oid = wl.make_id("outcome", name)
-            outcomes[oid] = {
-                "id": oid, "name": name,
-                "description": _str(o.get("description")),
-                "beneficiary": _str(o.get("beneficiary")),
-                "metric_ids": [],
-                "source_refs": [source],
-            }
+            # Zusammenführen, nicht ersetzen: Dateien werden alphabetisch verarbeitet, und
+            # die Kennzahlen eines Ergebnisses entstehen erst beim Prozess in derselben oder
+            # einer früheren Datei. Ein Ersetzen würde sie stillschweigend wieder abräumen.
+            entry = outcomes.setdefault(oid, {
+                "id": oid, "name": name, "description": "", "beneficiary": "",
+                "metric_ids": [], "source_refs": [],
+            })
+            # Beschreibende Felder: die erste Datei gewinnt (wie in build_graph.py).
+            if not entry["description"]:
+                entry["description"] = _str(o.get("description"))
+            if not entry["beneficiary"]:
+                entry["beneficiary"] = _str(o.get("beneficiary"))
+            entry["source_refs"] = sorted(set(entry["source_refs"] + [source]))
 
         for sy in ex.get("systems", []):
             name = _str(sy.get("name")) if isinstance(sy, dict) else _str(sy)
@@ -237,10 +244,14 @@ def build(project: Path) -> tuple:
 
             oc_name = _str(pr.get("outcome"))
             oid = wl.make_id("outcome", oc_name) if oc_name else None
-            if oid and oid not in outcomes:
-                outcomes[oid] = {"id": oid, "name": oc_name, "description": "",
-                                 "beneficiary": _str(pr.get("beneficiary")), "metric_ids": [],
-                                 "source_refs": [source]}
+            if oid:
+                entry = outcomes.setdefault(oid, {
+                    "id": oid, "name": oc_name, "description": "",
+                    "beneficiary": "", "metric_ids": [], "source_refs": [],
+                })
+                if not entry["beneficiary"]:
+                    entry["beneficiary"] = _str(pr.get("beneficiary"))
+                entry["source_refs"] = sorted(set(entry["source_refs"] + [source]))
 
             baseline_ids = []
             for m in pr.get("baseline_metrics", []):
@@ -276,10 +287,17 @@ def build(project: Path) -> tuple:
 
             step_ids = []
             step_name_to_id = {}
-            for st in pr.get("steps", []):
+            # Nur benannte Schritte bilden den Prozess. Ein namenloser Schritt wird gemeldet,
+            # statt still zu verschwinden — sonst fehlt er im Modell und niemand weiß warum.
+            named_steps = []
+            for pos, st in enumerate(pr.get("steps", []), start=1):
+                if _str(st.get("name")):
+                    named_steps.append(st)
+                else:
+                    idx.problems.append(f"{where}: Schritt an Position {pos} hat keinen Namen "
+                                        "und wurde nicht übernommen")
+            for st in named_steps:
                 sname = _str(st.get("name"))
-                if not sname:
-                    continue
                 sid = wl.make_id("process_step", pname, sname)
                 step_name_to_id[wl.normalize_name(sname)] = sid
                 sw = f"{where}, Schritt {sname!r}"
@@ -340,15 +358,15 @@ def build(project: Path) -> tuple:
                     _add_provenance(provenance, "process_steps", sid, pv, source, default_field="handling_time_min")
 
             # Kanten: entweder ausdrücklich über "next" je Schritt, sonst linear in Reihenfolge.
-            explicit = any(st.get("next") for st in pr.get("steps", []))
-            for i, st in enumerate(pr.get("steps", [])):
+            # Die implizite Kette läuft über named_steps, nicht über die Rohliste — sonst
+            # zeigte sie bei einem namenlosen Schritt ins Leere und die Kette bräche ab.
+            explicit = any(st.get("next") for st in named_steps)
+            for i, st in enumerate(named_steps):
                 sname = _str(st.get("name"))
-                if not sname:
-                    continue
                 from_id = step_name_to_id[wl.normalize_name(sname)]
                 targets = st.get("next") or []
-                if not targets and not explicit and i + 1 < len(step_ids):
-                    targets = [{"to": pr["steps"][i + 1].get("name"), "handover": "system"}]
+                if not targets and not explicit and i + 1 < len(named_steps):
+                    targets = [{"to": named_steps[i + 1].get("name"), "handover": "system"}]
                 for nx in targets:
                     if isinstance(nx, str):
                         nx = {"to": nx}
@@ -406,7 +424,28 @@ def build(project: Path) -> tuple:
     graph["processes"] = list(processes.values())
     graph["process_steps"] = list(steps.values())
     graph["process_edges"] = list(edges.values())
-    graph["provenance"] = list(keep_prov.values())
+
+    # Verwaiste Provenienz aussortieren. IDs sind Hashes der Namen: Wer eine Kennzahl oder
+    # einen Schritt umbenennt, erzeugt eine neue ID — der alte Provenienzeintrag zeigt dann
+    # ins Leere und der Validator lehnt den Graphen ab. Ohne diese Bereinigung bliebe ein
+    # Projekt nach einer Umbenennung dauerhaft blockiert, bis jemand den Graphen von Hand
+    # repariert. Geprüft wird nur, was dieses Skript selbst neu aufbaut; Provenienz zu
+    # Rollen, Aufgaben oder Agenten bleibt unangetastet.
+    rebuilt = {"outcomes": outcomes, "systems": systems, "controls": controls,
+               "metrics": metrics, "processes": processes, "process_steps": steps,
+               "process_edges": edges}
+    live_prov = {}
+    for pid, entry in keep_prov.items():
+        table = rebuilt.get(entry.get("entity_type"))
+        if table is not None and entry.get("entity_id") not in table:
+            idx.problems.append(
+                f"Provenienz zu {entry.get('entity_type')}/{entry.get('entity_id')} "
+                f"(Feld '{entry.get('field')}') entfernt — der Eintrag existiert nicht mehr, "
+                "vermutlich nach einer Umbenennung")
+            stats["provenance_dropped"] += 1
+            continue
+        live_prov[pid] = entry
+    graph["provenance"] = list(live_prov.values())
     wl.sort_graph(graph)
     return graph, stats, idx.problems
 

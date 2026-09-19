@@ -87,6 +87,51 @@ Der Diagnosemodus bleibt vollständig erhalten. Ein Projekt darf darin bleiben.
 - Ein erneuter Lauf verwarf im Pilot gemessene Werte und Freigabestände und legte deshalb
   jedes Mal eine neue Graph-Version an. Beides überlebt den Neubau.
 
+### Behoben nach dem Code-Review dieses Stands
+
+Ein Review des Schema-1.1-Stands hat sieben Fehler gefunden, ein Regressionstest dazu einen
+achten. Alle waren reproduzierbar und sind behoben; für jeden gibt es jetzt einen Test in
+`tests/test_regressions.py`.
+
+- **Die Pipeline brach beim ersten Redesign-Durchgang ab.** Solange alle Entwürfe auf
+  `draft` standen — dem dokumentierten Ausgangszustand — beendete sich `make_experiments.py`
+  mit Code 2 und riss Szenarienvergleich, Freigaben und Dashboard mit. Pilotplanung ist
+  jetzt ein Hinweis (Code 3), kein Abbruch.
+- **Eine Umbenennung konnte ein Projekt dauerhaft blockieren.** IDs sind Hashes der Namen;
+  der alte Provenienzeintrag zeigte danach ins Leere und der Validator lehnte jeden weiteren
+  Lauf ab. `build_processes.py` sortiert verwaiste Provenienz jetzt aus und meldet es.
+- **Ein Prozess ohne erfasste Zeiten ließ `build_blueprints.py` abstürzen** — nach dem
+  Schreiben des Graphen, was wie ein gescheiterter Lauf aussah. Fehlende Prozentwerte
+  werden jetzt als „–" dargestellt.
+- **Ein namenloser Schritt verschwand still und zerriss die Schrittkette.** Er wird jetzt
+  gemeldet, und die implizite Verkettung läuft über die benannten Schritte.
+- **Eine zweite Prozessdatei löschte die Kennzahlverknüpfung eines Ergebnisses.** Ergebnisse
+  werden zusammengeführt statt ersetzt.
+- **`design: "ab_test"` ohne erfasste Jahresmenge** warf einen TypeError. Alle vier Designs
+  vertragen jetzt eine fehlende Menge und benennen sie als Lücke.
+- **Kennzahlen ganz ohne Ausgangswert zählten als „bestätigt oder gemessen"** und kehrten
+  damit genau die Aussage um, für die der Satz existiert. Der Bericht unterscheidet jetzt
+  drei Fälle.
+- **Ein Eintrag ohne `id` ließ den Validator mit `KeyError` abstürzen** — ausgerechnet an
+  dem Eintrag, dessen Fehler er gerade melden wollte. Der Fehler wird jetzt gemeldet, und
+  `validate()` verändert den übergebenen Graphen nicht mehr.
+
+### Geändert: Übergaben werden anders gezählt
+
+Ist und Soll zählten Übergaben nach verschiedenen Regeln — das Ist jede Kante mit einem
+Medium, das Soll jeden Wechsel des Ausführenden. Dadurch wies ein Entwurf, der **nichts**
+änderte, eine Verbesserung aus. Beide Seiten verwenden jetzt dieselbe Regel: Eine Übergabe
+ist ein Wechsel des Ausführenden, bei dem mindestens eine Seite ein Mensch ist. Zwei
+Agenten, die innerhalb desselben Systems weiterreichen, kosten Millisekunden und zählen
+nicht. Medienbrüche (E-Mail, Telefon, Papier) bleiben als eigener Ist-Befund erhalten,
+gehen aber nicht in den Vergleich ein, weil ein Soll-Entwurf keine Medien modelliert.
+
+Die Zahlen im Referenzbeispiel ändern sich dadurch, und zwar nach unten. „Auftrag bis
+Rechnung" hat vier statt neun Ist-Übergaben, und das konservative Szenario weist bei dieser
+Kennzahl jetzt −2 aus statt +3: Es setzt einen Agenten an beide Enden einer sonst
+unveränderten Menschenkette und erzeugt damit zwei zusätzliche Wechsel. Dieses Ergebnis
+bleibt so stehen — es ist der Befund, um den es geht.
+
 ### Bekannte Grenzen
 
 Ein Soll-Prozess aus Interviews und Stellenbeschreibungen ist ein Entwurf, keine Prognose.

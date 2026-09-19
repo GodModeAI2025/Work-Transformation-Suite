@@ -66,15 +66,14 @@ def blueprint_totals(bp: dict[str, Any]) -> dict[str, Any]:
 
     rework = [float(s.get("rework_pct")) for s in steps if s.get("rework_pct") is not None]
     human_touches = sum(1 for s in steps if _step_has_human(s))
-    # Übergaben: jeder Wechsel des Ausführenden zwischen aufeinanderfolgenden Schritten.
-    # Parallele Schritte derselben Gruppe zählen nicht als Kette.
+    # Übergaben nach derselben Regel wie im Ist-Prozess (wl.is_handover): Wechsel des
+    # Ausführenden mit mindestens einem Menschen auf einer Seite.
     handovers = 0
     previous = None
     for s in steps:
-        cur = _executor_key(s)
-        if previous is not None and cur != previous:
+        if previous is not None and wl.is_handover(previous, s):
             handovers += 1
-        previous = cur
+        previous = s
     return {
         "steps": len(steps),
         "handling_time_min": wl.round1(handling),
@@ -89,8 +88,8 @@ def blueprint_totals(bp: dict[str, Any]) -> dict[str, Any]:
 
 
 def _executor_key(step: dict[str, Any]) -> str:
-    ex = step.get("executor") or {}
-    return f"{ex.get('type')}:{ex.get('id') or ex.get('name') or ''}"
+    """Gleiche Regel wie wl.executor_key — Ist und Soll müssen Übergaben gleich zählen."""
+    return wl.executor_key(step)
 
 
 def _step_has_human(step: dict[str, Any]) -> bool:
@@ -101,6 +100,9 @@ def _step_has_human(step: dict[str, Any]) -> bool:
 
 # Kennzahlen, bei denen weniger besser ist. Für sie wird das Delta so gedreht,
 # dass ein positiver Wert immer eine Verbesserung bedeutet.
+# media_breaks fehlt hier bewusst: Ein Blueprint modelliert keine Übergabemedien. Stünde
+# die Kennzahl im Soll auf 0, sähe jeder Entwurf so aus, als hätte er sämtliche
+# Medienbrüche beseitigt — auch einer, der die Übergabe gar nicht anfasst.
 LOWER_IS_BETTER = {"steps", "handling_time_min", "wait_time_min", "lead_time_hours",
                    "human_touches", "handovers", "rework_pct", "waste_steps"}
 

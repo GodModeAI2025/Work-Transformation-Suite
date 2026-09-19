@@ -51,6 +51,19 @@ def _enum(value, allowed, default):
     return v if v in allowed else default
 
 
+def _signed(value, suffix: str = "") -> str:
+    """Vorzeichenbehaftete Zahl für die Zusammenfassung, oder ein Strich.
+
+    delta() liefert keinen Prozentwert, wenn der Ist-Wert 0 ist — durch 0 lässt sich keine
+    Veränderung ausdrücken. Das ist ein gültiger Fall (ein Prozess ohne erfasste Zeiten),
+    und er darf die Ausgabe nicht sprengen: Der Graph ist an dieser Stelle längst
+    geschrieben, ein Absturz hier würde nur den Eindruck erwecken, der Lauf sei gescheitert.
+    """
+    if value is None:
+        return "–"
+    return f"{value:+g}{suffix}"
+
+
 def build(graph: dict[str, Any], raw: list) -> tuple[list, list, list]:
     problems: list[str] = []
     proposed_agents: list[str] = []
@@ -328,10 +341,11 @@ def main() -> int:
     for bp in blueprints:
         d = bp["delta"]
         print(f"  {bp['name']}: {bp['soll_totals']['steps']} Schritte "
-              f"({d['steps']['improvement']:+g}), {bp['soll_totals']['human_touches']} Human "
-              f"Touchpoints ({d['human_touches']['improvement']:+g}), Durchlaufzeit "
+              f"({_signed(d.get('steps', {}).get('improvement'))}), "
+              f"{bp['soll_totals']['human_touches']} Human Touchpoints "
+              f"({_signed(d.get('human_touches', {}).get('improvement'))}), Durchlaufzeit "
               f"{bp['soll_totals']['lead_time_hours']} h "
-              f"({d['lead_time_hours']['improvement_pct']:+g} %)")
+              f"({_signed(d.get('lead_time_hours', {}).get('improvement_pct'), suffix=' %')})")
     return 0
 
 

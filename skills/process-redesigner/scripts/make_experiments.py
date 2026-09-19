@@ -139,6 +139,7 @@ def template(graph: dict[str, Any]) -> list[dict[str, Any]]:
 
 def _design_reason(graph, proc, bp, design) -> str:
     vol = _num(proc.get("volume_per_year"))
+    menge = f"rund {int(vol)}" if vol is not None else "unbekannt viele"
     if design == "shadow":
         why = []
         if proc.get("regulated"):
@@ -151,10 +152,14 @@ def _design_reason(graph, proc, bp, design) -> str:
         return ("Schattenbetrieb vorgeschlagen, weil " + " und ".join(why)
                 + ". Der Agent rechnet mit, entscheidet aber nichts.")
     if design == "ab_test":
-        return (f"A/B-Test möglich: rund {int(vol)} Fälle im Jahr, keine Aufsicht, "
-                "keine irreversiblen Entscheidungen.")
+        # Das Design kann auch aus der Experimentkarte kommen, nicht nur aus suggest_design.
+        # Dann ist nicht garantiert, dass eine Jahresmenge erfasst ist.
+        return (f"A/B-Test: {menge} Fälle im Jahr, keine Aufsicht, "
+                "keine irreversiblen Entscheidungen."
+                + ("" if vol is not None else " Ohne erfasste Jahresmenge lässt sich nicht "
+                   "prüfen, ob genug Fälle zusammenkommen — volume_per_year nachtragen."))
     if design == "stepped_rollout":
-        return (f"Für einen A/B-Test zu wenig Menge ({int(vol) if vol else 'unbekannt'} Fälle/Jahr). "
+        return (f"Für einen A/B-Test zu wenig Menge ({menge} Fälle/Jahr). "
                 "Gestaffelt ausrollen, Team für Team, und nach jeder Stufe messen.")
     return ("Zu wenig Fälle für Gruppenvergleiche. Vorher-Nachher, mit ausdrücklichem "
             "Vergleichszeitraum und dem Hinweis, dass saisonale Effekte nicht ausgeschlossen sind.")
@@ -295,8 +300,16 @@ def main() -> int:
     if not src.exists():
         rows = template(graph)
         if not rows:
-            wl.fail("Kein Blueprint im Status 'reviewed' oder 'approved'. Ein Pilot wird für "
-                    "einen entschiedenen Entwurf geplant, nicht für einen Entwurf im Entwurf.")
+            # Kein Abbruch: Ein Pilot wird für einen entschiedenen Entwurf geplant, nicht für
+            # einen Entwurf im Entwurf. Beim ersten Redesign-Durchgang stehen alle Blueprints
+            # noch auf "draft" — das ist der Normalfall, kein Fehler. Exit-Code 3 ist in der
+            # Suite das Signal „hier fehlt eine menschliche Entscheidung"; die Pipeline gibt
+            # dafür einen Hinweis aus und läuft weiter bis zum Dashboard.
+            print("Kein Blueprint im Status 'reviewed' oder 'approved' — noch keine Pilotplanung. "
+                  "Ein Pilot wird für einen entschiedenen Entwurf geplant. Nächster Schritt: "
+                  "Entwürfe fachlich prüfen und in blueprints.json auf 'reviewed' setzen oder "
+                  "über 30_review/decisions.csv freigeben.")
+            return 3
         todo = project / wl.DIR_GRAPH / "experiments_todo.json"
         wl.write_json(todo, rows)
         print(f"Geschrieben: {wl.relpath(todo)} | Vorschläge={len(rows)}")

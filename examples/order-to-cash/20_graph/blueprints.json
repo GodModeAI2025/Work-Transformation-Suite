@@ -271,7 +271,7 @@
   {
     "process": "Auftrag bis Rechnung",
     "scenario": "balanced",
-    "name": "Auftrag bis Rechnung — Übergaben entfallen, Menschen entscheiden Ausnahmen",
+    "name": "Auftrag bis Rechnung — Schritte zusammengelegt, Menschen entscheiden Ausnahmen",
     "summary": "Erfassung und Prüfung werden zu einem Schritt, die Nachverfolgungsliste entfällt, Bonität und Bestätigung laufen agentengestützt. Die Kreditfreigabe wandert in der Regelarbeit vom Teamleiter zum Kreditprüfer, die Rechnungsfreigabe bleibt im Vier-Augen-Prinzip. Aus zehn Schritten werden sechs, aus neun Übergaben fünf.",
     "steps": [
       {

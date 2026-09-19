@@ -118,7 +118,8 @@ def briefing(todo: list[dict[str, Any]]) -> str:
         t = e["ist_totals"]
         fte = e["fte_equivalent"]
         out.append(f"**Ist:** {t['steps']} Schritte, {t['human_touches']} Human Touchpoints, "
-                   f"{t['handovers']} Übergaben, {t['lead_time_hours']} h Durchlaufzeit "
+                   f"{t['handovers']} Übergaben (davon {t['media_breaks']} über ein Medium "
+                   f"statt über ein System), {t['lead_time_hours']} h Durchlaufzeit "
                    f"({t['handling_time_min']} min Arbeit, {t['wait_time_min']} min Warten), "
                    f"{t['rework_pct']} % Nacharbeit"
                    + (f", rund {fte} VZÄ menschliche Arbeit" if fte is not None else ""))

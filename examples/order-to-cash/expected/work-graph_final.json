@@ -701,10 +701,10 @@
           "soll": 48.0
         },
         "handovers": {
-          "change": -3.0,
-          "improvement": 3.0,
-          "improvement_pct": 50.0,
-          "ist": 6,
+          "change": 1.0,
+          "improvement": -1.0,
+          "improvement_pct": -50.0,
+          "ist": 2,
           "soll": 3
         },
         "human_touches": {
@@ -756,9 +756,10 @@
       "ist_totals": {
         "automated_steps": 0,
         "handling_time_min": 68.0,
-        "handovers": 6,
+        "handovers": 2,
         "human_touches": 6,
         "lead_time_hours": 34.1,
+        "media_breaks": 2,
         "rework_pct": 11.0,
         "steps": 6,
         "wait_time_min": 1980.0,
@@ -1015,11 +1016,11 @@
           "soll": 20.0
         },
         "handovers": {
-          "change": -4.0,
-          "improvement": 4.0,
-          "improvement_pct": 44.4,
-          "ist": 9,
-          "soll": 5
+          "change": -1.0,
+          "improvement": 1.0,
+          "improvement_pct": 25.0,
+          "ist": 4,
+          "soll": 3
         },
         "human_touches": {
           "change": -7.0,
@@ -1070,15 +1071,16 @@
       "ist_totals": {
         "automated_steps": 0,
         "handling_time_min": 121.0,
-        "handovers": 9,
+        "handovers": 4,
         "human_touches": 10,
         "lead_time_hours": 42.5,
+        "media_breaks": 2,
         "rework_pct": 8.9,
         "steps": 10,
         "wait_time_min": 2430.0,
         "waste_steps": 1
       },
-      "name": "Auftrag bis Rechnung — Übergaben entfallen, Menschen entscheiden Ausnahmen",
+      "name": "Auftrag bis Rechnung — Schritte zusammengelegt, Menschen entscheiden Ausnahmen",
       "open_assumptions": [
         "Die Kreditvollmacht bis 50.000 EUR für Kreditprüfer ist heute nicht geregelt.",
         "Der Archivzugang über eine Schnittstelle muss geschaffen werden."
@@ -1131,7 +1133,7 @@
       "soll_totals": {
         "automated_steps": 4,
         "handling_time_min": 20.0,
-        "handovers": 5,
+        "handovers": 3,
         "human_touches": 3,
         "lead_time_hours": 5.8,
         "rework_pct": 4.3,
@@ -1354,10 +1356,10 @@
           "soll": 75.0
         },
         "handovers": {
-          "change": -3.0,
-          "improvement": 3.0,
-          "improvement_pct": 33.3,
-          "ist": 9,
+          "change": 2.0,
+          "improvement": -2.0,
+          "improvement_pct": -50.0,
+          "ist": 4,
           "soll": 6
         },
         "human_touches": {
@@ -1409,9 +1411,10 @@
       "ist_totals": {
         "automated_steps": 0,
         "handling_time_min": 121.0,
-        "handovers": 9,
+        "handovers": 4,
         "human_touches": 10,
         "lead_time_hours": 42.5,
+        "media_breaks": 2,
         "rework_pct": 8.9,
         "steps": 10,
         "wait_time_min": 2430.0,
@@ -1781,11 +1784,11 @@
           "soll": 17.0
         },
         "handovers": {
-          "change": -4.0,
-          "improvement": 4.0,
-          "improvement_pct": 66.7,
-          "ist": 6,
-          "soll": 2
+          "change": -1.0,
+          "improvement": 1.0,
+          "improvement_pct": 50.0,
+          "ist": 2,
+          "soll": 1
         },
         "human_touches": {
           "change": -3.0,
@@ -1836,9 +1839,10 @@
       "ist_totals": {
         "automated_steps": 0,
         "handling_time_min": 68.0,
-        "handovers": 6,
+        "handovers": 2,
         "human_touches": 6,
         "lead_time_hours": 34.1,
+        "media_breaks": 2,
         "rework_pct": 11.0,
         "steps": 6,
         "wait_time_min": 1980.0,
@@ -1885,7 +1889,7 @@
       "soll_totals": {
         "automated_steps": 2,
         "handling_time_min": 17.0,
-        "handovers": 2,
+        "handovers": 1,
         "human_touches": 3,
         "lead_time_hours": 3.5,
         "rework_pct": 4.7,
@@ -2023,11 +2027,11 @@
           "soll": 10.0
         },
         "handovers": {
-          "change": -6.0,
-          "improvement": 6.0,
-          "improvement_pct": 66.7,
-          "ist": 9,
-          "soll": 3
+          "change": -3.0,
+          "improvement": 3.0,
+          "improvement_pct": 75.0,
+          "ist": 4,
+          "soll": 1
         },
         "human_touches": {
           "change": -7.0,
@@ -2078,9 +2082,10 @@
       "ist_totals": {
         "automated_steps": 0,
         "handling_time_min": 121.0,
-        "handovers": 9,
+        "handovers": 4,
         "human_touches": 10,
         "lead_time_hours": 42.5,
+        "media_breaks": 2,
         "rework_pct": 8.9,
         "steps": 10,
         "wait_time_min": 2430.0,
@@ -2141,7 +2146,7 @@
       "soll_totals": {
         "automated_steps": 3,
         "handling_time_min": 10.0,
-        "handovers": 3,
+        "handovers": 1,
         "human_touches": 3,
         "lead_time_hours": 1.5,
         "rework_pct": 3.3,
@@ -2309,11 +2314,11 @@
           "soll": 26.0
         },
         "handovers": {
-          "change": -3.0,
-          "improvement": 3.0,
-          "improvement_pct": 50.0,
-          "ist": 6,
-          "soll": 3
+          "change": 0.0,
+          "improvement": 0.0,
+          "improvement_pct": 0.0,
+          "ist": 2,
+          "soll": 2
         },
         "human_touches": {
           "change": -3.0,
@@ -2364,9 +2369,10 @@
       "ist_totals": {
         "automated_steps": 0,
         "handling_time_min": 68.0,
-        "handovers": 6,
+        "handovers": 2,
         "human_touches": 6,
         "lead_time_hours": 34.1,
+        "media_breaks": 2,
         "rework_pct": 11.0,
         "steps": 6,
         "wait_time_min": 1980.0,
@@ -2411,7 +2417,7 @@
       "soll_totals": {
         "automated_steps": 2,
         "handling_time_min": 26.0,
-        "handovers": 3,
+        "handovers": 2,
         "human_touches": 3,
         "lead_time_hours": 8.3,
         "rework_pct": 6.0,
@@ -2601,7 +2607,7 @@
       "rationale": "Fachlich getragen, aber zwei Voraussetzungen fehlen: die schriftliche Kreditvollmacht bis 50.000 EUR und der Archivzugang über eine Schnittstelle. Entscheidung nach Abschluss des Schattenbetriebs, spätestens im September.",
       "role": "Leitung Finanzen",
       "subject_id": "bp_066a2059326c",
-      "subject_name": "Auftrag bis Rechnung — Übergaben entfallen, Menschen entscheiden Ausnahmen",
+      "subject_name": "Auftrag bis Rechnung — Schritte zusammengelegt, Menschen entscheiden Ausnahmen",
       "subject_type": "blueprints",
       "supersedes": null
     },

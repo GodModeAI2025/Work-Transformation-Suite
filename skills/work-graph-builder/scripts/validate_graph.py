@@ -70,15 +70,24 @@ def validate(graph: dict) -> tuple[list[str], list[str]]:
     elif sv != wl.SCHEMA_VERSION:
         warnings.append(f"meta.schema_version={sv!r}: Projekt läuft noch auf altem Schema, "
                         f"migrate_graph.py hebt es auf {wl.SCHEMA_VERSION}")
+    # Arbeitskopie statt Mutation des übergebenen Graphen. Ein Eintrag ohne id wird hier
+    # gemeldet und dann aussortiert: Die Detailprüfungen unten greifen auf it["id"] zu und
+    # würden sonst mit einem KeyError abbrechen — ausgerechnet an dem Eintrag, dessen
+    # eigentlichen Fehler sie gerade melden wollten.
+    data = dict(graph)
     for c in wl.COLLECTIONS:
         if c not in graph or not isinstance(graph[c], list):
             errors.append(f"Sammlung '{c}' fehlt oder ist keine Liste")
-            graph[c] = graph.get(c) or []
+            data[c] = []
 
     ids: dict[str, set[str]] = {}
     for c in wl.COLLECTIONS:
         seen: set[str] = set()
-        for it in graph[c]:
+        kept: list = []
+        for it in data[c]:
+            if not isinstance(it, dict):
+                errors.append(f"{c}: Eintrag ist kein Objekt: {it!r}")
+                continue
             iid = it.get("id")
             if not iid:
                 errors.append(f"{c}: Eintrag ohne id: {it.get('name')!r}")
@@ -86,7 +95,10 @@ def validate(graph: dict) -> tuple[list[str], list[str]]:
             if iid in seen:
                 errors.append(f"{c}: doppelte id {iid}")
             seen.add(iid)
+            kept.append(it)
         ids[c] = seen
+        data[c] = kept
+    graph = data
 
     fam = ids["job_families"]
     clu = ids["job_clusters"]

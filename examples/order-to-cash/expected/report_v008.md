@@ -37,10 +37,10 @@ Verteilung: Eliminiert 1, Transformiert 3, Augmentiert 1.
 
 | # | Prozess | Band | Wert | Ist-Durchlauf | Bestes Szenario | Soll-Durchlauf | Human Touchpoints | Übergaben |
 |---:|---|---|---:|---:|---|---:|---|---|
-| 1 | Rechnung bis Zahlungseingang | Als Nächstes (kippelig) | 6,9 | 34,1 h | Agent-nativ | 3,5 h | 6 → 3 | 6 → 2 |
-| 2 | Auftrag bis Rechnung | Als Nächstes | 6,3 | 42,5 h | Agent-nativ | 1,5 h | 10 → 3 | 9 → 3 |
+| 1 | Rechnung bis Zahlungseingang | Als Nächstes (kippelig) | 6,9 | 34,1 h | Agent-nativ | 3,5 h | 6 → 3 | 2 → 1 |
+| 2 | Auftrag bis Rechnung | Als Nächstes | 6,3 | 42,5 h | Agent-nativ | 1,5 h | 10 → 3 | 4 → 1 |
 
-Belastbarkeit der Kennzahlen: 4 von 6 Ausgangswerten sind bestätigt oder gemessen, 2 sind Schätzungen. Jede Delta-Zahl in diesem Bericht ist aus den Soll-Schritten der Blueprints gerechnet, nicht zugesagt.
+Belastbarkeit der Kennzahlen: 4 von 6 Ausgangswerten sind bestätigt oder gemessen, 2 geschätzt. Jede Delta-Zahl in diesem Bericht ist aus den Soll-Schritten der Blueprints gerechnet, nicht zugesagt.
 
 
 ## Hinweise

@@ -43,15 +43,23 @@ entfernt sie.
 ## Was das Beispiel zeigen soll
 
 **Der Ist-Prozess ist der Befund, nicht der Entwurf.** „Auftrag bis Rechnung" braucht
-gemessene 42 Stunden, davon rund 40 Stunden Liegezeit. Zehn Schritte, neun Übergaben,
-vier Rollen. Einer der Schritte — die Excel-Nachverfolgungsliste — existiert nur, weil ein
-System eine Information nicht ausweist.
+gemessene 42 Stunden, davon rund 40 Stunden Liegezeit. Zehn Schritte, vier Übergaben und
+vier beteiligte Rollen; zwei der Übergaben laufen über E-Mail statt über ein System. Einer
+der Schritte — die Excel-Nachverfolgungsliste — existiert nur, weil ein System eine
+Information nicht ausweist.
 
 **Drei Szenarien, die wirklich verschieden sind.** Konservativ behält jede Kontrolle und
 kommt auf 30 Stunden. Ausgewogen legt Schritte zusammen, streicht die Liste und kommt auf
 6 Stunden. Agent-nativ lässt Auftragsannahme und Bonitätsprüfung gleichzeitig laufen und
 kommt auf 1,5 Stunden — mit zwei Menschen an den Stellen, an denen es um Verantwortung
 geht. Alle drei behalten jede Pflichtkontrolle.
+
+**Und ein unbequemes Ergebnis, das so stehenbleibt.** Bei den Übergaben weist das
+konservative Szenario **−2** aus, also eine Verschlechterung: Es setzt einen Agenten an
+den Anfang und einen ans Ende einer sonst unveränderten Menschenkette und erzeugt damit
+zwei zusätzliche Wechsel des Ausführenden. Genau das ist der Befund, um den es in dieser
+Suite geht — KI auf den Altprozess zu setzen, ohne den Zuschnitt zu ändern, bringt
+strukturell nichts. Ausgewogen kommt auf +1, agent-nativ auf +3.
 
 **Wert schlägt Arbeitszeit.** „Auftrag bis Rechnung" bindet 22,7 Vollzeitäquivalente,
 „Rechnung bis Zahlungseingang" nur 14,9 — trotzdem steht der zweite Prozess vorn. Er ist

@@ -478,6 +478,38 @@ def metric_best_known(metric: dict[str, Any]):
     return None, None, None
 
 
+def executor_key(step: dict[str, Any]) -> str:
+    """Wer einen Schritt ausführt, als vergleichbarer Schlüssel.
+
+    Ist- und Soll-Schritte tragen `executor` in derselben Form, deshalb liefert dieselbe
+    Funktion für beide den Schlüssel — nur so sind Übergaben zwischen Ist und Soll
+    überhaupt vergleichbar.
+    """
+    ex = step.get("executor") or {}
+    return f"{ex.get('type')}:{ex.get('id') or ex.get('name') or ''}"
+
+
+def is_handover(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    """Ist der Übergang von Schritt a nach Schritt b eine Übergabe?
+
+    Eine Übergabe ist ein Wechsel des Ausführenden, bei dem mindestens eine Seite ein
+    Mensch ist. Das ist die Größe, die in einer Organisation tatsächlich etwas kostet:
+    ein Postkorb, eine Wartezeit, ein Kontextverlust. Zwei Agenten, die innerhalb
+    desselben Systems weiterreichen, kosten Millisekunden — sie als Übergabe zu zählen,
+    würde jeden Entwurf mit mehreren Spezialagenten schlechter aussehen lassen als eine
+    lange Kette derselben Sachbearbeitung, und das wäre schlicht falsch.
+
+    Dieselbe Funktion gilt für Ist-Schritte und Blueprint-Schritte. Zwei verschiedene
+    Definitionen hätten zur Folge, dass im Ist-Soll-Vergleich zwei verschiedene Größen
+    nebeneinander stünden — ein Entwurf, der nichts ändert, sähe dann nach einer
+    Verbesserung aus.
+    """
+    if executor_key(a) == executor_key(b):
+        return False
+    types = {(a.get("executor") or {}).get("type"), (b.get("executor") or {}).get("type")}
+    return "human" in types
+
+
 def step_is_automated(step: dict[str, Any]) -> bool:
     return (step.get("executor") or {}).get("type") in ("agent", "system", "rule")
 
@@ -496,10 +528,23 @@ def process_totals(graph: dict[str, Any], process_id: str) -> dict[str, Any]:
     """
     steps = steps_of(graph, process_id)
     edges = edges_of(graph, process_id)
+    by_id = {s["id"]: s for s in steps}
     handling = sum(float(s.get("handling_time_min") or 0) for s in steps)
     wait = sum(float(s.get("wait_time_min") or 0) for s in steps)
     rework = [float(s.get("rework_pct")) for s in steps if s.get("rework_pct") is not None]
-    handovers = sum(1 for e in edges if (e.get("handover") or "none") != "none")
+
+    # Übergaben nach der gemeinsamen Regel (is_handover), damit Ist und Soll dieselbe
+    # Größe messen. Die Kante liefert die Reihenfolge, nicht das Kriterium.
+    handovers = 0
+    for e in edges:
+        a, b = by_id.get(e.get("from_step_id")), by_id.get(e.get("to_step_id"))
+        if a is not None and b is not None and is_handover(a, b):
+            handovers += 1
+    # Medienbrüche bleiben getrennt erfasst: Sie beschreiben, WIE übergeben wird, nicht ob.
+    # Für das Redesign sind sie der interessantere Befund, für den Vergleich taugen sie nicht,
+    # weil ein Soll-Entwurf keine Medien modelliert.
+    media_breaks = sum(1 for e in edges
+                       if (e.get("handover") or "none") in ("email", "call", "meeting", "document"))
     return {
         "steps": len(steps),
         "handling_time_min": round1(handling),
@@ -508,6 +553,7 @@ def process_totals(graph: dict[str, Any], process_id: str) -> dict[str, Any]:
         "human_touches": sum(1 for s in steps if step_has_human(s)),
         "automated_steps": sum(1 for s in steps if step_is_automated(s)),
         "handovers": handovers,
+        "media_breaks": media_breaks,
         "rework_pct": round1(sum(rework) / len(rework)) if rework else 0.0,
         "waste_steps": sum(1 for s in steps if s.get("value_type") == "waste"),
     }
