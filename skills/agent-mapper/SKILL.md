@@ -87,6 +87,43 @@ Bau-Reihenfolge (kurzfristiger Horizont und geringe Komplexität zuerst, dann We
 Agent ist oft nicht der erste, den man baut; berichte beide Rangfolgen und sage, wo sie auseinanderfallen.
 Ergebnis: neue Graph-Version `work-graph_vNNN_mapper.json`.
 
+### 4b. Capability Contract je Agent, der gebaut werden soll
+
+Ein Agent mit Namen, Muster und Aufgabenliste reicht für eine Portfoliodiskussion. Er reicht
+nicht, um ihn zu bauen, zu betreiben oder freizugeben. Dafür braucht er einen Vertrag:
+was ihn auslöst, worauf er zugreift, wie weit seine Entscheidung reicht, was passiert, wenn er
+scheitert, und woran man merkt, dass er schlechter geworden ist.
+
+Format und Regeln: `references/contract-format.md`. Der Vertrag steht als `contract` im
+jeweiligen Eintrag von `agents.json`.
+
+**Nenne keine Modellnamen.** Nicht aus Prinzipienreiterei, sondern weil Modelle schneller
+wechseln als Prozesse: Ein Vertrag, der ein Modell festlegt, erzwingt bei jedem Wechsel eine
+Prozessänderung und eine neue Freigabe. Was gebraucht wird, steht als Anforderung in
+`capability_profile`. Der Validator lehnt konkrete Modellnamen ab.
+
+Drei Regeln setzt der Validator durch. Alle drei stammen aus derselben Erfahrung:
+Agentenprojekte scheitern nicht am Modell, sondern am Betrieb.
+
+- Schreibrechte brauchen `audit_events` und `idempotency_key`. Eine Schreibaktion ohne Spur ist
+  nicht prüfbar; ein Wiederholungslauf ohne Schlüssel schreibt doppelt.
+- `decision_scope: execute_irreversible` braucht einen `human_checkpoint`. Was sich nicht
+  zurücknehmen lässt, entscheidet kein Agent allein.
+- Status `pilot` oder `live` braucht ein `evaluation_set`. Ohne Testmenge merkt niemand, wenn
+  die Qualität nachlässt.
+
+```
+python3 <skill>/scripts/validate_contracts.py --project ./projekte/<name>
+python3 <skill>/scripts/export_contracts.py --project ./projekte/<name>
+```
+
+`validate_contracts.py` prüft zusätzlich gegen den Prozess: Reicht die Entscheidungsreichweite
+für die Schritte, die der Agent ausführt? Soll er in ein System schreiben, das ohne
+Schnittstelle erfasst ist? Tragen seine Schritte Kontrollen, die der Vertrag nicht abbildet?
+
+Ein Agent kann andere koordinieren (`orchestrates`). Der Orchestrator sollte dann keine eigenen
+Schreibrechte haben — sonst ist im Fehlerfall nicht mehr feststellbar, wer geschrieben hat.
+
 ### 5. Ergebnis prüfen und berichten
 
 Sieh dir `agents[]` im Graphen an. Nenne dem Nutzer die fünf Agenten mit höchstem Wert
@@ -94,7 +131,20 @@ Sieh dir `agents[]` im Graphen an. Nenne dem Nutzer die fünf Agenten mit höchs
 FTE-Äquivalent (oder Abdeckungspunkten), Sourcing, Horizont und der wichtigsten Vorbedingung. Weise auf nicht zugeordnete Aufgaben hin. Wenn ein einzelner Agent mehr als die
 Hälfte aller Abdeckungspunkte trägt, ist er vermutlich zu breit geschnitten; schlage eine Teilung vor.
 
-Nächster Schritt: `transformation-dashboard`.
+Nächster Schritt: `process-redesigner`, wenn Prozesse erfasst sind — sonst
+`transformation-dashboard`.
+
+## Ein Prozessschritt, mehrere Fähigkeiten
+
+Im Diagnosemodus gilt: genau ein Agent je nicht-manueller Aufgabe. Für eine Opportunity Map ist
+das die ehrlichere Darstellung, weil sich Abdeckungen dann addieren lassen.
+
+Im Redesignmodus stimmt die Annahme nicht mehr. Ein Prozessschritt kann menschliche,
+regelbasierte, systemische und agentische Fähigkeiten kombinieren, und ein Orchestrator
+koordiniert mehrere Spezialagenten. `compute_coverage.py --shared-tasks` lässt
+Überschneidungen zu, weist sie je Agent aus (`overlap_task_ids`) und meldet am Ende eine
+bereinigte Gesamtabdeckung. **Diese bereinigte Zahl gehört in die Portfoliodiskussion** — die
+Summe der Einzelagenten zählt dieselbe Arbeit mehrfach.
 
 ## Neue Rollen
 

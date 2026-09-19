@@ -23,10 +23,22 @@ Ergebnis in `40_output/` (NNN = Graph-Version):
 
 - `dashboard_vNNN.html`: eine Datei, ohne externe Ressourcen, offline nutzbar, Corporate-Farbwelt (per Theme-Datei anpassbar)
 - `roles_vNNN.csv`, `tasks_vNNN.csv`, `agents_vNNN.csv`: alle Werte, Semikolon-getrennt, UTF-8
-- `report_vNNN.md`: Kurzbericht mit Kennzahlen, Rollentabelle, Agententabelle
+- `processes_vNNN.csv`, `blueprints_vNNN.csv`: nur wenn Prozesse erfasst sind
+- `report_vNNN.md`: Kurzbericht mit Kennzahlen, Rollentabelle, Agententabelle, Prozessportfolio
 
 `--stamp` schreibt ein Datum in die Kopfzeile. Ohne `--stamp` ist die Datei byteidentisch
 reproduzierbar (nützlich für Diffs zwischen Versionen). Für Präsentationen ist `--stamp` sinnvoll.
+
+Sobald der Graph Prozesse enthält, ist die **Prozessansicht die Hauptansicht**: Portfolio,
+Ist/Soll je Prozess mit umschaltbaren Szenarien, Pilotkarten und ein Governance-Abschnitt. Die
+Rollenansicht bleibt vollständig erhalten, rückt aber dahinter — als Folgenansicht des
+Prozessredesigns. Das ist Absicht: Sobald Organisationskästchen zuerst kommen, wird das
+Organigramm zum Designobjekt, und genau das verhindert ein Redesign vom Ergebnis her.
+
+Ohne Prozesse verhält sich das Dashboard wie bisher und zeigt die Rollenansicht zuerst.
+
+Die Szenarien schalten über verborgene Radiobuttons um, ohne JavaScript. Das Dashboard bleibt
+damit auch in Dateivorschauen bedienbar, in denen kein Skript ausgeführt wird.
 
 ### 2. Ansehen und prüfen
 
@@ -39,6 +51,10 @@ reproduzierbar (nützlich für Diffs zwischen Versionen). Für Präsentationen i
   will, gehören sie dort hin (`TRANSFORMATION_LOGIC` in `task-scorer/scripts/score_roles.py`).
 - Agentenbibliothek: Trägt ein Agent mehr als die Hälfte aller Abdeckungspunkte? Dann zurück
   zum `agent-mapper` und teilen.
+- Prozessansicht (wenn vorhanden): Steht über einem Prozess der Hinweis, dass das Modell die
+  gemessene Durchlaufzeit nicht erklärt? Dann sind die Deltas darunter auf zu kleiner Grundmenge
+  gerechnet — das gehört in deine Einordnung, nicht ins Kleingedruckte. Und: Kippt ein
+  Prioritätsband schon bei ±1? Dann ist die Reihenfolge eine Richtung, keine Rangfolge.
 
 Der Nutzer kann das Dashboard nicht im Chat sehen. Übergib die Datei (SendUserFile) und, wenn ein
 Ordner verbunden ist, lege sie dort ab. Wenn der Nutzer das Dashboard teilen will, veröffentliche
@@ -46,9 +62,14 @@ es als Artifact; die Datei ist dafür bereits vollständig eigenständig.
 
 ### 3. Berichten
 
-Nenne dem Nutzer: Version, Verteilung der Disruptionstypen, die drei Rollen mit dem höchsten
-Score, die drei priorisierten Agenten mit FTE-Äquivalent, den Anteil ungeprüfter Rollen, und
-die Belastbarkeits- und Stabilitätsverteilung (wie viele Rollen ungeprüft, wie viele grenznah
+Wenn Prozesse erfasst sind, beginne mit ihnen: welcher Prozess zuerst und in welchem Band,
+welches Szenario wie viel gegenüber dem konservativen bringt, wie viele Ausgangswerte gemessen
+und wie viele geschätzt sind, und welche Pflichtkontrollen für das empfohlene Szenario angefasst
+werden müssen. Die Rollenwirkung kommt danach — sie ist die Folge, nicht der Ausgangspunkt.
+
+Nenne dem Nutzer außerdem: Version, Verteilung der Disruptionstypen, die drei Rollen mit dem
+höchsten Score, die drei priorisierten Agenten mit FTE-Äquivalent, den Anteil ungeprüfter Rollen,
+und die Belastbarkeits- und Stabilitätsverteilung (wie viele Rollen ungeprüft, wie viele grenznah
 oder wackelig). Eine Rollenkarte, in der alle Rollen „ungeprüft" sind, ist ein Gesprächsangebot
 an den Fachbereich, kein Ergebnis; sag das so. Weise
 darauf hin, dass alle Werte KI-generiert und durch Overrides überschreibbar sind, und dass die

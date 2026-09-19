@@ -12,17 +12,33 @@ jobs:
   check:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.9", "3.13"]
+        python-version: ["3.9", "3.11", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Skripte kompilieren
-        run: python -m py_compile skills/*/scripts/*.py
-      - name: Suite-Check (Skills, Bibliothekskopien, Frontmatter, dist-Pakete)
+        run: python -m py_compile skills/*/scripts/*.py tools/*.py
+
+      - name: Suite-Check (Skills, Bibliothekskopien, Referenzen, Frontmatter, dist-Pakete)
         run: python skills/work-transformation/scripts/check_suite.py
+
+      - name: Bibliothekskopien identisch
+        run: python tools/sync_shared.py --check
+
+      - name: dist-Pakete aktuell
+        run: python tools/pack_skills.py --check
+
+      - name: Testsuite (Einheiten, Validator, Redesign, End-to-End)
+        run: python -m unittest discover -v
+
+      - name: Referenzbeispiel ergibt den hinterlegten Stand
+        run: python tools/refresh_example.py --check
+
       - name: Leeres Projekt anlegen, Pipeline muss an der ersten Claude-Eingabe anhalten
         run: |
           python skills/work-graph-builder/scripts/init_project.py --project "$RUNNER_TEMP/ci" \

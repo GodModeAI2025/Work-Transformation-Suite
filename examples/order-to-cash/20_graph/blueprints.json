@@ -1,0 +1,1067 @@
+[
+  {
+    "process": "Auftrag bis Rechnung",
+    "scenario": "conservative",
+    "name": "Auftrag bis Rechnung — KI assistiert, Kontrollen unverändert",
+    "summary": "Der Ablauf bleibt wie er ist. Erfassung und Versand übernimmt ein Agent, alle übrigen Schritte werden durch bessere Vorbereitung kürzer. Jede heutige Kontrolle bleibt unverändert bestehen. Das ist die Untergrenze und der Vergleichsmaßstab für die beiden anderen Szenarien.",
+    "steps": [
+      {
+        "name": "Auftrag erfassen",
+        "operator": "automate",
+        "from_steps": [
+          "Auftrag erfassen"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Auftragserfassungs-Agent"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "handling_time_min": 2,
+        "wait_time_min": 30,
+        "rework_pct": 6,
+        "human_gate": {
+          "when": "Konfidenz unter 0,9 oder kein gültiger Rahmenvertrag",
+          "role": "Auftragssachbearbeiter"
+        },
+        "rationale": "Die Übernahme aus Bestelldokumenten ist strukturiert und gut belegt; Fehler fallen in der anschließenden Prüfung ohnehin auf.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Bestellformate der zwanzig größten Kunden decken über 80 Prozent des Volumens ab."
+      },
+      {
+        "name": "Auftragsdaten prüfen",
+        "operator": "simplify",
+        "from_steps": [
+          "Auftragsdaten prüfen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Auftragssachbearbeiter"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 8,
+        "wait_time_min": 180,
+        "rework_pct": 12,
+        "rationale": "Der Agent liefert eine Abweichungsliste mit; geprüft wird nur noch, was abweicht, statt jede Position.",
+        "metric": "Rechnungskorrekturquote",
+        "assumption": "Die Abweichungsliste ist vollständig; stille Abweichungen gibt es nicht."
+      },
+      {
+        "name": "Auftrag in Nachverfolgungsliste eintragen",
+        "operator": "simplify",
+        "from_steps": [
+          "Auftrag in Nachverfolgungsliste eintragen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Auftragssachbearbeiter"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 3,
+        "wait_time_min": 90,
+        "rework_pct": 5,
+        "rationale": "Die Liste bleibt in diesem Szenario bestehen, wird aber aus dem ERP vorbefüllt statt von Hand geführt.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Teamsteuerung braucht die Liste weiterhin in ihrer heutigen Form."
+      },
+      {
+        "name": "Bonität prüfen",
+        "operator": "simplify",
+        "from_steps": [
+          "Bonität prüfen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Kreditprüfer"
+        },
+        "systems": [
+          "Bonitätsauskunft",
+          "ERP"
+        ],
+        "controls": [
+          "Kreditlimitprüfung"
+        ],
+        "handling_time_min": 15,
+        "wait_time_min": 300,
+        "rework_pct": 5,
+        "rationale": "Die Auskunft wird automatisch angefragt und mit der internen Historie zusammengeführt; der Kreditprüfer bewertet nur noch.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Schnittstelle zur Auskunftei liefert innerhalb von Minuten."
+      },
+      {
+        "name": "Limit freigeben",
+        "operator": "human_gate",
+        "from_steps": [
+          "Limit freigeben"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Teamleitung Order-to-Cash"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "controls": [
+          "Kreditlimitprüfung"
+        ],
+        "handling_time_min": 10,
+        "wait_time_min": 300,
+        "rework_pct": 3,
+        "human_gate": {
+          "when": "Auftragswert über dem Kreditlimit",
+          "role": "Teamleitung Order-to-Cash"
+        },
+        "rationale": "Die Freigabe über dem Limit bleibt unverändert bei der Teamleitung. In diesem Szenario wird an den Kontrollen nichts geändert.",
+        "metric": "Aufträge über Kreditlimit ohne Freigabe"
+      },
+      {
+        "name": "Auftragsbestätigung senden",
+        "operator": "simplify",
+        "from_steps": [
+          "Auftragsbestätigung senden"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Auftragssachbearbeiter"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "handling_time_min": 4,
+        "wait_time_min": 90,
+        "rework_pct": 3,
+        "rationale": "Die Bestätigung wird aus dem freigegebenen Auftrag vorbefüllt; der Sachbearbeiter prüft und sendet.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Textbausteine je Kundengruppe sind gepflegt."
+      },
+      {
+        "name": "Leistungsnachweis zusammenstellen",
+        "operator": "simplify",
+        "from_steps": [
+          "Leistungsnachweis zusammenstellen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Fakturierungssachbearbeiter"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 14,
+        "wait_time_min": 420,
+        "rework_pct": 16,
+        "rationale": "Lieferscheine und Stundennachweise werden vorgeschlagen zugeordnet; offen bleibt nur, was nicht eindeutig ist.",
+        "metric": "Rechnungskorrekturquote",
+        "assumption": "Lieferscheine tragen durchgängig die Auftragsnummer."
+      },
+      {
+        "name": "Rechnung erstellen",
+        "operator": "simplify",
+        "from_steps": [
+          "Rechnung erstellen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Fakturierungssachbearbeiter"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 10,
+        "wait_time_min": 120,
+        "rework_pct": 7,
+        "rationale": "Positionen und Steuerkennzeichen werden aus der Abrechnungsgrundlage vorgeschlagen.",
+        "metric": "Rechnungskorrekturquote",
+        "assumption": "Die Steuerlogik ist als Regelwerk abgebildet und gepflegt."
+      },
+      {
+        "name": "Rechnung freigeben",
+        "operator": "human_gate",
+        "from_steps": [
+          "Rechnung freigeben"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Fakturierungssachbearbeiter"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "controls": [
+          "Vier-Augen-Prinzip Rechnungsfreigabe"
+        ],
+        "handling_time_min": 8,
+        "wait_time_min": 180,
+        "rework_pct": 5,
+        "human_gate": {
+          "when": "immer, durch eine zweite Person",
+          "role": "Fakturierungssachbearbeiter"
+        },
+        "rationale": "Die Rechnung ist der Moment, in dem sich das Unternehmen festlegt. Das Vier-Augen-Prinzip bleibt unverändert.",
+        "metric": "Rechnungskorrekturquote"
+      },
+      {
+        "name": "Rechnung versenden und archivieren",
+        "operator": "automate",
+        "from_steps": [
+          "Rechnung versenden und archivieren"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Fakturierungs-Agent"
+        },
+        "systems": [
+          "ERP",
+          "Archiv",
+          "E-Mail"
+        ],
+        "controls": [
+          "Rechnungsarchivierung GoBD"
+        ],
+        "handling_time_min": 1,
+        "wait_time_min": 10,
+        "rework_pct": 1,
+        "rationale": "Versand und Archivierung sind technische Schritte mit klaren Regeln; die Archivierungspflicht bleibt als Kontrolle bestehen.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Das Archiv nimmt Belege über eine Schnittstelle entgegen."
+      }
+    ],
+    "removed_steps": [],
+    "control_coverage": {
+      "retained": [
+        "Kreditlimitprüfung",
+        "Vier-Augen-Prinzip Rechnungsfreigabe",
+        "Rechnungsarchivierung GoBD"
+      ],
+      "replaced": [],
+      "dropped": []
+    },
+    "projected_metrics": [
+      {
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "value": 30,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Rechnungskorrekturquote",
+        "value": 7,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Aufträge über Kreditlimit ohne Freigabe",
+        "value": 1.5,
+        "basis": "estimated"
+      }
+    ],
+    "open_assumptions": [
+      "Der Archivzugang über eine Schnittstelle ist heute nicht vorhanden und muss geschaffen werden."
+    ],
+    "risks": [
+      "Die Zeitgewinne entstehen überwiegend aus kürzerer Bearbeitung, nicht aus kürzerer Liegezeit. Wenn die Liegezeiten bleiben, bleibt auch die Durchlaufzeit weitgehend."
+    ],
+    "status": "reviewed"
+  },
+  {
+    "process": "Auftrag bis Rechnung",
+    "scenario": "balanced",
+    "name": "Auftrag bis Rechnung — Übergaben entfallen, Menschen entscheiden Ausnahmen",
+    "summary": "Erfassung und Prüfung werden zu einem Schritt, die Nachverfolgungsliste entfällt, Bonität und Bestätigung laufen agentengestützt. Die Kreditfreigabe wandert in der Regelarbeit vom Teamleiter zum Kreditprüfer, die Rechnungsfreigabe bleibt im Vier-Augen-Prinzip. Aus zehn Schritten werden sechs, aus neun Übergaben fünf.",
+    "steps": [
+      {
+        "name": "Auftrag erfassen und prüfen",
+        "operator": "merge",
+        "from_steps": [
+          "Auftrag erfassen",
+          "Auftragsdaten prüfen"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Auftragserfassungs-Agent"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "handling_time_min": 3,
+        "wait_time_min": 20,
+        "rework_pct": 5,
+        "human_gate": {
+          "when": "Konfidenz unter 0,9, kein gültiger Rahmenvertrag oder Preisabweichung über 2 Prozent",
+          "role": "Auftragssachbearbeiter"
+        },
+        "rationale": "Erfassung und Vertragsabgleich arbeiten auf denselben Daten. Getrennt gehalten kosten sie vier Stunden Liegezeit für eine Übergabe an dieselbe Rolle.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Der Agent erkennt Abweichungen zuverlässig genug, dass eine getrennte Prüfung entbehrlich wird."
+      },
+      {
+        "name": "Bonität bewerten",
+        "operator": "automate",
+        "from_steps": [
+          "Bonität prüfen"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Bonitäts-Agent"
+        },
+        "systems": [
+          "Bonitätsauskunft",
+          "ERP"
+        ],
+        "controls": [
+          "Kreditlimitprüfung"
+        ],
+        "handling_time_min": 2,
+        "wait_time_min": 30,
+        "rework_pct": 4,
+        "rationale": "Auskunft einholen und mit der Zahlungshistorie verrechnen ist eine Datenzusammenführung. Der Agent schlägt vor, er entscheidet nicht.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Auskunftei ist über eine Schnittstelle erreichbar und antwortet in Minuten."
+      },
+      {
+        "name": "Limit bestätigen",
+        "operator": "human_gate",
+        "from_steps": [
+          "Limit freigeben"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Kreditprüfer"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "controls": [
+          "Kreditlimitprüfung"
+        ],
+        "handling_time_min": 4,
+        "wait_time_min": 120,
+        "rework_pct": 3,
+        "human_gate": {
+          "when": "immer; Auftragswert über 50.000 EUR zusätzlich durch die Teamleitung",
+          "role": "Kreditprüfer"
+        },
+        "rationale": "Die Kontrolle bleibt vollständig erhalten, rückt aber näher an die Fachkenntnis. Die Teamleitung entscheidet nur noch die großen Fälle statt jeden.",
+        "metric": "Aufträge über Kreditlimit ohne Freigabe",
+        "assumption": "Die Kreditprüfer haben die Vollmacht bis 50.000 EUR; das muss schriftlich geregelt werden."
+      },
+      {
+        "name": "Auftragsbestätigung senden",
+        "operator": "automate",
+        "from_steps": [
+          "Auftragsbestätigung senden"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Auftragserfassungs-Agent"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "handling_time_min": 1,
+        "wait_time_min": 5,
+        "rework_pct": 2,
+        "rationale": "Aus einem freigegebenen Auftrag entsteht die Bestätigung regelbasiert; ein menschlicher Zwischenschritt fügt nichts hinzu.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Textbausteine je Kundengruppe sind gepflegt und freigegeben."
+      },
+      {
+        "name": "Rechnung vorbereiten",
+        "operator": "merge",
+        "from_steps": [
+          "Leistungsnachweis zusammenstellen",
+          "Rechnung erstellen"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Fakturierungs-Agent"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 4,
+        "wait_time_min": 60,
+        "rework_pct": 8,
+        "rationale": "Nachweise zusammenstellen und daraus die Rechnung erzeugen ist ein Arbeitsgang, der heute nur getrennt ist, weil er in zwei Postkörben liegt. Hier entsteht die meiste Nacharbeit.",
+        "metric": "Rechnungskorrekturquote",
+        "assumption": "Lieferscheine tragen durchgängig die Auftragsnummer; sonst bleibt die Zuordnung manuell."
+      },
+      {
+        "name": "Rechnung freigeben und versenden",
+        "operator": "merge",
+        "from_steps": [
+          "Rechnung freigeben",
+          "Rechnung versenden und archivieren"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Fakturierungssachbearbeiter"
+        },
+        "systems": [
+          "ERP",
+          "Archiv",
+          "E-Mail"
+        ],
+        "controls": [
+          "Vier-Augen-Prinzip Rechnungsfreigabe",
+          "Rechnungsarchivierung GoBD"
+        ],
+        "handling_time_min": 6,
+        "wait_time_min": 90,
+        "rework_pct": 4,
+        "human_gate": {
+          "when": "immer, durch eine zweite Person",
+          "role": "Fakturierungssachbearbeiter"
+        },
+        "rationale": "Freigabe und Versand sind heute zwei Schritte mit vier Stunden Liegezeit dazwischen. Mit der Freigabe löst derselbe Klick Versand und Archivierung aus; das Vier-Augen-Prinzip bleibt unverändert.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Das Archiv nimmt Belege über eine Schnittstelle entgegen."
+      }
+    ],
+    "removed_steps": [
+      {
+        "step": "Auftrag in Nachverfolgungsliste eintragen",
+        "rationale": "Die Liste existiert nur, weil das ERP den Bearbeitungsstand über Bereichsgrenzen hinweg nicht ausweist. Der Fallzustand liegt künftig im ERP; die Liste bildet ihn doppelt und veraltet zwischen zwei Pflegeläufen.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Teamsteuerung akzeptiert die ERP-Auswertung als Ersatz.",
+        "replacement": "Statusauswertung im ERP, täglich automatisch an die Teamleitung"
+      }
+    ],
+    "control_coverage": {
+      "retained": [
+        "Kreditlimitprüfung",
+        "Vier-Augen-Prinzip Rechnungsfreigabe",
+        "Rechnungsarchivierung GoBD"
+      ],
+      "replaced": [],
+      "dropped": []
+    },
+    "projected_metrics": [
+      {
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "value": 6,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Rechnungskorrekturquote",
+        "value": 5,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Aufträge über Kreditlimit ohne Freigabe",
+        "value": 0.5,
+        "basis": "estimated"
+      }
+    ],
+    "open_assumptions": [
+      "Die Kreditvollmacht bis 50.000 EUR für Kreditprüfer ist heute nicht geregelt.",
+      "Der Archivzugang über eine Schnittstelle muss geschaffen werden."
+    ],
+    "risks": [
+      "Wenn der Agent Abweichungen übersieht, fehlt die getrennte Prüfung als zweites Netz. Gegenmaßnahme: Konfidenzschwelle 0,9 und Stichprobe 10 Prozent in den ersten drei Monaten."
+    ],
+    "status": "reviewed"
+  },
+  {
+    "process": "Auftrag bis Rechnung",
+    "scenario": "agent_native",
+    "name": "Auftrag bis Rechnung — vom Ergebnis her gebaut",
+    "summary": "Der Prozess wird vom gewünschten Ergebnis aus neu geschnitten: Auftragsannahme und Bonitätsbewertung laufen gleichzeitig statt nacheinander, die Rechnung entsteht aus demselben Datenbestand, und Menschen greifen an genau zwei Stellen ein — beim Kreditlimit über der Vollmachtsgrenze und bei der Rechnungsfreigabe. Aus zehn Schritten werden vier.",
+    "steps": [
+      {
+        "name": "Auftrag aufnehmen, prüfen und bestätigen",
+        "operator": "merge",
+        "from_steps": [
+          "Auftrag erfassen",
+          "Auftragsdaten prüfen",
+          "Auftragsbestätigung senden"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Auftragserfassungs-Agent"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "parallel_group": "eingang",
+        "handling_time_min": 2,
+        "wait_time_min": 10,
+        "rework_pct": 3,
+        "human_gate": {
+          "when": "kein gültiger Rahmenvertrag oder Preisabweichung über 2 Prozent",
+          "role": "Auftragssachbearbeiter"
+        },
+        "rationale": "Erfassen, prüfen und bestätigen arbeiten auf demselben Datensatz und trennen sich heute nur durch Postkörbe. Zusammengelegt entfallen zwei Übergaben und drei Wartestrecken.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Der Agent kann eine Bestätigung ohne menschliche Zwischenprüfung versenden, solange Vertrag und Preise stimmen."
+      },
+      {
+        "name": "Bonität und Limit bestimmen",
+        "operator": "parallelize",
+        "from_steps": [
+          "Bonität prüfen",
+          "Limit freigeben"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Bonitäts-Agent"
+        },
+        "systems": [
+          "Bonitätsauskunft",
+          "ERP"
+        ],
+        "controls": [
+          "Kreditlimitprüfung"
+        ],
+        "parallel_group": "eingang",
+        "handling_time_min": 2,
+        "wait_time_min": 15,
+        "rework_pct": 3,
+        "human_gate": {
+          "when": "Limitvorschlag über 50.000 EUR oder Konfidenz unter 0,85",
+          "role": "Kreditprüfer"
+        },
+        "rationale": "Die Bonität hängt am Kunden, nicht am Auftragsinhalt. Sie kann gleichzeitig mit der Auftragsaufnahme laufen statt danach — das spart die gesamte Wartestrecke von acht Stunden.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Bonitätsauskunft ist in Minuten verfügbar und darf vor der endgültigen Auftragsprüfung angefragt werden."
+      },
+      {
+        "name": "Rechnung erzeugen und prüfen",
+        "operator": "merge",
+        "from_steps": [
+          "Leistungsnachweis zusammenstellen",
+          "Rechnung erstellen"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Fakturierungs-Agent"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 2,
+        "wait_time_min": 20,
+        "rework_pct": 4,
+        "rationale": "Nachweise, Rechnung und Prüfbefund entstehen aus demselben Datenbestand in einem Lauf. Getrennt gehalten kosten sie dreizehn Stunden Liegezeit.",
+        "metric": "Rechnungskorrekturquote",
+        "assumption": "Alle abrechnungsrelevanten Belege liegen strukturiert im ERP vor."
+      },
+      {
+        "name": "Rechnung freigeben und versenden",
+        "operator": "merge",
+        "from_steps": [
+          "Rechnung freigeben",
+          "Rechnung versenden und archivieren"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Fakturierungssachbearbeiter"
+        },
+        "systems": [
+          "ERP",
+          "Archiv",
+          "E-Mail"
+        ],
+        "controls": [
+          "Vier-Augen-Prinzip Rechnungsfreigabe",
+          "Rechnungsarchivierung GoBD"
+        ],
+        "handling_time_min": 4,
+        "wait_time_min": 45,
+        "rework_pct": 3,
+        "human_gate": {
+          "when": "immer, durch eine zweite Person",
+          "role": "Fakturierungssachbearbeiter"
+        },
+        "rationale": "Hier legt sich das Unternehmen gegenüber dem Kunden fest, und der Schritt ist nicht umkehrbar. Diese Verantwortungsgrenze bleibt auch in einem agent-nativen Prozess beim Menschen.",
+        "metric": "Rechnungskorrekturquote",
+        "assumption": "Freigabe, Versand und Archivierung lösen technisch in einem Vorgang aus; scheitert die Archivierung, darf die Rechnung nicht versendet sein."
+      }
+    ],
+    "removed_steps": [
+      {
+        "step": "Auftrag in Nachverfolgungsliste eintragen",
+        "rationale": "Die Liste bildet einen Zustand ab, den der Prozess künftig selbst führt. Sie hat keinen Empfänger außerhalb des Teams.",
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "assumption": "Die Teamsteuerung akzeptiert die ERP-Auswertung als Ersatz.",
+        "replacement": "Fallzustand im ERP, Auswertung auf Abruf"
+      }
+    ],
+    "control_coverage": {
+      "retained": [
+        "Kreditlimitprüfung",
+        "Vier-Augen-Prinzip Rechnungsfreigabe",
+        "Rechnungsarchivierung GoBD"
+      ],
+      "replaced": [],
+      "dropped": []
+    },
+    "agents": [
+      "Order-to-Cash-Orchestrator"
+    ],
+    "projected_metrics": [
+      {
+        "metric": "Durchlaufzeit Auftrag bis Rechnung",
+        "value": 3,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Rechnungskorrekturquote",
+        "value": 4,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Aufträge über Kreditlimit ohne Freigabe",
+        "value": 0.3,
+        "basis": "estimated"
+      }
+    ],
+    "open_assumptions": [
+      "Bonitätsanfrage vor abgeschlossener Auftragsprüfung ist vertraglich mit der Auskunftei zu klären.",
+      "Die Kreditvollmacht bis 50.000 EUR für Kreditprüfer ist heute nicht geregelt.",
+      "Der Fallzustand muss im ERP über Bereichsgrenzen hinweg sichtbar sein; heute ist er es nicht."
+    ],
+    "risks": [
+      "Parallelität erzeugt Fälle, in denen die Bonität negativ ausfällt, nachdem der Auftrag bereits bestätigt wurde. Gegenmaßnahme: Bestätigung mit Vorbehalt bei Neukunden ohne Limit.",
+      "Vier von zehn Schritten fallen weg — der Wissensaufbau der Sachbearbeitung über diese Schritte fällt mit weg. Gegenmaßnahme: Ausnahmebearbeitung bewusst rotieren."
+    ],
+    "status": "draft"
+  },
+  {
+    "process": "Rechnung bis Zahlungseingang",
+    "scenario": "conservative",
+    "name": "Rechnung bis Zahlungseingang — Zuordnung automatisiert, Rest unverändert",
+    "summary": "Nur die Zuordnung der Zahlungseingänge übernimmt ein Agent. Klärung, Mahnwesen und Zahlungsvereinbarungen bleiben menschlich und werden lediglich besser vorbereitet. Alle Kontrollen bleiben unverändert.",
+    "steps": [
+      {
+        "name": "Zahlungseingang zuordnen",
+        "operator": "automate",
+        "from_steps": [
+          "Zahlungseingang zuordnen"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Zahlungszuordnungs-Agent"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 1,
+        "wait_time_min": 60,
+        "rework_pct": 8,
+        "human_gate": {
+          "when": "Konfidenz unter 0,9 oder Restdifferenz über 100 EUR",
+          "role": "Forderungsmanager"
+        },
+        "rationale": "Der Abgleich zwischen Verwendungszweck und offenen Posten ist ein Datenabgleich mit sehr guter Datenlage.",
+        "metric": "Quote unklarer Zahlungseingänge",
+        "assumption": "Die Kontoauszüge kommen strukturiert; der Verwendungszweck enthält meist Rechnungs- oder Kundennummer."
+      },
+      {
+        "name": "Differenz klären",
+        "operator": "simplify",
+        "from_steps": [
+          "Differenz klären"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Forderungsmanager"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "handling_time_min": 16,
+        "wait_time_min": 480,
+        "rework_pct": 18,
+        "rationale": "Der Agent liefert eine Erklärungshypothese mit; recherchiert werden muss nur noch, was sie nicht erklärt.",
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "assumption": "Die Hypothesen sind in der Mehrzahl der Fälle brauchbar."
+      },
+      {
+        "name": "Mahnstufe bestimmen",
+        "operator": "simplify",
+        "from_steps": [
+          "Mahnstufe bestimmen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Forderungsmanager"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 5,
+        "wait_time_min": 120,
+        "rework_pct": 7,
+        "rationale": "Die Vorschlagsliste ist vorgefiltert um Kunden mit laufender Klärung; durchgesehen wird nur der Rest.",
+        "metric": "Mahnungen an zahlende Kunden",
+        "assumption": "Klärfälle sind im ERP als solche erkennbar."
+      },
+      {
+        "name": "Mahnung freigeben",
+        "operator": "human_gate",
+        "from_steps": [
+          "Mahnung freigeben"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Teamleitung Order-to-Cash"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "controls": [
+          "Mahnfreigabe ab Stufe 3"
+        ],
+        "handling_time_min": 5,
+        "wait_time_min": 240,
+        "rework_pct": 4,
+        "human_gate": {
+          "when": "Mahnstufe 3 oder höher",
+          "role": "Teamleitung Order-to-Cash"
+        },
+        "rationale": "Eine Mahnung an einen zahlenden Kunden kostet Vertrauen. Die Freigabe bleibt unverändert bei der Teamleitung.",
+        "metric": "Mahnungen an zahlende Kunden"
+      },
+      {
+        "name": "Mahnung versenden",
+        "operator": "simplify",
+        "from_steps": [
+          "Mahnung versenden"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Forderungsmanager"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "handling_time_min": 1,
+        "wait_time_min": 30,
+        "rework_pct": 1,
+        "rationale": "Der Versand erfolgt gesammelt aus der freigegebenen Liste statt einzeln.",
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "assumption": "Die Versandkanäle je Kunde sind gepflegt."
+      },
+      {
+        "name": "Zahlungsvereinbarung abstimmen",
+        "operator": "simplify",
+        "from_steps": [
+          "Zahlungsvereinbarung abstimmen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Forderungsmanager"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 20,
+        "wait_time_min": 420,
+        "rework_pct": 10,
+        "rationale": "Ratenpläne werden aus Vorlagen vorgerechnet; verhandelt wird wie bisher.",
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "assumption": "Die zulässigen Ratenmodelle sind abgestimmt."
+      }
+    ],
+    "removed_steps": [],
+    "control_coverage": {
+      "retained": [
+        "Mahnfreigabe ab Stufe 3"
+      ],
+      "replaced": [],
+      "dropped": []
+    },
+    "projected_metrics": [
+      {
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "value": 24,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Quote unklarer Zahlungseingänge",
+        "value": 8,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Mahnungen an zahlende Kunden",
+        "value": 2.0,
+        "basis": "estimated"
+      }
+    ],
+    "open_assumptions": [
+      "Ob Klärfälle im ERP zuverlässig gekennzeichnet sind, ist nicht geprüft."
+    ],
+    "risks": [
+      "Eine falsche automatische Zuordnung ist schlechter als keine, weil sie den offenen Posten schließt. Gegenmaßnahme: Konfidenzschwelle 0,9 und tägliche Ausreißerprüfung."
+    ],
+    "status": "reviewed"
+  },
+  {
+    "process": "Rechnung bis Zahlungseingang",
+    "scenario": "balanced",
+    "name": "Rechnung bis Zahlungseingang — Zuordnung und Vorklärung zusammen",
+    "summary": "Zuordnung und Vorklärung werden ein Schritt, der Mahnvorschlag entsteht agentengestützt, Freigabe und Versand fallen zusammen. Die Freigabe ab Stufe 3 bleibt unverändert bei der Teamleitung. Aus sechs Schritten werden vier. Die Annahme, dass Klärfälle im ERP maschinell erkennbar sind, hat der Pilot bestätigt.",
+    "steps": [
+      {
+        "name": "Zahlung zuordnen und Differenz vorklären",
+        "operator": "merge",
+        "from_steps": [
+          "Zahlungseingang zuordnen",
+          "Differenz klären"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Zahlungszuordnungs-Agent"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "handling_time_min": 3,
+        "wait_time_min": 30,
+        "rework_pct": 8,
+        "human_gate": {
+          "when": "Konfidenz unter 0,9 oder Restdifferenz über 100 EUR",
+          "role": "Forderungsmanager"
+        },
+        "rationale": "Zuordnung und Vorklärung arbeiten auf denselben Daten. Die Trennung kostet heute zwölf Stunden Liegezeit für eine Übergabe innerhalb derselben Rolle.",
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "assumption": "Der Agent erklärt Teilzahlungen und Abzüge in der Mehrzahl der Fälle richtig."
+      },
+      {
+        "name": "Mahnvorschlag erzeugen",
+        "operator": "automate",
+        "from_steps": [
+          "Mahnstufe bestimmen"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Mahnlauf-Agent"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 1,
+        "wait_time_min": 20,
+        "rework_pct": 5,
+        "rationale": "Die Stufenlogik ist ein Regelwerk. Der Agent wendet es an und begründet jeden Ausschluss.",
+        "metric": "Mahnungen an zahlende Kunden",
+        "assumption": "Klärfälle und Zahlungsvereinbarungen sind im ERP maschinell erkennbar."
+      },
+      {
+        "name": "Mahnung freigeben und versenden",
+        "operator": "merge",
+        "from_steps": [
+          "Mahnung freigeben",
+          "Mahnung versenden"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Teamleitung Order-to-Cash"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "controls": [
+          "Mahnfreigabe ab Stufe 3"
+        ],
+        "handling_time_min": 4,
+        "wait_time_min": 120,
+        "rework_pct": 3,
+        "human_gate": {
+          "when": "Mahnstufe 3 oder höher",
+          "role": "Teamleitung Order-to-Cash"
+        },
+        "rationale": "Freigabe und Versand sind heute zwei Schritte mit fünf Stunden Liegezeit dazwischen. Mit der Freigabe geht die Mahnung raus.",
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "assumption": "Die Versandkanäle je Kunde sind gepflegt."
+      },
+      {
+        "name": "Zahlungsvereinbarung abstimmen",
+        "operator": "simplify",
+        "from_steps": [
+          "Zahlungsvereinbarung abstimmen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Forderungsmanager"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 18,
+        "wait_time_min": 300,
+        "rework_pct": 8,
+        "rationale": "Die Verhandlung bleibt menschlich; vorbereitet wird sie mit gerechneten Ratenvarianten und der Zahlungshistorie.",
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "assumption": "Die zulässigen Ratenmodelle sind abgestimmt."
+      }
+    ],
+    "removed_steps": [],
+    "control_coverage": {
+      "retained": [
+        "Mahnfreigabe ab Stufe 3"
+      ],
+      "replaced": [],
+      "dropped": []
+    },
+    "projected_metrics": [
+      {
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "value": 9,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Quote unklarer Zahlungseingänge",
+        "value": 6,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Mahnungen an zahlende Kunden",
+        "value": 1.0,
+        "basis": "estimated"
+      }
+    ],
+    "open_assumptions": [],
+    "risks": [
+      "Die Vorklärung durch den Agenten kann eine falsche Erklärung plausibel aussehen lassen. Gegenmaßnahme: Erklärung immer mit Beleg, sonst kein Vorschlag."
+    ],
+    "status": "reviewed"
+  },
+  {
+    "process": "Rechnung bis Zahlungseingang",
+    "scenario": "agent_native",
+    "name": "Rechnung bis Zahlungseingang — Klärung und Mahnung gleichzeitig",
+    "summary": "Zuordnung, Klärung und Mahnvorbereitung laufen gleichzeitig statt nacheinander; das Mahnwesen wird ein Schritt. Menschen entscheiden bei der Mahnfreigabe ab Stufe 3 und bei jeder Zahlungsvereinbarung. Aus sechs Schritten werden drei.",
+    "steps": [
+      {
+        "name": "Zahlungseingang zuordnen und klären",
+        "operator": "merge",
+        "from_steps": [
+          "Zahlungseingang zuordnen",
+          "Differenz klären"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Zahlungszuordnungs-Agent"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "parallel_group": "klaerung",
+        "handling_time_min": 1,
+        "wait_time_min": 10,
+        "rework_pct": 5,
+        "human_gate": {
+          "when": "Restdifferenz über 500 EUR oder Kunde widerspricht",
+          "role": "Forderungsmanager"
+        },
+        "rationale": "Zuordnung und Klärung sind derselbe Vorgang, sobald die Erklärung belegt werden kann. Übrig bleibt der Fall, in dem der Kunde widerspricht — und genau der gehört zu einem Menschen.",
+        "metric": "Quote unklarer Zahlungseingänge",
+        "assumption": "Eine Erklärung ohne Beleg gilt als nicht geklärt und geht ins Gate."
+      },
+      {
+        "name": "Mahnung erzeugen, freigeben und versenden",
+        "operator": "parallelize",
+        "from_steps": [
+          "Mahnstufe bestimmen",
+          "Mahnung freigeben",
+          "Mahnung versenden"
+        ],
+        "executor": {
+          "type": "agent",
+          "name": "Mahnlauf-Agent"
+        },
+        "systems": [
+          "ERP",
+          "E-Mail"
+        ],
+        "controls": [
+          "Mahnfreigabe ab Stufe 3"
+        ],
+        "parallel_group": "klaerung",
+        "handling_time_min": 1,
+        "wait_time_min": 15,
+        "rework_pct": 3,
+        "human_gate": {
+          "when": "Mahnstufe 3 oder höher",
+          "role": "Teamleitung Order-to-Cash"
+        },
+        "rationale": "Das Mahnwesen wartet heute auf die Klärung, obwohl es nur die unstrittigen Posten betrifft. Beides kann gleichzeitig laufen; die Freigabe ab Stufe 3 bleibt als Kontrolle unverändert bestehen.",
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "assumption": "Strittige Posten sind zum Zeitpunkt des Mahnlaufs als solche markiert und werden ausgeschlossen."
+      },
+      {
+        "name": "Zahlungsvereinbarung abstimmen",
+        "operator": "human_gate",
+        "from_steps": [
+          "Zahlungsvereinbarung abstimmen"
+        ],
+        "executor": {
+          "type": "human",
+          "name": "Forderungsmanager"
+        },
+        "systems": [
+          "ERP"
+        ],
+        "handling_time_min": 15,
+        "wait_time_min": 180,
+        "rework_pct": 6,
+        "human_gate": {
+          "when": "immer; Stundung über 90 Tage zusätzlich durch die Teamleitung",
+          "role": "Forderungsmanager"
+        },
+        "rationale": "Eine Zahlungsvereinbarung ist eine Zusage mit rechtlicher Wirkung und Ermessensspielraum. Sie bleibt vollständig beim Menschen, auch in einem agent-nativen Prozess.",
+        "metric": "Durchlaufzeit bis geklärte Zuordnung"
+      }
+    ],
+    "removed_steps": [],
+    "control_coverage": {
+      "retained": [
+        "Mahnfreigabe ab Stufe 3"
+      ],
+      "replaced": [],
+      "dropped": []
+    },
+    "agents": [
+      "Order-to-Cash-Orchestrator"
+    ],
+    "projected_metrics": [
+      {
+        "metric": "Durchlaufzeit bis geklärte Zuordnung",
+        "value": 4,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Quote unklarer Zahlungseingänge",
+        "value": 4,
+        "basis": "estimated"
+      },
+      {
+        "metric": "Mahnungen an zahlende Kunden",
+        "value": 0.5,
+        "basis": "estimated"
+      }
+    ],
+    "open_assumptions": [
+      "Parallele Mahnung und Klärung setzt voraus, dass strittige Posten sofort markiert werden. Heute geschieht das erst bei der Klärung."
+    ],
+    "risks": [
+      "Wenn ein strittiger Posten nicht rechtzeitig markiert ist, geht eine Mahnung an einen Kunden, der zu Recht nicht gezahlt hat. Gegenmaßnahme: Mahnlauf schließt jeden Posten aus, der in den letzten 14 Tagen berührt wurde."
+    ],
+    "status": "draft"
+  }
+]

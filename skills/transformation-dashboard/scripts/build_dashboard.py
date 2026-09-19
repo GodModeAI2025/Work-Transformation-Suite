@@ -4,12 +4,22 @@ build_dashboard.py — erzeugt aus dem aktuellen work-graph ein eigenständiges
 HTML-Dashboard (eine Datei, kein externes Laden), CSV-Exporte und einen
 Markdown-Kurzbericht in 40_output/.
 
+Ab Schema 1.1 ist die Prozessansicht die Hauptansicht: Ist-Fluss, entworfene
+Soll-Szenarien und was sich zwischen ihnen ändert. Die Rollenansicht bleibt vollständig
+erhalten, rückt aber dahinter — als Folgenansicht des Prozessredesigns. Das ist Absicht:
+Sobald Organisationskästchen zuerst kommen, wird das Organigramm zum Designobjekt, und
+genau das verhindert ein Redesign vom Ergebnis her.
+
+Enthält der Graph keine Prozesse, verhält sich das Dashboard wie bisher und zeigt die
+Rollenansicht zuerst.
+
 Aufruf:
     python3 <skill>/scripts/build_dashboard.py --project ./mein-projekt [--stamp "..."] [--title "..."] [--theme ./mein-theme.json]
 
 Ausgaben (NNN = Graph-Version):
     40_output/dashboard_vNNN.html
     40_output/roles_vNNN.csv, tasks_vNNN.csv, agents_vNNN.csv
+    40_output/processes_vNNN.csv, blueprints_vNNN.csv (wenn Prozesse vorhanden)
     40_output/report_vNNN.md
 
 Determinismus: Das HTML wird ausschließlich aus dem Graphen erzeugt, ohne
@@ -71,6 +81,36 @@ STATUS_LABEL = {"proposed": "vorgeschlagen", "planned": "geplant", "pilot": "Pil
 EVIDENCE_LABEL = {"high": "belastbar", "medium": "teilweise geprüft", "low": "ungeprüft"}
 EVIDENCE_COLOR = {"high": "#2E7D32", "medium": "#B26A00", "low": "#9A9A9A"}
 STABILITY_LABEL = {"stable": "Einstufung stabil", "borderline": "Einstufung grenznah", "fragile": "Einstufung wackelig"}
+SCENARIO_ORDER = ["conservative", "balanced", "agent_native"]
+SCENARIO_LABEL = {"conservative": "Konservativ", "balanced": "Ausgewogen", "agent_native": "Agent-nativ"}
+SCENARIO_HINT = {
+    "conservative": "Heutige Kontrollen bleiben, KI assistiert.",
+    "balanced": "Unnötige Schritte und Übergaben entfallen, Menschen behandeln Ausnahmen.",
+    "agent_native": "Vom Zielzustand aus neu gebaut, Menschen an Verantwortungsgrenzen.",
+}
+OPERATOR_LABEL = {"eliminate": "Eliminiert", "simplify": "Vereinfacht", "merge": "Zusammengeführt",
+                  "parallelize": "Parallelisiert", "automate": "Automatisiert", "human_gate": "Human Gate"}
+EXECUTOR_LABEL = {"human": "Mensch", "agent": "Agent", "system": "System", "rule": "Regel"}
+EXECUTOR_CLASS = {"human": "ex-human", "agent": "ex-agent", "system": "ex-system", "rule": "ex-rule"}
+BASIS_LABEL = {"observed": "gemessen", "expert_confirmed": "bestätigt", "estimated": "geschätzt"}
+BASIS_SHORT = {"observed": "gem.", "expert_confirmed": "best.", "estimated": "gesch."}
+BAND_LABEL = {"now": "Jetzt", "next": "Als Nächstes", "later": "Später", "hold": "Zurückstellen"}
+BAND_COLOR = {"now": "#2E7D32", "next": "#1C6CA8", "later": "#B26A00", "hold": "#6E6E6E"}
+DESIGN_LABEL = {"ab_test": "A/B-Test", "shadow": "Schattenbetrieb",
+                "stepped_rollout": "gestaffelter Rollout", "pre_post": "Vorher-Nachher"}
+VALUE_TYPE_LABEL = {"customer_value": "Kundenwert", "business_required": "betrieblich nötig",
+                    "waste": "ohne Wertbeitrag"}
+FLOW_METRICS = [
+    ("steps", "Schritte", 0),
+    ("human_touches", "Human Touchpoints", 0),
+    ("handovers", "Übergaben", 0),
+    ("handling_time_min", "Bearbeitungszeit (min)", 1),
+    ("wait_time_min", "Wartezeit (min)", 1),
+    ("lead_time_hours", "Durchlaufzeit (h)", 1),
+    ("rework_pct", "Nacharbeit (%)", 1),
+    ("automated_steps", "automatisierte Schritte", 0),
+]
+
 ARCH_LABEL = {
     "control-heavy": "Kontrolle", "knowledge-heavy": "Wissen", "process-heavy": "Prozess",
     "relationship-heavy": "Beziehung", "creative-heavy": "Kreation", "physical-heavy": "Physisch",
@@ -197,6 +237,37 @@ th{background:#f5f2ef;color:var(--ink2);font-weight:600;position:sticky;top:46px
 .col h4{margin:0 0 8px;font-size:15px;color:var(--primary);font-family:var(--f-head)}.col ul{margin:0;padding-left:18px;font-size:13px}.col li{margin:3px 0}
 footer{padding:20px 32px;color:var(--ink3);font-size:12px;border-top:1px solid var(--line)}
 .hidden{display:none!important}.nojs{margin:6px 0 10px;padding:8px 12px;border:1px solid #E6B800;background:#FFF8DB;border-radius:6px;font-size:13px;color:#5a4a00}
+/* Szenarien umschalten ohne JavaScript: verborgene Radios steuern über
+   :checked ~ die Sichtbarkeit der zugehörigen Tafel. Die Radios bleiben
+   fokussierbar, damit die Umschaltung auch per Tastatur funktioniert. */
+.tabs{position:relative}
+.tabs>input{position:absolute;width:1px;height:1px;opacity:0;margin:0}
+.tabbar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.tabbar label{padding:6px 12px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink2)}
+.tabs>.panes>.pane{display:none}
+.tabs>input:nth-of-type(1):checked~.panes>.pane:nth-child(1),
+.tabs>input:nth-of-type(2):checked~.panes>.pane:nth-child(2),
+.tabs>input:nth-of-type(3):checked~.panes>.pane:nth-child(3),
+.tabs>input:nth-of-type(4):checked~.panes>.pane:nth-child(4){display:block}
+.tabs>input:nth-of-type(1):checked~.tabbar label:nth-child(1),
+.tabs>input:nth-of-type(2):checked~.tabbar label:nth-child(2),
+.tabs>input:nth-of-type(3):checked~.tabbar label:nth-child(3),
+.tabs>input:nth-of-type(4):checked~.tabbar label:nth-child(4){background:var(--primary);color:#fff;border-color:var(--primary)}
+.tabs>input:focus-visible~.tabbar label{outline:2px solid var(--accent);outline-offset:2px}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:4px;margin:10px 0}
+.flow .st{flex:1 1 150px;min-width:140px;border:1px solid var(--line);border-left:4px solid var(--ink3);border-radius:6px;padding:8px 10px;background:#fff;font-size:12px}
+.flow .st b{display:block;font-size:13px;color:var(--ink);margin-bottom:3px}
+.flow .st .who{color:var(--ink3)}
+.flow .st.ex-human{border-left-color:#1C6CA8}.flow .st.ex-agent{border-left-color:#6A3FA0}
+.flow .st.ex-system{border-left-color:#2E7D32}.flow .st.ex-rule{border-left-color:#B26A00}
+.flow .st.gone{background:#f7f5f3;border-left-color:#c9c4bf;color:var(--ink3);text-decoration:line-through}
+.flow .arr{align-self:center;color:var(--ink3);font-size:16px;flex:0 0 auto}
+.gate{display:inline-block;margin-top:4px;font-size:11px;padding:1px 6px;border-radius:9px;background:#FFF3D6;color:#5a4a00;border:1px solid #E6C77A}
+.delta-up{color:#2E7D32;font-weight:600}.delta-down{color:#B3261E;font-weight:600}.delta-flat{color:var(--ink3)}
+.basis{font-size:11px;color:var(--ink3);white-space:nowrap}
+.band{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;color:#fff;font-weight:600}
+.note{font-size:12px;color:var(--ink3);margin:6px 0 0}
+.warnbox{margin:10px 0;padding:10px 12px;border:1px solid #E6B800;background:#FFF8DB;border-radius:6px;font-size:13px;color:#5a4a00}
 @media(max-width:800px){main,header,nav,footer{padding-left:16px;padding-right:16px}.cols{grid-template-columns:1fr}.rows{grid-template-columns:1fr}}
 """
 
@@ -437,6 +508,377 @@ def table_html(roles: list[dict[str, Any]]) -> str:
             '<th class="n">Hebel</th><th class="n">Kern</th><th class="n">Assist.</th><th class="n">Deleg.</th><th>Horizont</th><th>Belastbarkeit</th><th>Stabilität</th><th>Status</th></tr></thead><tbody>' + "".join(rows) + "</tbody></table>")
 
 
+# ---------------------------------------------------------------------------
+# Prozessansicht (Schema 1.1)
+# ---------------------------------------------------------------------------
+
+def name_index(graph: dict[str, Any]) -> dict[str, dict]:
+    idx: dict[str, dict] = {}
+    for c in wl.COLLECTIONS:
+        for it in graph.get(c, []):
+            idx[it["id"]] = it
+    return idx
+
+
+def process_kpis(graph: dict[str, Any]) -> dict[str, Any]:
+    """Portfoliokennzahlen der Prozessebene.
+
+    Die Deltas werden über das jeweils beste entworfene Szenario je Prozess gebildet —
+    nicht über alle Blueprints, sonst zählt ein Prozess mit drei Szenarien dreifach.
+    """
+    procs = graph.get("processes", [])
+    best: dict[str, dict] = {}
+    for bp in graph.get("blueprints", []):
+        cur = best.get(bp["process_id"])
+        score = (bp.get("delta", {}).get("lead_time_hours", {}) or {}).get("improvement") or 0
+        if cur is None or score > (cur.get("delta", {}).get("lead_time_hours", {}) or {}).get("improvement", 0):
+            best[bp["process_id"]] = bp
+    lead_gain = [(b["delta"].get("lead_time_hours") or {}).get("improvement_pct")
+                 for b in best.values()]
+    lead_gain = [x for x in lead_gain if x is not None]
+    touch_gain = sum((b["delta"].get("human_touches") or {}).get("improvement") or 0
+                     for b in best.values())
+    hand_gain = sum((b["delta"].get("handovers") or {}).get("improvement") or 0
+                    for b in best.values())
+    scored = [p for p in procs if p.get("value")]
+    bands = {b: sum(1 for p in scored if p["value"]["band"] == b) for b in wl.ENUM_PRIORITY_BAND}
+    return {
+        "processes": len(procs),
+        "steps": len(graph.get("process_steps", [])),
+        "blueprints": len(graph.get("blueprints", [])),
+        "scenarios_complete": sum(1 for p in procs if len({b["scenario"] for b in graph["blueprints"]
+                                                           if b["process_id"] == p["id"]}) >= 3),
+        "experiments": len(graph.get("experiments", [])),
+        "approved": sum(1 for b in graph.get("blueprints", []) if b.get("status") == "approved"),
+        "avg_lead_gain": round(sum(lead_gain) / len(lead_gain), 1) if lead_gain else None,
+        "touch_gain": touch_gain,
+        "handover_gain": hand_gain,
+        "bands": bands,
+        "scored": len(scored),
+        "best": best,
+    }
+
+
+def process_tiles(pk: dict[str, Any]) -> str:
+    items = [
+        (str(pk["processes"]), "Prozesse"),
+        (str(pk["steps"]), "Prozessschritte"),
+        (f"{pk['scenarios_complete']}/{pk['processes']}", "mit drei Szenarien"),
+        (str(pk["approved"]), "Blueprints freigegeben"),
+        (str(pk["experiments"]), "Piloten geplant"),
+        (pct(pk["avg_lead_gain"]) if pk["avg_lead_gain"] is not None else "–", "Ø Durchlaufzeitgewinn"),
+        (f"{pk['touch_gain']:+g}", "Human Touchpoints"),
+        (f"{pk['handover_gain']:+g}", "Übergaben"),
+    ]
+    return '<div class="tiles">' + "".join(
+        f'<div class="tile"><div class="v">{esc(v)}</div><div class="l">{esc(l)}</div></div>'
+        for v, l in items) + "</div>"
+
+
+def _delta_cell(d: dict[str, Any], nd: int = 1) -> str:
+    """Eine Deltazelle: Soll-Wert, Veränderung und der Ist-Wert als Tooltip.
+
+    Das Vorzeichen ist immer als Verbesserung gelesen — bei Kennzahlen, bei denen
+    weniger besser ist, wurde es vorher gedreht. Sonst müsste man in jeder Zeile neu
+    überlegen, ob ein Minus gut oder schlecht ist.
+    """
+    if not d:
+        return '<td class="n">–</td>'
+    imp = d.get("improvement")
+    cls = "delta-flat" if not imp else ("delta-up" if imp > 0 else "delta-down")
+    pctv = d.get("improvement_pct")
+    extra = f" ({pctv:+g} %)" if pctv is not None else ""
+    title = f"Ist {fmt(d.get('ist'), nd)} → Soll {fmt(d.get('soll'), nd)}"
+    return (f'<td class="n" title="{esc(title)}">{fmt(d.get("soll"), nd)} '
+            f'<span class="{cls}">{imp:+g}{extra}</span></td>')
+
+
+def flow_html(graph: dict[str, Any], steps: list, names: dict, removed: set = frozenset()) -> str:
+    """Ist- oder Soll-Fluss als Kette von Schrittkacheln."""
+    parts = []
+    for i, st in enumerate(steps):
+        ex = st.get("executor") or {}
+        etype = ex.get("type") or "human"
+        who = ex.get("name") or names.get(ex.get("id"), {}).get("name") or EXECUTOR_LABEL.get(etype, etype)
+        gone = st.get("id") in removed
+        cls = "st gone" if gone else f"st {EXECUTOR_CLASS.get(etype, '')}"
+        bits = [f'<b>{esc(st.get("name"))}</b>',
+                f'<span class="who">{esc(EXECUTOR_LABEL.get(etype, etype))}: {esc(who)}</span>']
+        t = st.get("handling_time_min")
+        wv = st.get("wait_time_min")
+        if t is not None or wv is not None:
+            bits.append(f'<div>{fmt(t, 0)} min Arbeit · {fmt(wv, 0)} min Warten</div>')
+        if st.get("operator"):
+            bits.append(f'<div>{esc(OPERATOR_LABEL.get(st["operator"], st["operator"]))}</div>')
+        if st.get("value_type"):
+            bits.append(f'<div>{esc(VALUE_TYPE_LABEL.get(st["value_type"], ""))}</div>')
+        if st.get("human_gate"):
+            gate = st["human_gate"].get("when") or "Kontrollpunkt"
+            bits.append(f'<span class="gate">Human Gate: {esc(gate)}</span>')
+        parts.append(f'<div class="{cls}">{"".join(bits)}</div>')
+        if i < len(steps) - 1:
+            parts.append('<div class="arr">→</div>')
+    return f'<div class="flow">{"".join(parts)}</div>' if parts else "<p>Keine Schritte erfasst.</p>"
+
+
+def scenario_pane(graph: dict[str, Any], bp: dict[str, Any], names: dict) -> str:
+    out = [f'<p>{esc(bp.get("summary") or SCENARIO_HINT.get(bp["scenario"], ""))}</p>']
+    ops = ", ".join(f'{OPERATOR_LABEL[o]} {n}×'
+                    for o, n in sorted((bp.get("operator_counts") or {}).items()) if n)
+    out.append(f'<p class="meta">Operatoren: {esc(ops or "–")} · Status: {esc(bp.get("status", "draft"))}'
+               + (f' · Agenten: {esc(", ".join(names.get(a, {}).get("name", a) for a in bp.get("agent_ids", [])))}'
+                  if bp.get("agent_ids") else "") + '</p>')
+    out.append(flow_html(graph, bp.get("steps", []), names))
+
+    if bp.get("removed_steps"):
+        rows = "".join(
+            f'<tr><td>{esc(names.get(r["step_id"], {}).get("name", r["step_id"]))}</td>'
+            f'<td>{esc(r.get("rationale", ""))}</td><td>{esc(r.get("replacement") or "–")}</td></tr>'
+            for r in bp["removed_steps"])
+        out.append('<details><summary>Gestrichene Schritte '
+                   f'({len(bp["removed_steps"])})</summary>'
+                   '<table><tr><th>Ist-Schritt</th><th>Begründung</th><th>Ersatz</th></tr>'
+                   f'{rows}</table></details>')
+
+    cov = bp.get("control_coverage") or {}
+    if cov.get("replaced") or cov.get("dropped_control_ids"):
+        rows = "".join(
+            f'<tr><td>{esc(names.get(r["control_id"], {}).get("name", r["control_id"]))}</td>'
+            f'<td>ersetzt</td><td>{esc(r.get("replacement", ""))}</td>'
+            f'<td>{esc(r.get("approved_by") or "offen")}</td></tr>' for r in cov.get("replaced", []))
+        rows += "".join(
+            f'<tr><td>{esc(names.get(c, {}).get("name", c))}</td><td>gestrichen</td><td>–</td>'
+            f'<td>–</td></tr>' for c in cov.get("dropped_control_ids", []))
+        out.append('<details open><summary>Veränderte Kontrollen</summary>'
+                   '<table><tr><th>Kontrolle</th><th>Wie</th><th>Ersatz</th><th>Freigabe</th></tr>'
+                   f'{rows}</table></details>')
+
+    metrics = wl.index_by_id(graph["metrics"])
+    if bp.get("projected_metrics"):
+        rows = []
+        for m in bp["projected_metrics"]:
+            met = metrics.get(m["metric_id"], {})
+            base, basis = wl.metric_value(met, "baseline") if met else (None, None)
+            rows.append(f'<tr><td>{esc(met.get("name", m["metric_id"]))}</td>'
+                        f'<td class="n">{fmt(base)} <span class="basis">({esc(BASIS_SHORT.get(basis, "?"))})</span></td>'
+                        f'<td class="n">{fmt(m.get("value"))} <span class="basis">({esc(BASIS_SHORT.get(m.get("basis"), "?"))})</span></td>'
+                        f'<td>{esc(met.get("unit") or "")}</td></tr>')
+        out.append('<details open><summary>Zugesagte Kennzahlen</summary>'
+                   '<table><tr><th>Kennzahl</th><th class="n">Ausgangswert</th>'
+                   f'<th class="n">Zielwert</th><th>Einheit</th></tr>{"".join(rows)}</table>'
+                   '<p class="note">gesch. = geschätzt, best. = vom Fachexperten bestätigt, '
+                   'gem. = im Pilot gemessen.</p></details>')
+
+    facts = []
+    for st in bp.get("steps", []):
+        if st.get("rationale"):
+            met = metrics.get(st.get("metric_id"), {}).get("name")
+            facts.append(f'<li><b>{esc(st["name"])}</b> ({esc(OPERATOR_LABEL.get(st["operator"], ""))}): '
+                         f'{esc(st["rationale"])}'
+                         + (f' · Kennzahl: {esc(met)}' if met else "")
+                         + (f' · Annahme: {esc(st["assumption"])}' if st.get("assumption") else "") + '</li>')
+    if facts:
+        out.append(f'<details><summary>Begründungen und Annahmen je Änderung ({len(facts)})</summary>'
+                   f'<ul>{"".join(facts)}</ul></details>')
+    if bp.get("open_assumptions"):
+        out.append('<div class="warnbox"><b>Offene Annahmen:</b><ul>'
+                   + "".join(f'<li>{esc(a)}</li>' for a in bp["open_assumptions"]) + '</ul></div>')
+    if bp.get("risks"):
+        out.append('<details><summary>Risiken</summary><ul>'
+                   + "".join(f'<li>{esc(r)}</li>' for r in bp["risks"]) + '</ul></details>')
+    if bp.get("proposed_agents"):
+        out.append('<p class="note">Noch anzulegende Agenten: '
+                   + esc(", ".join(bp["proposed_agents"])) + '</p>')
+    return "".join(out)
+
+
+def process_card(graph: dict[str, Any], pr: dict[str, Any], names: dict, n: int) -> str:
+    ist = wl.process_totals(graph, pr["id"])
+    ist_steps = wl.steps_of(graph, pr["id"])
+    bps = sorted([b for b in graph["blueprints"] if b["process_id"] == pr["id"]],
+                 key=lambda b: SCENARIO_ORDER.index(b["scenario"]) if b["scenario"] in SCENARIO_ORDER else 9)
+    v = pr.get("value") or {}
+    band = v.get("band")
+    head = [f'<div class="head"><div><h3>{esc(pr["name"])}</h3>'
+            f'<div class="meta">Auslöser: {esc(pr.get("trigger") or "–")} · '
+            f'Ergebnis: {esc(names.get(pr.get("outcome_id"), {}).get("name", "–"))} · '
+            f'Owner: {esc(names.get(pr.get("owner_role_id"), {}).get("name", "–"))}</div></div>']
+    tags = []
+    if band:
+        tags.append(f'<span class="band" style="background:{BAND_COLOR.get(band, "#666")}">'
+                    f'{esc(BAND_LABEL.get(band, band))} · Wert {fmt(v.get("score"))}</span>')
+    if pr.get("regulated"):
+        tags.append('<span class="tag">reguliert</span>')
+    for dc in pr.get("data_classes", []):
+        tags.append(f'<span class="tag">{esc(dc)}</span>')
+    if pr.get("volume_per_year"):
+        tags.append(f'<span class="tag">{int(pr["volume_per_year"])} Fälle/Jahr</span>')
+    head.append("<div>" + "".join(tags) + "</div></div>")
+
+    gap = wl.lead_time_gap(graph, pr["id"])
+    if gap:
+        head.append(f'<div class="warnbox">Das Prozessmodell erklärt {fmt(gap["modelled_hours"])} h '
+                    f'von {fmt(gap["measured_hours"])} h gemessener Durchlaufzeit '
+                    f'({gap["deviation_pct"]:+g} %). Es fehlen vermutlich Schritte oder Liegezeiten; '
+                    'die Deltas unten rechnen auf der modellierten Grundmenge.</div>')
+    if v and not (v.get("sensitivity") or {}).get("band_stable", True):
+        flips = ", ".join(sorted({f["factor"] for f in v["sensitivity"]["flips"]}))
+        head.append(f'<div class="warnbox">Prioritätsband kippt schon bei ±1 in: {esc(flips)}. '
+                    'Die Einordnung ist eine Richtung, keine Rangfolge.</div>')
+
+    # Vergleichstabelle Ist gegen alle Szenarien
+    cmp_rows = []
+    for key, label, nd in FLOW_METRICS:
+        cells = "".join(_delta_cell((b.get("delta") or {}).get(key), nd) for b in bps)
+        cmp_rows.append(f'<tr><td>{esc(label)}</td><td class="n">{fmt(ist.get(key), nd)}</td>{cells}</tr>')
+    head_cells = "".join(f'<th class="n">{esc(SCENARIO_LABEL.get(b["scenario"], b["scenario"]))}</th>'
+                         for b in bps)
+    table = ('<table><tr><th>Kennzahl</th><th class="n">Ist</th>' + head_cells + "</tr>"
+             + "".join(cmp_rows) + "</table>") if bps else ""
+
+    # Umschaltbare Tafeln: Ist plus je Szenario eine
+    tid = f"pr{n}"
+    inputs, labels, panes = [], [], []
+    options = [("Ist", flow_html(graph, ist_steps, names,
+                                 removed=set().union(*[set(b.get("removed_step_ids", [])) for b in bps])
+                                 if bps else set()))]
+    for b in bps:
+        options.append((SCENARIO_LABEL.get(b["scenario"], b["scenario"]), scenario_pane(graph, b, names)))
+    for i, (label, body) in enumerate(options):
+        checked = " checked" if i == 0 else ""
+        inputs.append(f'<input type="radio" name="{tid}" id="{tid}-{i}"{checked}>')
+        labels.append(f'<label for="{tid}-{i}">{esc(label)}</label>')
+        panes.append(f'<div class="pane">{body}</div>')
+    tabs = (f'<div class="tabs">{"".join(inputs)}<div class="tabbar">{"".join(labels)}</div>'
+            f'<div class="panes">{"".join(panes)}</div></div>')
+
+    extra = ""
+    if not bps:
+        extra = ('<p class="note">Noch kein Szenario entworfen. Skill process-redesigner: '
+                 'export_process_candidates.py, dann drei Szenarien, dann build_blueprints.py.</p>')
+    return (f'<div class="card" id="process-{esc(pr["id"])}">' + "".join(head)
+            + table + tabs + extra + "</div>")
+
+
+def processes_html(graph: dict[str, Any], names: dict) -> str:
+    procs = sorted(graph["processes"],
+                   key=lambda p: (-(p.get("value", {}) or {}).get("score", 0), p["name"]))
+    return '<div class="cards">' + "".join(
+        process_card(graph, pr, names, i) for i, pr in enumerate(procs)) + "</div>"
+
+
+def experiments_html(graph: dict[str, Any], names: dict) -> str:
+    xs = sorted(graph["experiments"], key=lambda x: x["id"])
+    if not xs:
+        return ('<p>Noch kein Pilot geplant. Ein Redesign ohne Messplan bleibt eine Meinung: '
+                'process-redesigner/scripts/make_experiments.py erzeugt aus jedem geprüften '
+                'Blueprint eine Karte mit Hypothese, Guardrails und Stoppregeln.</p>')
+    metrics = wl.index_by_id(graph["metrics"])
+    out = []
+    for x in xs:
+        guard = "".join(
+            f'<li>{esc(metrics.get(g["metric_id"], {}).get("name", g["metric_id"]))}: '
+            f'{"höchstens" if g.get("direction") == "max" else "mindestens"} {fmt(g.get("limit"))}</li>'
+            for g in x.get("guardrails", []))
+        stops = "".join(f'<li>{esc(r)}</li>' for r in x.get("stop_rules", []))
+        res = ""
+        if x.get("results"):
+            res = ('<details open><summary>Gemessen</summary><ul>' + "".join(
+                f'<li>{esc(metrics.get(r["metric_id"], {}).get("name", r["metric_id"]))}: '
+                f'{fmt(r.get("value"))} ({esc(r.get("as_of") or "ohne Datum")})</li>'
+                for r in x["results"]) + '</ul></details>')
+        primary = metrics.get(x.get("primary_metric_id"), {})
+        out.append(
+            f'<div class="card"><div class="head"><div><h3>{esc(x["name"])}</h3>'
+            f'<div class="meta">{esc(DESIGN_LABEL.get(x.get("design"), x.get("design")))} · '
+            f'{x.get("duration_days")} Tage · rund {x.get("sample_size")} Fälle · '
+            f'Status {esc(x.get("status"))} · Owner {esc(names.get(x.get("owner_role_id"), {}).get("name", "–"))}'
+            f'</div></div></div>'
+            f'<p><b>Hypothese:</b> {esc(x.get("hypothesis") or "–")}</p>'
+            f'<p class="meta">{esc(x.get("design_rationale") or "")}</p>'
+            f'<div class="cols"><div class="col"><h4>Primärmetrik</h4><ul><li>'
+            f'{esc(primary.get("name", "–"))}: Ziel {fmt(x.get("target_value"))} '
+            f'{esc(primary.get("unit") or "")}</li></ul></div>'
+            f'<div class="col"><h4>Guardrails</h4><ul>{guard or "<li>keine</li>"}</ul></div>'
+            f'<div class="col"><h4>Abbruch und Rückfall</h4><ul>{stops}'
+            f'<li>Rollback: {esc(x.get("rollback") or "–")}</li></ul></div></div>{res}</div>')
+    return '<div class="cards">' + "".join(out) + "</div>"
+
+
+def governance_html(graph: dict[str, Any], names: dict) -> str:
+    """Woher die Zahlen kommen und wer wofür geradesteht."""
+    metrics = graph["metrics"]
+    prov = graph["provenance"]
+    by_target = {(p["entity_type"], p["entity_id"], p["field"]): p for p in prov}
+    rows = []
+    for m in sorted(metrics, key=lambda m: m["id"]):
+        val, basis = wl.metric_value(m, "baseline")
+        obs, _ = wl.metric_value(m, "observed")
+        pv = by_target.get(("metrics", m["id"], "observed")) or by_target.get(("metrics", m["id"], "baseline"))
+        rows.append(
+            f'<tr><td>{esc(m["name"])}</td><td>{esc(names.get(m.get("process_id"), {}).get("name", "–"))}</td>'
+            f'<td class="n">{fmt(val)} {esc(m.get("unit") or "")}</td>'
+            f'<td>{esc(BASIS_LABEL.get(basis, "–"))}</td>'
+            f'<td class="n">{fmt(obs) if obs is not None else "–"}</td>'
+            f'<td>{esc(pv.get("source_ref") if pv else "keine Provenienz")}</td>'
+            f'<td>{esc(pv.get("reviewer") or pv.get("author") or "–") if pv else "–"}</td></tr>')
+    metric_table = ('<table><tr><th>Kennzahl</th><th>Prozess</th><th class="n">Ausgangswert (Ist)</th>'
+                    '<th>Belastbarkeit</th><th class="n">Im Pilot gemessen</th><th>Quelle</th>'
+                    '<th>Geprüft von</th></tr>' + "".join(rows) + "</table>") \
+                   if rows else "<p>Keine Kennzahlen erfasst.</p>"
+
+    gates = []
+    for st in sorted(graph["process_steps"], key=lambda s: s["id"]):
+        dec = st.get("decision") or {}
+        if not dec.get("scope") or dec["scope"] == "recommend":
+            continue
+        gates.append(
+            f'<tr><td>{esc(names.get(st.get("process_id"), {}).get("name", "–"))}</td>'
+            f'<td>{esc(st["name"])}</td>'
+            f'<td>{esc(EXECUTOR_LABEL.get((st.get("executor") or {}).get("type"), "–"))}</td>'
+            f'<td>{esc(dec["scope"])}</td>'
+            f'<td>{esc(names.get(dec.get("accountable_role_id"), {}).get("name", "–"))}</td>'
+            f'<td>{esc(dec.get("escalation") or "–")}</td>'
+            f'<td>{esc(st["human_gate"]["when"]) if st.get("human_gate") else "–"}</td></tr>')
+    gate_table = ('<table><tr><th>Prozess</th><th>Schritt</th><th>Wer führt aus</th>'
+                  '<th>Reichweite</th><th>Verantwortlich</th><th>Eskalation</th><th>Human Gate</th></tr>'
+                  + "".join(gates) + "</table>") if gates else \
+                 "<p>Keine Schritte mit ausführender Entscheidungsreichweite.</p>"
+
+    dec_rows = "".join(
+        f'<tr><td>{esc(d.get("date"))}</td><td>{esc(d.get("subject_type"))}</td>'
+        f'<td>{esc(d.get("subject_name") or names.get(d.get("subject_id"), {}).get("name", d.get("subject_id")))}</td>'
+        f'<td>{esc(d.get("decision"))}</td><td>{esc(d.get("decided_by"))}</td>'
+        f'<td>{esc(d.get("rationale") or "–")}</td></tr>'
+        for d in sorted(graph["decisions"], key=lambda d: (d.get("date", ""), d["id"])))
+    dec_table = ('<table><tr><th>Datum</th><th>Gegenstand</th><th>Name</th><th>Entscheidung</th>'
+                 '<th>Von</th><th>Begründung</th></tr>' + dec_rows + "</table>") if dec_rows else \
+                "<p>Noch keine Freigabe im Entscheidungslog (30_review/decisions.csv).</p>"
+
+    return (f'<h3>Herkunft der Zahlen</h3>{metric_table}'
+            f'<h3>Automatisierte Entscheidungen und ihre Verantwortung</h3>{gate_table}'
+            f'<h3>Entscheidungslog</h3>{dec_table}')
+
+
+
+METHOD_PROCESS = (
+    "<p><b>Prozessebene.</b> Die Ist-Kennzahlen eines Prozesses sind Summen über seine "
+    "Schritte: Bearbeitungszeit und Wartezeit werden addiert, Übergaben aus den Kanten "
+    "gezählt, Human Touchpoints aus ausführender Rolle und Human Gates. Bewusst keine "
+    "Simulation — ohne Prozess-Mining-Daten wäre jede Verteilungsannahme Scheingenauigkeit. "
+    "Im Soll-Szenario wird nur dort nicht addiert, wo Schritte ausdrücklich einer gemeinsamen "
+    "Parallelgruppe zugeordnet sind; dann zählt für die Durchlaufzeit der längste von ihnen, "
+    "die Arbeitsminuten bleiben die Summe. Die sechs Redesign-Operatoren (eliminieren, "
+    "vereinfachen, zusammenführen, parallelisieren, automatisieren, Human Gate erhalten) "
+    "folgen der ESIA-Schule der Prozessneugestaltung, erweitert um Parallelisierung und den "
+    "ausdrücklichen Kontrollpunkt. Die Prozesspriorisierung ist eine gewichtete Rubrik aus "
+    "Nutzen, Machbarkeit und Umkehrbarkeit; die Gewichte stehen versioniert in "
+    "assets/value-weights.json. Zu jedem Prozess wird geprüft, ob sein Prioritätsband bei "
+    "einer Abweichung von ±1 in einem einzelnen Faktor kippt — wenn ja, ist die Einordnung "
+    "eine Richtung und keine Rangfolge.</p>"
+)
+
+
 def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], title: str, stamp: str) -> str:
     meta = graph["meta"]
     clusters = sorted({r["cluster"] for r in data["roles"]})
@@ -447,14 +889,56 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
                           "hj": fmt(r["analysis"].get("human_judgment")), "pb": fmt(r["analysis"].get("productivity_boost"))} for r in data["roles"]}
     cards = "".join(role_card(r, data["agents_idx"]) for r in data["roles"])
     stamp_html = f" · Stand {esc(stamp)}" if stamp else ""
+
+    # Prozessansicht nur bauen, wenn es Prozesse gibt. Ein Projekt nach Schema 1.0
+    # bekommt damit weiterhin genau das Dashboard, das es vorher hatte.
+    names = name_index(graph)
+    has_processes = bool(graph.get("processes"))
+    if has_processes:
+        pk = process_kpis(graph)
+        nav_items = [("#prozesse", "Prozesse"), ("#szenarien", "Szenarien"),
+                     ("#piloten", "Piloten"), ("#ueberblick", "Rollenüberblick"),
+                     ("#matrix", "Rollenmatrix"), ("#rollen", "Rollenanalyse"),
+                     ("#agenten", "Agentenbibliothek"), ("#governance", "Governance"),
+                     ("#rollout", "Rollout"), ("#tabelle", "Tabelle"), ("#methodik", "Methodik")]
+        process_sections = f"""
+<section id="prozesse"><h2>Prozessportfolio</h2><p>Die Prozesse des Bereichs, sortiert nach ihrem Wert (mehrdimensional bewertet, nicht nach gebundener Arbeitszeit). Die Kennzahlen oben fassen je Prozess das jeweils wirksamste entworfene Szenario zusammen.</p>
+{process_tiles(pk)}
+<p class="meta" style="margin-top:10px">{pk['scored']} von {pk['processes']} Prozessen bewertet · Bänder: {" · ".join(f"{BAND_LABEL[b]} {n}" for b, n in pk['bands'].items() if n)} · Deltas stammen aus den Soll-Schritten der Blueprints, nicht aus Zusagen.</p></section>
+
+<section id="szenarien"><h2>Ist und Soll je Prozess</h2><p>Je Prozess: der heutige Ablauf und die entworfenen Szenarien. Die Reiter schalten zwischen Ist und Szenario um; die Tabelle darüber zeigt alle Szenarien nebeneinander. Positive Zahlen sind immer Verbesserungen, auch bei Kennzahlen, bei denen weniger besser ist.</p>
+{processes_html(graph, names)}</section>
+
+<section id="piloten"><h2>Piloten und Messplan</h2><p>Aus einem geprüften Blueprint wird erst dann eine Entscheidungsgrundlage, wenn klar ist, was gemessen wird, welche Guardrails gelten und wann abgebrochen wird.</p>
+{experiments_html(graph, names)}</section>
+"""
+        governance_section = f"""
+<section id="governance"><h2>Governance und Herkunft der Zahlen</h2><p>Welche Zahl geschätzt, welche bestätigt und welche gemessen ist; wer eine automatisierte Entscheidung verantwortet; welche Freigaben im Log stehen.</p>
+{governance_html(graph, names)}</section>
+"""
+        roles_intro = ("Folgenansicht des Prozessredesigns: Welche Rollen die entworfenen Prozesse "
+                       "berühren. Sortiert nach Disruptionsscore. Je Rolle: Zeitverteilung, "
+                       "Transformationslogik, nächster Schritt, Kennwerte, Skills und Aufgaben.")
+    else:
+        pk = None
+        nav_items = [("#ueberblick", "Überblick"), ("#matrix", "Rollenmatrix"),
+                     ("#rollen", "Rollenanalyse"), ("#agenten", "Agentenbibliothek"),
+                     ("#rollout", "Rollout"), ("#tabelle", "Tabelle"), ("#methodik", "Methodik")]
+        process_sections = ""
+        governance_section = ""
+        roles_intro = ("Sortiert nach Disruptionsscore. Je Rolle: Zeitverteilung, "
+                       "Transformationslogik, nächster Schritt, Kennwerte, Skills und Aufgaben.")
+    nav_html = "".join(f'<a href="{h}">{esc(t)}</a>' for h, t in nav_items)
+    method_extra = METHOD_PROCESS if has_processes else ""
     return f"""<!DOCTYPE html>
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)}</title><style>{themed_css()}</style></head>
 <body>
 <header><h1>{esc(title)}</h1><div class="sub"><b>{esc(meta.get('organization') or '')}</b> · {esc(meta.get('scope') or '')} · Work-Graph Version {meta.get('version')} ({esc(meta.get('stage'))}){stamp_html}</div></header>
-<nav><a href="#ueberblick">Überblick</a><a href="#matrix">Rollenmatrix</a><a href="#rollen">Rollenanalyse</a><a href="#agenten">Agentenbibliothek</a><a href="#rollout">Rollout</a><a href="#tabelle">Tabelle</a><a href="#methodik">Methodik</a></nav>
+<nav>{nav_html}</nav>
 <main>
-<section id="ueberblick"><h2>Überblick</h2><p>Kennzahlen des analysierten Bereichs. Zeitanteile sind headcount-gewichtet, wo Headcounts bekannt sind ({k['headcount_known']} von {k['roles']} Rollen).</p>
+{process_sections}
+<section id="ueberblick"><h2>{'Rollenüberblick' if has_processes else 'Überblick'}</h2><p>Kennzahlen des analysierten Bereichs. Zeitanteile sind headcount-gewichtet, wo Headcounts bekannt sind ({k['headcount_known']} von {k['roles']} Rollen).</p>
 {tiles_html(k)}<div style="height:14px"></div>{dist_html(k)}
 <p class="meta" style="margin-top:10px">Datenqualität: {fmt(k['inferred_pct'], 0)} % der Aufgaben aus dem Berufsbild ergänzt (nicht aus Quelle) · {k['reviewed_roles']} von {k['roles']} Rollen durch Experten geprüft · Belastbarkeit: {k['evidence']['high']} belastbar, {k['evidence']['medium']} teilweise geprüft, {k['evidence']['low']} ungeprüft · Einstufung grenznah bei {k['borderline']}, wackelig bei {k['fragile']} Rollen. Unterschiede im Expositionswert unter 0,5 sind Rauschen; belastbar sind die Quadranten, nicht die Rangfolge innerhalb.</p></section>
 
@@ -464,12 +948,12 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
 <div class="matrix" id="matrix-box">{matrix_svg(data['roles'])}<div class="tip" id="tip"></div></div>
 <div class="legend">{"".join(f'<span><i style="background:{TYPE_COLOR[t]}"></i>{TYPE_LABEL[t]}</span>' for t in TYPE_ORDER if k["types"][t])}</div></section>
 
-<section id="rollen"><h2>Rollenanalyse</h2><p>Sortiert nach Disruptionsscore. Je Rolle: Zeitverteilung, Transformationslogik, nächster Schritt, Kennwerte, Skills und Aufgaben.</p>
+<section id="rollen"><h2>Rollenanalyse</h2><p>{esc(roles_intro)}</p>
 <div class="cards">{cards}</div></section>
 
 <section id="agenten"><h2>Agentenbibliothek</h2><p>Wiederverwendbare Agenten. „Wert #" ordnet nach FTE-Äquivalent (Σ Abdeckung × Headcount), sonst nach Abdeckungspunkten; „Bau #" ist die empfohlene Reihenfolge (kurzfristig und einfach zuerst). Abdeckung = Zeitanteil × Automatisierungspotenzial der übernommenen Aufgaben.</p>
 {agents_html(data['agents'])}</section>
-
+{governance_section}
 <section id="rollout"><h2>Rollout-Plan</h2><p>Abgeleitet aus Datenlage und Fehlerfolgen der Aufgaben: Was heute an Daten scheitert, ist mittelfristig.</p>
 {rollout_html(data['roles'], data['agents'])}</section>
 
@@ -477,9 +961,9 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
 {table_html(data['roles'])}</section>
 
 <section id="methodik"><h2>Methodik</h2>
-<p>Aufgaben wurden nach sechs Kriterien (0–10) bewertet: Automatisierbarkeit durch KI/Software, durch Robotik, benötigtes menschliches Urteil, Produktivitätshebel, Datenlage, Fehlerfolgen. Ausführungsmodus: <em>an Agent delegiert</em> bei Potenzial ≥ 7, Urteil ≤ 3 und Fehlerfolge ≤ 5 (reguliert ≤ 3); <em>KI-unterstützt</em> bei Potenzial ≥ 4 oder Hebel ≥ 5; sonst <em>manuell</em>. Rollenwerte sind zeitanteilgewichtete Mittel. Disruptionsscore = 0,5·Potenzial + 0,3·Hebel + 0,2·(10 − Urteil). Typen: eliminiert (≥ 60 % delegierbar, Urteil ≤ 3), transformiert (≥ 30 % delegierbar oder Potenzial ≥ 6 bei Urteil ≤ 5), augmentiert (≥ 40 % automatisierbar oder Hebel ≥ 5), entstehend (neue Rolle), stabil. HAS = Human Agency Scale (H1 Agent allein … H5 Mensch unverzichtbar) nach Stanford WORKBank. Bewertungen sind KI-generiert und durch Expertenkorrekturen (Overrides) überschreibbar; der Status je Rolle zeigt den Prüfstand.</p></section>
+<p>Aufgaben wurden nach sechs Kriterien (0–10) bewertet: Automatisierbarkeit durch KI/Software, durch Robotik, benötigtes menschliches Urteil, Produktivitätshebel, Datenlage, Fehlerfolgen. Ausführungsmodus: <em>an Agent delegiert</em> bei Potenzial ≥ 7, Urteil ≤ 3 und Fehlerfolge ≤ 5 (reguliert ≤ 3); <em>KI-unterstützt</em> bei Potenzial ≥ 4 oder Hebel ≥ 5; sonst <em>manuell</em>. Rollenwerte sind zeitanteilgewichtete Mittel. Disruptionsscore = 0,5·Potenzial + 0,3·Hebel + 0,2·(10 − Urteil). Typen: eliminiert (≥ 60 % delegierbar, Urteil ≤ 3), transformiert (≥ 30 % delegierbar oder Potenzial ≥ 6 bei Urteil ≤ 5), augmentiert (≥ 40 % automatisierbar oder Hebel ≥ 5), entstehend (neue Rolle), stabil. HAS = Human Agency Scale (H1 Agent allein … H5 Mensch unverzichtbar) nach Stanford WORKBank. Bewertungen sind KI-generiert und durch Expertenkorrekturen (Overrides) überschreibbar; der Status je Rolle zeigt den Prüfstand.</p>{method_extra}</section>
 </main>
-<footer>Erzeugt mit der Work-Transformation-Suite (work-graph-builder → task-scorer → agent-mapper → transformation-dashboard) aus {esc(wl.LATEST_GRAPH)} Version {meta.get('version')}. Schema {esc(meta.get('schema_version'))}.</footer>
+<footer>Erzeugt mit der Work-Transformation-Suite (work-graph-builder → task-scorer → agent-mapper → process-redesigner → transformation-dashboard) aus {esc(wl.LATEST_GRAPH)} Version {meta.get('version')}. Schema {esc(meta.get('schema_version'))}.</footer>
 <script>window.__ROLES__={json.dumps(roles_js, ensure_ascii=False, sort_keys=True)};{JS}</script>
 </body></html>
 """
@@ -530,6 +1014,49 @@ def export_csv(project: Path, graph: dict[str, Any], data: dict[str, Any], versi
     p = out / f"agents_v{version:03d}.csv"
     wl.write_csv(p, arows, list(arows[0].keys()) if arows else ["agent_id"])
     paths.append(p)
+
+    if graph.get("processes"):
+        names = name_index(graph)
+        prows = []
+        for pr in sorted(graph["processes"],
+                         key=lambda x: (-(x.get("value", {}) or {}).get("score", 0), x["name"])):
+            t = wl.process_totals(graph, pr["id"])
+            v = pr.get("value") or {}
+            prows.append({
+                "process_id": pr["id"], "process": pr["name"],
+                "rank": v.get("rank"), "value_score": v.get("score"), "band": v.get("band"),
+                "band_stable": (v.get("sensitivity") or {}).get("band_stable"),
+                "benefit": v.get("benefit"), "ease": v.get("ease"),
+                "fte_equivalent": v.get("fte_equivalent"),
+                "outcome": names.get(pr.get("outcome_id"), {}).get("name"),
+                "owner_role": names.get(pr.get("owner_role_id"), {}).get("name"),
+                "volume_per_year": pr.get("volume_per_year"), "regulated": pr.get("regulated"),
+                "status": pr.get("status"),
+                "steps": t["steps"], "human_touches": t["human_touches"], "handovers": t["handovers"],
+                "handling_time_min": t["handling_time_min"], "wait_time_min": t["wait_time_min"],
+                "lead_time_hours": t["lead_time_hours"], "rework_pct": t["rework_pct"],
+                "scenarios": len({b["scenario"] for b in graph["blueprints"] if b["process_id"] == pr["id"]}),
+            })
+        p = out / f"processes_v{version:03d}.csv"
+        wl.write_csv(p, prows, list(prows[0].keys()) if prows else ["process_id"])
+        paths.append(p)
+
+        brows = []
+        for b in sorted(graph["blueprints"], key=lambda b: b["id"]):
+            row = {"blueprint_id": b["id"], "process": names.get(b["process_id"], {}).get("name"),
+                   "scenario": b["scenario"], "name": b["name"], "status": b.get("status"),
+                   "fte_equivalent": b.get("fte_equivalent")}
+            for key, _label, _nd in FLOW_METRICS:
+                row[f"soll_{key}"] = b["soll_totals"].get(key)
+                row[f"delta_{key}"] = (b["delta"].get(key) or {}).get("improvement")
+            for op in wl.ENUM_OPERATOR:
+                row[f"op_{op}"] = (b.get("operator_counts") or {}).get(op, 0)
+            row["open_assumptions"] = len(b.get("open_assumptions", []))
+            brows.append(row)
+        if brows:
+            p = out / f"blueprints_v{version:03d}.csv"
+            wl.write_csv(p, brows, list(brows[0].keys()))
+            paths.append(p)
     return paths
 
 
@@ -553,6 +1080,44 @@ def report_md(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], ti
         fte = fmt(a.get("fte_equivalent")) if a.get("fte_equivalent") is not None else "–"
         lines.append(f"| {a.get('priority_rank', '–')} | {a.get('sequence_rank', '–')} | {a['name']} | {a.get('pattern')} | {SOURCING_LABEL.get(a.get('sourcing'), '–')} | {HORIZON_LABEL.get(a.get('horizon'), '–')} | "
                      f"{a.get('roles_covered_count', 0)} | {pct(a.get('avg_coverage_pct'))} | {fte} |")
+    if graph.get("processes"):
+        pk = process_kpis(graph)
+        names = name_index(graph)
+        lines += ["", "## Prozessportfolio", "",
+                  f"{pk['processes']} Prozess{'e' if pk['processes'] != 1 else ''} mit "
+                  f"{pk['steps']} Schritten, {pk['scenarios_complete']} davon mit allen "
+                  "drei Szenarien. "
+                  f"{pk['blueprints']} Blueprints ({pk['approved']} freigegeben), "
+                  f"{pk['experiments']} Piloten geplant."
+                  + (f" Durchschnittlicher Durchlaufzeitgewinn im jeweils besten Szenario: "
+                     f"{fmt(pk['avg_lead_gain'], 0)} %." if pk["avg_lead_gain"] is not None else ""),
+                  "",
+                  "| # | Prozess | Band | Wert | Ist-Durchlauf | Bestes Szenario | Soll-Durchlauf | Human Touchpoints | Übergaben |",
+                  "|---:|---|---|---:|---:|---|---:|---|---|"]
+        for pr in sorted(graph["processes"],
+                         key=lambda x: (-(x.get("value", {}) or {}).get("score", 0), x["name"])):
+            t = wl.process_totals(graph, pr["id"])
+            v = pr.get("value") or {}
+            best = pk["best"].get(pr["id"])
+            flag = "" if (v.get("sensitivity") or {}).get("band_stable", True) else " (kippelig)"
+            if best:
+                d = best["delta"]
+                lines.append(f"| {v.get('rank', '–')} | {pr['name']} | {BAND_LABEL.get(v.get('band'), '–')}{flag} "
+                             f"| {fmt(v.get('score'))} | {fmt(t['lead_time_hours'])} h "
+                             f"| {SCENARIO_LABEL.get(best['scenario'], '–')} "
+                             f"| {fmt(best['soll_totals']['lead_time_hours'])} h "
+                             f"| {t['human_touches']} → {best['soll_totals']['human_touches']} "
+                             f"| {t['handovers']} → {best['soll_totals']['handovers']} |")
+            else:
+                lines.append(f"| {v.get('rank', '–')} | {pr['name']} | {BAND_LABEL.get(v.get('band'), '–')}{flag} "
+                             f"| {fmt(v.get('score'))} | {fmt(t['lead_time_hours'])} h | noch keins "
+                             f"| – | {t['human_touches']} | {t['handovers']} |")
+        estimated = sum(1 for m in graph["metrics"] if wl.metric_value(m, "baseline")[1] == "estimated")
+        lines += ["", f"Belastbarkeit der Kennzahlen: {len(graph['metrics']) - estimated} von "
+                      f"{len(graph['metrics'])} Ausgangswerten sind bestätigt oder gemessen, "
+                      f"{estimated} {'ist eine Schätzung' if estimated == 1 else 'sind Schätzungen'}. Jede Delta-Zahl in diesem Bericht ist aus den "
+                      "Soll-Schritten der Blueprints gerechnet, nicht zugesagt.", ""]
+
     lines += ["", "## Hinweise", "",
               "Bewertungen sind KI-generiert nach einer festen Rubrik und durch Expertenkorrekturen überschreibbar. "
               "Rollen mit Status `generated` wurden noch nicht geprüft. Die Schwellen der Klassifikation stehen in der Rubrik des task-scorer. "
@@ -594,10 +1159,10 @@ def main() -> int:
     out = project / wl.DIR_OUTPUT
     out.mkdir(parents=True, exist_ok=True)
     html_path = out / f"dashboard_v{version:03d}.html"
-    html_path.write_text(build_html(graph, data, k, title, args.stamp or ""), encoding="utf-8", newline="\n")
+    wl.write_text(html_path, build_html(graph, data, k, title, args.stamp or ""))
     csvs = export_csv(project, graph, data, version)
     rep = out / f"report_v{version:03d}.md"
-    rep.write_text(report_md(graph, data, k, title), encoding="utf-8", newline="\n")
+    wl.write_text(rep, report_md(graph, data, k, title))
     print(f"Geschrieben: {wl.relpath(html_path)}")
     for p in csvs + [rep]:
         print(f"Geschrieben: {wl.relpath(p)}")

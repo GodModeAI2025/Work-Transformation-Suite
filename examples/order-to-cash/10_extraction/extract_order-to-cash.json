@@ -1,0 +1,153 @@
+{
+  "source": "Stellenbeschreibungen Order-to-Cash, anonymisiert, Stand 2026-01",
+  "job_family": "Finanzen und Controlling",
+  "job_family_description": "Kaufmännische Abwicklung, Rechnungslegung und Forderungsmanagement.",
+  "job_cluster": "Order-to-Cash",
+  "job_cluster_description": "Vom eingehenden Auftrag bis zum zugeordneten Zahlungseingang.",
+  "roles": [
+    {
+      "name": "Auftragssachbearbeiter",
+      "level": "Fachkraft",
+      "headcount": 9,
+      "archetype": "process-heavy",
+      "purpose": "Nimmt Kundenaufträge auf, prüft sie gegen Vertrag und Stammdaten und bestätigt sie.",
+      "description": "Erfasst Aufträge aus Bestellungen, klärt Abweichungen mit dem Vertrieb und pflegt Änderungen ein.",
+      "time_shares_source": "source",
+      "skills": [
+        {"name": "ERP-Auftragsabwicklung", "kind": "tool", "level": 4, "importance": "core"},
+        {"name": "Vertragsauslegung", "kind": "knowledge", "level": 3, "importance": "core"},
+        {"name": "Kundenkommunikation", "kind": "skill", "level": 3, "importance": "supporting"}
+      ],
+      "tasks": [
+        {"name": "Auftrag aus Bestellung erfassen", "share_of_time": 30, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Bestellungen aus E-Mail, Portal und PDF in das ERP übertragen.",
+         "skills": [{"name": "ERP-Auftragsabwicklung"}]},
+        {"name": "Auftragsdaten gegen Rahmenvertrag prüfen", "share_of_time": 20, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Preise, Konditionen und Lieferbedingungen gegen den gültigen Rahmenvertrag abgleichen.",
+         "skills": [{"name": "Vertragsauslegung"}]},
+        {"name": "Rückfragen mit Vertrieb klären", "share_of_time": 20, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Abweichungen zwischen Bestellung und Vertrag mit dem zuständigen Vertrieb abstimmen.",
+         "skills": [{"name": "Kundenkommunikation"}]},
+        {"name": "Auftragsbestätigung versenden", "share_of_time": 15, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Bestätigung erzeugen, prüfen und an den Kunden senden.",
+         "skills": [{"name": "ERP-Auftragsabwicklung"}]},
+        {"name": "Auftragsänderungen einpflegen", "share_of_time": 15, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Mengen-, Termin- und Adressänderungen nachziehen und Folgebelege anpassen.",
+         "skills": [{"name": "ERP-Auftragsabwicklung"}]}
+      ]
+    },
+    {
+      "name": "Kreditprüfer",
+      "level": "Fachkraft",
+      "headcount": 3,
+      "archetype": "control-heavy",
+      "regulated": true,
+      "purpose": "Bewertet die Bonität von Kunden und legt Kreditlimits fest.",
+      "description": "Holt Auskünfte ein, bewertet sie, legt Limits fest und dokumentiert die Entscheidung.",
+      "time_shares_source": "source",
+      "skills": [
+        {"name": "Bonitätsbewertung", "kind": "knowledge", "level": 4, "importance": "core"},
+        {"name": "Risikoeinschätzung", "kind": "competence", "level": 4, "importance": "core"},
+        {"name": "ERP-Auftragsabwicklung", "kind": "tool", "level": 3, "importance": "supporting"}
+      ],
+      "tasks": [
+        {"name": "Bonitätsauskunft einholen", "share_of_time": 30, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Auskunft beim externen Dienstleister anfragen und mit internen Zahlungserfahrungen zusammenführen.",
+         "skills": [{"name": "Bonitätsbewertung"}]},
+        {"name": "Kreditlimit festlegen", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Limit aus Auskunft, Historie und Auftragsvolumen ableiten.",
+         "skills": [{"name": "Risikoeinschätzung"}]},
+        {"name": "Limitüberschreitung eskalieren", "share_of_time": 20, "frequency": "weekly", "nature": "cognitive", "confidence": "source",
+         "description": "Aufträge über dem Limit mit Begründung an die Teamleitung geben.",
+         "skills": [{"name": "Risikoeinschätzung"}]},
+        {"name": "Kreditakte dokumentieren", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Entscheidung, Grundlage und Gültigkeit revisionssicher festhalten.",
+         "skills": [{"name": "ERP-Auftragsabwicklung"}]}
+      ]
+    },
+    {
+      "name": "Fakturierungssachbearbeiter",
+      "level": "Fachkraft",
+      "headcount": 6,
+      "archetype": "process-heavy",
+      "purpose": "Erstellt, prüft und versendet Rechnungen.",
+      "description": "Stellt Leistungsnachweise zusammen, erzeugt Rechnungen, prüft sie im Vier-Augen-Prinzip und archiviert sie.",
+      "time_shares_source": "source",
+      "skills": [
+        {"name": "Rechnungslegung", "kind": "knowledge", "level": 4, "importance": "core"},
+        {"name": "ERP-Auftragsabwicklung", "kind": "tool", "level": 4, "importance": "core"},
+        {"name": "Belegprüfung", "kind": "skill", "level": 3, "importance": "core"}
+      ],
+      "tasks": [
+        {"name": "Leistungsnachweise zusammenstellen", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Lieferscheine, Stundennachweise und Teilleistungen einem Auftrag zuordnen.",
+         "skills": [{"name": "Belegprüfung"}]},
+        {"name": "Rechnung erstellen", "share_of_time": 30, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Rechnung im ERP erzeugen, Positionen und Steuerkennzeichen setzen.",
+         "skills": [{"name": "Rechnungslegung"}]},
+        {"name": "Rechnung prüfen und freigeben", "share_of_time": 20, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Zweite Person prüft Positionen, Konditionen und Empfänger und gibt frei.",
+         "skills": [{"name": "Belegprüfung"}]},
+        {"name": "Rechnung versenden und archivieren", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Versand über den vereinbarten Kanal, Ablage im revisionssicheren Archiv.",
+         "skills": [{"name": "ERP-Auftragsabwicklung"}]}
+      ]
+    },
+    {
+      "name": "Forderungsmanager",
+      "level": "Fachkraft",
+      "headcount": 4,
+      "archetype": "control-heavy",
+      "purpose": "Ordnet Zahlungseingänge zu, klärt offene Posten und steuert das Mahnwesen.",
+      "description": "Gleicht Zahlungen gegen offene Posten ab, klärt Differenzen mit Kunden und bereitet Mahnläufe vor.",
+      "time_shares_source": "source",
+      "skills": [
+        {"name": "Offene-Posten-Verwaltung", "kind": "knowledge", "level": 4, "importance": "core"},
+        {"name": "Kundenkommunikation", "kind": "skill", "level": 3, "importance": "core"},
+        {"name": "Verhandlungsführung", "kind": "competence", "level": 3, "importance": "supporting"}
+      ],
+      "tasks": [
+        {"name": "Zahlungseingänge zuordnen", "share_of_time": 30, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Kontoauszüge gegen offene Posten abgleichen, Teilzahlungen aufteilen.",
+         "skills": [{"name": "Offene-Posten-Verwaltung"}]},
+        {"name": "Offene Posten klären", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
+         "description": "Differenzen recherchieren und mit Kunde oder Vertrieb klären.",
+         "skills": [{"name": "Kundenkommunikation"}]},
+        {"name": "Mahnlauf vorbereiten und prüfen", "share_of_time": 25, "frequency": "weekly", "nature": "cognitive", "confidence": "source",
+         "description": "Mahnvorschlagsliste durchsehen, Ausnahmen herausnehmen, Stufen festlegen.",
+         "skills": [{"name": "Offene-Posten-Verwaltung"}]},
+        {"name": "Zahlungsvereinbarungen abstimmen", "share_of_time": 20, "frequency": "weekly", "nature": "cognitive", "confidence": "source",
+         "description": "Ratenpläne und Stundungen mit Kunden verhandeln und dokumentieren.",
+         "skills": [{"name": "Verhandlungsführung"}]}
+      ]
+    },
+    {
+      "name": "Teamleitung Order-to-Cash",
+      "level": "Führung",
+      "headcount": 1,
+      "archetype": "relationship-heavy",
+      "purpose": "Verantwortet den Prozess, entscheidet Ausnahmen und steuert das Team.",
+      "description": "Entscheidet Eskalationen, berichtet Kennzahlen, führt und entwickelt das Team.",
+      "time_shares_source": "estimated",
+      "skills": [
+        {"name": "Führung", "kind": "competence", "level": 4, "importance": "core"},
+        {"name": "Risikoeinschätzung", "kind": "competence", "level": 4, "importance": "core"},
+        {"name": "Prozesssteuerung", "kind": "knowledge", "level": 3, "importance": "core"}
+      ],
+      "tasks": [
+        {"name": "Ausnahmen und Eskalationen entscheiden", "share_of_time": 35, "frequency": "daily", "nature": "cognitive", "confidence": "inferred",
+         "description": "Limitüberschreitungen, Kulanz, Stundungen und Mahnstopps entscheiden.",
+         "skills": [{"name": "Risikoeinschätzung"}]},
+        {"name": "Kennzahlen berichten", "share_of_time": 25, "frequency": "monthly", "nature": "cognitive", "confidence": "inferred",
+         "description": "Durchlaufzeiten, Außenstände und Fehlerquoten aufbereiten und berichten.",
+         "skills": [{"name": "Prozesssteuerung"}]},
+        {"name": "Team steuern und einarbeiten", "share_of_time": 25, "frequency": "weekly", "nature": "cognitive", "confidence": "inferred",
+         "description": "Kapazität planen, einarbeiten, Gespräche führen.",
+         "skills": [{"name": "Führung"}]},
+        {"name": "Prozessänderungen abstimmen", "share_of_time": 15, "frequency": "monthly", "nature": "cognitive", "confidence": "inferred",
+         "description": "Änderungen mit angrenzenden Bereichen, Revision und IT abstimmen.",
+         "skills": [{"name": "Prozesssteuerung"}]}
+      ]
+    }
+  ]
+}

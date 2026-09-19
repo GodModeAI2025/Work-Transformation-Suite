@@ -80,7 +80,8 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
     roles: dict[str, dict] = {}
     tasks: dict[str, dict] = {}
     skills: dict[str, dict] = {}
-    stats = {"files": 0, "roles_new": 0, "roles_merged": 0, "tasks": 0, "skills": 0, "scores_kept": 0}
+    stats = {"files": 0, "roles_new": 0, "roles_merged": 0, "tasks": 0, "skills": 0, "scores_kept": 0,
+             "processes": 0, "process_task_refs_dropped": 0}
 
     def get_skill(name: str, kind: str = "skill", category: str = "") -> str:
         sid = wl.make_id("skill", name)
@@ -250,6 +251,24 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
     graph["agents"] = agents
     graph["positions"] = list(previous.get("positions", [])) if previous else []
     graph["courses"] = list(previous.get("courses", [])) if previous else []
+
+    # Prozessebene, Redesign und Governance werden hier nicht neu gebaut — sie entstehen
+    # in build_processes.py bzw. im Skill process-redesigner. Sie werden aus der Vorversion
+    # übernommen, damit ein erneuter Architekt-Lauf keine Prozessarbeit verwirft.
+    for c in wl.COLLECTIONS_PROCESS + wl.COLLECTIONS_REDESIGN + wl.COLLECTIONS_GOVERNANCE:
+        graph[c] = [dict(x) for x in previous.get(c, [])] if previous else []
+    # Aufgabenverweise aus Prozessschritten bereinigen: eine Aufgabe, die es nicht mehr
+    # gibt, darf keinen Schritt ungültig machen. Verweise auf Rollen, Systeme oder Agenten
+    # werden NICHT stillschweigend entfernt — dort meldet der Validator lieber den Bruch,
+    # als ein Prozessmodell klammheimlich zu entkernen.
+    dropped_refs = 0
+    for st in graph["process_steps"]:
+        keep = sorted(t for t in st.get("task_ids", []) if t in tasks)
+        dropped_refs += len(st.get("task_ids", [])) - len(keep)
+        st["task_ids"] = keep
+    stats["process_task_refs_dropped"] = dropped_refs
+    stats["processes"] = len(graph["processes"])
+
     wl.sort_graph(graph)
     return graph, stats
 
@@ -282,8 +301,12 @@ def main() -> int:
     print(
         f"{verb}: {wl.relpath(path)} (Version {version}) | Dateien={stats['files']} "
         f"Rollen={stats['roles_new']} (zusammengeführt {stats['roles_merged']}) "
-        f"Aufgaben={stats['tasks']} Skills={stats['skills']} Bewertungen übernommen={stats['scores_kept']} Overrides={ov_applied}"
+        f"Aufgaben={stats['tasks']} Skills={stats['skills']} Bewertungen übernommen={stats['scores_kept']} "
+        f"Prozesse übernommen={stats['processes']} Overrides={ov_applied}"
     )
+    if stats["process_task_refs_dropped"]:
+        print(f"HINWEIS  {stats['process_task_refs_dropped']} Aufgabenverweis(e) in Prozessschritten "
+              "entfernt, weil die Aufgaben nicht mehr extrahiert werden")
     return 0
 
 

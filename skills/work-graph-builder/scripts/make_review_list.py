@@ -112,10 +112,10 @@ def main() -> int:
 
     out = project / wl.DIR_REVIEW / f"review_v{version:03d}.md"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text("\n".join(lines), encoding="utf-8")
+    wl.write_text(out, "\n".join(lines))
     ov = project / wl.DIR_REVIEW / "overrides.csv"
     if not ov.exists():
-        ov.write_text(OVERRIDE_HEADER, encoding="utf-8")
+        wl.write_text(ov, OVERRIDE_HEADER, newline="")
     print(f"Geschrieben: {wl.relpath(out)} ({len(roles)} Rollen)")
     return 0
 
