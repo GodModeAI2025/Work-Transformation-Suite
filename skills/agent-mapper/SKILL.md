@@ -211,7 +211,7 @@ Firmentexte. Lege es unter `00_input/kontext/` ab (`firma/`, `<rolle>/texte`, `<
 python3 <skill>/scripts/extract_context_evidence.py --project ./projekte/<name> [--role "<Rolle>"]
 ```
 
-Das Ergebnis sind **Vorschläge mit Quelle, Fundstelle und Zitat** in `30_review/kontext_evidenz/`; `build_rollen_md.py` und `build_role_setup.py` zeigen sie als „✎ Vorschlag aus Dokument — bitte bestätigen“.
+Das Ergebnis sind **Vorschläge mit Quelle, Fundstelle und Zitat** in `30_review/kontext_evidenz/`; `build_rollen_md.py` und `build_role_setup.py` zeigen sie als „✎ Vorschlag aus Dokument, bitte bestätigen“.
 Was Skripte nicht lesen (PDF, Word, Mail, Kalender), liest du und trägst es im selben Format in `<rolle>.claude.json` ein — nur mit wörtlichem Zitat und Quelle, nichts ergänzt, nichts geschlossen.
 Sag dem Nutzer: Vorschläge sind keine Tatsachen; ein Stilprofil gibt es erst ab drei Texten und 600 Wörtern; Transkripte enthalten Daten Dritter und gehören nur mit Einverständnis ins Projekt; Personennamen werden nicht gesucht.
 Das Interview bleibt für Entscheidungen (Qualitätsverständnis, gewünschte Rückfrage, was nie ohne Rückfrage geschehen darf). Details: `references/kontext-aus-dokumenten.md`.

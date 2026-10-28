@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Work-Transformation-Suite</title>
-<meta name="description" content="Sechs Claude-Skills: aus Stellenbeschreibungen ein bewerteter Arbeitsgraph, und daraus KI-native Soll-Prozesse in drei Szenarien, mit gerechneten Deltas, Capability Contracts und messbarem Pilotplan.">
+<meta name="description" content="Sechs Claude-Skills: aus Stellenbeschreibungen ein bewerteter Arbeitsgraph, daraus KI-native Soll-Prozesse mit gerechneten Deltas und eine Rollen.md, die einem Agenten den Kontext seiner Rolle gibt.">
 <meta property="og:title" content="Work-Transformation-Suite">
-<meta property="og:description" content="Welche Arbeit kann KI übernehmen, und wie sähe der Prozess aus, wenn man ihn vom Ergebnis her neu baut? Claude urteilt, Skripte rechnen.">
+<meta property="og:description" content="Welche Arbeit kann KI übernehmen, wie sähe der Prozess vom Ergebnis her neu gebaut aus, und was muss ein Agent über seine Rolle wissen? Claude urteilt, Skripte rechnen.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230d3b39'/><circle cx='32' cy='34' r='11' fill='%23fff'/><circle cx='68' cy='66' r='11' fill='%235FD9C6'/><path d='M40 41 L60 59' stroke='%23fff' stroke-width='6'/></svg>">
 <style>
@@ -54,6 +54,12 @@ header .lead{font-size:clamp(16px,2.2vw,19px);max-width:62ch;opacity:.92;margin:
 .btn-ghost:hover{background:rgba(255,255,255,.12)}
 .badges{display:flex;flex-wrap:wrap;gap:8px}
 .badge{font-size:12.5px;padding:4px 11px;border:1px solid rgba(255,255,255,.35);border-radius:999px;opacity:.9}
+
+/* Sprungmarken */
+.anchors{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 22px;padding:0;list-style:none;font-size:14px}
+.anchors a{color:#fff;opacity:.85;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+.anchors a:hover{opacity:1;border-color:var(--mint)}
+.anchors .here{border-color:var(--mint);opacity:1;font-weight:600}
 
 /* Sections */
 main{padding:8px 0 0}
@@ -115,29 +121,37 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 <header>
   <div class="wrap">
     <p class="kicker">Sechs Claude-Skills · Python 3.9+ · keine Abhängigkeiten</p>
-    <h1>Erst der <b>bewertete Arbeitsgraph</b>. Dann der <b>Prozess, neu gebaut</b>.</h1>
+    <h1>Vom <b>bewerteten Arbeitsgraphen</b> zum <b>Agenten, der seine Rolle kennt</b>.</h1>
     <p class="lead">
-      Rollen, Aufgaben und Skills eines Bereichs, jede Aufgabe auf KI-Automatisierbarkeit bewertet,
-      jede Rolle als eliminiert, transformiert, augmentiert, entstehend oder stabil klassifiziert,
-      dazu eine Agentenbibliothek mit Rollenabdeckung und ein Dashboard. Angefangen hat das mit
-      Pilotbereichen von 20 bis 40 Rollen. Inzwischen läuft es mit über 200 Rollen in einem Durchgang.
+      Rollen, Aufgaben und Skills eines Bereichs, jede Aufgabe auf KI-Automatisierbarkeit bewertet, jede Rolle als
+      eliminiert, transformiert, augmentiert, entstehend oder stabil eingeordnet. Dazu eine Agentenbibliothek mit
+      Rollenabdeckung und ein Dashboard. Der Ablauf ist bis über 200 Rollen in einem Durchgang gelaufen.
     </p>
     <p class="lead">
-      Seit 0.2 kommt die zweite Hälfte dazu: Aus derselben Datenbasis plus einer Prozessaufnahme
-      entstehen KI-native Soll-Prozesse: je Prozess drei vergleichbare Szenarien, gerechnete
-      Deltas bei Durchlaufzeit, Übergaben und Human Touchpoints, ausführbare Capability Contracts
-      und ein messbarer Pilotplan. Denn wenn fünf Rollen nacheinander dieselben Daten prüfen,
-      findet eine Aufgabenanalyse fünf automatisierbare Aufgaben. Ein Redesign streicht vier
-      Prüfungen und drei Übergaben, und der Rest braucht gar keinen Agenten mehr.
+      Aus derselben Datenbasis plus einer Prozessaufnahme entstehen KI-native Soll-Prozesse: je Prozess drei vergleichbare
+      Szenarien mit gerechneten Deltas bei Durchlaufzeit, Übergaben und Human Touchpoints, Capability Contracts und ein
+      messbarer Pilotplan. Denn wenn fünf Rollen nacheinander dieselben Daten prüfen, findet eine Aufgabenanalyse fünf
+      automatisierbare Aufgaben. Ein Redesign streicht vier Prüfungen und drei Übergaben, und der Rest braucht gar keinen
+      Agenten mehr.
     </p>
     <p class="lead">
-      Seit 0.3 kommen drei Dinge dazu, die in der Praxis über Erfolg entscheiden: die Unterscheidung
-      zwischen technisch möglich und tatsächlich auffangbar, eine Datenaufbereitung, die Quellen sichtet
-      und Methoden vorschlägt, statt still zu rechnen, und ein Setup-Paket für einen persönlichen
-      Arbeitsagenten, das auf Zuruf für genau eine Rolle entsteht.
+      Und für jede Rolle lässt sich die Datei erzeugen, die ein Agent braucht, um zu wissen, wer hier arbeitet:
+      die <b>Rollen.md</b>.
     </p>
+    <ul class="anchors" aria-label="Auf dieser Seite">
+      <li><a href="#idee">Idee</a></li>
+      <li><a href="#ablauf">Ablauf</a></li>
+      <li><a href="#ergebnisse">Ergebnisse</a></li>
+      <li><a href="#aufbereitung">Datenaufbereitung</a></li>
+      <li><a class="here" href="#rollen-md">Rollen.md</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#ehrlichkeit">Belastbarkeit</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#grenzen">Grenzen</a></li>
+    </ul>
     <div class="cta">
-      <a class="btn btn-primary" href="https://github.com/GodModeAI2025/Work-Transformation-Suite">Repository auf GitHub</a>
+      <a class="btn btn-primary" href="#rollen-md">Rollen.md erzeugen</a>
+      <a class="btn btn-ghost" href="https://github.com/GodModeAI2025/Work-Transformation-Suite">Repository auf GitHub</a>
       <a class="btn btn-ghost" href="https://github.com/GodModeAI2025/Work-Transformation-Suite#installation">Anleitung lesen</a>
       <a class="btn btn-ghost" href="https://github.com/GodModeAI2025/Work-Transformation-Suite/tree/main/dist">.skill-Pakete</a>
     </div>
@@ -246,45 +260,176 @@ Optional, auf Zuruf oder bei Bedarf:
   </div>
 </section>
 
-<section id="neu">
+<section id="ergebnisse">
   <div class="wrap">
-    <h2>Neu seit 0.3</h2>
-    <p class="sub">Alles optional und additiv. Ein Projekt, das nichts davon füttert, läuft unverändert; Schema 1.0 und 1.1 hebt <code>migrate_graph.py</code> verlustfrei auf 1.2.</p>
+    <h2>Was am Ende vorliegt</h2>
+    <p class="sub">Dieselben Daten tragen drei Auswertungen, jeweils für andere Leser. Ein Dashboard zeigt alles zusammen, zwei Berichte trennen die Sicht von HR und IT.</p>
     <div class="grid g3">
       <div class="card">
-        <p class="num">KAPAZITÄT</p>
-        <h3>Technisch möglich, auffangbar</h3>
-        <p>Je Rolle zwei Zahlen: Was die Bewertung technisch frei setzt, und was die Organisation durch Wachstum, Fluktuation oder Umbesetzung auffangen kann. Fehlt die Angabe, steht „nicht bewertet“, nie null. Dazu kommt ein Zielbild je Rolle, ausdrücklich als Entwurf.</p>
+        <p class="num">FÜR HR</p>
+        <h3>Technisch möglich und auffangbar</h3>
+        <p>Je Rolle zwei Zahlen: was die Bewertung technisch frei setzt, und was die Organisation durch Wachstum, Fluktuation oder Umbesetzung auffangen kann. Fehlt die Angabe, steht „nicht bewertet“, nie null. Dazu ein Zielbild je Rolle, ausdrücklich als Entwurf, und die Bedingungen, unter denen Beschäftigte ehrlich mitarbeiten können.</p>
       </div>
       <div class="card">
-        <p class="num">AUFGABENKARTE</p>
-        <h3>Welche Aufgabe zuerst?</h3>
-        <p>Alle bewerteten Aufgaben quer über alle Rollen auf einer Karte, Größe nach gebundener Arbeit, Farbe nach Modus. Die Rangliste ordnet nach Exposition; die Fehlerfolge steht daneben, denn „am besten automatisierbar“ ist nicht „sicher delegierbar“.</p>
+        <p class="num">FÜR IT</p>
+        <h3>Aufgabenkarte und Backlog</h3>
+        <p>Alle bewerteten Aufgaben quer über alle Rollen auf einer Karte: Größe nach gebundener Arbeit, Farbe nach Modus. Die Rangliste ordnet nach Exposition, die Fehlerfolge steht daneben, denn „am besten automatisierbar“ heißt nicht „sicher delegierbar“. Dazu Reichweite je Agent und die Prozesse, für die niemand etwas angefragt hat.</p>
       </div>
       <div class="card">
-        <p class="num">DATENAUFBEREITUNG</p>
-        <h3>Sichten, vorschlagen, anbieten</h3>
-        <p>Das Quelleninventar ordnet <code>00_input/</code> Quellenarten zu, zeigt die Lücken im Modell und schlägt Methoden mit Befehl vor: Vollständigkeitsprüfung gegen eine anpassbare Vorlage, Aufgabencluster über Rollen, Zusammenarbeit aus Prozessen und Positionen, allgemeine Regeln, Level und Kostensatz, Referenzautomatisierungen mit Quelle und Evidenzgrad. Nichts füllt Lücken still auf.</p>
+        <p class="num">FÜR DEN PILOT</p>
+        <h3>Szenarien, Wert und Messplan</h3>
+        <p>Je Prozess drei Soll-Szenarien, Prioritätsbänder statt Rangliste und Pilotkarten mit Guardrails und Abbruchkriterien. Jeder Soll-Schritt trägt eine Lösungsklasse: Wer 84 PDFs von Hand öffnet, braucht eine Schnittstelle und kein Sprachmodell. Der Vergleich zählt die Schritte ohne KI.</p>
+      </div>
+    </div>
+    <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:18px 0 0">
+      Der Nutzungsstand eines Agenten kommt nur aggregiert je Rolle. Unter fünf Stellen wird nichts angezeigt, und der Validator lehnt jeden Satz darunter ab.
+    </p>
+  </div>
+</section>
+
+<section id="aufbereitung">
+  <div class="wrap">
+    <h2>Datenaufbereitung: sichten, vorschlagen, anbieten</h2>
+    <p class="sub">Gute Analysen hängen mehr an den Quellen als am Modell. Das Quelleninventar ordnet jede Datei in <code>00_input/</code> einer Quellenart zu, zeigt, welche Teile des Modells noch keine Quelle haben, und schlägt passende Methoden mit Befehl vor. Die Suite bietet sie an und führt nichts still aus. Lücken füllt sie nie von selbst auf.</p>
+    <div class="scroller">
+      <table class="tbl">
+        <thead><tr><th>Methode</th><th>Was sie liefert</th><th>Grenze</th></tr></thead>
+        <tbody>
+          <tr><td>inventory_sources</td><td>Quellenarten, Lücken im Modell, vorgeschlagene Methoden</td><td>PDF, Word und Excel erkennt sie nur am Namen</td></tr>
+          <tr><td>check_completeness</td><td>Füllgrad je Rolle gegen eine anpassbare Vorlage, mit Hinweis, woher eine Lücke zu füllen wäre</td><td>füllt nichts auf</td></tr>
+          <tr><td>dedupe_tasks</td><td>dieselbe Arbeit in mehreren Rollen als Cluster, mit Rollenzahl und FTE</td><td>erkennt gleiche Wörter, keine gleiche Bedeutung; Cluster bleiben Kandidaten, bis jemand mit Namen bestätigt</td></tr>
+          <tr><td>derive_collaboration</td><td>Rollenpaare mit Belegen: Übergabe im Prozess, gemeinsame Stelle, gleiche Einheit</td><td>Gesprächsvorlage, kein Befund</td></tr>
+          <tr><td>Regeln mit Selektoren</td><td>eine Expertenaussage wirkt auf alle betroffenen Rollen (<code>cluster:</code>, <code>family:</code>, <code>role:</code>, <code>*</code>)</td><td>Löschen ist als Regel nicht erlaubt</td></tr>
+          <tr><td>import_levels</td><td>Kostensatz je Arbeitstag nach Level</td><td>Planwerte je Level, keine Gehälter einzelner Personen</td></tr>
+          <tr><td>Referenzautomatisierungen</td><td>bekannte Automatisierungen mit Quelle und Evidenzgrad bei den Agentenkandidaten</td><td>eine Referenz ohne Quelle wird nicht geführt</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="rollen-md">
+  <div class="wrap">
+    <h2>Rollen.md: der Kontext für einen Agenten</h2>
+    <p class="sub">Ein Agent ist nur so gut wie sein Kontext. Die Rollen.md ist die eine Datei, die ein Agenten-Harness lädt, damit es weiß, wer hier arbeitet. Sie entsteht für eine Rolle oder für mehrere ausgewählte, zum größten Teil aus dem, was die Suite ohnehin weiß.</p>
+
+    <div class="grid g3">
+      <div class="card">
+        <p class="num">1 · FIRMENPROFIL</p>
+        <h3>Was das Unternehmen tut und für wen</h3>
+        <p>Damit ordnet der Agent Aufgaben im richtigen Markt ein. Aus dem Graphen kommen Organisation, Bereich und die Empfänger der Prozessergebnisse. Geschäftsmodell, Markt und Produkte liefern Firmentexte oder das Interview.</p>
       </div>
       <div class="card">
-        <p class="num">ROLLEN-SETUP</p>
-        <h3>Ein Arbeitsagent für genau diese Rolle</h3>
-        <p>Auf Zuruf entsteht für eine oder mehrere Rollen eine <code>Rollen.md</code> mit Firmenprofil, Rollenprofil samt Zeitfressern, Team-Kontext mit Kanälen, Prioritäten und Stil (vorbelegt aus dem Graphen, der Rest „offen“). Wer mehr will, bekommt ein ganzes Paket: Interview-Prompt, schlanker Agenten-Prompt, drei bis fünf Skills mit Testfall-Gerüst, Tool-Tabelle und inaktive Routinen. Skills durchlaufen Reifegrade von Entwurf bis live-reif, und eine Routine darf nur für live-reife Skills laufen.</p>
+        <p class="num">2 · ROLLENPROFIL</p>
+        <h3>Was du tust und womit du arbeitest</h3>
+        <p>Verantwortung, Tools, wiederkehrende Aufgaben mit Häufigkeit und Zeitanteil, Entscheidungsräume. Zeitfresser stammen aus der gebundenen Arbeitszeit, der Reibung in der Prozessaufnahme, der längsten Liegezeit und den meisten Rückläufern.</p>
       </div>
       <div class="card">
-        <p class="num">KONTEXT AUS MATERIAL</p>
-        <h3>Weniger fragen, mehr vorschlagen</h3>
-        <p>Eigene Texte, Meeting-Transkripte und Projektdokumente liefern Vorschläge für Stil, Prioritäten, Zeitfresser und Kanäle, jeweils mit Quelle, Fundstelle und Zitat. In der <code>Rollen.md</code> stehen sie als „bitte bestätigen“. Der Stil wird aus den Texten gemessen, und bei zu wenig Material entsteht keiner. Das Interview bleibt für Entscheidungen.</p>
+        <p class="num">3 · TEAM-KONTEXT</p>
+        <h3>Mit wem, wen wann, über welchen Kanal</h3>
+        <p>Übergaben mit Richtung und Kanal (System, E-Mail, Ticket, Telefon, Meeting), Eskalationen und die Organisationseinheit. Namen von Ansprechpersonen kennt der Graph nicht, sie bleiben offen.</p>
       </div>
       <div class="card">
-        <p class="num">NUTZUNG</p>
-        <h3>Reichweite, Blindflecken, Nutzungsstand</h3>
-        <p>Für wie viele Rollen und FTE gilt ein Agent? Welche hochwertigen Prozesse hat niemand angefragt? Der Nutzungsstand kommt nur aggregiert je Rolle und Agent; unter fünf Stellen wird nichts gezeigt, und der Validator lehnt jeden Satz darunter ab.</p>
+        <p class="num">4 · PRIORITÄTEN &amp; ZIELE</p>
+        <h3>Woran du gerade arbeitest</h3>
+        <p>Der lebendigste Abschnitt, einmal im Monat zu aktualisieren. Prozessergebnisse und Kennzahlen kommen aus dem Graphen, die Prioritäten selbst aus Statusberichten und Transkripten oder aus dem Gespräch.</p>
       </div>
       <div class="card">
-        <p class="num">KEIN KI-FALL</p>
-        <h3>Nicht jeder Schritt braucht KI</h3>
-        <p>Wer 84 PDFs von Hand öffnet, braucht eine Schnittstelle, kein Sprachmodell. Jeder Soll-Schritt trägt eine Lösungsklasse, der Szenarienvergleich zählt die Schritte ohne KI. Dazu ein Interviewleitfaden und die Regel, den Rahmen vor dem Gespräch zu klären.</p>
+        <p class="num">5 · ARBEITS- &amp; KOMMUNIKATIONSSTIL</p>
+        <h3>Wie du arbeitest und klingst</h3>
+        <p>Tonalität, Formate, Rückfrage, Do's und Don'ts für KI-Texte. Der Stil wird aus eigenen Texten gemessen: Anrede je Text, Satzlänge, Listenanteil, wiederkehrende Wendungen, Schlussformel.</p>
+      </div>
+      <div class="card">
+        <p class="num">HERKUNFT JEDER ZEILE</p>
+        <h3>Drei Markierungen, nichts erfunden</h3>
+        <p><b>✓ Graph</b> stammt aus dem Arbeitsgraphen. <b>✎ Vorschlag aus Dokument</b> hat Quelle, Fundstelle und Zitat und wartet auf Bestätigung. <b>❓ offen</b> weiß weder Graph noch Material; das klärt das Interview.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 10px">So entsteht sie</h3>
+    <div class="pipe">
+      <div class="step">
+        <p class="who">1 · Aus dem Graphen</p>
+        <h3>vorbelegen</h3>
+        <p>Rolle, Aufgaben, Systeme, Übergaben, Entscheidungsräume, Kennzahlen. Alles, was die Analyse ohnehin erzeugt hat.</p>
+      </div>
+      <div class="step">
+        <p class="who">2 · Aus Material</p>
+        <h3>vorschlagen</h3>
+        <p>Eigene Texte, Meeting-Transkripte, Projektdokumente und Firmentexte unter <code>00_input/kontext/</code> liefern Vorschläge mit Quelle und Zitat. Was Skripte nicht lesen (PDF, Word, Mail, Kalender), liest Claude und trägt es im selben Format ein.</p>
+      </div>
+      <div class="step">
+        <p class="who">3 · Im Gespräch</p>
+        <h3>bestätigen und ergänzen</h3>
+        <p>Der Interview-Prompt führt durch die fünf Abschnitte, liest Vorschläge vor und fragt, ob sie stimmen. Entscheidungen, etwa was ein gutes Ergebnis ist oder was nie ohne Rückfrage geschehen darf, bleiben beim Menschen.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 10px">Erzeugen</h3>
+<pre># eine Rolle
+python3 skills/agent-mapper/scripts/build_rollen_md.py --project projekte/kundenservice --role "Forderungsmanager"
+
+# mehrere ausgewählte Rollen in einer Datei, Firmenprofil einmal
+python3 skills/agent-mapper/scripts/build_rollen_md.py --project projekte/kundenservice --role "Forderungsmanager;Kreditprüfer"
+
+# alle Rollen, je Rolle eine eigene Datei
+python3 skills/agent-mapper/scripts/build_rollen_md.py --project projekte/kundenservice --all --split
+
+# Vorschläge aus Material holen (vorher Dateien unter 00_input/kontext/ ablegen)
+python3 skills/agent-mapper/scripts/extract_context_evidence.py --project projekte/kundenservice</pre>
+    <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:0 0 18px">
+      Ausgabe: <code>40_output/rollen_md/Rollen.md</code>. Ein erneuter Lauf überschreibt keine Datei, die inzwischen bearbeitet wurde. Der neue Stand liegt dann als <code>.vorschlag</code> daneben.
+    </p>
+
+    <h3 style="margin:26px 0 10px">So sieht ein Ausschnitt aus (Beispielprojekt, gekürzt)</h3>
+<pre>## Rolle: Forderungsmanager
+
+### 2) Rollenprofil
+- **Zweck:** Ordnet Zahlungseingänge zu, klärt offene Posten und steuert das Mahnwesen. _(✓ Graph)_
+- **Zeitfresser (aus den Daten):**
+  - längste Liegezeit: Schritt „Differenz klären“, 720 Min _(✓ abgeleitet, bitte bestätigen)_
+- **Zeitfresser aus deiner Sicht:** ❓ offen
+
+### 3) Team-Kontext
+- **Zusammenarbeit und Kanäle:**
+  - Teamleitung Order-to-Cash: du gibst weiter (System 1×), du bekommst (System 1×) _(✓ Graph)_
+
+### 4) Prioritäten &amp; Ziele
+- **Ziele dieses Quartals:** Ziel: Quote unklarer Zahlungseingänge unter zehn Prozent bis Ende Q4.
+  _(✎ Vorschlag aus Dokument, bitte bestätigen; Quelle: status-q4.md, Zeile 3)_
+
+### 5) Arbeits- &amp; Kommunikationsstil
+- **Tonalität:** Anrede: je nach Adressat: 3 Texte informell (du/ihr), 1 formell (Sie); kurze Sätze (Ø 11 Wörter)
+  _(✎ Vorschlag aus Dokument, bitte bestätigen; Quelle: texte/, Messung)_
+- **Don'ts für KI-Texte:** ❓ offen</pre>
+
+    <div class="grid g2" style="margin-top:22px">
+      <div class="card">
+        <h3>Regeln für Vorschläge aus Material</h3>
+        <p>Ein Eintrag ohne Zitat und Quelle wird abgelehnt. Ein Stilprofil entsteht erst ab drei Texten und 600 Wörtern, darunter steht „zu wenig Material“. Don'ts gibt es nur als Befund: typische KI-Floskeln, die in den eigenen Texten nie vorkommen. Alles bleibt Vorschlag, bis die Person die Datei bearbeitet.</p>
+      </div>
+      <div class="card">
+        <h3>Personendaten</h3>
+        <p>E-Mail-Adressen, Telefonnummern und Anreden mit Namen werden maskiert, Personennamen nicht gesucht, nur kurze Zitate gespeichert. Die Maskierung ist eine Heuristik und kein Anonymisierungsverfahren. Transkripte enthalten Daten Dritter und gehören nur mit Einverständnis aller Beteiligten ins Projekt.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 10px">Wer mehr will: das Setup-Paket</h3>
+    <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:0 0 14px">
+      <code>build_role_setup.py</code> erzeugt zusätzlich zur Rollen.md alles, was ein persönlicher Arbeitsagent braucht, und für mehrere Rollen eine Agenda für einen gemeinsamen Starttermin.
+    </p>
+    <div class="grid g3">
+      <div class="card">
+        <h3>Agent und Skills</h3>
+        <p>Ein schlanker Agenten-Prompt, der nur die Zusammenarbeit steuert, und drei bis fünf Skills nach Zeitanteil mal Automatisierbarkeit. Jeder Skill kommt mit einem Gerüst von mindestens fünf Testfällen, die erst durch echte Fälle ersetzt werden müssen.</p>
+      </div>
+      <div class="card">
+        <h3>Reifegrade statt Versprechen</h3>
+        <p>Entwurf, im Test, live-reif: live-reif heißt fünf echte Fälle, zwei Schleifen, alle bestanden. Eine Routine darf nur für live-reife Skills laufen. Erst im Chat gut machen, dann automatisieren.</p>
+      </div>
+      <div class="card">
+        <h3>Tools und Teamstart</h3>
+        <p>Eine Tool-Tabelle mit Datenklassen, in der die Freigabe auf „offen“ steht, bis Datenschutz und IT zugestimmt haben. Ein Skill-Ideen-Prompt für die gefüllte Rollen.md und bei mehreren Rollen eine Agenda für einen Mini-Hackathon.</p>
       </div>
     </div>
   </div>
@@ -301,7 +446,7 @@ Optional, auf Zuruf oder bei Bedarf:
           <tr><td>work-transformation</td><td>Orchestrator: sagt, welcher Schritt dran ist, und hält die Arbeitsteilung sauber</td><td>Pipeline-Lauf, Suite-Check</td></tr>
           <tr><td>work-graph-builder</td><td>Extraktion aus Quellen, Zusammenführung, Review-Liste, Overrides, Stellen-Import, Prozesshaus-Import, Interviewleitfaden</td><td><code>work-graph.json</code>, <code>review.md</code></td></tr>
           <tr><td>task-scorer</td><td>Aufgabenbewertung nach Rubrik, Rollenaggregation, Kipp-Analyse, Kalibrierung, Kapazität und Zielbild</td><td>Modus, HAS, Horizont, Disruptionstyp, technisch und realisierbar frei werdende FTE</td></tr>
-          <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung, Capability Contracts, Use-Case-Register, Reichweite, Nutzungsstand, Setup-Paket je Rolle</td><td><code>agents.json</code>, Verträge, Reichweite, Skill-Gerüste</td></tr>
+          <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung, Capability Contracts, Use-Case-Register, Reichweite, Nutzungsstand, Rollen.md und Setup-Paket je Rolle</td><td><code>agents.json</code>, Verträge, <code>Rollen.md</code>, Skill-Gerüste</td></tr>
           <tr><td>process-redesigner</td><td>Drei Soll-Szenarien je Prozess, sechs Operatoren, Prozesswert, Pilotkarten</td><td>Blueprints mit Deltas, Prioritätsbänder, Experimente</td></tr>
           <tr><td>transformation-dashboard</td><td>Visualisierung und Export, Ist/Soll-Vergleich</td><td>HTML, CSV-Exporte, Bericht für HR und Bericht für IT</td></tr>
         </tbody>
@@ -387,7 +532,7 @@ Optional, auf Zuruf oder bei Bedarf:
 <pre>git clone https://github.com/GodModeAI2025/Work-Transformation-Suite.git
 cd Work-Transformation-Suite
 python3 skills/work-transformation/scripts/check_suite.py        # → Suite OK
-python3 -m unittest discover                                     # → 83 Tests, OK
+python3 -m unittest discover                                     # → alle Tests grün
 
 # Referenzbeispiel vollständig durchrechnen
 python3 skills/work-transformation/scripts/run_pipeline.py --project examples/order-to-cash
@@ -397,7 +542,7 @@ python3 skills/work-graph-builder/scripts/init_project.py \
   --name "Kundenservice Pilot" --organization "Meine Firma" \
   --scope "Kundenservice – Vertrag und Abrechnung"</pre>
     <div class="note">
-      <p>Der Ablauf ist am Pilotbereich mit 20 bis 40 Rollen entstanden und bereits mit über 200 Rollen in einem Dashboard gelaufen. Projektdaten liegen außerhalb des Repositories. Dort stehen nur die Skills.</p>
+      <p>Der Ablauf läuft mit Bereichen von 20 bis über 200 Rollen. Projektdaten liegen außerhalb des Repositories, dort stehen nur die Skills.</p>
     </div>
   </div>
 </section>
@@ -409,16 +554,16 @@ python3 skills/work-graph-builder/scripts/init_project.py \
     <ul class="plain">
       <li>Kein Freigabeworkflow mit Rollen und Rechten. Freigaben sind ein nachvollziehbares Log mit Name, Datum und Begründung, mehr gibt es nicht.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
-      <li>Das Rollen-Setup ist ein Startpunkt: ungetestet, ohne Systemfreigabe, ohne Aussage zur Zeitersparnis. Kontext, den der Graph nicht kennt, bleibt „offen“, und die Testfälle sind Gerüste, bis jemand echte einträgt.</li>
+      <li>Rollen.md und Setup-Paket sind Startpunkte: ungetestet, ohne Systemfreigabe, ohne Aussage zur Zeitersparnis. Was der Graph nicht kennt, bleibt „offen“, und die Testfälle sind Gerüste, bis jemand echte einträgt.</li>
+      <li>Vorschläge aus Dokumenten beruhen auf Mustern und Messungen, nicht auf Verständnis. Ein Stilprofil beschreibt die gemessenen Texte, nicht die ganze Person.</li>
       <li>Keine Telemetrie der Agentennutzung, keine Prozess-Mining-Anbindung. Nutzung kennt die Suite nur als aggregierten Stand je Rolle und Agent, mit Mindestgruppe von fünf Stellen.</li>
       <li>Ein umbenannter Task bekommt eine neue ID und verliert Bewertung und Overrides. Namen also stabil halten.</li>
       <li><b>Ein Soll-Prozess aus Interviews und Stellenbeschreibungen ist ein Entwurf, keine Prognose.</b> Aus Rollendaten allein lässt sich kein Unternehmen verlässlich „neu bauen“. Dafür braucht es Prozessbeobachtungen, Systemdaten und gemessene Ausgangswerte.</li>
     </ul>
     <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:16px 0 0">
-      Für die Punkte zu Integration, Telemetrie und Prozess-Mining verkaufen kommerzielle Plattformen ihr Produkt. Für die Frage,
-      ob eine solche Analyse für einen Bereich überhaupt belastbare Ergebnisse liefert, reicht die
-      Suite. Bis über 200 Rollen ist sie bisher gelaufen. Und wo Zahlen geschätzt sind, steht das
-      dran, in jeder Ausgabe.
+      Integration, Telemetrie und Prozess-Mining sind das Geschäft kommerzieller Plattformen. Die Suite beantwortet eine
+      andere Frage: ob eine solche Analyse für einen Bereich belastbare Ergebnisse liefert. Wo Zahlen geschätzt sind,
+      steht das dran, in jeder Ausgabe.
     </p>
   </div>
 </section>

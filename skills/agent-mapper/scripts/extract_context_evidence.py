@@ -20,7 +20,7 @@ Ausgabe: `30_review/kontext_evidenz/firma.json` und `<rolle>.json` plus eine les
 
 Was gilt:
 - Jeder Vorschlag trägt Quelle, Fundstelle und ein kurzes Zitat. Ohne Zitat und Quelle gibt es keinen Eintrag.
-- Vorschläge sind **Vorschläge**. In der Rollen.md stehen sie mit „✎ Vorschlag aus Dokument — bitte bestätigen“, nicht als Tatsache.
+- Vorschläge sind **Vorschläge**. In der Rollen.md stehen sie mit „✎ Vorschlag aus Dokument, bitte bestätigen“, nicht als Tatsache.
 - Stil wird **gemessen**, nicht geraten: Anrede, Satzlänge, Listenanteil, Grußformeln, wiederkehrende Wendungen. Mit weniger als drei Texten oder
   600 Wörtern entsteht kein Stilprofil („zu wenig Material“).
 - „Don'ts“ entstehen nur aus einem Befund: Typische KI-Floskeln, die in den eigenen Texten nie vorkommen.
@@ -252,8 +252,8 @@ def style_entries(samples: list[tuple[str, str]], keep_names: bool) -> list[dict
     elif informal_texts == 0:
         anrede = f"durchgehend formell (Sie) in {formal_texts} von {len(texts)} Texten"
     else:
-        anrede = (f"je nach Adressat: {informal_texts} Texte informell (du/ihr), {formal_texts} formell (Sie) — "
-                  "Intern und Kunden unterscheiden sich vermutlich")
+        anrede = (f"je nach Adressat: {informal_texts} Texte informell (du/ihr), {formal_texts} formell (Sie); "
+                  "intern und gegenüber Kunden unterscheidet sich der Ton vermutlich")
     sents = sentences(joined)
     avg = sum(len(s.split()) for s in sents) / len(sents) if sents else 0
     length = "kurze Sätze" if avg < 14 else "mittellange Sätze" if avg < 22 else "lange Sätze"
@@ -360,7 +360,7 @@ def write_doc(path: Path, scope: str, role: str | None, entries: list[dict[str, 
 def render_md(docs: list[tuple[str, list[dict[str, Any]]]]) -> str:
     L = ["# Kontext-Vorschläge aus Dokumenten", "",
          "Vorschläge für Felder der Rollen.md, die der Arbeitsgraph nicht kennt. **Vorschläge, keine Tatsachen:** Jeder Eintrag nennt Quelle, Fundstelle und Zitat. "
-         "In der Rollen.md stehen sie als „✎ Vorschlag aus Dokument — bitte bestätigen“, bis jemand die Datei bearbeitet.", ""]
+         "In der Rollen.md stehen sie als „✎ Vorschlag aus Dokument, bitte bestätigen“, bis jemand die Datei bearbeitet.", ""]
     for title, entries in docs:
         L += [f"## {title}", ""]
         if not entries:

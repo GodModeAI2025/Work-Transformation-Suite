@@ -442,7 +442,7 @@ existiert. Material unter `00_input/kontext/` (`firma/`, `<rolle>/texte`, `<roll
 | Tonalität, Formate, Do's | eigene Texte | **Messung**: Anrede je Text, Satzlänge, Listenanteil, wiederkehrende Wendungen, Schlussformel |
 | Don'ts | eigene Texte | typische KI-Floskeln, die in den eigenen Texten nie vorkommen |
 
-In der Rollen.md erscheinen sie als „✎ Vorschlag aus Dokument — bitte bestätigen“, nie als Tatsache. Ein Stilprofil entsteht erst ab drei Texten und 600 Wörtern; darunter steht
+In der Rollen.md erscheinen sie als „✎ Vorschlag aus Dokument, bitte bestätigen“, nie als Tatsache. Ein Stilprofil entsteht erst ab drei Texten und 600 Wörtern; darunter steht
 „zu wenig Material“. Ein Eintrag ohne Zitat und Quelle wird abgelehnt. Was Skripte nicht lesen (PDF, Word, Mail, Kalender), liest Claude und trägt es im selben Format ein
 (`<rolle>.claude.json`). E-Mail-Adressen, Telefonnummern und Anreden mit Namen werden maskiert, Personennamen nicht gesucht; Transkripte enthalten Daten Dritter und gehören nur mit
 Einverständnis ins Projekt. Was bleibt (Qualitätsverständnis, gewünschte Rückfrage), klärt das Interview. Details und Grenzen: `skills/agent-mapper/references/kontext-aus-dokumenten.md`.

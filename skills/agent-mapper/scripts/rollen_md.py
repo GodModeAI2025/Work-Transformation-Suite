@@ -11,7 +11,7 @@ Eine Rollen.md ist die eine Datei, die ein Agenten-Harness als Kontext lädt, da
 
 Jede Zeile trägt ihre Herkunft: „✓ Graph“ stammt aus dem Arbeitsgraphen, „❓ offen“ weiß er nicht. Die Funktionen erfinden
 nichts. Was ein Graph über eine Person nicht wissen kann (Prioritäten, Tonalität, Do's und Don'ts), bleibt offen, bis jemand es
-sagt; abgeleitete Hinweise sind als „abgeleitet — bitte bestätigen“ gekennzeichnet.
+sagt; abgeleitete Hinweise sind als „abgeleitet, bitte bestätigen“ gekennzeichnet.
 """
 
 from __future__ import annotations
@@ -26,9 +26,9 @@ import export_skill as es
 import extract_context_evidence as xe
 
 OPEN = "❓ offen"
-PROPOSED = "✎ Vorschlag aus Dokument — bitte bestätigen"
+PROPOSED = "✎ Vorschlag aus Dokument, bitte bestätigen"
 GRAPH = "✓ Graph"
-DERIVED = "✓ abgeleitet — bitte bestätigen"
+DERIVED = "✓ abgeleitet, bitte bestätigen"
 FREQ_LABEL = {"daily": "täglich", "weekly": "wöchentlich", "monthly": "monatlich", "quarterly": "quartalsweise", "adhoc": "bei Bedarf"}
 MODE_LABEL = {"manual": "manuell", "ai_assisted": "KI-unterstützt", "agent_delegated": "an Agent delegiert"}
 SCOPE_LABEL = {"recommend": "schlägt vor, entscheidet nicht", "execute_reversible": "führt aus, umkehrbar",
@@ -184,7 +184,7 @@ def firmenprofil(graph: dict[str, Any], roles: list[dict[str, Any]], ev: list[di
             fld(xe.FIELD_KEYS["firma.kunden"], "firma.kunden", ev, ", ".join(beneficiaries)),
             fld(xe.FIELD_KEYS["firma.markt"], "firma.markt", ev), fld(xe.FIELD_KEYS["firma.produkte"], "firma.produkte", ev),
             fld(xe.FIELD_KEYS["firma.sprachgebrauch"], "firma.sprachgebrauch", ev),
-            line("Regulatorischer Rahmen", "mindestens eine der Rollen ist als reguliert eingestuft — Ergebnisse müssen nachvollziehbar sein") if regulated
+            line("Regulatorischer Rahmen", "mindestens eine der Rollen ist als reguliert eingestuft; Ergebnisse müssen nachvollziehbar sein") if regulated
             else f"- **Regulatorischer Rahmen:** {OPEN} (keine Rolle als reguliert eingestuft; das ist eine Annahme)", ""]
 
 
@@ -198,7 +198,7 @@ def rollenprofil(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str,
          "_Was du tust und womit du arbeitest: Verantwortung, Tools, wiederkehrende Aufgaben, Zeitfresser._", "",
          line("Rolle", role["name"]), line("Zweck", role.get("purpose")), line("Verantwortung", role.get("description")),
          line("Jobcluster", clusters.get(role.get("cluster_id"), {}).get("name")), line("Level", role.get("level")),
-         line("Reguliert", "ja — Ergebnisse müssen nachvollziehbar und begründet sein" if role.get("regulated")
+         line("Reguliert", "ja, Ergebnisse müssen nachvollziehbar und begründet sein" if role.get("regulated")
               else "nein (Annahme, ggf. vom Fachexperten bestätigt)"),
          line("Tools und Systeme", "; ".join(systems_of(graph, role))), line("Kern-Skills", "; ".join(core)),
          "- **Wiederkehrende Aufgaben:**"]
@@ -207,23 +207,23 @@ def rollenprofil(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str,
             bits = [FREQ_LABEL.get(t.get("frequency"), t.get("frequency") or "–"), f"{float(t.get('share_of_time') or 0):.0f} % der Zeit"]
             if t.get("mode"):
                 bits.append(MODE_LABEL.get(t["mode"], t["mode"]))
-            L.append(f"  - {t['name']} — {', '.join(bits)} _({GRAPH})_")
+            L.append(f"  - {t['name']}: {', '.join(bits)} _({GRAPH})_")
     else:
         L.append(f"  - {OPEN}")
     # Zeitfresser: gebundene Zeit, Schmerzpunkte aus der Prozessaufnahme, Wartezeit und Rückläufer
     top = sorted(tasks, key=lambda t: (-float(t.get("share_of_time") or 0), t["name"]))[:ZEITFRESSER_TOP]
     pains = [f"„{s['pain']}“ (Schritt {s['name']})" for s in role_steps(graph, role) if (s.get("pain") or "").strip()]
     st = role_steps(graph, role)
-    waits = [f"Schritt „{s['name']}“: {float(s['wait_time_min']):.0f} Min Liegezeit"
+    waits = [f"Schritt „{s['name']}“, {float(s['wait_time_min']):.0f} Min"
              for s in sorted((x for x in st if float(x.get("wait_time_min") or 0) >= WAIT_MIN_HINT),
                              key=lambda x: (-float(x["wait_time_min"]), x["name"]))[:ZEITFRESSER_TOP]]
-    rework = [f"Schritt „{s['name']}“: {float(s['rework_pct']):.0f} % Rückläufer"
+    rework = [f"Schritt „{s['name']}“, {float(s['rework_pct']):.0f} %"
               for s in sorted((x for x in st if float(x.get("rework_pct") or 0) >= REWORK_PCT_HINT),
                               key=lambda x: (-float(x["rework_pct"]), x["name"]))[:ZEITFRESSER_TOP]]
     L.append("- **Zeitfresser (aus den Daten):**")
     derived = [f"größte gebundene Zeit: {t['name']} ({float(t.get('share_of_time') or 0):.0f} %)" for t in top] + \
               [f"Reibung laut Prozessaufnahme: {p}" for p in pains] + \
-              [f"längste Liegezeit — {w}" for w in waits] + [f"meiste Rückläufer — {r}" for r in rework]
+              [f"längste Liegezeit: {w}" for w in waits] + [f"meiste Rückläufer: {r}" for r in rework]
     L += [f"  - {d} _({DERIVED if not d.startswith('Reibung') else GRAPH})_" for d in derived] or [f"  - {OPEN}"]
     L += [fld(xe.FIELD_KEYS["rolle.zeitfresser"], "rolle.zeitfresser", ev), ""]
     gates = gates_of(graph, role)
@@ -246,7 +246,7 @@ def team_kontext(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str,
             if d["from"]:
                 parts.append(f"du bekommst ({channels(d['from'])})")
             procs = "; ".join(sorted(p for p in d["processes"] if p))
-            L.append(f"  - {roles[rid]['name']} — {', '.join(parts)}" + (f" — {procs}" if procs else "") + f" _({GRAPH})_")
+            L.append(f"  - {roles[rid]['name']}: {', '.join(parts)}" + (f" ({procs})" if procs else "") + f" _({GRAPH})_")
     else:
         L.append(f"- **Zusammenarbeit und Kanäle:** {OPEN} (keine Übergaben im Graphen erfasst)")
     units = sorted({p["org_unit"] for p in graph["positions"] if p.get("org_unit") and any(rs["role_id"] == role["id"] for rs in p.get("role_shares", []))})
@@ -309,7 +309,7 @@ def compose(graph: dict[str, Any], roles: list[dict[str, Any]], title: str = "Ro
            ["stand: offen", "pflege: Abschnitt 4 einmal im Monat aktualisieren, die übrigen bei Veränderung", "---", "",
             f"# {title}", "",
             "Diese Datei sagt einem Agenten, wer hier arbeitet. Lade zuerst **1) Firmenprofil**, dann die Abschnitte der Rolle, in der gerade gearbeitet wird. "
-            f"Zeilen mit „{GRAPH}“ stammen aus dem Arbeitsgraphen und sind nur so gut wie er; „{OPEN}“ weiß der Graph nicht — dann nachfragen, nicht raten. "
+            f"Zeilen mit „{GRAPH}“ stammen aus dem Arbeitsgraphen und sind nur so gut wie er; „{OPEN}“ weiß der Graph nicht; dann nachfragen, nicht raten. "
             "Zeilen mit „abgeleitet“ oder „✎ Vorschlag aus Dokument“ sind Vorschläge mit Quelle, die die Person bestätigen soll.", ""]
     evidence = evidence or {"firma": [], "roles": {}}
     body = firmenprofil(graph, roles, evidence.get("firma"))

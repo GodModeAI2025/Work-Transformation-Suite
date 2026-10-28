@@ -15,7 +15,7 @@ aus Material, das ohnehin existiert — und kennzeichnet sie als Vorschläge.
   Quelle, Fundstelle und Zitat nach `30_review/kontext_evidenz/`.
 - **Stil wird gemessen:** Anrede je Text (informell, Sie, je nach Adressat), Satzlänge, Listenanteil, Absatzlänge, Ausrufezeichen, Emojis, wiederkehrende Wendungen, Schlussformel.
   Don'ts nur als Befund (typische KI-Floskeln, die in den eigenen Texten nie vorkommen). Ab drei Texten und 600 Wörtern, sonst „zu wenig Material“.
-- **Rollen.md zeigt Vorschläge** als „✎ Vorschlag aus Dokument — bitte bestätigen“; ein Graphwert schlägt einen Vorschlag; ohne Material bleibt das Feld offen.
+- **Rollen.md zeigt Vorschläge** als „✎ Vorschlag aus Dokument, bitte bestätigen“; ein Graphwert schlägt einen Vorschlag; ohne Material bleibt das Feld offen.
 - **Claude-Schicht:** Funde aus PDF, Word, Mail und Kalender im selben Format (`<rolle>.claude.json`); ohne wörtliches Zitat und Quelle wird ein Eintrag abgelehnt und gemeldet.
 - **Personendaten:** E-Mail-Adressen, Telefonnummern und Anreden mit Namen werden maskiert, Personennamen nicht gesucht, nur kurze Zitate gespeichert.
 - **Quelleninventar** erkennt das Material und bietet es an, wenn es fehlt (freiwillig).
@@ -39,7 +39,7 @@ für mehrere ausgewählte.
   (einmal), 2) Rollenprofil, 3) Team-Kontext, 4) Prioritäten & Ziele, 5) Arbeits- & Kommunikationsstil (je Rolle).
 - **Zeitfresser** im Rollenprofil: größte gebundene Zeit, Reibung aus der Prozessaufnahme (`pain`), längste Liegezeit und meiste Rückläufer.
 - **Kanäle im Team-Kontext:** Übergaben mit Richtung und Art (System, E-Mail, Ticket, Telefon, Meeting), dazu Eskalationen und Organisationseinheit.
-- **Herkunft je Zeile:** „✓ Graph“, „✓ abgeleitet — bitte bestätigen“ oder „❓ offen“. Prioritäten, Tonalität, Do's und Don'ts werden nicht erfunden.
+- **Herkunft je Zeile:** „✓ Graph“, „✓ abgeleitet, bitte bestätigen“ oder „❓ offen“. Prioritäten, Tonalität, Do's und Don'ts werden nicht erfunden.
 - Schutz bearbeiteter Dateien auch hier (`.vorschlag`).
 
 ### Geändert

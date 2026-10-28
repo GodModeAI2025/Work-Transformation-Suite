@@ -38,7 +38,7 @@ Nicht aus Material gewonnen werden: Qualitätsverständnis, gewünschte Rückfra
 
 ## Regeln
 
-1. **Vorschlag, nie Tatsache.** In der Rollen.md steht jeder Eintrag als „✎ Vorschlag aus Dokument — bitte bestätigen“ mit Quelle und Fundstelle. Erst wenn die Person die
+1. **Vorschlag, nie Tatsache.** In der Rollen.md steht jeder Eintrag als „✎ Vorschlag aus Dokument, bitte bestätigen“ mit Quelle und Fundstelle. Erst wenn die Person die
    Datei bearbeitet (Markierung entfernt, Text angepasst), gilt er. Das Skript überschreibt bearbeitete Dateien nicht.
 2. **Zitat und Quelle sind Pflicht.** Ein Eintrag ohne Zitat, Quelle oder Text wird beim Laden abgelehnt und gemeldet. So bleibt jede Aussage zum Originaltext zurückverfolgbar.
 3. **Messen, nicht raten.** Ein Stilprofil entsteht erst ab drei Texten und 600 Wörtern; darunter steht „zu wenig Material“ mit der Zählung. Die Anrede wird je Text bestimmt:
