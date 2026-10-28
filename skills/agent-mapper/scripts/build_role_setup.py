@@ -59,7 +59,7 @@ FREQ_LABEL = {"daily": "täglich", "weekly": "wöchentlich", "monthly": "monatli
 TIME_TRIGGER = {"daily": "werktags morgens", "weekly": "wöchentlich, z. B. Montagmorgen", "monthly": "monatlich zum Monatsanfang",
                 "quarterly": "quartalsweise"}
 VISIBILITY = ["als Browser-Startseite", "auf einem reservierten zweiten Bildschirm", "als Desktop-App",
-              "eingebettet in den Chat des Hauses (Slack oder Teams)"]
+              "eingebettet in den Chat des Hauses"]
 GENERIC_TOOLS = ["E-Mail", "Kalender", "Projektmanagement", "Wissensmanagement", "CRM"]
 
 
@@ -128,16 +128,17 @@ def names(graph: dict[str, Any], coll: str, ids: list[str]) -> list[str]:
 # Rollen.md (Kontext der Rolle)
 # ---------------------------------------------------------------------------
 
-def kontextprofil(graph: dict[str, Any], role: dict[str, Any], groups: list[dict[str, Any]]) -> tuple[str, int, int]:
+def kontextprofil(graph: dict[str, Any], role: dict[str, Any], groups: list[dict[str, Any]],
+                  evidence: dict[str, Any] | None = None) -> tuple[str, int, int]:
     """Rollen.md für diese eine Rolle. Gleicher Text wie `build_rollen_md.py --role`, damit es eine Quelle gibt."""
-    return rm.compose(graph, [role], title=f"Rollen — {role['name']}")
+    return rm.compose(graph, [role], title=f"Rollen — {role['name']}", evidence=evidence)
 
 
 def interview_prompt(role: dict[str, Any], open_n: int) -> str:
     return f"""# Interview: Rollen.md für die Rolle „{role['name']}“
 
 Kopiere den Text unten in dein KI-Werkzeug, hänge `Rollen.md` an und beantworte die Fragen per Spracheingabe oder Text.
-Ein Durchlauf dauert erfahrungsgemäß rund eine Stunde. In der Datei sind {open_n} Felder offen.
+Ein Durchlauf dauert erfahrungsgemäß rund eine Stunde, weniger, wenn Vorschläge aus Dokumenten (✎) schon dastehen. In der Datei sind {open_n} Felder offen.
 
 ---
 
@@ -149,12 +150,63 @@ Regeln:
 2. Frage nach, wenn eine Antwort vage ist („Woran würdest du das merken?“, „Kannst du ein Beispiel aus der letzten Woche nennen?“).
 3. Erfinde nichts. Wenn ich etwas nicht weiß, schreibe „offen“ und frage später noch einmal.
 4. Gib mir keine Ratschläge, solange das Interview läuft. Sammle nur.
-5. Widerspricht eine Antwort dem, was schon dasteht (Zeilen mit „✓ Graph“), sag es mir und frage, was gilt. Ändere Graph-Zeilen nicht ohne meine Bestätigung. Zeilen mit „abgeleitet“ sind Vorschläge: Frage, ob sie stimmen.
+5. Widerspricht eine Antwort dem, was schon dasteht (Zeilen mit „✓ Graph“), sag es mir und frage, was gilt. Ändere Graph-Zeilen nicht ohne meine Bestätigung. Zeilen mit „abgeleitet“ oder „✎ Vorschlag aus Dokument“ sind Vorschläge mit Quelle: Lies sie mir vor und frage, ob sie stimmen. Bestätigte Vorschläge übernimmst du ohne Markierung, abgelehnte löschst du.
 6. Bei Abschnitt 5 frage nach echten Beispielen: ein Text, den ich selbst geschrieben habe und gut finde; eine Formulierung, die ich nie schreiben würde.
 7. Am Ende: Gib mir die vollständige Rollen.md in derselben Gliederung zurück. Lass „❓ offen“ stehen, wo ich keine Antwort hatte, und liste die noch offenen Felder am Schluss auf.
 
 Beginne jetzt mit der ersten Frage.
 """
+
+
+def skill_ideen_prompt(role: dict[str, Any]) -> str:
+    return f"""# Skill-Ideen für die Rolle „{role['name']}“
+
+Erst nach dem Interview verwenden, wenn die Rollen.md weitgehend gefüllt ist. Du brauchst keine eigene Liste: Die KI liest die Rollen.md und schlägt vor.
+
+---
+
+Lies die angehängte Rollen.md. Schlage mir fünf wiederkehrende Aufgaben vor, die sich als Skill lohnen (ein Skill ist eine verschriftlichte Anleitung für eine
+bestimmte Aufgabe, damit gute Ergebnisse nicht von einem zufällig gelungenen Prompt abhängen).
+
+Gib eine Tabelle: Aufgabe · Wie oft · Was es heute kostet (Zeit, Ärger) · Nutzen (hoch/mittel/niedrig) · Umsetzbarkeit (hoch/mittel/niedrig, mit Begründung:
+welche Daten und Systeme braucht es, wo entscheidet ein Mensch) · Risiko bei Fehlern.
+
+Regeln:
+1. Nur Aufgaben, die wirklich wiederkehren und spürbar Zeit kosten. Keine Seltenheiten.
+2. Sortiere nach Nutzen und Umsetzbarkeit zusammen. Die ersten drei sind die, mit denen ich anfange.
+3. Stütze dich auf Zeilen, die in der Rollen.md stehen. Wenn dir Information fehlt, sag es, statt etwas anzunehmen.
+4. Nenne bei jedem Vorschlag, welche Testfälle ich bräuchte (mindestens fünf, mit einem Randfall und einem Fall, der an einen Menschen gehen muss).
+5. Schlage nichts vor, das sofort automatisch laufen soll. Erst im Chat gut machen, dann automatisieren.
+"""
+
+
+def teamstart(entries: list[dict[str, Any]]) -> str:
+    L = ["# Teamstart — Mini-Hackathon", "",
+         "Ein gemeinsamer Termin, an dessen Ende jede Person mit eigener Rollen.md, einem eingerichteten Agenten und den ersten Skills arbeitet. "
+         "Der Zeitrahmen ist ein Richtwert aus einem öffentlichen Playbook (rund vier konzentrierte Stunden), keine Messung. Der schwierigste Teil ist die Gewohnheit, nicht die Technik.", "",
+         "## Vorher", "",
+         "- [ ] Rahmen klären und sagen: Wozu das Ganze, was passiert nicht (keine Leistungsbewertung einzelner Personen), ist die Beschäftigtenvertretung beteiligt.",
+         "- [ ] Material je Person ablegen (freiwillig): eigene Texte, Transkripte, Projektdokumente unter `00_input/kontext/<rolle>/`; Firmentexte unter `firma/`. "
+         "Transkripte enthalten Daten Dritter — nur mit Einverständnis aller Beteiligten.",
+         "- [ ] `extract_context_evidence.py` laufen lassen und `build_role_setup.py` für alle Rollen.",
+         "- [ ] Wahl der Plattform ist entschieden und nicht Thema des Tages (permanentes Tool-Hopping erzeugt wenig Wert).", "",
+         "## Ablauf", "",
+         "| Zeit (Richtwert) | Schritt | Datei |", "|---|---|---|",
+         "| 15 Min | Rahmen, Ziel, Datenschutz | – |",
+         "| 60 Min | Rollen.md vervollständigen: Vorschläge (✎) bestätigen, offene Felder im Interview füllen | `kontext/interview-prompt.md` |",
+         "| 30 Min | Agenten einrichten: Systemprompt, Rollen.md ablegen, wo er sie lesen und aktualisieren kann | `agent/systemprompt.md` |",
+         "| 30 Min | Skill-Ideen vorschlagen lassen, drei auswählen | `skills/skill-ideen-prompt.md` |",
+         "| 75 Min | Ersten Skill mit mindestens fünf echten Fällen testen, zwei bis drei Schleifen | `skills/<skill>/evals/` |",
+         "| 30 Min | Erfolgsmoment: ein kurzer Auftrag, ein brauchbares Ergebnis; Agent sichtbar machen | `routinen/routinen.md` |", "",
+         "## Danach", "",
+         "- [ ] Abschnitt 4 (Prioritäten & Ziele) einmal im Monat aktualisieren.",
+         "- [ ] Systeme erst nach Freigabe durch Datenschutz und IT anbinden, erst lesend.",
+         "- [ ] Routinen erst aktivieren, wenn ein Skill live-reif ist (`check_role_setup.py`).", "",
+         "## Rollen im Team", "", "| Rolle | Skills (Entwurf) | Zeilen aus dem Graphen | Vorschläge aus Dokumenten | Noch offen |", "|---|---:|---:|---:|---:|"]
+    for e in entries:
+        L.append(f"| {e['role']} | {e['skills']} | {e['filled']} | {e['proposed']} | {e['open']} |")
+    L.append("")
+    return "\n".join(L) + "\n"
 
 
 # ---------------------------------------------------------------------------
@@ -457,7 +509,7 @@ def readme(role: dict[str, Any], skills: list[dict[str, Any]], filled: int, open
 # Zusammenbau
 # ---------------------------------------------------------------------------
 
-def build_package(graph: dict[str, Any], role: dict[str, Any], n_skills: int) -> dict[str, str]:
+def build_package(graph: dict[str, Any], role: dict[str, Any], n_skills: int, evidence: dict[str, Any] | None = None) -> dict[str, str]:
     groups, note = skill_groups(graph, role, n_skills)
     if len(groups) < MIN_SKILLS:
         extra = (f"Es gibt nur {len(groups)} Skill-Gruppe(n): Aufgaben, die derselbe Agent abdeckt, sind zu einem Skill gebündelt, "
@@ -500,9 +552,10 @@ def build_package(graph: dict[str, Any], role: dict[str, Any], n_skills: int) ->
         skill_meta.append({"name": name, "one_line": one,
                            "tasks": ", ".join(t["name"] for t in g["tasks"]), "origin": origin,
                            "time": TIME_TRIGGER.get(top), "event": trig})
-    kp, filled, open_n = kontextprofil(graph, role, groups)
+    kp, filled, open_n = kontextprofil(graph, role, groups, evidence)
     files["kontext/Rollen.md"] = kp
     files["kontext/interview-prompt.md"] = interview_prompt(role, open_n)
+    files["skills/skill-ideen-prompt.md"] = skill_ideen_prompt(role)
     files["agent/systemprompt.md"] = systemprompt(graph, role, skill_meta)
     tools_md, tool_rows = tool_table(graph, role, groups)
     files["tools/anbindungen.md"] = tools_md
@@ -558,7 +611,7 @@ def list_roles(graph: dict[str, Any]) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", required=True)
-    ap.add_argument("--role", default=None, help="Rollenname oder ID")
+    ap.add_argument("--role", action="append", default=[], help="Rollenname oder ID; mehrfach oder mit ; getrennt")
     ap.add_argument("--all", action="store_true", help="Pakete für alle Rollen")
     ap.add_argument("--list", action="store_true", help="Rollen mit Skill-Kandidaten anzeigen")
     ap.add_argument("--skills", type=int, default=DEFAULT_SKILLS, help=f"Anzahl Skills ({MIN_SKILLS}–{MAX_SKILLS})")
@@ -571,25 +624,43 @@ def main() -> int:
         print(list_roles(graph))
         return 0
     if not args.role and not args.all:
-        wl.fail("Rolle angeben (--role \"Name\"), --all oder --list")
+        wl.fail("Rolle angeben (--role \"Name\", mehrfach möglich), --all oder --list")
     if args.all:
         targets = sorted(graph["roles"], key=lambda r: (r["name"], r["id"]))
     else:
-        role = find_role(graph, args.role)
-        if role is None:
-            sim = similar_roles(graph, args.role)
-            wl.fail(f"Rolle {args.role!r} nicht eindeutig gefunden." + (f" Meinst du: {', '.join(sim)}?" if sim else " Mit --list siehst du alle Rollen."))
-        targets = [role]
+        targets, missing = [], []
+        for ref in args.role:
+            for part in (x.strip() for x in ref.split(";")):
+                if not part:
+                    continue
+                r = find_role(graph, part)
+                if r is None:
+                    sim = similar_roles(graph, part)
+                    missing.append(f"{part!r}" + (f" (meinst du: {', '.join(sim)}?)" if sim else ""))
+                elif r not in targets:
+                    targets.append(r)
+        if missing:
+            wl.fail("Rolle nicht eindeutig gefunden: " + "; ".join(missing) + ". Mit --list siehst du alle Rollen.")
+    evidence, ev_problems = rm.load_evidence(project, [r["name"] for r in targets])
+    for p in ev_problems:
+        print(f"HINWEIS  Kontext-Vorschläge: {p}")
     root = project / wl.DIR_OUTPUT / "rollen_setup"
+    team = []
     for role in targets:
-        files = build_package(graph, role, args.skills)
+        ev = {"firma": evidence["firma"], "roles": evidence["roles"]}
+        files = build_package(graph, role, args.skills, ev)
         out = root / es.slug(role["name"])
         written, proposed, unchanged = write_package(out, files)
         meta = json.loads(files["_meta"])
-        print(f"Geschrieben: {wl.relpath(out)} | Skills={len(meta['skills'])} vorbelegt={meta['filled']} offen={meta['open']} Systeme={meta['systems']} "
-              f"neu={len(written)} unverändert={len(unchanged)} Vorschläge={len(proposed)}")
+        n_prop = files["kontext/Rollen.md"].count(rm.PROPOSED)
+        team.append({"role": role["name"], "skills": len(meta["skills"]), "filled": meta["filled"], "proposed": n_prop, "open": meta["open"]})
+        print(f"Geschrieben: {wl.relpath(out)} | Skills={len(meta['skills'])} vorbelegt={meta['filled']} Vorschläge aus Dokumenten={n_prop} offen={meta['open']} "
+              f"Systeme={meta['systems']} neu={len(written)} unverändert={len(unchanged)} Vorschläge={len(proposed)}")
         for rel in proposed:
             print(f"HINWEIS  {rel} wurde bearbeitet — neuer Stand als {rel}.vorschlag")
+    if len(targets) >= 2:
+        w, pr, _u = write_package(root / "_team", {"Teamstart.md": teamstart(team), "_meta": json.dumps({"roles": [t["role"] for t in team]})})
+        print(f"Geschrieben: {wl.relpath(root / '_team' / 'Teamstart.md')} (Mini-Hackathon für {len(targets)} Rollen)")
     return 0
 
 

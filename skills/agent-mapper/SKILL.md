@@ -201,3 +201,17 @@ Die **Rollen.md** hat fünf Abschnitte: 1) Firmenprofil (einmal), dann je Rolle 
 4) Prioritäten & Ziele (monatlich aktualisieren), 5) Arbeits- & Kommunikationsstil. Alles, was der Graph nicht weiß, steht als „❓ offen“; Abgeleitetes ist
 als „bitte bestätigen“ markiert. Sag dem Nutzer, dass die offenen Felder aus einem Gespräch kommen müssen (Interview-Prompt im Setup-Paket), und erfinde
 nichts. Mit `--split` entsteht je Rolle eine Datei.
+
+### Den Rest nicht per Frage und Antwort erfragen (ab 0.7)
+
+Was der Graph über eine Person nicht weiß, muss nicht nur per Interview kommen. Frage den Nutzer, ob er Material hat (freiwillig): eigene Texte, Meeting-Transkripte, Projektdokumente,
+Firmentexte. Lege es unter `00_input/kontext/` ab (`firma/`, `<rolle>/texte`, `<rolle>/transkripte`, `<rolle>/projekte`), dann:
+
+```
+python3 <skill>/scripts/extract_context_evidence.py --project ./projekte/<name> [--role "<Rolle>"]
+```
+
+Das Ergebnis sind **Vorschläge mit Quelle, Fundstelle und Zitat** in `30_review/kontext_evidenz/`; `build_rollen_md.py` und `build_role_setup.py` zeigen sie als „✎ Vorschlag aus Dokument — bitte bestätigen“.
+Was Skripte nicht lesen (PDF, Word, Mail, Kalender), liest du und trägst es im selben Format in `<rolle>.claude.json` ein — nur mit wörtlichem Zitat und Quelle, nichts ergänzt, nichts geschlossen.
+Sag dem Nutzer: Vorschläge sind keine Tatsachen; ein Stilprofil gibt es erst ab drei Texten und 600 Wörtern; Transkripte enthalten Daten Dritter und gehören nur mit Einverständnis ins Projekt; Personennamen werden nicht gesucht.
+Das Interview bleibt für Entscheidungen (Qualitätsverständnis, gewünschte Rückfrage, was nie ohne Rückfrage geschehen darf). Details: `references/kontext-aus-dokumenten.md`.

@@ -53,6 +53,7 @@ def main() -> int:
     ap.add_argument("--role", action="append", default=[], help="Rollenname oder ID; mehrfach oder mit ; getrennt")
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--split", action="store_true", help="je Rolle eine eigene Datei")
+    ap.add_argument("--no-evidence", action="store_true", help="Vorschläge aus Dokumenten (30_review/kontext_evidenz/) nicht verwenden")
     args = ap.parse_args()
     project = wl.resolve_project(args.project)
     graph = wl.load_latest_graph(project)
@@ -72,22 +73,27 @@ def main() -> int:
         wl.fail("Rolle angeben (--role \"Name\", mehrfach möglich), oder --all")
     if not roles:
         wl.fail("Keine Rollen im Graphen")
+    evidence: dict = {"firma": [], "roles": {}}
+    if not args.no_evidence:
+        evidence, ev_problems = rm.load_evidence(project, [r["name"] for r in roles])
+        for p in ev_problems:
+            print(f"HINWEIS  Kontext-Vorschläge: {p}")
     files: dict[str, str] = {}
     filled = open_n = 0
     if args.split:
         for r in roles:
-            text, f, o = rm.compose(graph, [r], title=f"Rollen — {r['name']}")
+            text, f, o = rm.compose(graph, [r], title=f"Rollen — {r['name']}", evidence=evidence)
             files[f"Rollen_{es.slug(r['name'])}.md"] = text
             filled += f
             open_n += o
     else:
-        text, filled, open_n = rm.compose(graph, roles)
+        text, filled, open_n = rm.compose(graph, roles, evidence=evidence)
         files["Rollen.md"] = text
     files["_meta"] = json.dumps({"filled": filled, "open": open_n, "roles": [r["name"] for r in sorted(roles, key=lambda r: r["name"])]}, sort_keys=True)
     out = project / wl.DIR_OUTPUT / "rollen_md"
     written, proposed, unchanged = brs.write_package(out, files)
     print(f"Geschrieben: {wl.relpath(out)} | Rollen={len(roles)} Dateien={len([k for k in files if not k.startswith('_')])} "
-          f"vorbelegt={filled} offen={open_n} neu={len(written)} unverändert={len(unchanged)} Vorschläge={len(proposed)}")
+          f"vorbelegt={filled} Vorschläge aus Dokumenten={sum(t.count(rm.PROPOSED) for k, t in files.items() if not k.startswith('_'))} offen={open_n} neu={len(written)} unverändert={len(unchanged)} Vorschläge={len(proposed)}")
     for rel in proposed:
         print(f"HINWEIS  {rel} wurde bearbeitet — neuer Stand als {rel}.vorschlag")
     return 0

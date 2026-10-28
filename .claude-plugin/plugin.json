@@ -1,6 +1,6 @@
 {
   "name": "work-transformation-suite",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Sechs Claude-Skills: aus Stellenbeschreibungen und Prozessaufnahmen eines Bereichs ein bewerteter Arbeitsgraph mit Rollen, Aufgaben, Skills, KI-Automatisierbarkeit, Agentenbibliothek mit Capability Contracts — und daraus KI-native Soll-Prozesse in drei Szenarien, mehrdimensional priorisiert, mit messbarem Pilotplan und Dashboard.",
   "author": {
     "name": "Mark Zimmermann"

@@ -18,9 +18,15 @@ from __future__ import annotations
 
 from typing import Any
 
+import json
+from pathlib import Path
+
 import workgraph_lib as wl
+import export_skill as es
+import extract_context_evidence as xe
 
 OPEN = "❓ offen"
+PROPOSED = "✎ Vorschlag aus Dokument — bitte bestätigen"
 GRAPH = "✓ Graph"
 DERIVED = "✓ abgeleitet — bitte bestätigen"
 FREQ_LABEL = {"daily": "täglich", "weekly": "wöchentlich", "monthly": "monatlich", "quarterly": "quartalsweise", "adhoc": "bei Bedarf"}
@@ -38,6 +44,55 @@ def line(label: str, value: Any, source: str = GRAPH) -> str:
     if value in (None, "", [], {}):
         return f"- **{label}:** {OPEN}"
     return f"- **{label}:** {value} _({source})_"
+
+
+def entries_for(ev: list[dict[str, Any]] | None, key: str) -> list[dict[str, Any]]:
+    return [e for e in (ev or []) if e.get("field") == key and e.get("confidence") != "none"]
+
+
+def note_for(ev: list[dict[str, Any]] | None, key: str) -> str:
+    return next((e["text"] for e in (ev or []) if e.get("field") == key and e.get("confidence") == "none"), "")
+
+
+def fld(label: str, key: str, ev: list[dict[str, Any]] | None, value: Any = None, source: str = GRAPH) -> str:
+    """Wert aus dem Graphen, sonst Vorschlag aus einem Dokument, sonst offen. Nie stillschweigend erfunden."""
+    if value not in (None, "", [], {}):
+        return line(label, value, source)
+    es_ = entries_for(ev, key)
+    if es_:
+        texts = " · ".join(e["text"] for e in es_[:3])
+        src = "; ".join(f"{e['source']} ({e['locator']})" for e in es_[:3])
+        return f"- **{label}:** {texts} _({PROPOSED}; Quelle: {src})_"
+    note = note_for(ev, key)
+    return f"- **{label}:** {OPEN}" + (f" _({note})_" if note else "")
+
+
+def load_evidence(project: Path, role_names: list[str]) -> tuple[dict[str, Any], list[str]]:
+    """Vorschläge aus `30_review/kontext_evidenz/` (Skript und Claude), geprüft: ohne Zitat und Quelle kein Eintrag."""
+    root = project / wl.DIR_REVIEW / "kontext_evidenz"
+    problems: list[str] = []
+    out: dict[str, Any] = {"firma": [], "roles": {}}
+    if not root.is_dir():
+        return out, problems
+
+    def read(paths):
+        items = []
+        for p in sorted(paths):
+            try:
+                doc = json.loads(p.read_text(encoding="utf-8"))
+            except ValueError:
+                problems.append(f"{p.name}: kein gültiges JSON")
+                continue
+            ok, probs = xe.validate_entries(doc.get("entries", []))
+            problems.extend(f"{p.name}: {x}" for x in probs)
+            items.extend(ok)
+        return items
+
+    out["firma"] = read(root.glob("firma*.json"))
+    for name in role_names:
+        slug = es.slug(name)
+        out["roles"][name] = read(p for p in root.glob(f"{slug}*.json") if p.name == f"{slug}.json" or p.name.startswith(f"{slug}."))
+    return out, problems
 
 
 def task_weight(t: dict[str, Any]) -> float:
@@ -115,7 +170,7 @@ def gates_of(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
 # Abschnitte
 # ---------------------------------------------------------------------------
 
-def firmenprofil(graph: dict[str, Any], roles: list[dict[str, Any]]) -> list[str]:
+def firmenprofil(graph: dict[str, Any], roles: list[dict[str, Any]], ev: list[dict[str, Any]] | None = None) -> list[str]:
     meta = graph["meta"]
     rids = {r["id"] for r in roles}
     proc_ids = {s["process_id"] for s in graph["process_steps"] if s.get("role_id") in rids}
@@ -125,15 +180,15 @@ def firmenprofil(graph: dict[str, Any], roles: list[dict[str, Any]]) -> list[str
     return ["## 1) Firmenprofil", "",
             "_Was das Unternehmen tut und für wen. Damit ordnet die KI Aufgaben im richtigen Markt ein._", "",
             line("Organisation", meta.get("organization")), line("Bereich", meta.get("scope")), line("Sprache", meta.get("language")),
-            line("Was das Unternehmen tut (Geschäftsmodell)", None),
-            line("Für wen (Kunden und Empfänger der Ergebnisse)", ", ".join(beneficiaries)),
-            line("Markt und Branche", None), line("Produkte und Leistungen", None),
-            line("Sprachgebrauch im Haus (Fachbegriffe, Anrede)", None),
+            fld(xe.FIELD_KEYS["firma.geschaeftsmodell"], "firma.geschaeftsmodell", ev),
+            fld(xe.FIELD_KEYS["firma.kunden"], "firma.kunden", ev, ", ".join(beneficiaries)),
+            fld(xe.FIELD_KEYS["firma.markt"], "firma.markt", ev), fld(xe.FIELD_KEYS["firma.produkte"], "firma.produkte", ev),
+            fld(xe.FIELD_KEYS["firma.sprachgebrauch"], "firma.sprachgebrauch", ev),
             line("Regulatorischer Rahmen", "mindestens eine der Rollen ist als reguliert eingestuft — Ergebnisse müssen nachvollziehbar sein") if regulated
             else f"- **Regulatorischer Rahmen:** {OPEN} (keine Rolle als reguliert eingestuft; das ist eine Annahme)", ""]
 
 
-def rollenprofil(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
+def rollenprofil(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str, Any]] | None = None) -> list[str]:
     clusters = wl.index_by_id(graph["job_clusters"])
     skills = wl.index_by_id(graph["skills"])
     tasks = role_tasks(graph, role)
@@ -170,13 +225,13 @@ def rollenprofil(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
               [f"Reibung laut Prozessaufnahme: {p}" for p in pains] + \
               [f"längste Liegezeit — {w}" for w in waits] + [f"meiste Rückläufer — {r}" for r in rework]
     L += [f"  - {d} _({DERIVED if not d.startswith('Reibung') else GRAPH})_" for d in derived] or [f"  - {OPEN}"]
-    L += [line("Zeitfresser aus deiner Sicht", None), ""]
+    L += [fld(xe.FIELD_KEYS["rolle.zeitfresser"], "rolle.zeitfresser", ev), ""]
     gates = gates_of(graph, role)
     L.insert(L.index("- **Wiederkehrende Aufgaben:**"), line("Wo ein Mensch entscheidet", "; ".join(gates)))
     return L
 
 
-def team_kontext(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
+def team_kontext(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str, Any]] | None = None) -> list[str]:
     roles = wl.index_by_id(graph["roles"])
     hmap = handovers(graph, role)
     L = ["### 3) Team-Kontext", "",
@@ -199,11 +254,11 @@ def team_kontext(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
     L += [line("Organisationseinheit", "; ".join(units)),
           line("Wen du wann einbeziehst (Entscheidungen, Eskalation)", "; ".join(gates)),
           line("Führungskraft und Ansprechpersonen (Namen)", None),
-          line("Bevorzugter Kanal je Anlass (dringend, Abstimmung, Dokumentation)", None), ""]
+          fld(xe.FIELD_KEYS["team.kanaele"], "team.kanaele", ev), ""]
     return L
 
 
-def prioritaeten(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
+def prioritaeten(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str, Any]] | None = None) -> list[str]:
     steps = role_steps(graph, role)
     proc_ids = sorted({s["process_id"] for s in steps})
     outcomes = sorted({o["name"] for p in graph["processes"] if p["id"] in proc_ids for o in graph["outcomes"] if o["id"] == p.get("outcome_id")})
@@ -215,14 +270,15 @@ def prioritaeten(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
     first = [t["name"] for t in sorted(role_tasks(graph, role), key=lambda t: (-task_weight(t), t["name"]))[:3]]
     return ["### 4) Prioritäten & Ziele", "",
             "_Woran du gerade arbeitest. Der lebendigste Abschnitt: einmal im Monat aktualisieren._", "",
-            line("Woran du gerade arbeitest", None), line("Ziele dieses Quartals", None), line("Stand dieser Angaben (Monat)", None),
+            fld(xe.FIELD_KEYS["prio.aktuell"], "prio.aktuell", ev), fld(xe.FIELD_KEYS["prio.ziele"], "prio.ziele", ev),
+            line("Stand dieser Angaben (Monat)", None),
             line("Ergebnisse, auf die die Prozesse der Rolle einzahlen", "; ".join(outcomes)),
             line("Kennzahlen der Prozesse", "; ".join(metrics)),
             line("Wo Unterstützung sich zuerst lohnt (Zeitanteil × Automatisierbarkeit)", "; ".join(first), DERIVED),
             line("Woran du merkst, dass es gut läuft", None), ""]
 
 
-def stil(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
+def stil(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str, Any]] | None = None) -> list[str]:
     tasks = role_tasks(graph, role)
     coe = max((float((t.get("scores") or {}).get("consequence_of_error", 0)) for t in tasks), default=0.0)
     do_hints = []
@@ -230,21 +286,23 @@ def stil(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
         do_hints.append("Grundlage und Quelle jeder Aussage nennen (die Rolle ist reguliert)")
     if coe >= 6:
         do_hints.append("Unsicherheit und offene Punkte benennen, statt sie zu glätten (bei mindestens einer Aufgabe wäre ein Fehler teuer)")
+    dos = [line("Do's für KI-Texte", "; ".join(do_hints), DERIVED)] if do_hints else []
+    if entries_for(ev, "stil.dos") or not do_hints:
+        dos.append(fld("Do's aus deinen eigenen Texten" if do_hints else "Do's für KI-Texte", "stil.dos", ev))
     return ["### 5) Arbeits- & Kommunikationsstil", "",
             "_Wie du arbeitest und wie du klingst, inklusive Do's und Don'ts für KI-Texte._", "",
             line("Qualitätsverständnis (was ist ein gutes Ergebnis?)", None),
-            line("Bevorzugte Formate (Tabelle, Stichpunkte, Fließtext, Länge)", None),
+            fld(xe.FIELD_KEYS["stil.format"], "stil.format", ev),
             line("Wie viel Rückfrage ist gewünscht?", None), line("Was der Agent nie ohne Rückfrage tun soll", None),
-            line("Tonalität (wie du klingst, Anrede, Förmlichkeit)", None),
-            line("Do's für KI-Texte", "; ".join(do_hints), DERIVED) if do_hints else line("Do's für KI-Texte", None),
-            line("Don'ts für KI-Texte (Floskeln, Formulierungen, die du nie schreiben würdest)", None), ""]
+            fld(xe.FIELD_KEYS["stil.ton"], "stil.ton", ev), *dos,
+            fld(xe.FIELD_KEYS["stil.donts"], "stil.donts", ev), ""]
 
 
 # ---------------------------------------------------------------------------
 # Zusammenbau
 # ---------------------------------------------------------------------------
 
-def compose(graph: dict[str, Any], roles: list[dict[str, Any]], title: str = "Rollen") -> tuple[str, int, int]:
+def compose(graph: dict[str, Any], roles: list[dict[str, Any]], title: str = "Rollen", evidence: dict[str, Any] | None = None) -> tuple[str, int, int]:
     """Eine Rollen.md für eine oder mehrere Rollen. Gibt (Text, Zeilen aus dem Graphen, offene Felder) zurück."""
     roles = sorted(roles, key=lambda r: (r["name"], r["id"]))
     head = ["---", "dokument: Rollen.md", "version: 1", "rollen:"] + [f"  - {r['name']}" for r in roles] + \
@@ -252,9 +310,11 @@ def compose(graph: dict[str, Any], roles: list[dict[str, Any]], title: str = "Ro
             f"# {title}", "",
             "Diese Datei sagt einem Agenten, wer hier arbeitet. Lade zuerst **1) Firmenprofil**, dann die Abschnitte der Rolle, in der gerade gearbeitet wird. "
             f"Zeilen mit „{GRAPH}“ stammen aus dem Arbeitsgraphen und sind nur so gut wie er; „{OPEN}“ weiß der Graph nicht — dann nachfragen, nicht raten. "
-            "Zeilen mit „abgeleitet“ sind Vorschläge, die die Person bestätigen soll.", ""]
-    body = firmenprofil(graph, roles)
+            "Zeilen mit „abgeleitet“ oder „✎ Vorschlag aus Dokument“ sind Vorschläge mit Quelle, die die Person bestätigen soll.", ""]
+    evidence = evidence or {"firma": [], "roles": {}}
+    body = firmenprofil(graph, roles, evidence.get("firma"))
     for r in roles:
-        body += [f"## Rolle: {r['name']}", ""] + rollenprofil(graph, r) + team_kontext(graph, r) + prioritaeten(graph, r) + stil(graph, r)
+        ev = evidence.get("roles", {}).get(r["name"])
+        body += [f"## Rolle: {r['name']}", ""] + rollenprofil(graph, r, ev) + team_kontext(graph, r, ev) + prioritaeten(graph, r, ev) + stil(graph, r, ev)
     text = "\n".join(head + body).rstrip("\n") + "\n"
     return text, text.count(GRAPH) + text.count(DERIVED), text.count(OPEN)

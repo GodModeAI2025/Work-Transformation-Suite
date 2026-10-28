@@ -429,6 +429,27 @@ Mehrere Rollen landen in einer Datei: das Firmenprofil einmal, danach je Rolle d
 Graph kennt eine Person nicht: Was er nicht weiß, steht als „❓ offen“ und wird nicht erfunden; das Interview aus dem Setup-Paket füllt es. Ein erneuter Lauf
 überschreibt keine bearbeitete Datei (neuer Stand als `.vorschlag`).
 
+### Den Rest nicht erfragen, sondern aus Material holen
+
+Ein Graph kennt keine Person: nicht ihre Prioritäten, nicht ihren Ton, nicht, was sie nervt. Das lässt sich im Interview erfragen — oder aus Material holen, das ohnehin
+existiert. Material unter `00_input/kontext/` (`firma/`, `<rolle>/texte`, `<rolle>/transkripte`, `<rolle>/projekte`) wertet `extract_context_evidence.py` aus und liefert
+**Vorschläge mit Quelle, Fundstelle und Zitat**:
+
+| Feld | Material | Verfahren |
+|---|---|---|
+| Geschäftsmodell, Kunden, Produkte, Markt, Fachbegriffe | Firmentexte | Sätze mit typischen Mustern, Zählung von Branchenbegriffen |
+| Zeitfresser, Kanäle, Prioritäten, Ziele | Transkripte, Projektdokumente | Zeilen mit Reibungs-, Kanal-, Prioritäts- und Zielwörtern |
+| Tonalität, Formate, Do's | eigene Texte | **Messung**: Anrede je Text, Satzlänge, Listenanteil, wiederkehrende Wendungen, Schlussformel |
+| Don'ts | eigene Texte | typische KI-Floskeln, die in den eigenen Texten nie vorkommen |
+
+In der Rollen.md erscheinen sie als „✎ Vorschlag aus Dokument — bitte bestätigen“, nie als Tatsache. Ein Stilprofil entsteht erst ab drei Texten und 600 Wörtern; darunter steht
+„zu wenig Material“. Ein Eintrag ohne Zitat und Quelle wird abgelehnt. Was Skripte nicht lesen (PDF, Word, Mail, Kalender), liest Claude und trägt es im selben Format ein
+(`<rolle>.claude.json`). E-Mail-Adressen, Telefonnummern und Anreden mit Namen werden maskiert, Personennamen nicht gesucht; Transkripte enthalten Daten Dritter und gehören nur mit
+Einverständnis ins Projekt. Was bleibt (Qualitätsverständnis, gewünschte Rückfrage), klärt das Interview. Details und Grenzen: `skills/agent-mapper/references/kontext-aus-dokumenten.md`.
+
+Für ein ganzes Team entsteht beim Aufruf mit mehreren Rollen zusätzlich `Teamstart.md`, eine Agenda für einen Mini-Hackathon (Rahmen, Rollen.md, Agent, erste Skills, Erfolgsmoment),
+und je Rolle ein `skill-ideen-prompt.md`, der aus der gefüllten Rollen.md fünf lohnende Skills vorschlagen lässt.
+
 ### Setup-Paket je Rolle: ein Arbeitsagent auf Zuruf
 
 Die Analyse sagt, welche Aufgaben sich lohnen. Eine Person braucht außerdem etwas, das sie am Montagmorgen öffnen kann. Auf Zuruf („Baue das Setup für

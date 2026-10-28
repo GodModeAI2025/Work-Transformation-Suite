@@ -216,5 +216,5 @@ sag „nicht bewertet“, nicht „null“.
 ## Rollen-Setup auf Zuruf
 
 Fragt der Nutzer nach einem Arbeitsagenten für eine bestimmte Rolle (Rollen.md, Skills, Testfälle, Tools, Routinen), nutze `agent-mapper/scripts/build_role_setup.py`
-(Details im SKILL.md des agent-mapper). Nur die Kontextdatei für ein Harness: `build_rollen_md.py --role "A;B"`. Voraussetzung ist ein bewerteter Graph. Das Paket ist ein Startpunkt: Kontext, der nicht im Graphen steht, bleibt „offen“, und
+(Details im SKILL.md des agent-mapper). Fehlen Prioritäten, Ton und Zeitfresser, frage nach Material (`00_input/kontext/`) und nutze `extract_context_evidence.py`, bevor du alles per Interview erfragst. Nur die Kontextdatei für ein Harness: `build_rollen_md.py --role "A;B"`. Voraussetzung ist ein bewerteter Graph. Das Paket ist ein Startpunkt: Kontext, der nicht im Graphen steht, bleibt „offen“, und
 Skills sind erst nach fünf echten Testfällen und zwei Schleifen einsatzbereit.

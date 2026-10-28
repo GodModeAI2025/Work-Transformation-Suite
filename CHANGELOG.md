@@ -4,6 +4,30 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.7.0] — Kontext aus Dokumenten statt aus Fragen
+
+Eine Rollen.md hat Felder, die ein Graph nicht kennt: Prioritäten, Ton, Zeitfresser aus Sicht der Person. Sie müssen nicht alle per Frage und Antwort kommen. Diese Version holt Vorschläge
+aus Material, das ohnehin existiert — und kennzeichnet sie als Vorschläge.
+
+### Neu
+
+- **`extract_context_evidence.py`** (agent-mapper): liest Textmaterial unter `00_input/kontext/` (`firma/`, `<rolle>/texte`, `transkripte`, `projekte`) und schreibt Vorschläge mit
+  Quelle, Fundstelle und Zitat nach `30_review/kontext_evidenz/`.
+- **Stil wird gemessen:** Anrede je Text (informell, Sie, je nach Adressat), Satzlänge, Listenanteil, Absatzlänge, Ausrufezeichen, Emojis, wiederkehrende Wendungen, Schlussformel.
+  Don'ts nur als Befund (typische KI-Floskeln, die in den eigenen Texten nie vorkommen). Ab drei Texten und 600 Wörtern, sonst „zu wenig Material“.
+- **Rollen.md zeigt Vorschläge** als „✎ Vorschlag aus Dokument — bitte bestätigen“; ein Graphwert schlägt einen Vorschlag; ohne Material bleibt das Feld offen.
+- **Claude-Schicht:** Funde aus PDF, Word, Mail und Kalender im selben Format (`<rolle>.claude.json`); ohne wörtliches Zitat und Quelle wird ein Eintrag abgelehnt und gemeldet.
+- **Personendaten:** E-Mail-Adressen, Telefonnummern und Anreden mit Namen werden maskiert, Personennamen nicht gesucht, nur kurze Zitate gespeichert.
+- **Quelleninventar** erkennt das Material und bietet es an, wenn es fehlt (freiwillig).
+- **Aus dem Playbook:** `skills/skill-ideen-prompt.md` je Rolle (fünf lohnende Skills aus der gefüllten Rollen.md vorschlagen lassen) und `Teamstart.md` (Mini-Hackathon) bei mehreren Rollen.
+- `references/kontext-aus-dokumenten.md`: Verzeichnis, Verfahren, Regeln, Grenzen.
+
+### Grenzen
+
+- Die Muster sind Heuristiken; ein Satz mit „Ziel“ ist nicht immer ein Ziel. Deshalb Vorschlag und Bestätigung.
+- Ein Stilprofil beschreibt die gemessenen Texte, nicht die ganze Person.
+- Die Maskierung ist kein Anonymisierungsverfahren. Transkripte enthalten Daten Dritter und gehören nur mit Einverständnis ins Projekt.
+
 ## [0.6.0] — Rollen.md für ein oder mehrere Rollen
 
 Ein Agenten-Harness braucht eine Datei, in der geklärt ist, wer hier arbeitet. Diese Version erzeugt sie aus dem Arbeitsgraphen — für eine Rolle oder
