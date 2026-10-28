@@ -600,6 +600,7 @@ def validate_process_layer(graph: dict, ids: dict, errors: list, warnings: list)
     _validate_experiments(graph, ids, errors, warnings)
     _validate_governance(graph, ids, errors, warnings, prov_index)
     _validate_adoption_layer(graph, ids, errors, warnings)
+    _validate_task_clusters(graph, ids, errors, warnings)
 
 
 def _validate_blueprints(graph, ids, errors, warnings, controls, steps_by_id, processes) -> None:
@@ -768,6 +769,27 @@ def _validate_experiments(graph, ids, errors, warnings) -> None:
             warnings.append(f"{w}: frame_confirmed ohne frame_note — wer hat was zugesagt?")
         if x.get("status") in ("running", "stopped", "completed") and not x.get("results"):
             warnings.append(f"{w}: Status '{x.get('status')}' ohne results")
+
+
+def _validate_task_clusters(graph, ids, errors, warnings) -> None:
+    """Aufgabencluster: gleiche Arbeit in mehreren Rollen. Ein Cluster mit einer Aufgabe ist keiner."""
+    tas, rol = ids["tasks"], ids["roles"]
+    tasks = wl.index_by_id(graph["tasks"])
+    for c in graph["task_clusters"]:
+        w = f"task_cluster {c['id']} ({c.get('name')})"
+        members = c.get("task_ids", [])
+        if len(members) < 2:
+            errors.append(f"{w}: weniger als zwei Aufgaben")
+        for tid in members:
+            if tid not in tas:
+                errors.append(f"{w}: task_id {tid} unbekannt")
+        for rid in c.get("role_ids", []):
+            if rid not in rol:
+                errors.append(f"{w}: role_id {rid} unbekannt")
+        roles_of_members = {tasks[t]["role_id"] for t in members if t in tasks}
+        if len(roles_of_members) < 2 and not any(t not in tas for t in members):
+            warnings.append(f"{w}: alle Aufgaben stehen in derselben Rolle — wiederkehrende Arbeit über Rollen zeigt das nicht")
+        check_enum(errors, w, "status", c.get("status"), wl.ENUM_CLUSTER_STATUS)
 
 
 def _validate_adoption_layer(graph, ids, errors, warnings) -> None:

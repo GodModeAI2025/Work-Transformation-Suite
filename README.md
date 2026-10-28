@@ -387,6 +387,26 @@ Neben der Rollenmatrix zeigt das Dashboard alle bewerteten Aufgaben auf einer Ka
 sortiert nach **Exposition** (Automatisierungspotenzial ÷ 10 × gebundene Arbeit), die **Fehlerfolge** steht daneben. Eine
 Aufgabe mit hoher Exposition und hoher Fehlerfolge bekommt den Hinweis „Fehler teuer“: Dort gehört ein Mensch in den Ablauf.
 
+### Datenaufbereitung: sichten, vorschlagen, anbieten
+
+Gute Analysen hängen mehr an der Aufbereitung als am Modell. `inventory_sources.py` sichtet `00_input/`, ordnet jede Datei einer
+Quellenart zu (interne Stellenbeschreibung, externe Anzeige, Positionsliste, Level-Struktur, Prozessbeschreibung, Kursunterlage,
+Geschäftsbericht, …), zeigt, welche Teile des Modells noch ohne Quelle sind, und schlägt die passenden Methoden vor — mit Befehl. Die
+Suite bietet sie an und wählt nicht still. Katalog mit Eingaben, Ergebnissen und Grenzen:
+`skills/work-graph-builder/references/datenaufbereitung.md`.
+
+| Methode | Skript | Zweck |
+|---|---|---|
+| Vollständigkeitsprüfung | `check_completeness.py` | Rolle gegen eine anpassbare Vorlage prüfen; Lücken nennen, woher sie zu füllen sind. Füllt nichts auf |
+| Aufgabencluster | `dedupe_tasks.py` | Dieselbe Arbeit in mehreren Rollen finden. Kandidaten, bis ein Fachexperte mit Namen bestätigt |
+| Zusammenarbeit | `derive_collaboration.py` | Rollenpaare mit Belegen: Übergabe im Prozess, gemeinsame Stelle, gleiche Einheit |
+| Allgemeine Regeln | `apply_overrides.py` mit Selektoren | Eine Expertenaussage wirkt auf alle betroffenen Rollen (`cluster:`, `family:`, `role:`, `*`) |
+| Level und Kostensatz | `import_levels.py` | Planwert je Arbeitstag nach Level; gesetzte Werte bleiben |
+| Referenzautomatisierungen | `export_agent_candidates.py` | Kuratiertes Register mit Quelle und Evidenzgrad; Treffer erscheinen bei den Agentenkandidaten |
+
+Ehrlich zu den Grenzen: Die Aufgabencluster beruhen auf gleichen Wörtern, nicht auf gleicher Bedeutung. Die Suite scrapt keine öffentlichen
+Daten und füllt keine Lücken still auf; was sie nicht aus einer Quelle hat, bleibt „ergänzt“ oder „geschätzt“.
+
 ### Zwei Berichte, ein Graph
 
 Das Dashboard schreibt neben `report_vNNN.md` zwei Fassungen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — in der Sprache

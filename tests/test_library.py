@@ -32,7 +32,7 @@ class TestIdentifiers(unittest.TestCase):
             "process_steps": "process_step", "process_edges": "process_edge",
             "blueprints": "blueprint", "experiments": "experiment",
             "provenance": "provenance", "decisions": "decision",
-            "target_roles": "target_role", "usecases": "usecase", "adoption": "adoption",
+            "target_roles": "target_role", "usecases": "usecase", "adoption": "adoption", "task_clusters": "task_cluster",
         }
         self.assertEqual(set(singular), set(wl.COLLECTIONS))
         for kind in singular.values():

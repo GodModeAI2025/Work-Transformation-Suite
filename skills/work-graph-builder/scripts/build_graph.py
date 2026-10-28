@@ -146,6 +146,16 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                     role["status"] = prev.get("status", "generated")
                     if prev.get("analysis"):
                         role["analysis"] = prev["analysis"]
+                    # Werte, die ein Import nach dem Builder gesetzt hat (Positionen, Level), bleiben stehen.
+                    # Sonst baute jeder Lauf die Rolle ohne sie auf, der Import setzte sie wieder, und ein
+                    # zweiter Lauf legte zwei neue Graph-Versionen an, obwohl sich nichts geändert hat.
+                    for k in ("headcount_from_positions", "positions_count"):
+                        if prev.get(k) is not None:
+                            role[k] = prev[k]
+                    if role["headcount"] is None and prev.get("headcount_from_positions") is not None:
+                        role["headcount"] = prev.get("headcount")
+                    if prev.get("day_rate_source") == "level":
+                        role["day_rate_eur"], role["day_rate_source"] = prev.get("day_rate_eur"), "level"
                 roles[rid] = role
 
             seen_skill_ids = {s["skill_id"] for s in role["skills"]}
@@ -256,7 +266,7 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
     # in build_processes.py bzw. im Skill process-redesigner. Sie werden aus der Vorversion
     # übernommen, damit ein erneuter Architekt-Lauf keine Prozessarbeit verwirft.
     for c in (wl.COLLECTIONS_PROCESS + wl.COLLECTIONS_REDESIGN + wl.COLLECTIONS_GOVERNANCE
-              + wl.COLLECTIONS_ADOPTION):
+              + wl.COLLECTIONS_ADOPTION + wl.COLLECTIONS_PREP):
         graph[c] = [dict(x) for x in previous.get(c, [])] if previous else []
     # Aufgabenverweise aus Prozessschritten bereinigen: eine Aufgabe, die es nicht mehr
     # gibt, darf keinen Schritt ungültig machen. Verweise auf Rollen, Systeme oder Agenten
@@ -268,6 +278,14 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
         dropped_refs += len(st.get("task_ids", [])) - len(keep)
         st["task_ids"] = keep
     stats["process_task_refs_dropped"] = dropped_refs
+    # Aufgabencluster: verschwundene Aufgaben austragen, Cluster unter zwei Mitgliedern auflösen.
+    pruned = []
+    for c in graph["task_clusters"]:
+        c["task_ids"] = sorted(t for t in c.get("task_ids", []) if t in tasks)
+        if len(c["task_ids"]) >= 2:
+            c["role_ids"] = sorted({tasks[t]["role_id"] for t in c["task_ids"]})
+            pruned.append(c)
+    graph["task_clusters"] = pruned
     stats["processes"] = len(graph["processes"])
 
     wl.sort_graph(graph)

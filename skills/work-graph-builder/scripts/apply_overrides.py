@@ -16,6 +16,16 @@ field:       beliebiges Feld des Objekts, z. B. headcount, share_of_time, status
              Sonderfall field=delete, value=true: Objekt entfernen (Task: auch aus Rolle).
 value:       Zahlen werden als Zahl übernommen, true/false als Bool, sonst Text.
 
+Allgemeine Regeln (Selektoren statt einer ID in entity_id):
+    *                 alle Objekte des Typs
+    cluster:<Name>    Rollen dieses Jobclusters (bei task: deren Aufgaben)
+    family:<Name>     Rollen dieser Jobfamilie (bei task: deren Aufgaben)
+    role:<Name>       bei task: alle Aufgaben dieser Rolle
+Beispiel: role;cluster:Netzbetrieb;regulated;true;M. Muster;gilt für den ganzen Cluster
+So wirkt eine Expertenaussage („bei uns ist das generell reguliert“) auf alle betroffenen Rollen
+und nicht nur auf die, über die gerade gesprochen wurde. Eine Regelzeile gilt zuerst, eine
+Einzelzeile darunter überstimmt sie für ein Objekt. `delete` ist als Regel nicht erlaubt.
+
 Regeln:
 - Overrides gewinnen immer über generierte Werte. Sie werden bei jedem Lauf erneut
   angewendet (idempotent), damit ein neuer Architekt-Lauf sie nicht verliert.
@@ -52,9 +62,68 @@ def parse_value(v: str) -> Any:
         return s
 
 
+def expand_selectors(graph: dict[str, Any], rows: list[dict[str, str]]) -> tuple[list[dict[str, str]], list[str]]:
+    """Regelzeilen (`*`, `cluster:`, `family:`, `role:`) in Einzelzeilen auflösen, in ID-Reihenfolge."""
+    problems: list[str] = []
+    clusters = {wl.normalize_name(c["name"]): c for c in graph["job_clusters"]}
+    families = {wl.normalize_name(f["name"]): f for f in graph["job_families"]}
+    cluster_family = {c["id"]: c.get("family_id") for c in graph["job_clusters"]}
+    roles_by_name = {wl.normalize_name(r["name"]): r for r in graph["roles"]}
+    out: list[dict[str, str]] = []
+    for i, row in enumerate(rows, start=2):
+        eid = (row.get("entity_id") or "").strip()
+        et = (row.get("entity_type") or "").strip().lower()
+        is_selector = eid == "*" or eid.split(":", 1)[0] in ("cluster", "family", "role") and ":" in eid
+        if not is_selector:
+            out.append(row)
+            continue
+        if (row.get("field") or "").strip() == "delete":
+            problems.append(f"Zeile {i}: delete ist als Regel nicht erlaubt")
+            continue
+        kind, _, name = eid.partition(":")
+        key = wl.normalize_name(name)
+        if et == "role" and kind in ("cluster", "family", "*") or et == "role" and kind == "role":
+            if kind == "*":
+                targets = list(graph["roles"])
+            elif kind == "cluster":
+                c = clusters.get(key)
+                targets = [r for r in graph["roles"] if c and r.get("cluster_id") == c["id"]]
+            elif kind == "family":
+                f = families.get(key)
+                targets = [r for r in graph["roles"] if f and cluster_family.get(r.get("cluster_id")) == f["id"]]
+            else:
+                r = roles_by_name.get(key)
+                targets = [r] if r else []
+        elif et == "task":
+            if kind == "*":
+                targets = list(graph["tasks"])
+            else:
+                if kind == "role":
+                    r = roles_by_name.get(key)
+                    role_ids = {r["id"]} if r else set()
+                elif kind == "cluster":
+                    c = clusters.get(key)
+                    role_ids = {r["id"] for r in graph["roles"] if c and r.get("cluster_id") == c["id"]}
+                else:
+                    f = families.get(key)
+                    role_ids = {r["id"] for r in graph["roles"] if f and cluster_family.get(r.get("cluster_id")) == f["id"]}
+                targets = [t for t in graph["tasks"] if t.get("role_id") in role_ids]
+        elif et in ("skill", "agent") and kind == "*":
+            targets = list(graph[COLL[et]])
+        else:
+            problems.append(f"Zeile {i}: Selektor '{eid}' passt nicht zu entity_type '{et}'")
+            continue
+        if not targets:
+            problems.append(f"Zeile {i}: Selektor '{eid}' trifft nichts")
+            continue
+        for obj in sorted(targets, key=lambda o: o["id"]):
+            out.append(dict(row, entity_id=obj["id"], comment=(row.get("comment") or "") + f" [Regel {eid}]"))
+    return out, problems
+
+
 def apply(graph: dict[str, Any], rows: list[dict[str, str]]) -> tuple[int, list[str]]:
     applied = 0
-    problems: list[str] = []
+    rows, problems = expand_selectors(graph, rows)
     to_delete: list[tuple[str, str]] = []
     for i, row in enumerate(rows, start=2):
         et = (row.get("entity_type") or "").strip().lower()

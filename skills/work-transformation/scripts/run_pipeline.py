@@ -84,6 +84,9 @@ def main() -> int:
     if (project / wl.DIR_INPUT / "positions.csv").exists():
         if run([py, script("work-graph-builder", "import_positions.py"), "--project", proj], cwd):
             return 2
+    if (project / wl.DIR_INPUT / "levels.csv").exists():
+        if run([py, script("work-graph-builder", "import_levels.py"), "--project", proj], cwd):
+            return 2
     run([py, script("work-graph-builder", "make_review_list.py"), "--project", proj], cwd)
     if stop == 0:
         return 0
@@ -93,6 +96,13 @@ def main() -> int:
     if process_files:
         if run([py, script("work-graph-builder", "build_processes.py"), "--project", proj], cwd):
             return 2
+    # Datenaufbereitung: Quelleninventar, Aufgabencluster, Vollständigkeit, Zusammenarbeit.
+    # Alles Berichte oder additive Sammlungen; nichts davon hält die Pipeline an.
+    run([py, script("work-graph-builder", "inventory_sources.py"), "--project", proj], cwd)
+    if run([py, script("work-graph-builder", "dedupe_tasks.py"), "--project", proj], cwd):
+        return 2
+    run([py, script("work-graph-builder", "check_completeness.py"), "--project", proj], cwd)
+    run([py, script("work-graph-builder", "derive_collaboration.py"), "--project", proj], cwd)
     if stop == 1:
         return 0
 

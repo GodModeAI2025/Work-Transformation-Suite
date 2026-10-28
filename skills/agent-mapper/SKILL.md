@@ -167,3 +167,9 @@ Der Scorer klassifiziert sie dann als `emerging`.
 - **Skill-Export.** `scripts/export_skill.py [--agent "Name"]` macht aus dem Vertrag ein Skill-Gerüst (SKILL.md, deterministisches
   `run.py` mit Eingabeprüfung, Idempotenz, Konfidenzschwelle, Rückfall und Audit, Testmengen-Hülle, Nutzungsmeldung). Es ist ein
   Gerüst: Die Systemaufrufe fehlen, die Testmenge ist leer. Sag das so.
+
+## Referenzautomatisierungen (ab 0.4)
+
+Liegt `00_input/referenzautomatisierungen.csv` vor (Format in `work-graph-builder/references/datenaufbereitung.md`), nennt
+`export_agent_candidates.py` je Aufgabenkandidat bis zu drei passende Referenzen mit Quelle und Evidenzgrad. Eine Referenz zeigt, dass es so etwas
+gibt, nicht, dass es hier passt. Ohne Quelle wird sie nicht geführt; der Agent bleibt `heuristic`, bis ein Fachexperte die Passung bestätigt.

@@ -226,3 +226,20 @@ die Review-Liste „Split prüfen“. In einer zu groben Rolle gehen beim Mittel
 
 **Glossar.** `references/glossar.md` legt Rolle, Position, Aufgabe, Prozessschritt, Agent und Use Case fest und sagt, wie HR und
 IT dieselben Wörter benutzen.
+
+## Datenaufbereitung (ab 0.4)
+
+Zuerst sichten, dann aufbereiten. Die Methoden und ihre Grenzen stehen in `references/datenaufbereitung.md`.
+
+1. `scripts/inventory_sources.py` — Quellenarten, Lücken, vorgeschlagene Methoden (`30_review/quellen_inventar.md`). Biete die Vorschläge
+   dem Nutzer an; wähle nicht still.
+2. Nach dem Bauen des Graphen: `scripts/check_completeness.py` prüft jede Rolle gegen `assets/role-template.json`. Lücken werden nicht
+   aufgefüllt; sie sagen, woher sie zu füllen wären (innen vor außen).
+3. `scripts/dedupe_tasks.py` findet dieselbe Arbeit in mehreren Rollen. **Das sind Kandidaten.** Das Verfahren kennt Wörter, nicht
+   Bedeutung; prüfe sie mit dem Fachexperten und trage Entscheidungen mit Namen in `30_review/task_clusters.csv` ein.
+4. `scripts/derive_collaboration.py` leitet Zusammenarbeit aus Prozesskanten und Positionslisten ab — als Gesprächsvorlage.
+5. `scripts/import_levels.py` ordnet Level Kostensätze zu (`00_input/levels.csv`); gesetzte Werte bleiben.
+6. Allgemeine Regeln: Wenn ein Experte etwas über viele Rollen sagt („im Netzbetrieb ist alles reguliert“), schreibe eine Regelzeile mit Selektor
+   (`cluster:`, `family:`, `role:`, `*`) in `overrides.csv`, nicht zwanzig Einzelzeilen.
+
+Externe Stellenanzeigen ergänzen nur, was intern fehlt, und werden als `confidence: inferred` geführt.

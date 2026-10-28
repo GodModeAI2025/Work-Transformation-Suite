@@ -30,7 +30,9 @@ SHARED = {
 REQUIRED = {
     "work-graph-builder": ["init_project.py", "build_graph.py", "build_processes.py", "migrate_graph.py",
                            "make_review_list.py", "apply_overrides.py", "apply_governance.py",
-                           "validate_graph.py", "import_positions.py", "import_process_house.py"],
+                           "validate_graph.py", "import_positions.py", "import_process_house.py",
+                           "import_levels.py", "inventory_sources.py", "dedupe_tasks.py",
+                           "check_completeness.py", "derive_collaboration.py"],
     "task-scorer": ["export_scoring_sheet.py", "score_roles.py", "calibrate.py", "build_target_roles.py"],
     "agent-mapper": ["export_agent_candidates.py", "compute_coverage.py", "validate_contracts.py",
                      "export_contracts.py", "export_skill.py", "export_reach.py",
@@ -44,7 +46,8 @@ REQUIRED = {
 # Dateien, die ein Skill zusätzlich zu scripts/ braucht (Referenzen, Konfiguration).
 REQUIRED_FILES = {
     "work-graph-builder": ["references/extraction-format.md", "references/process-format.md",
-                           "references/glossar.md", "references/interview-leitfaden.md"],
+                           "references/glossar.md", "references/interview-leitfaden.md",
+                           "references/datenaufbereitung.md", "assets/role-template.json"],
     "task-scorer": ["references/rubric.md"],
     "agent-mapper": ["references/agent-patterns.md", "references/contract-format.md"],
     "process-redesigner": ["references/redesign-rules.md", "references/blueprint-format.md",

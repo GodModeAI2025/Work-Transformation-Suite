@@ -174,6 +174,26 @@ document.getElementById('f-trole').addEventListener('change',apply);
 """
 
 
+STATUS_LABEL = {"candidate": "Kandidat (ungeprüft)", "confirmed": "bestätigt"}
+
+
+def clusters_html(graph: dict[str, Any]) -> str:
+    """Dieselbe Arbeit in mehreren Rollen. Verworfene Cluster erscheinen nicht."""
+    cl = [c for c in graph.get("task_clusters", []) if c.get("status") != "rejected"]
+    if not cl:
+        return ""
+    roles = wl.index_by_id(graph["roles"])
+    rows = "".join(
+        f'<tr><td>{esc(c["name"])}</td><td class="n">{c["roles_count"]}</td><td class="n">{c["tasks_count"]}</td>'
+        f'<td class="n">{f1(c["fte"]) if c.get("fte") is not None else f1(c["share_sum"], 0) + " %"}</td>'
+        f'<td class="n">{f1(c["similarity_min"], 2)}</td><td>{esc(STATUS_LABEL.get(c["status"], c["status"]))}</td>'
+        f'<td>{esc(", ".join(roles[r]["name"] for r in c["role_ids"] if r in roles))}</td></tr>'
+        for c in sorted(cl, key=lambda c: (-c["roles_count"], -(c.get("fte") or 0), c["name"], c["id"])))
+    return f"""<h3 style="font-family:var(--f-head);color:var(--primary);margin:22px 0 4px">Wiederkehrende Aufgaben über Rollen</h3>
+<p class="meta" style="margin:0 0 8px">Dieselbe Arbeit unter ähnlichem Namen in mehreren Rollen. Je mehr Rollen sie trägt, desto eher lohnt ein gemeinsamer Agent. Die Zuordnung beruht auf gleichen Wörtern, nicht auf gleicher Bedeutung; „Kandidat“ heißt: noch kein Fachexperte hat sie bestätigt (<code>30_review/task_clusters.csv</code>).</p>
+<div class="scroller"><table><thead><tr><th>Aufgabe</th><th class="n">Rollen</th><th class="n">Aufgaben</th><th class="n">Arbeit</th><th class="n">Ähnlichkeit ab</th><th>Stand</th><th>Rollen</th></tr></thead><tbody>{rows}</tbody></table></div>"""
+
+
 def section(graph: dict[str, Any], mode_color: dict[str, str], mode_label: dict[str, str],
             horizon_label: dict[Any, str]) -> tuple[str, str, str]:
     """(HTML, Skript, Nav-Eintrag). Leer, wenn keine bewerteten Aufgaben vorliegen."""
@@ -213,6 +233,7 @@ def section(graph: dict[str, Any], mode_color: dict[str, str], mode_label: dict[
 <p class="meta" style="margin:0 0 8px">Exposition = Automatisierungspotenzial ÷ 10 × gebundene Arbeit. Sie sagt, wo der größte angreifbare Arbeitsblock liegt — nicht, was automatisiert werden <em>soll</em>. {n_caution} Aufgaben tragen den Hinweis „Fehler teuer“: Dort gehört ein Mensch in den Ablauf, auch wenn die Exposition hoch ist.</p>
 <div class="scroller"><table><thead><tr><th class="n">#</th>{head}</tr></thead><tbody>{top_rows}</tbody></table></div>
 <details><summary>Alle {len(items)} Aufgaben als Tabelle (barrierefreie Alternative zur Karte)</summary><div class="scroller"><table><thead><tr>{head}</tr></thead><tbody>{all_rows}</tbody></table></div></details>
+{clusters_html(graph)}
 </section>"""
     script = f"window.__TASKS__={json.dumps(js_data, ensure_ascii=False, sort_keys=True)};{TASK_JS}"
     return body, script, "#aufgaben"

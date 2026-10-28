@@ -4,6 +4,36 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.4.0] — Datenaufbereitung
+
+Gute Analysen hängen mehr an der Aufbereitung als am Modell. Diese Version bringt die Methoden, die sich in der Praxis bewährt haben,
+als Funktionen der Suite — sichten, vorschlagen, anbieten, nie still ausführen. Alles ist optional und additiv.
+
+### Neu
+
+- **Quelleninventar** (`inventory_sources.py`): ordnet `00_input/` Quellenarten zu, nennt Lücken im Modell und schlägt Methoden mit Befehl vor.
+- **Vollständigkeitsprüfung** (`check_completeness.py`, `assets/role-template.json`): Rolle gegen eine anpassbare Vorlage; Lücken mit Hinweis,
+  woher sie zu füllen wären. Füllt nichts auf.
+- **Aufgabencluster** (`dedupe_tasks.py`, Sammlung `task_clusters`): dieselbe Arbeit in mehreren Rollen. Kandidaten, bis ein Fachexperte mit
+  Namen bestätigt (`30_review/task_clusters.csv`); Dashboard-Tabelle „Wiederkehrende Aufgaben über Rollen“.
+- **Zusammenarbeit** (`derive_collaboration.py`): Rollenpaare mit Belegen nach Stärke.
+- **Allgemeine Regeln:** Selektoren in `overrides.csv` (`*`, `cluster:`, `family:`, `role:`); `delete` als Regel ist ausgeschlossen.
+- **Level und Kostensatz** (`import_levels.py`).
+- **Referenzautomatisierungen** (`00_input/referenzautomatisierungen.csv`): Treffer mit Quelle und Evidenzgrad in `agents_todo.json`.
+- **Katalog** `references/datenaufbereitung.md` mit Eingaben, Ergebnissen und Grenzen jeder Methode.
+- **Hygiene-Test:** prüft, dass ein bestimmter Anbietername weder in Dateien noch in den Skill-Paketen steht.
+
+### Behoben
+
+- Importe nach dem Builder (Positionen, Level) machten einen zweiten Pipeline-Lauf zu zwei neuen Graph-Versionen, weil `build_graph.py` die
+  abgeleiteten Rollenwerte nicht übernahm. Behoben, mit Test.
+
+### Grenzen
+
+- Aufgabencluster beruhen auf gleichen Wörtern, nicht auf gleicher Bedeutung.
+- Das Inventar erkennt PDF, Word und Excel nur am Namen; ihren Inhalt liest Claude.
+- Die Suite scrapt keine öffentlichen Daten.
+
 ## [0.3.0] — Realisierbarkeit, Zielbild und Nutzungsstand
 
 Auslöser war ein Gespräch mit einem Energieversorger über genau die Lücken, die ein

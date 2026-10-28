@@ -112,6 +112,7 @@ ENUM_EVIDENCE_GRADE = ["heuristic", "expert_confirmed", "proven"]
 # öffnet, braucht oft nur eine Schnittstelle.
 ENUM_SOLUTION_CLASS = ["ai", "interface", "process_change", "rule_or_rpa"]
 ENUM_TARGET_ROLE_BASIS = ["estimated", "expert_confirmed"]
+ENUM_CLUSTER_STATUS = ["candidate", "confirmed", "rejected"]
 
 ID_PREFIX = {
     "job_family": "jf",
@@ -138,6 +139,7 @@ ID_PREFIX = {
     "target_role": "tr",
     "usecase": "uc",
     "adoption": "ad",
+    "task_cluster": "tc",
 }
 
 
@@ -350,8 +352,10 @@ COLLECTIONS_REDESIGN = ["blueprints", "experiments"]
 COLLECTIONS_GOVERNANCE = ["provenance", "decisions"]
 # Schema 1.2: Zielbild je Rolle, eigene Use Cases, aggregierter Nutzungsstand
 COLLECTIONS_ADOPTION = ["target_roles", "usecases", "adoption"]
+# Datenaufbereitung: Aufgabencluster über Rollen hinweg
+COLLECTIONS_PREP = ["task_clusters"]
 COLLECTIONS = (COLLECTIONS_CORE + COLLECTIONS_PROCESS + COLLECTIONS_REDESIGN
-               + COLLECTIONS_GOVERNANCE + COLLECTIONS_ADOPTION)
+               + COLLECTIONS_GOVERNANCE + COLLECTIONS_ADOPTION + COLLECTIONS_PREP)
 
 # Mindestgruppengröße für jede Nutzungsauswertung. Darunter wird nichts angezeigt: Eine
 # Zahl für drei Stellen ist eine Aussage über drei Menschen.

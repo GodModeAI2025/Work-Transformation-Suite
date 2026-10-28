@@ -1,0 +1,5 @@
+name;beschreibung;stichwoerter;quelle;evidenz
+Zahlungsabgleich mit Regelwerk;Kontoauszugspositionen anhand von Referenz und Betrag automatisch offenen Posten zuordnen;zahlungseing|zuordn;Herstellerdokumentation Beispiel-ERP, Kapitel 4;expert_confirmed
+Mahnentwurf nach Mahnstufe;Mahnstufe nach Regelwerk bestimmen und Mahntext vorbereiten;mahn;Eigenes Projekt Beispiel GmbH 2025, Abschlussbericht;proven
+Auftragserfassung aus E-Mail;Bestellungen aus Freitext lesen und im ERP anlegen;bestellung|auftrag aus;Forumsbeitrag (ungeprüft);heuristic
+Beleg ohne Quelle;Nur eine Behauptung;beleg;;heuristic

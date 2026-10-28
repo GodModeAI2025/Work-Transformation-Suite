@@ -22,6 +22,17 @@ braucht gar keinen Agenten mehr.
 Die Diagnose ist für sich vollständig. Ein Projekt darf darin bleiben; der Redesignmodus
 schaltet sich ein, sobald Prozesse erfasst sind.
 
+## Zuerst die Datenlage sichten
+
+Bevor du Quellen zerlegst, führe `work-graph-builder/scripts/inventory_sources.py` aus und sag dem Nutzer, was er hat und was
+fehlt. Der Bericht (`30_review/quellen_inventar.md`) ordnet jede Datei einer Quellenart zu, nennt die Lücken im Modell und
+schlägt Aufbereitungsmethoden vor — mit Befehl. Biete sie an, wähle nicht still: Der Nutzer entscheidet, ob eine Positionsliste
+importiert, ein Prozesshaus übernommen oder ein Interview geführt wird. Die Methoden stehen in
+`work-graph-builder/references/datenaufbereitung.md`.
+
+Die Pipeline führt danach automatisch die Berichte aus (Inventar, Vollständigkeit, Zusammenarbeit) und bildet Aufgabencluster.
+Nichts davon hält sie an.
+
 ## Zwei Spuren
 
 Dieselben Daten tragen zwei Auswertungen, und man sollte sie beim Namen nennen:

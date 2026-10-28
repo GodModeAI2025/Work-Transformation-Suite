@@ -108,3 +108,6 @@ zeigt den Evidenzgrad.
 Neben `report_vNNN.md` entstehen zwei Berichte aus demselben Graphen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — für HR) und
 `report_it_vNNN.md` (Backlog nach Wert, Use Cases, Prozessbänder, Blindflecken — für IT). Die Sprache im HR-Bericht ist bewusst:
 „Rolle verändert sich“, nie „Rolle entfällt“. Alle Zahlen sind Schätzungen; wo etwas nicht bewertet ist, steht „nicht bewertet“.
+
+Unter der Aufgabenkarte steht, sobald Aufgabencluster vorliegen, die Tabelle **Wiederkehrende Aufgaben über Rollen**. Kandidaten sind als
+solche gekennzeichnet; verworfene Cluster erscheinen nicht.

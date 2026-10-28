@@ -2839,12 +2839,26 @@
   ],
   "meta": {
     "language": "de",
+    "levels": [
+      {
+        "day_rate_eur": 450.0,
+        "description": "Ausführende Fachaufgaben mit Prüfverantwortung",
+        "label": "EG 8–9",
+        "level": "Fachkraft"
+      },
+      {
+        "day_rate_eur": 640.0,
+        "description": "Fachliche und disziplinarische Führung eines Teams",
+        "label": "EG 12",
+        "level": "Führung"
+      }
+    ],
     "organization": "Beispiel GmbH",
     "project": "Order-to-Cash (Referenzbeispiel)",
     "schema_version": "1.2",
     "scope": "Order-to-Cash",
     "stage": "governance",
-    "version": 11
+    "version": 12
   },
   "metrics": [
     {
@@ -4492,6 +4506,8 @@
       },
       "archetype": "relationship-heavy",
       "cluster_id": "jc_1d8027deadc9",
+      "day_rate_eur": 640.0,
+      "day_rate_source": "level",
       "description": "Entscheidet Eskalationen, berichtet Kennzahlen, führt und entwickelt das Team.",
       "headcount": 1,
       "id": "ro_e70a9399feff",
@@ -4781,6 +4797,7 @@
       "value_eur_estimated": 340560.0
     }
   ],
+  "task_clusters": [],
   "tasks": [
     {
       "agent_ids": [
