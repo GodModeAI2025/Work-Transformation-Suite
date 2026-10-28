@@ -167,6 +167,7 @@ def build(graph: dict[str, Any], raw: list) -> tuple[list, list, list]:
                 "step_id": wl.make_id("process_step", proc["name"] + "|" + scenario, sname),
                 "name": sname,
                 "operator": _enum(st.get("operator"), wl.ENUM_OPERATOR, "simplify"),
+                "solution_class": _enum(st.get("solution_class"), wl.ENUM_SOLUTION_CLASS, "ai"),
                 "from_step_ids": from_ids,
                 "is_new": not from_ids,
                 "executor": {"type": etype, "id": eid, "name": ename or None},
@@ -293,6 +294,8 @@ def build(graph: dict[str, Any], raw: list) -> tuple[list, list, list]:
         counts = {op: sum(1 for s in steps_out if s["operator"] == op) for op in wl.ENUM_OPERATOR}
         counts["eliminate"] = len(removals)
         bp["operator_counts"] = counts
+        # Schritte, die ohne KI gelöst werden (Schnittstelle, Prozessänderung, Regel/RPA).
+        bp["non_ai_steps"] = sum(1 for s in steps_out if s.get("solution_class") not in (None, "ai"))
         hmin = wl.round1(sum(float(s.get("handling_time_min") or 0) for s in steps_out
                              if wl.step_has_human(s)))
         bp["human_minutes_per_case"] = hmin

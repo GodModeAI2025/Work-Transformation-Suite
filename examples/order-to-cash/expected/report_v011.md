@@ -1,10 +1,10 @@
 # KI-Transformationsdashboard — Order-to-Cash
 
-Beispiel GmbH · Order-to-Cash · Work-Graph Version 8
+Beispiel GmbH · Order-to-Cash · Work-Graph Version 11
 
 ## Kennzahlen
 
-5 Rollen (5 bewertet), 21 Aufgaben, 11 Skills, 8 Agenten. Headcount bekannt für 5 Rollen (23 Personen). Durchschnittlicher Disruptionsscore 6,6. Zeitverteilung: 6 % menschlicher Kern, 50 % KI-unterstützt, 44 % delegierbar. 19 % der Aufgaben aus dem Berufsbild ergänzt; 0 Rollen expertengeprüft.
+5 Rollen (5 bewertet), 21 Aufgaben, 11 Skills, 8 Agenten. Headcount bekannt für 5 Rollen (23 Personen). Durchschnittlicher Disruptionsscore 6,6. Zeitverteilung: 6 % menschlicher Kern, 50 % KI-unterstützt, 44 % delegierbar. 19 % der Aufgaben aus dem Berufsbild ergänzt; 4 Rollen expertengeprüft.
 
 Verteilung: Eliminiert 1, Transformiert 3, Augmentiert 1.
 
@@ -12,10 +12,10 @@ Verteilung: Eliminiert 1, Transformiert 3, Augmentiert 1.
 
 | Rolle | Cluster | MA | Typ | Score | Kern | Assist. | Deleg. | Horizont | Belastbarkeit | Stabilität | Nächster Schritt |
 |---|---|---:|---|---:|---:|---:|---:|---|---|---|---|
-| Fakturierungssachbearbeiter | Order-to-Cash | 6 | Transformiert | 7,3 | 0 % | 50 % | 50 % | kurzfristig | teilweise geprüft | grenznah | Rolle um den menschlichen Kern neu definieren: delegierbare Aufgaben an Agenten, verbleibende Aufgaben zu einem neuen Profil bündeln, Skillplan aufsetzen. |
-| Auftragssachbearbeiter | Order-to-Cash | 9 | Eliminiert | 6,8 | 0 % | 35 % | 65 % | kurzfristig | teilweise geprüft | wackelig | Aufgaben strukturiert an Agenten und Nachbarrollen umverteilen; Abhängigkeiten in Prozessen und Freigaben prüfen, bevor Kapazität abgebaut wird. |
-| Kreditprüfer | Order-to-Cash | 3 | Transformiert | 6,7 | 0 % | 100 % | 0 % | kurzfristig | teilweise geprüft | stabil | Rolle um den menschlichen Kern neu definieren: delegierbare Aufgaben an Agenten, verbleibende Aufgaben zu einem neuen Profil bündeln, Skillplan aufsetzen. |
-| Forderungsmanager | Order-to-Cash | 4 | Transformiert | 5,9 | 20 % | 50 % | 30 % | kurzfristig | teilweise geprüft | stabil | Rolle um den menschlichen Kern neu definieren: delegierbare Aufgaben an Agenten, verbleibende Aufgaben zu einem neuen Profil bündeln, Skillplan aufsetzen. |
+| Fakturierungssachbearbeiter | Order-to-Cash | 6 | Transformiert | 7,3 | 0 % | 50 % | 50 % | kurzfristig | belastbar | grenznah | Rolle um den menschlichen Kern neu definieren: delegierbare Aufgaben an Agenten, verbleibende Aufgaben zu einem neuen Profil bündeln, Skillplan aufsetzen. |
+| Auftragssachbearbeiter | Order-to-Cash | 9 | Eliminiert | 6,8 | 0 % | 35 % | 65 % | kurzfristig | belastbar | wackelig | Aufgaben strukturiert an Agenten und Nachbarrollen umverteilen; Abhängigkeiten in Prozessen und Freigaben prüfen, bevor Kapazität abgebaut wird. |
+| Kreditprüfer | Order-to-Cash | 3 | Transformiert | 6,7 | 0 % | 100 % | 0 % | kurzfristig | belastbar | stabil | Rolle um den menschlichen Kern neu definieren: delegierbare Aufgaben an Agenten, verbleibende Aufgaben zu einem neuen Profil bündeln, Skillplan aufsetzen. |
+| Forderungsmanager | Order-to-Cash | 4 | Transformiert | 5,9 | 20 % | 50 % | 30 % | kurzfristig | belastbar | stabil | Rolle um den menschlichen Kern neu definieren: delegierbare Aufgaben an Agenten, verbleibende Aufgaben zu einem neuen Profil bündeln, Skillplan aufsetzen. |
 | Teamleitung Order-to-Cash | Order-to-Cash | 1 | Augmentiert | 3,4 | 60 % | 40 % | 0 % | mittelfristig | ungeprüft | stabil | KI-Werkzeuge für die assistierbaren Aufgaben bereitstellen, Schulung und Qualitätssicherung einführen, Zeitgewinn in Kernaufgaben lenken. |
 
 ## Agenten nach Priorität

@@ -241,11 +241,11 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
         <thead><tr><th>Skill</th><th>Aufgabe</th><th>Ergebnis</th></tr></thead>
         <tbody>
           <tr><td>work-transformation</td><td>Orchestrator: sagt, welcher Schritt dran ist, und hält die Arbeitsteilung sauber</td><td>Pipeline-Lauf, Suite-Check</td></tr>
-          <tr><td>work-graph-builder</td><td>Extraktion aus Quellen, Zusammenführung, Review-Liste, Overrides, Stellen-Import</td><td><code>work-graph.json</code>, <code>review.md</code></td></tr>
-          <tr><td>task-scorer</td><td>Aufgabenbewertung nach Rubrik, Rollenaggregation, Kipp-Analyse, Kalibrierung</td><td>Modus, HAS, Horizont, Disruptionstyp</td></tr>
-          <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung, Capability Contracts</td><td><code>agents.json</code>, Verträge als JSON und Markdown</td></tr>
+          <tr><td>work-graph-builder</td><td>Extraktion aus Quellen, Zusammenführung, Review-Liste, Overrides, Stellen-Import, Prozesshaus-Import, Interviewleitfaden</td><td><code>work-graph.json</code>, <code>review.md</code></td></tr>
+          <tr><td>task-scorer</td><td>Aufgabenbewertung nach Rubrik, Rollenaggregation, Kipp-Analyse, Kalibrierung, Kapazität und Zielbild</td><td>Modus, HAS, Horizont, Disruptionstyp, technisch und realisierbar frei werdende FTE</td></tr>
+          <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung, Capability Contracts, Use-Case-Register, Reichweite, Nutzungsstand</td><td><code>agents.json</code>, Verträge, Reichweite, Skill-Gerüste</td></tr>
           <tr><td>process-redesigner</td><td>Drei Soll-Szenarien je Prozess, sechs Operatoren, Prozesswert, Pilotkarten</td><td>Blueprints mit Deltas, Prioritätsbänder, Experimente</td></tr>
-          <tr><td>transformation-dashboard</td><td>Visualisierung und Export, Ist/Soll-Vergleich</td><td>HTML, CSV-Exporte, Bericht</td></tr>
+          <tr><td>transformation-dashboard</td><td>Visualisierung und Export, Ist/Soll-Vergleich</td><td>HTML, CSV-Exporte, Bericht für HR und Bericht für IT</td></tr>
         </tbody>
       </table>
     </div>
@@ -343,7 +343,7 @@ python3 skills/work-graph-builder/scripts/init_project.py \
     <ul class="plain">
       <li>Kein Freigabeworkflow mit Rollen und Rechten. Freigaben sind ein nachvollziehbares Log mit Name, Datum und Begründung — mehr nicht.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
-      <li>Kein Tracking der Agentennutzung nach dem Rollout, keine Prozess-Mining-Anbindung.</li>
+      <li>Keine Telemetrie der Agentennutzung, keine Prozess-Mining-Anbindung. Nutzung kennt die Suite nur als aggregierten Stand je Rolle und Agent, mit Mindestgruppe von fünf Stellen.</li>
       <li>Ein umbenannter Task bekommt eine neue ID und verliert Bewertung und Overrides. Namen also stabil halten.</li>
       <li><b>Ein Soll-Prozess aus Interviews und Stellenbeschreibungen ist ein Entwurf, keine Prognose.</b> Aus Rollendaten allein lässt sich kein Unternehmen verlässlich „neu bauen“. Dafür braucht es Prozessbeobachtungen, Systemdaten und gemessene Ausgangswerte.</li>
     </ul>

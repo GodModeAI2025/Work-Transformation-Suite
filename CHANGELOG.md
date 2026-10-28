@@ -4,6 +4,62 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.3.0] — Realisierbarkeit, Zielbild und Nutzungsstand
+
+Auslöser war ein Gespräch mit einem Energieversorger über genau die Lücken, die ein
+Rollen-und-Aufgaben-Modell hat: Es sagt, was technisch möglich ist, aber nicht, was eine
+Organisation auffangen kann; es kennt den Einzelschritt, aber nicht die Kette; es empfiehlt
+Automatisierung, aber fragt nicht, ob ein Schritt überhaupt ein KI-Fall ist. Dazu kamen drei
+Regeln zum Umgang mit Menschen: nur aggregiert messen, den Rahmen vor dem Gespräch klären,
+von „Rolle verändert sich“ sprechen statt von „Rolle entfällt“.
+
+Alles ist optional und additiv. Ein Projekt ohne die neuen Eingaben läuft unverändert;
+`migrate_graph.py` hebt Schema 1.0 und 1.1 verlustfrei auf 1.2.
+
+### Neu
+
+- **Schema 1.2.** Sammlungen `target_roles`, `usecases`, `adoption`; Felder `absorption`,
+  `absorption_pct`, `day_rate_eur` (Rolle), `evidence_grade` (Agent), `pain` (Prozessschritt),
+  `solution_class` (Soll-Schritt), `frame_confirmed` und `frame_note` (Pilot), `telemetry` (Vertrag).
+- **Technisch gegenüber realisierbar.** `score_roles.py` rechnet je Rolle `fte_released_technical`
+  und, sobald der Auffangweg bekannt ist (Wachstum, Fluktuation, Umbesetzung, keiner),
+  `fte_realisable`. Fehlt die Angabe, bleibt der Wert leer: „nicht bewertet“ ist nicht „null“.
+- **Zielbild je Rolle** (`build_target_roles.py`): was bleibt, FTE heute und danach, auffangbar,
+  Zusammenlegungskandidaten im Cluster. Ausdrücklich ein Entwurf.
+- **Zwei Spuren, zwei Berichte.** Spur A (Rollenaggregation) und Spur B (Prozessredesign) stehen
+  im Orchestrator und im README; das Dashboard schreibt `report_hr_vNNN.md` und `report_it_vNNN.md`.
+- **Reichweite und Blindflecken** (`export_reach.py`), **Use-Case-Register** (`import_usecases.py`).
+- **Nutzungsstand nur aggregiert** (`import_adoption.py`). Rollen unter fünf Stellen werden
+  unterdrückt gespeichert; der Validator lehnt jeden Satz darunter ab. Vertragstelemetrie nur mit
+  `level: "aggregate"`, ohne Person- oder Inhaltsfelder.
+- **Kein KI-Fall.** `solution_class` (`ai`, `interface`, `process_change`, `rule_or_rpa`);
+  der Szenarienvergleich zählt Schritte ohne KI.
+- **Interviewleitfaden** (drei Fragen, Nachfrageschema, Rahmen vorab), **Glossar** für HR und IT,
+  **Prozesshaus-Import** (`import_process_house.py`).
+- **Rahmen vor dem Pilot:** Warnung bei `ready` und `running` ohne bestätigten Rahmen.
+- **Skill-Export** (`export_skill.py`): Gerüst aus dem Capability Contract mit deterministischem
+  `run.py`, Testmengen-Hülle und aggregierter Nutzungsmeldung.
+- **Evidenzgrad je Agent** (`heuristic`, `expert_confirmed`, `proven`), im Dashboard sichtbar.
+- **Review-Liste:** „Split prüfen“ bei zehn und mehr Aufgaben oder fremden Aufgabenpaaren; Frage nach
+  dem Auffangweg.
+- Dashboard-Abschnitte Kapazität, Zielbild, Nutzungsstand, Reichweite (nur mit Daten).
+
+### Geändert
+
+- `build_graph.py` übernimmt die neuen Sammlungen aus der Vorversion. Ohne das legte jeder zweite
+  Lauf neue Graph-Versionen an.
+- Das Referenzbeispiel enthält Auffangwege, Use Cases, Nutzungsstand, einen `pain`-Eintrag, eine
+  Lösungsklasse und einen Rahmenvermerk; `expected/` ist neu erzeugt (Versionsnummern 010 und 011).
+- Die Pipeline führt `build_target_roles.py` aus und liest, wo vorhanden, `usecases.csv` und
+  `adoption.csv`.
+
+### Grenzen
+
+- Realisierbar heißt: Die Angabe zum Auffangweg stammt von Menschen. Die Suite prüft sie nicht gegen
+  Verträge, Altersstrukturen oder Personalplanung.
+- `export_skill.py` liefert ein Gerüst, keinen fertigen Skill. Systemaufrufe und Testmenge fehlen.
+- Nutzungsstand kommt als Datei, nicht aus einer Telemetrie-Pipeline.
+
 ## [0.2.0] — Vom Arbeitsgraphen zum KI-nativen Betriebsmodell
 
 Bis 0.1 beantwortete die Suite eine Frage: **Welche heutige Arbeit kann KI übernehmen?**

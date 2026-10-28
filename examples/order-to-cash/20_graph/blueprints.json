@@ -53,6 +53,7 @@
       {
         "name": "Auftrag in Nachverfolgungsliste eintragen",
         "operator": "simplify",
+        "solution_class": "process_change",
         "from_steps": [
           "Auftrag in Nachverfolgungsliste eintragen"
         ],

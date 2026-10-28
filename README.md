@@ -19,6 +19,12 @@ Wert entsteht auf der Ebene des Ablaufs, nicht der Einzelaufgabe.
 
 Der Diagnosemodus bleibt für sich vollständig. Ein Projekt darf darin bleiben.
 
+**Zwei Spuren, ein Graph.** Spur B ist das Prozessredesign: Ketten, Übergaben, Wert je Prozess. Das ist der
+belastbarere Weg, weil eine einzelne Rolle nur Teile eines Ablaufs sieht — fünfmal 2,8 gesparte Stunden sind keine
+zehn, wenn die Übergaben bleiben. Spur A ist die Rollenaggregation je Jobfamilie: technisches und realisierbares
+Potenzial, Zielbild je Rolle. Sie ist schneller und gröber und der richtige Anfang, solange noch keine
+Prozessaufnahme vorliegt. Der Bericht sagt, welche Spur ihn trägt.
+
 ## Was drin ist
 
 ```
@@ -191,7 +197,7 @@ Prozessen ist die Liegezeit der eigentliche Hebel, und wer beides vermischt, ver
 Blick. Wenn die Summe der modellierten Schritte deutlich unter einer gemessenen Durchlaufzeit liegt,
 sagt das Skript es — dann fehlen Schritte, und jedes spätere Delta rechnet auf zu kleiner Grundmenge.
 
-Ein Projekt nach Schema 1.0 hebt `migrate_graph.py` verlustfrei auf 1.1. Die Migration rät nichts:
+Ein Projekt nach Schema 1.0 oder 1.1 hebt `migrate_graph.py` verlustfrei auf 1.2. Die Migration rät nichts:
 Sie legt die neuen Sammlungen leer an, mehr nicht.
 
 ### Schritt 3: agent-mapper (Claude)
@@ -320,6 +326,71 @@ bedeutet nichts, solange die Eingaben Schätzungen auf einer Zehnerskala sind. E
 ist auch kein Mangel, sondern ein Befund: Es zeigt, welchen einen Faktor man mit einem Fachexperten
 klären sollte, statt über die Reihenfolge zu streiten.
 
+## Realisierbarkeit, Zielbild und Nutzungsstand (ab Schema 1.2)
+
+Alles in diesem Abschnitt ist optional und additiv. Ein Projekt, das nichts davon füttert, läuft unverändert.
+
+### Technisch möglich gegenüber auffangbar
+
+Die Bewertung sagt, wie viel Arbeit technisch frei wird. Ob daraus Produktivität entsteht, hängt davon ab, ob die
+Organisation die Zeit auffängt: durch Wachstum, durch Fluktuation und Altersteilzeit oder durch Umbesetzung. Sonst
+startet man zwanzig Automatisierungen und bekommt einen Effekt, der nirgends ankommt.
+
+An der Rolle stehen dazu Overrides: `absorption` (`growth`, `attrition`, `redeployment`, `none`), optional
+`absorption_pct` und `day_rate_eur`. Daraus rechnet `score_roles.py` je Rolle `fte_released_technical` und
+`fte_realisable`. **Fehlt die Angabe, bleibt die Zahl leer — „nicht bewertet“ ist nicht „null“.** Das Dashboard zeigt
+beide Werte je Jobfamilie nebeneinander.
+
+### Zielbild je Rolle
+
+`build_target_roles.py` leitet aus den Aufgabenmodi ab, was je Rolle bleibt, wie viele FTE danach übrig sind, was
+davon die Organisation auffangen kann und welche Rollen im selben Cluster sich zusammenlegen ließen. Das ist ein Entwurf
+aus Schätzungen. Welche Rollen das Unternehmen künftig will, ist eine Strategiefrage, die diese Zahlen vorbereiten, aber
+nicht beantworten.
+
+### Reichweite, Blindflecken und Use-Case-Register
+
+`import_usecases.py` liest die eigenen Use Cases (`00_input/usecases.csv`). `export_reach.py` beantwortet danach zwei
+Fragen: Für wie viele Rollen und FTE gilt dieser Agent oder Use Case, und welche hochwertigen Prozesse hat bisher
+niemand angefragt? Letzteres ist die Liste, die man nicht sieht, wenn man nur bedient, was am lautesten gefordert wird.
+
+### Nutzungsstand, nur aggregiert
+
+`import_adoption.py` liest, in wie vielen Stellen einer Rolle ein Agent priorisiert, im Bau oder in Nutzung ist. Nur Rolle
+× Agent, nie Person × Agent. Rollen mit weniger als fünf Stellen werden unterdrückt gespeichert, ohne Zahlen, und der
+Validator lehnt jeden Satz darunter ab. Eine Quote für drei Stellen wäre eine Aussage über drei Menschen. Capability
+Contracts dürfen eine `telemetry` mit `level: "aggregate"` tragen; Felder wie Person oder Fallinhalt lehnt der Validator ab.
+
+### Kein KI-Fall
+
+Jeder Soll-Schritt kann eine `solution_class` tragen: `ai`, `interface`, `process_change` oder `rule_or_rpa`. Wer
+84 PDFs von Hand öffnet, braucht eine Schnittstelle, kein Sprachmodell. Der Szenarienvergleich zählt die Schritte ohne KI.
+Dazu gehört der Interviewleitfaden in `work-graph-builder/references/interview-leitfaden.md`: drei Fragen (Schritte,
+Systeme, Gefühl), das Feld `pain` am Prozessschritt und die Regel, zuerst zu fragen, ob ein Schritt überhaupt gebraucht wird.
+
+### Rahmen vor dem Pilot
+
+Piloten tragen `frame_confirmed` und `frame_note`. Ohne bestätigten Rahmen — Beschäftigtenvertretung beteiligt, Zusagen
+zur Beschäftigung benannt, Zweck der Erhebung klar — warnt der Validator vor dem Start. Wer weiß, dass seine Antworten zur
+eigenen Ersetzung führen können, antwortet vorsichtig, und die Datenlage wird schlechter statt besser.
+
+### Skill-Export
+
+`export_skill.py` macht aus einem Capability Contract das Gerüst eines Skills: `SKILL.md`, ein deterministisches
+`run.py` (Eingabeprüfung, Idempotenz, Konfidenzschwelle, Kontrollpunkt, Rückfall, Audit), eine Hülle für die Testmenge und
+eine Nutzungsmeldung, die nur Zählwerte schickt. Es ist ein Gerüst: Die Systemaufrufe sind `TODO`, die Testmenge leer.
+Eine Skill-Anweisung allein ist ein Prompt; was deterministisch sein soll, gehört in ein Skript.
+
+### Zwei Berichte, ein Graph
+
+Das Dashboard schreibt neben `report_vNNN.md` zwei Fassungen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — in der Sprache
+„Rolle verändert sich“) und `report_it_vNNN.md` (Backlog nach Wert, Use Cases, Prozessbänder, Blindflecken). Ein Glossar in
+`work-graph-builder/references/glossar.md` legt fest, wie die Wörter von HR und IT zueinander stehen.
+
+Weitere Hilfen: `import_process_house.py` übernimmt ein vorhandenes Prozesshaus als Prozessextraktion;
+die Review-Liste markiert Rollen mit zehn und mehr Aufgaben oder auffällig fremden Aufgabenpaaren mit „Split prüfen“; jeder Agent
+trägt einen Evidenzgrad (`heuristic`, `expert_confirmed`, `proven`), weil ein Vorschlag aus Mustern keine geprüfte Passung ist.
+
 ## Versionierung
 
 `project.json` zählt `graph_version` hoch. Jeder Schritt, der den Inhalt ändert, schreibt
@@ -350,8 +421,8 @@ Freigabeworkflow, aber es reicht für einen Piloten und lässt sich in Git versi
 
 ## Grenzen
 
-Keine Integration in SuccessFactors oder andere HR-Systeme, kein Tracking der Agentennutzung nach dem
-Rollout, keine Prozess-Mining-Anbindung. Für genau diese Dinge verkaufen kommerzielle Plattformen ihr
+Keine Integration in SuccessFactors oder andere HR-Systeme, keine Telemetrie der Agentennutzung (nur ein
+aggregierter Stand je Rolle und Agent), keine Prozess-Mining-Anbindung. Für genau diese Dinge verkaufen kommerzielle Plattformen ihr
 Produkt. Für die Frage, ob eine solche Analyse für einen Bereich überhaupt belastbare Ergebnisse
 liefert, reicht die Suite. Der Ablauf ist am Pilotbereich mit 20 bis 40 Rollen entstanden und bis über
 200 Rollen in einem Dashboard gelaufen.

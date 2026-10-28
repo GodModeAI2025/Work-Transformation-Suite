@@ -106,6 +106,22 @@ Formuliere die Bedingung überprüfbar: „Gutschrift über 250 EUR" statt „in
 Zweifelsfällen". Eine Bedingung, die niemand messen kann, wird im Betrieb entweder
 immer oder nie ausgelöst.
 
+## Lösungsklasse: nicht jeder Schritt braucht KI
+
+Jeder Soll-Schritt trägt (optional) eine `solution_class`. Der Standard ist `ai`. Setze eine andere, wenn das Problem
+ohne Sprachmodell zu lösen ist:
+
+| Klasse | Wann | Beispiel |
+|---|---|---|
+| `interface` | Daten werden von Hand zwischen Systemen bewegt | 84 PDFs einzeln öffnen → Schnittstelle liefert den Stapel |
+| `process_change` | Der Schritt entsteht nur durch den heutigen Zuschnitt | Wöchentliche Excel per E-Mail → Daten liegen im System |
+| `rule_or_rpa` | Die Entscheidung ist vollständig regelbar | Fristenprüfung nach festen Regeln |
+| `ai` | Freitext, Mehrdeutigkeit, Urteil in engen Grenzen | Reklamation klassifizieren |
+
+Frage immer zuerst: *Ist das ein KI-Fall?* Ein Soll-Schritt mit `solution_class` ungleich `ai` und einem Agenten als
+Ausführendem ist ein Widerspruch (Warnung). `compare_scenarios.py` weist je Szenario aus, wie viele Schritte ohne KI
+gelöst sind. Oft ist das die billigere, stabilere und schnellere Antwort.
+
 ## Regeln über den einzelnen Schritt hinaus
 
 ### Vollständigkeit

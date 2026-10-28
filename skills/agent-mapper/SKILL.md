@@ -152,3 +152,18 @@ Wenn die Agentenbibliothek eine Aufsichtsrolle nahelegt (z. B. „Agent Manager 
 der Stichproben, Eskalationen und Regelpflege übernimmt), gehört sie als Rolle mit
 `is_new: true` in eine Extraktionsdatei von `work-graph-builder`, nicht in `agents.json`.
 Der Scorer klassifiziert sie dann als `emerging`.
+
+## Ab Schema 1.2
+
+- **Evidenzgrad.** Jeder Agent trägt `evidence_grade` (`heuristic`, `expert_confirmed`, `proven`; Standard `heuristic`). Ein
+  Vorschlag aus Musterzuordnung ist keine geprüfte Passung. Setze `expert_confirmed` nur, wenn ein Fachexperte zugestimmt hat.
+- **Use-Case-Register.** `scripts/import_usecases.py` liest `00_input/usecases.csv` (Name, Eigentümer, Wert, Aufgaben) ein.
+  Daraus entsteht, für wie viele Rollen und FTE ein Use Case gilt.
+- **Reichweite und Blindflecken.** `scripts/export_reach.py` schreibt `reach_vNNN.md/.csv`: je Agent und Use Case die betroffenen
+  Rollen mit Zeitanteil und FTE, und die Prozesse im Band „Jetzt“ oder „Als Nächstes“, für die niemand etwas angefragt hat.
+- **Nutzungsstand.** `scripts/import_adoption.py` liest `00_input/adoption.csv` (Agent, Rolle, priorisiert, im Bau, in Nutzung).
+  Nur Rolle × Agent, nie Person × Agent. Rollen mit weniger als 5 Stellen werden unterdrückt gespeichert. Das ist Datenschutz
+  als Regel: Der Validator lehnt jeden Satz darunter ab.
+- **Skill-Export.** `scripts/export_skill.py [--agent "Name"]` macht aus dem Vertrag ein Skill-Gerüst (SKILL.md, deterministisches
+  `run.py` mit Eingabeprüfung, Idempotenz, Konfidenzschwelle, Rückfall und Audit, Testmengen-Hülle, Nutzungsmeldung). Es ist ein
+  Gerüst: Die Systemaufrufe fehlen, die Testmenge ist leer. Sag das so.

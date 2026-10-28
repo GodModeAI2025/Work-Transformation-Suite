@@ -1,5 +1,6 @@
 {
   "counts": {
+    "adoption": 2,
     "agents": 8,
     "blueprints": 6,
     "controls": 4,
@@ -16,23 +17,29 @@
     "roles": 5,
     "skills": 11,
     "systems": 4,
-    "tasks": 21
+    "target_roles": 5,
+    "tasks": 21,
+    "usecases": 2
   },
   "description": "Erwartete Ausgaben eines vollständigen Laufs dieses Beispielprojekts. Die Prüfsummen belegen, dass die Pipeline deterministisch ist: gleiche Eingaben, gleiche Bytes. Ein Unterschied hier ist entweder ein Fehler oder eine bewusste Änderung, die mit aktualisierten Prüfsummen festgehalten wird.",
   "files": {
-    "20_graph/work-graph_latest.json": "b75d1029844bc1f587e6eee894ff92a4e89937f9d25b99eacbcc357a7788f25b",
-    "40_output/agents_v008.csv": "a6e32c3fff219d2634ffa0a37ab7df31563f42e17d26325f26fd273e02ebff33",
-    "40_output/blueprints_v008.csv": "7467081ee725a2750d7566935342f98c722a6c7dc2a95de69a9fbbb5ef81c311",
-    "40_output/contracts_v007.json": "9216542f99ea92576286169c8c6039cfa6b07ed4f630809286c54b5ec0ec62db",
-    "40_output/contracts_v007.md": "4f385fcf16f29a227b3d7a77895edc97f843544a37a2810b743f9f09c2530e42",
-    "40_output/dashboard_v008.html": "32caec56ce9627aa0638d1a6a13bd2968632db3ccd37a11db6a7e0d673f00163",
-    "40_output/processes_v008.csv": "7d131f72a0d91dfd81fd8c81b00a92dbfc23e759647395ccc1208c1f39832e9e",
-    "40_output/report_v008.md": "b1606277732cca5cba0b003af8fa12e5c1fb66c78c0e83ee404dafc8bfc0e737",
-    "40_output/roles_v008.csv": "cf52a6682e4090af7bfffc95a6371f724e8ce2e8076e99c9c018cc04ee2daee4",
-    "40_output/scenarios_v007.csv": "67ae55300be55492521f52ac0dfa11bd4e44e06af281507669f94f9d1a0ed5c3",
-    "40_output/scenarios_v007.md": "37d24d19d838bfc94443229ceab8d5260f0f86c625703fc08e7614d8fe61985f",
-    "40_output/tasks_v008.csv": "439bf26bd47e42ce43cd3f7f82a43ed08ebfbe923b76ea70df284dc1d7ca3a65"
+    "20_graph/work-graph_latest.json": "fadac22e2579fc98ba9e950bdd32adab3640a1e6dc9490e19d4729d6a486c28f",
+    "40_output/agents_v011.csv": "a626d6360577bfffbb0b6b29d73c30c55370d890e95be49d417295960712f328",
+    "40_output/blueprints_v011.csv": "7467081ee725a2750d7566935342f98c722a6c7dc2a95de69a9fbbb5ef81c311",
+    "40_output/contracts_v010.json": "9216542f99ea92576286169c8c6039cfa6b07ed4f630809286c54b5ec0ec62db",
+    "40_output/contracts_v010.md": "4f385fcf16f29a227b3d7a77895edc97f843544a37a2810b743f9f09c2530e42",
+    "40_output/dashboard_v011.html": "fe63cc76f27b3c6aefa6045fa8fe97f066f290715a94612ffc976350d22514f2",
+    "40_output/processes_v011.csv": "7d131f72a0d91dfd81fd8c81b00a92dbfc23e759647395ccc1208c1f39832e9e",
+    "40_output/reach_v011.csv": "a1feca7d41565ab551b9d2a4a184621da0d50cd0048824dad12e1f22c0fc091d",
+    "40_output/reach_v011.md": "768c9e89af4687d6920cdf770cc4d64a76a64af038ffc772f2ee1a76824d18b4",
+    "40_output/report_hr_v011.md": "9df6bd005bbb67083d2816597bf7ed0e86bb8f2f8bbaf072108d0438c56cd770",
+    "40_output/report_it_v011.md": "a8fbfef19b6457f10cfebbe8e5512c39d1bc34de0dc6bcbf15ca0b4a99675e8b",
+    "40_output/report_v011.md": "79ad8f2ee0f42503ed3b480a54287162c6b1176687743bfb1da3201c730b4807",
+    "40_output/roles_v011.csv": "d6c7f8d0a1ba03d24dc3af32bc9ca674b369f6ed0c00c94d66dc0c0a32514008",
+    "40_output/scenarios_v010.csv": "67ae55300be55492521f52ac0dfa11bd4e44e06af281507669f94f9d1a0ed5c3",
+    "40_output/scenarios_v010.md": "d28afe264e14afe62fd727cca5ef09dcc48d06bb3be43759442afaaf12e02e83",
+    "40_output/tasks_v011.csv": "439bf26bd47e42ce43cd3f7f82a43ed08ebfbe923b76ea70df284dc1d7ca3a65"
   },
-  "graph_version": 8,
-  "schema_version": "1.1"
+  "graph_version": 11,
+  "schema_version": "1.2"
 }

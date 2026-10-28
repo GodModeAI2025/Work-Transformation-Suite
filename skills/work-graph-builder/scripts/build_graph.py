@@ -255,7 +255,8 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
     # Prozessebene, Redesign und Governance werden hier nicht neu gebaut — sie entstehen
     # in build_processes.py bzw. im Skill process-redesigner. Sie werden aus der Vorversion
     # übernommen, damit ein erneuter Architekt-Lauf keine Prozessarbeit verwirft.
-    for c in wl.COLLECTIONS_PROCESS + wl.COLLECTIONS_REDESIGN + wl.COLLECTIONS_GOVERNANCE:
+    for c in (wl.COLLECTIONS_PROCESS + wl.COLLECTIONS_REDESIGN + wl.COLLECTIONS_GOVERNANCE
+              + wl.COLLECTIONS_ADOPTION):
         graph[c] = [dict(x) for x in previous.get(c, [])] if previous else []
     # Aufgabenverweise aus Prozessschritten bereinigen: eine Aufgabe, die es nicht mehr
     # gibt, darf keinen Schritt ungültig machen. Verweise auf Rollen, Systeme oder Agenten

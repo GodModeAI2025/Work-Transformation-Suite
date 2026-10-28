@@ -24,6 +24,8 @@
     "rollback": "Zuteilung auf 100 Prozent Ist-Prozess stellen. Automatisch gesetzte Zuordnungen der letzten 24 Stunden werden gesammelt zurückgenommen; der Schalter wirkt innerhalb einer Stunde.",
     "owner_role": "Teamleitung Order-to-Cash",
     "status": "completed",
+    "frame_confirmed": true,
+    "frame_note": "Dienstvereinbarung KI-Pilotierung 2026, Abschnitt 3; Betriebsrat beteiligt",
     "results": [
       {"metric": "Durchlaufzeit bis geklärte Zuordnung", "value": 11.4, "as_of": "2026-05-31",
        "note": "Median über 1.184 ausgewertete Fälle der Testgruppe; Kontrollgruppe im selben Zeitraum 34,8 Stunden."},

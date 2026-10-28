@@ -109,3 +109,13 @@ Abweichung ≥ 0,75), und welche Rollenwirkungen sich durch die Korrekturen geä
 einer Systematik verschiebst du den Anker in `references/rubric.md` oder die Schwelle in
 `scripts/score_roles.py`, statt still weiter einzeln zu korrigieren; sag dem Nutzer, was du
 änderst und warum.
+
+## Ab Schema 1.2: Kapazität und Zielbild
+
+`score_roles.py` rechnet je Rolle zusätzlich `fte_released_technical` und, wenn an der Rolle `absorption` gesetzt ist,
+`fte_realisable` (Formel in `references/rubric.md`). Ohne Angabe bleibt der Wert leer: „nicht bewertet“ ist nicht „null“.
+
+`scripts/build_target_roles.py --project …` leitet daraus das **Zielbild je Rolle** ab (Sammlung `target_roles`): welche Aufgaben
+bleiben, FTE heute und danach, was die Organisation auffangen kann, welche Rollen im Cluster sich zusammenlegen ließen
+(weniger als 1,0 FTE Rest oder eliminiert). Das ist ein **Entwurf** aus Schätzungen. Es sagt nicht, welche Rollen das
+Unternehmen künftig will; das ist eine Strategiefrage, die die Zahlen vorbereitet, aber nicht beantwortet.

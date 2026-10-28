@@ -32,6 +32,7 @@ class TestIdentifiers(unittest.TestCase):
             "process_steps": "process_step", "process_edges": "process_edge",
             "blueprints": "blueprint", "experiments": "experiment",
             "provenance": "provenance", "decisions": "decision",
+            "target_roles": "target_role", "usecases": "usecase", "adoption": "adoption",
         }
         self.assertEqual(set(singular), set(wl.COLLECTIONS))
         for kind in singular.values():
@@ -47,7 +48,7 @@ class TestMigration(unittest.TestCase):
             old[c] = []
         old["roles"] = [{"id": "ro_x", "name": "Bestand"}]
         notes = wl.migrate_graph(old)
-        self.assertEqual(old["meta"]["schema_version"], "1.1")
+        self.assertEqual(old["meta"]["schema_version"], wl.SCHEMA_VERSION)
         self.assertEqual(old["roles"], [{"id": "ro_x", "name": "Bestand"}],
                          "Migration darf vorhandene Inhalte nicht anfassen")
         for c in wl.COLLECTIONS:

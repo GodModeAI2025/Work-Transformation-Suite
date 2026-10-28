@@ -348,6 +348,7 @@ def build(project: Path) -> tuple:
                     "wait_time_min": _num(st.get("wait_time_min"), 0.0),
                     "rework_pct": _num(st.get("rework_pct"), 0.0),
                     "value_type": _enum(st.get("value_type"), wl.ENUM_VALUE_TYPE, "business_required"),
+                    "pain": _str(st.get("pain")),
                     "human_gate": human_gate,
                     "decision": decision,
                     "source_refs": [source],

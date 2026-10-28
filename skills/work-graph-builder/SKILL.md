@@ -172,7 +172,7 @@ Neuberechnung.
 python3 <skill>/scripts/migrate_graph.py --project ./projekte/<name> [--dry-run]
 ```
 
-Hebt ein Projekt vom Schema 1.0 auf 1.1: additiv, verlustfrei, idempotent. Die Migration rät
+Hebt ein Projekt vom Schema 1.0 oder 1.1 auf 1.2: additiv, verlustfrei, idempotent. Die Migration rät
 nichts — sie erzeugt insbesondere keine Prozesse aus `workflow_steps`. Diese Textliste
 beschreibt den Ablauf innerhalb einer Rolle, nicht den Fluss über Rollen und Systeme hinweg;
 daraus einen End-to-End-Prozess zu generieren, würde eine Genauigkeit vortäuschen, die die
@@ -208,3 +208,21 @@ an das Format, die Taxonomie und vorhandene Namen hältst.
 - Wartezeit in die Bearbeitungszeit gerechnet: verdeckt den größten Hebel.
 - Prozess ohne `outcome`: dann lässt er sich nicht redesignen, weil unklar ist, was erhalten
   bleiben muss.
+
+## Ab Schema 1.2
+
+**Interview statt Stellenbeschreibung.** Für Prozesse und Übergaben ist eine Stellenbeschreibung nur ein Drittel der Wahrheit.
+Der Leitfaden `references/interview-leitfaden.md` hat drei Fragen (Schritte, Systeme, Gefühl), ein Nachfrageschema und die
+Regel, zuerst zu prüfen, ob das Problem überhaupt ein KI-Fall ist. Was an einem Schritt hakt, kommt in `pain`.
+
+**Prozesshaus.** `scripts/import_process_house.py --project … [--file 00_input/prozesshaus.csv]` liest ein vorhandenes Prozesshaus
+als Prozessextraktion ein (Format im Skript). Es liefert Struktur, nicht Wirklichkeit.
+
+**Kapazität.** Overrides kennen `absorption` (`growth`, `attrition`, `redeployment`, `none`), `absorption_pct` und `day_rate_eur`
+je Rolle; `make_review_list.py` fragt danach.
+
+**Rollenzuschnitt.** Hat eine Rolle zehn und mehr Aufgaben, oder teilt die Mehrheit ihrer Aufgabenpaare keinen Skill, markiert
+die Review-Liste „Split prüfen“. In einer zu groben Rolle gehen beim Mitteln Kontext und Unterschiede verloren.
+
+**Glossar.** `references/glossar.md` legt Rolle, Position, Aufgabe, Prozessschritt, Agent und Use Case fest und sagt, wie HR und
+IT dieselben Wörter benutzen.

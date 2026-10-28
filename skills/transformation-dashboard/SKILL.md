@@ -93,3 +93,13 @@ Keine externen Skripte, keine Webfonts, kein Tracking.
 
 Wer das Layout ändern will, ändert `CSS`, `JS` oder die Bausteinfunktionen in
 `scripts/build_dashboard.py` und baut neu. Handbearbeitetes HTML geht beim nächsten Lauf verloren.
+
+## Ab Schema 1.2
+
+Das Dashboard zeigt zusätzlich, sobald Daten vorliegen: **Kapazität** (technisch gegenüber auffangbar je Jobfamilie), **Zielbild** je
+Rolle, **Nutzungsstand** je Rolle und Agent (unterdrückt unter 5 Stellen) sowie **Reichweite und Blindflecken**. Die Agentenbibliothek
+zeigt den Evidenzgrad.
+
+Neben `report_vNNN.md` entstehen zwei Berichte aus demselben Graphen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — für HR) und
+`report_it_vNNN.md` (Backlog nach Wert, Use Cases, Prozessbänder, Blindflecken — für IT). Die Sprache im HR-Bericht ist bewusst:
+„Rolle verändert sich“, nie „Rolle entfällt“. Alle Zahlen sind Schätzungen; wo etwas nicht bewertet ist, steht „nicht bewertet“.

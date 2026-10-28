@@ -49,6 +49,10 @@ def _names(graph: dict[str, Any]) -> dict[str, dict]:
     return out
 
 
+SOLUTION_LABEL = {"interface": "Schnittstelle", "process_change": "Prozessänderung",
+                  "rule_or_rpa": "Regel/RPA"}
+
+
 def _fmt(x) -> str:
     if x is None:
         return "—"
@@ -123,6 +127,9 @@ def report(graph: dict[str, Any], only: str = "") -> tuple[str, list[dict]]:
             ops = ", ".join(f"{rl.OPERATOR_LABEL[o]} {n}×"
                             for o, n in sorted((b.get("operator_counts") or {}).items()) if n)
             out.append(f"**Angewandte Operatoren:** {ops or '—'}  ")
+            if b.get("non_ai_steps"):
+                out.append(f"**Ohne KI gelöst:** {b['non_ai_steps']} Schritt(e) über Schnittstelle, "
+                           "Prozessänderung oder feste Regel — oft die billigere und stabilere Lösung  ")
             out.append(f"**Status:** {b.get('status', 'draft')}")
             out.append("")
             out.append("| # | Soll-Schritt | Operator | Wer | Aus Ist-Schritt | Begründung |")
@@ -135,6 +142,8 @@ def report(graph: dict[str, Any], only: str = "") -> tuple[str, list[dict]]:
                     who += f" ({label})"
                 froms = ", ".join(names.get(f, {}).get("name", f) for f in st.get("from_step_ids", []))
                 gate = " · Human Gate: " + st["human_gate"]["when"] if st.get("human_gate") else ""
+                if st.get("solution_class") not in (None, "ai"):
+                    gate += " · Lösung: " + SOLUTION_LABEL.get(st["solution_class"], st["solution_class"])
                 out.append(f"| {i} | {st['name']} | {rl.OPERATOR_LABEL.get(st['operator'], st['operator'])} "
                            f"| {who} | {froms or 'neu'} | {st.get('rationale', '')}{gate} |")
             out.append("")

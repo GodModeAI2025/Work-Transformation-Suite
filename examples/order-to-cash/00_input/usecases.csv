@@ -1,0 +1,3 @@
+name;description;owner;status;value_eur_per_year;tasks
+Zahlungseingang automatisch zuordnen;Kontoauszugspositionen den offenen Posten zuordnen;Finanzbuchhaltung;pilot;48000;Forderungsmanager > Zahlungseingänge zuordnen
+Auftragsbestätigung aus Bestelldaten;Bestätigung ohne Handarbeit erzeugen und versenden;Vertriebsinnendienst;idea;;Auftragssachbearbeiter > Auftragsbestätigung versenden

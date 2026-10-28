@@ -33,8 +33,8 @@ import unicodedata
 from pathlib import Path
 from typing import Any, Iterable
 
-SCHEMA_VERSION = "1.1"
-SCHEMA_VERSIONS_SUPPORTED = ("1.0", "1.1")
+SCHEMA_VERSION = "1.2"
+SCHEMA_VERSIONS_SUPPORTED = ("1.0", "1.1", "1.2")
 
 # Feste Ordnerstruktur eines Projekts (relativ zum Projektordner)
 DIR_INPUT = "00_input"
@@ -102,6 +102,17 @@ ENUM_SOURCE_KIND = ["document", "interview", "system_export", "observation", "es
 ENUM_PROVENANCE_STATUS = ["asserted", "reviewed", "verified", "disputed"]
 ENUM_DECISION_TYPE = ["approve", "reject", "defer", "revoke"]
 
+# Schema 1.2: Realisierbarkeit, Zielbild, Adoption
+# Wie wird frei werdende Kapazität einer Rolle aufgefangen? `none` heißt: gar nicht, das
+# technische Potenzial bleibt dann Theorie.
+ENUM_ABSORPTION = ["growth", "attrition", "redeployment", "none"]
+ENUM_ADOPTION_STATUS = ["prioritized", "building", "in_use"]
+ENUM_EVIDENCE_GRADE = ["heuristic", "expert_confirmed", "proven"]
+# Lösungsklasse eines Soll-Schritts. Nicht jeder Schritt braucht KI: Wer 84 PDFs von Hand
+# öffnet, braucht oft nur eine Schnittstelle.
+ENUM_SOLUTION_CLASS = ["ai", "interface", "process_change", "rule_or_rpa"]
+ENUM_TARGET_ROLE_BASIS = ["estimated", "expert_confirmed"]
+
 ID_PREFIX = {
     "job_family": "jf",
     "job_cluster": "jc",
@@ -123,6 +134,10 @@ ID_PREFIX = {
     "experiment": "xp",
     "provenance": "pv",
     "decision": "dc",
+    # Schema 1.2
+    "target_role": "tr",
+    "usecase": "uc",
+    "adoption": "ad",
 }
 
 
@@ -333,7 +348,17 @@ COLLECTIONS_PROCESS = [
 ]
 COLLECTIONS_REDESIGN = ["blueprints", "experiments"]
 COLLECTIONS_GOVERNANCE = ["provenance", "decisions"]
-COLLECTIONS = COLLECTIONS_CORE + COLLECTIONS_PROCESS + COLLECTIONS_REDESIGN + COLLECTIONS_GOVERNANCE
+# Schema 1.2: Zielbild je Rolle, eigene Use Cases, aggregierter Nutzungsstand
+COLLECTIONS_ADOPTION = ["target_roles", "usecases", "adoption"]
+COLLECTIONS = (COLLECTIONS_CORE + COLLECTIONS_PROCESS + COLLECTIONS_REDESIGN
+               + COLLECTIONS_GOVERNANCE + COLLECTIONS_ADOPTION)
+
+# Mindestgruppengröße für jede Nutzungsauswertung. Darunter wird nichts angezeigt: Eine
+# Zahl für drei Stellen ist eine Aussage über drei Menschen.
+ADOPTION_MIN_GROUP = 5
+WORK_DAYS_PER_YEAR = 220
+# Assistierte Arbeit setzt nur einen Teil der Zeit frei: KI verkürzt, ersetzt nicht.
+ASSIST_FREED_FACTOR = 0.2
 
 
 def empty_graph() -> dict[str, Any]:
@@ -374,6 +399,8 @@ SORTED_LIST_KEYS = {
     "process_ids", "role_ids", "step_ref_ids", "from_step_ids", "removed_step_ids",
     "retained_control_ids", "dropped_control_ids", "data_classes", "inputs", "outputs",
     "tools", "read_permissions", "write_permissions", "audit_events", "blueprint_ids",
+    # Schema 1.2
+    "retained_task_ids", "delegated_task_ids", "merge_with_role_ids", "agent_ids_covered",
 }
 
 
@@ -610,6 +637,121 @@ def lead_time_gap(graph: dict[str, Any], process_id: str, tolerance_pct: float =
             "deviation_pct": round1(deviation),
         }
     return None
+
+
+# ---------------------------------------------------------------------------
+# Schema 1.2: Reichweite, Blindflecken, Kapazität je Jobfamilie
+# ---------------------------------------------------------------------------
+
+def role_headcount(role: dict[str, Any]):
+    """FTE-Basis einer Rolle: aus Positionen abgeleitet, sonst der gesetzte Headcount."""
+    hc = role.get("headcount_from_positions")
+    return role.get("headcount") if hc is None else hc
+
+
+def day_value(role: dict[str, Any], fte: float):
+    """Geschätzter Jahreswert frei werdender Zeit; nur mit Tagessatz, sonst None."""
+    rate = role.get("day_rate_eur")
+    if rate is None or fte is None:
+        return None
+    return round1(float(fte) * WORK_DAYS_PER_YEAR * float(rate))
+
+
+def agent_reach(graph: dict[str, Any]) -> list[dict[str, Any]]:
+    """Umgekehrte Sicht: Wen betrifft ein Agent oder Use Case?
+
+    Je Eintrag die Rollen, deren Aufgaben er abdeckt, mit Zeitanteil und FTE. Das ist
+    die Antwort auf „für wie viele Stellen gilt diese Automatisierung?“ — der Zeitanteil
+    ist die gebundene Arbeit der abgedeckten Aufgaben, nicht die erwartete Ersparnis.
+    """
+    tasks = index_by_id(graph.get("tasks", []))
+    roles = index_by_id(graph.get("roles", []))
+    out = []
+    items = ([("agent", a) for a in graph.get("agents", [])]
+             + [("usecase", u) for u in graph.get("usecases", [])])
+    for kind, it in items:
+        per_role: dict[str, float] = {}
+        for tid in it.get("task_ids", []):
+            t = tasks.get(tid)
+            if t and t.get("role_id") in roles:
+                per_role[t["role_id"]] = per_role.get(t["role_id"], 0.0) + float(t.get("share_of_time") or 0)
+        rows, fte_total, value_total, value_known = [], 0.0, 0.0, False
+        for rid in sorted(per_role):
+            r = roles[rid]
+            hc = role_headcount(r)
+            fte = round1(float(hc) * per_role[rid] / 100.0) if hc is not None else None
+            if fte is not None:
+                fte_total += fte
+            val = day_value(r, fte)
+            if val is not None:
+                value_total += val
+                value_known = True
+            rows.append({"role_id": rid, "name": r.get("name"), "headcount": hc,
+                         "time_share_pct": round1(per_role[rid]), "fte": fte, "value_eur": val})
+        out.append({"id": it["id"], "name": it.get("name"), "kind": kind, "roles": rows,
+                    "fte_total": round1(fte_total),
+                    "value_eur_estimated": round1(value_total) if value_known else None,
+                    "value_eur_declared": it.get("value_eur_per_year") if kind == "usecase" else None})
+    out.sort(key=lambda x: (-x["fte_total"], x["name"] or "", x["id"]))
+    return out
+
+
+def blind_spots(graph: dict[str, Any]) -> list[dict[str, Any]]:
+    """Prozesse mit hohem Wert, für die niemand einen Agenten oder Use Case anfragt.
+
+    „Hoch“ heißt Band `now` oder `next`. „Angefragt“ heißt: Mindestens eine Aufgabe eines
+    Schritts steht in einem Agenten oder einem Use Case. Wer nur den bedient, der am
+    lautesten ruft, übersieht genau diese Liste.
+    """
+    covered: set[str] = set()
+    for a in graph.get("agents", []):
+        covered.update(a.get("task_ids", []))
+    for u in graph.get("usecases", []):
+        covered.update(u.get("task_ids", []))
+    out = []
+    for pr in graph.get("processes", []):
+        v = pr.get("value") or {}
+        if v.get("band") not in ("now", "next"):
+            continue
+        task_ids = {tid for s in steps_of(graph, pr["id"]) for tid in s.get("task_ids", [])}
+        if task_ids & covered:
+            continue
+        out.append({"process_id": pr["id"], "name": pr.get("name"), "band": v.get("band"),
+                    "score": v.get("score"), "tasks": len(task_ids)})
+    out.sort(key=lambda x: (-(x["score"] or 0), x["name"] or ""))
+    return out
+
+
+def family_capacity(graph: dict[str, Any]) -> list[dict[str, Any]]:
+    """Technisches und realisierbares Potenzial je Jobfamilie (Spur A)."""
+    clusters = index_by_id(graph.get("job_clusters", []))
+    families = index_by_id(graph.get("job_families", []))
+    agg: dict[str, dict[str, Any]] = {}
+    for r in graph.get("roles", []):
+        an = r.get("analysis") or {}
+        fam_id = (clusters.get(r.get("cluster_id")) or {}).get("family_id")
+        row = agg.setdefault(fam_id, {"family_id": fam_id,
+                                      "name": (families.get(fam_id) or {}).get("name", "–"),
+                                      "roles": 0, "headcount": 0.0, "fte_technical": 0.0,
+                                      "fte_realisable": 0.0, "roles_unassessed": 0,
+                                      "roles_without_headcount": 0})
+        row["roles"] += 1
+        hc = role_headcount(r)
+        if hc is None:
+            row["roles_without_headcount"] += 1
+            continue
+        row["headcount"] += float(hc)
+        if an.get("fte_released_technical") is not None:
+            row["fte_technical"] += an["fte_released_technical"]
+            if an.get("fte_realisable") is None:
+                row["roles_unassessed"] += 1
+            else:
+                row["fte_realisable"] += an["fte_realisable"]
+    out = sorted(agg.values(), key=lambda x: (-x["fte_technical"], x["name"]))
+    for row in out:
+        for f in ("headcount", "fte_technical", "fte_realisable"):
+            row[f] = round1(row[f])
+    return out
 
 
 def fail(msg: str, code: int = 2) -> None:

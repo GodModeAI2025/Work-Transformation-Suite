@@ -261,6 +261,8 @@ def build(graph: dict[str, Any], raw: list) -> tuple[list, list, list]:
                              _str(entry.get("owner_role_id")) or proc.get("owner_role_id"),
             "status": status,
             "results": results,
+            "frame_confirmed": entry.get("frame_confirmed") is True,
+            "frame_note": _str(entry.get("frame_note")),
         })
 
         # Gemessene Werte zurück in den Graphen — mit Provenienz, sonst lehnt der Validator ab.

@@ -22,6 +22,19 @@ braucht gar keinen Agenten mehr.
 Die Diagnose ist für sich vollständig. Ein Projekt darf darin bleiben; der Redesignmodus
 schaltet sich ein, sobald Prozesse erfasst sind.
 
+## Zwei Spuren
+
+Dieselben Daten tragen zwei Auswertungen, und man sollte sie beim Namen nennen:
+
+- **Spur B, Prozessredesign (der beste Weg).** Ketten statt Einzelrollen: Übergaben, Durchlaufzeit, Wert je Prozess.
+  Belastbarer, weil Einzelrollen nur Teile eines Ablaufs sehen — fünfmal 2,8 Stunden sind nicht zehn Stunden, wenn die
+  Übergaben bleiben. Braucht eine Prozessaufnahme. Für IT und Fachbereiche (`report_it_vNNN.md`).
+- **Spur A, Rollenaggregation (der zweitbeste Weg).** Aus Rollen, Aufgaben und Bewertung je Jobfamilie: technisches und
+  realisierbares Potenzial, Zielbild je Rolle. Schnell und grob. Für HR (`report_hr_vNNN.md`).
+
+Beide Spuren laufen im selben Graphen. Wer die Prozessaufnahme noch nicht hat, beginnt mit Spur A und sagt ausdrücklich,
+dass sie Teile misst, nicht Abläufe.
+
 Jeder Schritt ist ein eigener Skill mit eigener SKILL.md; dieser Skill sagt dir, welcher
 Schritt dran ist, und hält die Arbeitsteilung sauber: Du urteilst (Extraktion, Bewertung,
 Agentenbündelung, Soll-Entwürfe, Prozesswert, Pilotpläne), Skripte rechnen (IDs, Aggregation,
@@ -150,8 +163,8 @@ eigentliche Arbeitsgrundlage, nicht das HTML.
 ## Grenzen, die du benennst
 
 Die Suite liefert Stände, keine lebende Datenbank; keine Integration in SuccessFactors oder
-andere HR-Systeme; kein Tracking, ob Agenten nach dem Rollout tatsächlich genutzt werden.
-Für einen Bereich ist sie ein vollständiges Analysewerkzeug, vom Piloten mit 20–40 Rollen bis zu
+andere HR-Systeme; Nutzung nach dem Rollout kennt die Suite nur als aggregierten Stand je Rolle und Agent (`adoption.csv`,
+Mindestgruppengröße 5), nicht als Telemetrie. Für einen Bereich ist sie ein vollständiges Analysewerkzeug, vom Piloten mit 20–40 Rollen bis zu
 über 200 Rollen in einem Lauf; für einen Konzernrollout ist sie die Machbarkeitsstudie, die vor
 einem Kauf steht.
 
@@ -165,3 +178,26 @@ Und noch eines: KI bringt innerhalb ihrer Fähigkeitsgrenze erhebliche Gewinne, 
 verschlechtert sie Ergebnisse. Human Gates sind deshalb keine Zugeständnisse an Skeptiker,
 sondern Teil des Entwurfs. Ein Szenario ohne benannte Verantwortungsgrenze ist kein mutiges
 Szenario, sondern ein unfertiges.
+
+## Ab Schema 1.2
+
+Zusätzlich zum bisherigen Ablauf, alles optional und additiv:
+
+| Eingabe | Skript | Ergebnis |
+|---|---|---|
+| Overrides `absorption`, `absorption_pct`, `day_rate_eur` je Rolle | `score_roles.py` | `fte_released_technical`, `fte_realisable` |
+| — | `build_target_roles.py` (läuft in der Pipeline) | Sammlung `target_roles`: Zielbild je Rolle |
+| `00_input/usecases.csv` | `agent-mapper/import_usecases.py` | Sammlung `usecases` |
+| `00_input/adoption.csv` | `agent-mapper/import_adoption.py` | Sammlung `adoption`, nur aggregiert |
+| — | `agent-mapper/export_reach.py` | `reach_vNNN.md/.csv`: Reichweite und Blindflecken |
+| Vertrag | `agent-mapper/export_skill.py` (auf Anforderung) | Skill-Gerüst in `40_output/skills_export/` |
+| `00_input/prozesshaus.csv` | `work-graph-builder/import_process_house.py` | `process_<quelle>.json` |
+
+**Rahmen vor Piloten.** Bevor Beschäftigte gebeten werden zu bestätigen, was sich an ihrer Arbeit automatisieren lässt, muss
+der Rahmen stehen (Beschäftigtenvertretung, Zusagen zur Beschäftigung, Zweck). Setze `frame_confirmed` im Pilot erst, wenn
+du es von jemandem hast, der es wissen kann. Der Validator warnt sonst.
+
+**Sprache.** „Die Rolle verändert sich“, nie „die Rolle entfällt“. Typen sind Aussagen über Aufgabenanteile, nicht über Menschen.
+
+**Realisierbar ist nicht technisch.** Nenne beide Zahlen. Fehlt die Angabe, wie frei werdende Kapazität aufgefangen wird,
+sag „nicht bewertet“, nicht „null“.
