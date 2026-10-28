@@ -238,6 +238,7 @@ Optional, auf Zuruf oder bei Bedarf:
    check_completeness.py · dedupe_tasks.py · derive_collaboration.py · import_levels.py
    build_target_roles.py     → Zielbild je Rolle (Entwurf)
    import_usecases.py · import_adoption.py · export_reach.py
+   build_rollen_md.py        → Rollen.md für eine oder mehrere Rollen
    build_role_setup.py       → Setup-Paket für einen Arbeitsagenten je Rolle</div>
     <div class="note">
       <p><code>python3 skills/work-transformation/scripts/run_pipeline.py --project projekte/kundenservice</code> führt alle Skript-Schritte hintereinander aus. Fehlt eine Claude-Eingabe, stoppt der Lauf mit Exit-Code 3 und einer klaren Meldung. Derselbe Befehl ist das „weiter machen“ nach jeder Korrektur.</p>
@@ -268,7 +269,12 @@ Optional, auf Zuruf oder bei Bedarf:
       <div class="card">
         <p class="num">ROLLEN-SETUP</p>
         <h3>Ein Arbeitsagent für genau diese Rolle</h3>
-        <p>Auf Zuruf entsteht ein Paket: Kontextprofil (vorbelegt aus dem Graphen, der Rest „offen“), Interview-Prompt, schlanker Agenten-Prompt, drei bis fünf Skills mit Testfall-Gerüst, Tool-Tabelle, inaktive Routinen. Reifegrade von Entwurf bis live-reif; eine Routine nur für live-reife Skills. Erst erweitern, dann automatisieren.</p>
+        <p>Auf Zuruf entsteht für eine oder mehrere Rollen eine <code>Rollen.md</code> mit Firmenprofil, Rollenprofil samt Zeitfressern, Team-Kontext mit Kanälen, Prioritäten und Stil (vorbelegt aus dem Graphen, der Rest „offen“) — oder ein ganzes Paket mit Interview-Prompt, schlanker Agenten-Prompt, drei bis fünf Skills mit Testfall-Gerüst, Tool-Tabelle, inaktive Routinen. Reifegrade von Entwurf bis live-reif; eine Routine nur für live-reife Skills. Erst erweitern, dann automatisieren.</p>
+      </div>
+      <div class="card">
+        <p class="num">KONTEXT AUS MATERIAL</p>
+        <h3>Weniger fragen, mehr vorschlagen</h3>
+        <p>Eigene Texte, Meeting-Transkripte und Projektdokumente liefern Vorschläge für Stil, Prioritäten, Zeitfresser und Kanäle — mit Quelle, Fundstelle und Zitat, in der <code>Rollen.md</code> als „bitte bestätigen“ markiert. Der Stil wird gemessen, nicht geraten; mit zu wenig Material gibt es keinen. Das Interview bleibt für Entscheidungen.</p>
       </div>
       <div class="card">
         <p class="num">NUTZUNG</p>

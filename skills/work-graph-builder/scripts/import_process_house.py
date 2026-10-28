@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 import_process_house.py — übernimmt ein vorhandenes Prozesshaus (z. B. IT-Betrieb nach
-ITIL) als Prozessextraktion, damit Rollen und Automatisierungspotenzial je Prozessschritt
+IT-Servicemanagement-Rahmenwerk) als Prozessextraktion, damit Rollen und Automatisierungspotenzial je Prozessschritt
 sichtbar werden.
 
 Aufruf:

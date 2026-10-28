@@ -4,6 +4,53 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.7.0] — Kontext aus Dokumenten statt aus Fragen
+
+Eine Rollen.md hat Felder, die ein Graph nicht kennt: Prioritäten, Ton, Zeitfresser aus Sicht der Person. Sie müssen nicht alle per Frage und Antwort kommen. Diese Version holt Vorschläge
+aus Material, das ohnehin existiert — und kennzeichnet sie als Vorschläge.
+
+### Neu
+
+- **`extract_context_evidence.py`** (agent-mapper): liest Textmaterial unter `00_input/kontext/` (`firma/`, `<rolle>/texte`, `transkripte`, `projekte`) und schreibt Vorschläge mit
+  Quelle, Fundstelle und Zitat nach `30_review/kontext_evidenz/`.
+- **Stil wird gemessen:** Anrede je Text (informell, Sie, je nach Adressat), Satzlänge, Listenanteil, Absatzlänge, Ausrufezeichen, Emojis, wiederkehrende Wendungen, Schlussformel.
+  Don'ts nur als Befund (typische KI-Floskeln, die in den eigenen Texten nie vorkommen). Ab drei Texten und 600 Wörtern, sonst „zu wenig Material“.
+- **Rollen.md zeigt Vorschläge** als „✎ Vorschlag aus Dokument — bitte bestätigen“; ein Graphwert schlägt einen Vorschlag; ohne Material bleibt das Feld offen.
+- **Claude-Schicht:** Funde aus PDF, Word, Mail und Kalender im selben Format (`<rolle>.claude.json`); ohne wörtliches Zitat und Quelle wird ein Eintrag abgelehnt und gemeldet.
+- **Personendaten:** E-Mail-Adressen, Telefonnummern und Anreden mit Namen werden maskiert, Personennamen nicht gesucht, nur kurze Zitate gespeichert.
+- **Quelleninventar** erkennt das Material und bietet es an, wenn es fehlt (freiwillig).
+- **Aus dem Playbook:** `skills/skill-ideen-prompt.md` je Rolle (fünf lohnende Skills aus der gefüllten Rollen.md vorschlagen lassen) und `Teamstart.md` (Mini-Hackathon) bei mehreren Rollen.
+- `references/kontext-aus-dokumenten.md`: Verzeichnis, Verfahren, Regeln, Grenzen.
+
+### Grenzen
+
+- Die Muster sind Heuristiken; ein Satz mit „Ziel“ ist nicht immer ein Ziel. Deshalb Vorschlag und Bestätigung.
+- Ein Stilprofil beschreibt die gemessenen Texte, nicht die ganze Person.
+- Die Maskierung ist kein Anonymisierungsverfahren. Transkripte enthalten Daten Dritter und gehören nur mit Einverständnis ins Projekt.
+
+## [0.6.0] — Rollen.md für ein oder mehrere Rollen
+
+Ein Agenten-Harness braucht eine Datei, in der geklärt ist, wer hier arbeitet. Diese Version erzeugt sie aus dem Arbeitsgraphen — für eine Rolle oder
+für mehrere ausgewählte.
+
+### Neu
+
+- **`build_rollen_md.py`** (agent-mapper): `--role` (mehrfach oder `A;B`), `--all`, `--split`. Eine `Rollen.md` mit den Abschnitten 1) Firmenprofil
+  (einmal), 2) Rollenprofil, 3) Team-Kontext, 4) Prioritäten & Ziele, 5) Arbeits- & Kommunikationsstil (je Rolle).
+- **Zeitfresser** im Rollenprofil: größte gebundene Zeit, Reibung aus der Prozessaufnahme (`pain`), längste Liegezeit und meiste Rückläufer.
+- **Kanäle im Team-Kontext:** Übergaben mit Richtung und Art (System, E-Mail, Ticket, Telefon, Meeting), dazu Eskalationen und Organisationseinheit.
+- **Herkunft je Zeile:** „✓ Graph“, „✓ abgeleitet — bitte bestätigen“ oder „❓ offen“. Prioritäten, Tonalität, Do's und Don'ts werden nicht erfunden.
+- Schutz bearbeiteter Dateien auch hier (`.vorschlag`).
+
+### Geändert
+
+- Das Setup-Paket nutzt dieselbe Rollen.md (`kontext/Rollen.md` statt `kontext/kontextprofil.md`); Interview-Prompt und Prüfung entsprechend angepasst.
+
+### Grenzen
+
+- Der Graph beschreibt eine Rolle, keine Person. Abschnitte 4 und 5 sind überwiegend offen, bis jemand sie im Gespräch füllt.
+- Zeitfresser aus den Daten sind Hinweise aus Aufgabenanteilen und Prozessmessungen, keine Selbstauskunft.
+
 ## [0.5.0] — Rollen-Setup auf Zuruf
 
 Eine Analyse sagt, welche Aufgaben sich lohnen. Diese Version baut daraus für eine bestimmte Rolle das, was eine Person tatsächlich benutzt: ein Setup-Paket für einen

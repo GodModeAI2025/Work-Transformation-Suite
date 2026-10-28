@@ -1,6 +1,6 @@
 ---
 name: agent-mapper
-description: "Bündelt die delegier- und assistierbaren Aufgaben eines bewerteten Arbeitsgraphen (work-graph.json nach task-scorer) zu einer Agentenbibliothek aus wiederverwendbaren KI-Agenten und berechnet deterministisch je Agent, welche Rollen er zu wie viel Prozent abdeckt, FTE-Äquivalent, Build/Buy/Hybrid, Zeithorizont und Priorität; gleicht bestehende KI-Anwendungen des Unternehmens ab; baut auf Zuruf für eine Rolle ein Setup-Paket (Kontext, Prompt, Skills, Tests, Tools, Routinen). Dritter Schritt der Work-Transformation-Suite. IMMER verwenden bei: Agentenbibliothek, Agentic Workforce Library, welche Agenten brauchen wir, Agenten zu Rollen zuordnen, Rollenabdeckung durch Agenten, Build or Buy für KI-Agenten, Agent-Katalog, Agentenlandkarte, Automatisierungs-Backlog priorisieren, 'welcher Agent übernimmt was', KI-Use-Cases aus Aufgaben ableiten, Rollen-Setup, Agent für diese Rolle einrichten — auch wenn der Nutzer nur fragt 'was sollen wir zuerst automatisieren' und ein bewerteter work-graph existiert."
+description: "Bündelt die delegier- und assistierbaren Aufgaben eines bewerteten Arbeitsgraphen (work-graph.json nach task-scorer) zu einer Agentenbibliothek aus wiederverwendbaren KI-Agenten und berechnet deterministisch je Agent, welche Rollen er zu wie viel Prozent abdeckt, FTE-Äquivalent, Build/Buy/Hybrid, Zeithorizont und Priorität; gleicht bestehende KI-Anwendungen des Unternehmens ab; baut auf Zuruf Rollen.md und Setup-Paket je Rolle (Kontext, Prompt, Skills, Tests, Tools). Dritter Schritt der Work-Transformation-Suite. IMMER verwenden bei: Agentenbibliothek, Agentic Workforce Library, welche Agenten brauchen wir, Agenten zu Rollen zuordnen, Rollenabdeckung durch Agenten, Build or Buy für KI-Agenten, Agent-Katalog, Agentenlandkarte, Automatisierungs-Backlog priorisieren, 'welcher Agent übernimmt was', KI-Use-Cases aus Aufgaben ableiten, Rollen-Setup, Agent für diese Rolle einrichten — auch wenn der Nutzer nur fragt 'was sollen wir zuerst automatisieren' und ein bewerteter work-graph existiert."
 ---
 
 # agent-mapper
@@ -184,7 +184,34 @@ python3 <skill>/scripts/build_role_setup.py --project ./projekte/<name> --role "
 python3 <skill>/scripts/check_role_setup.py --package 40_output/rollen_setup/<rolle> [--strict]
 ```
 
-Das Paket enthält Kontextprofil (vorbelegt aus dem Graphen, Rest „offen“), Interview-Prompt, schlanken Agenten-Prompt, drei bis fünf Skills mit
+Das Paket enthält die Rollen.md (vorbelegt aus dem Graphen, Rest „offen“), Interview-Prompt, schlanken Agenten-Prompt, drei bis fünf Skills mit
 Testfall-Gerüst, Tool-Tabelle und inaktive Routinen. Du sagst dem Nutzer ehrlich, was es ist: **ein Startpunkt, ungetestet, ohne Freigabe.**
 Erfinde keinen Kontext, schreibe keine echten Testfälle und aktiviere keine Routine; das tun der Nutzer und der Test. Die Begründung der Struktur und die
 Grenzen stehen in `references/rollen-setup.md`. Läuft das Skript erneut, überschreibt es bearbeitete Dateien nicht (`.vorschlag` daneben).
+
+### Nur die Rollen.md, für eine oder mehrere Rollen
+
+Will der Nutzer nur die Kontextdatei für ein Agenten-Harness (ohne Skills, Tools und Routinen):
+
+```
+python3 <skill>/scripts/build_rollen_md.py --project ./projekte/<name> --role "<Rolle>" [--role "<weitere Rolle>" | --role "A;B"] [--all] [--split]
+```
+
+Die **Rollen.md** hat fünf Abschnitte: 1) Firmenprofil (einmal), dann je Rolle 2) Rollenprofil (mit Zeitfressern), 3) Team-Kontext (Übergaben mit Kanal),
+4) Prioritäten & Ziele (monatlich aktualisieren), 5) Arbeits- & Kommunikationsstil. Alles, was der Graph nicht weiß, steht als „❓ offen“; Abgeleitetes ist
+als „bitte bestätigen“ markiert. Sag dem Nutzer, dass die offenen Felder aus einem Gespräch kommen müssen (Interview-Prompt im Setup-Paket), und erfinde
+nichts. Mit `--split` entsteht je Rolle eine Datei.
+
+### Den Rest nicht per Frage und Antwort erfragen (ab 0.7)
+
+Was der Graph über eine Person nicht weiß, muss nicht nur per Interview kommen. Frage den Nutzer, ob er Material hat (freiwillig): eigene Texte, Meeting-Transkripte, Projektdokumente,
+Firmentexte. Lege es unter `00_input/kontext/` ab (`firma/`, `<rolle>/texte`, `<rolle>/transkripte`, `<rolle>/projekte`), dann:
+
+```
+python3 <skill>/scripts/extract_context_evidence.py --project ./projekte/<name> [--role "<Rolle>"]
+```
+
+Das Ergebnis sind **Vorschläge mit Quelle, Fundstelle und Zitat** in `30_review/kontext_evidenz/`; `build_rollen_md.py` und `build_role_setup.py` zeigen sie als „✎ Vorschlag aus Dokument — bitte bestätigen“.
+Was Skripte nicht lesen (PDF, Word, Mail, Kalender), liest du und trägst es im selben Format in `<rolle>.claude.json` ein — nur mit wörtlichem Zitat und Quelle, nichts ergänzt, nichts geschlossen.
+Sag dem Nutzer: Vorschläge sind keine Tatsachen; ein Stilprofil gibt es erst ab drei Texten und 600 Wörtern; Transkripte enthalten Daten Dritter und gehören nur mit Einverständnis ins Projekt; Personennamen werden nicht gesucht.
+Das Interview bleibt für Entscheidungen (Qualitätsverständnis, gewünschte Rückfrage, was nie ohne Rückfrage geschehen darf). Details: `references/kontext-aus-dokumenten.md`.

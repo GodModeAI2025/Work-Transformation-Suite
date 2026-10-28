@@ -407,6 +407,49 @@ Suite bietet sie an und wählt nicht still. Katalog mit Eingaben, Ergebnissen un
 Ehrlich zu den Grenzen: Die Aufgabencluster beruhen auf gleichen Wörtern, nicht auf gleicher Bedeutung. Die Suite scrapt keine öffentlichen
 Daten und füllt keine Lücken still auf; was sie nicht aus einer Quelle hat, bleibt „ergänzt“ oder „geschätzt“.
 
+### Rollen.md: eine Datei, die ein Agenten-Harness als Kontext lädt
+
+Für eine oder mehrere ausgewählte Rollen erzeugt `build_rollen_md.py` die **Rollen.md** mit fünf Abschnitten:
+
+| Abschnitt | Was drinsteht | Aus dem Graphen |
+|---|---|---|
+| 1) Firmenprofil | Was das Unternehmen tut und für wen; damit ordnet die KI Aufgaben im richtigen Markt ein | Organisation, Bereich, Empfänger der Prozessergebnisse. Geschäftsmodell, Markt, Produkte bleiben offen |
+| 2) Rollenprofil | Verantwortung, Tools, wiederkehrende Aufgaben, Zeitfresser | Zweck, Aufgaben mit Häufigkeit und Zeitanteil, Systeme, Entscheidungsräume; Zeitfresser aus gebundener Zeit, Reibung der Prozessaufnahme, Liegezeit und Rückläufern |
+| 3) Team-Kontext | Mit wem, wen wann einbeziehen, über welchen Kanal was läuft | Übergaben mit Richtung und Kanal (System, E-Mail, Ticket, …), Eskalationen, Organisationseinheit |
+| 4) Prioritäten & Ziele | Woran gerade gearbeitet wird; der lebendigste Abschnitt, einmal im Monat aktualisieren | Prozessergebnisse und Kennzahlen; die Prioritäten selbst bleiben offen |
+| 5) Arbeits- & Kommunikationsstil | Wie die Person arbeitet und klingt, mit Do's und Don'ts für KI-Texte | fast alles offen; abgeleitete Hinweise sind als „bitte bestätigen“ markiert |
+
+```
+python3 skills/agent-mapper/scripts/build_rollen_md.py --project <projekt> --role "Forderungsmanager"
+python3 skills/agent-mapper/scripts/build_rollen_md.py --project <projekt> --role "Forderungsmanager;Kreditprüfer"
+python3 skills/agent-mapper/scripts/build_rollen_md.py --project <projekt> --all --split
+```
+
+Mehrere Rollen landen in einer Datei: das Firmenprofil einmal, danach je Rolle die Abschnitte 2 bis 5. Mit `--split` bekommt jede Rolle ihre eigene Datei. Der
+Graph kennt eine Person nicht: Was er nicht weiß, steht als „❓ offen“ und wird nicht erfunden; das Interview aus dem Setup-Paket füllt es. Ein erneuter Lauf
+überschreibt keine bearbeitete Datei (neuer Stand als `.vorschlag`).
+
+### Den Rest nicht erfragen, sondern aus Material holen
+
+Ein Graph kennt keine Person: nicht ihre Prioritäten, nicht ihren Ton, nicht, was sie nervt. Das lässt sich im Interview erfragen — oder aus Material holen, das ohnehin
+existiert. Material unter `00_input/kontext/` (`firma/`, `<rolle>/texte`, `<rolle>/transkripte`, `<rolle>/projekte`) wertet `extract_context_evidence.py` aus und liefert
+**Vorschläge mit Quelle, Fundstelle und Zitat**:
+
+| Feld | Material | Verfahren |
+|---|---|---|
+| Geschäftsmodell, Kunden, Produkte, Markt, Fachbegriffe | Firmentexte | Sätze mit typischen Mustern, Zählung von Branchenbegriffen |
+| Zeitfresser, Kanäle, Prioritäten, Ziele | Transkripte, Projektdokumente | Zeilen mit Reibungs-, Kanal-, Prioritäts- und Zielwörtern |
+| Tonalität, Formate, Do's | eigene Texte | **Messung**: Anrede je Text, Satzlänge, Listenanteil, wiederkehrende Wendungen, Schlussformel |
+| Don'ts | eigene Texte | typische KI-Floskeln, die in den eigenen Texten nie vorkommen |
+
+In der Rollen.md erscheinen sie als „✎ Vorschlag aus Dokument — bitte bestätigen“, nie als Tatsache. Ein Stilprofil entsteht erst ab drei Texten und 600 Wörtern; darunter steht
+„zu wenig Material“. Ein Eintrag ohne Zitat und Quelle wird abgelehnt. Was Skripte nicht lesen (PDF, Word, Mail, Kalender), liest Claude und trägt es im selben Format ein
+(`<rolle>.claude.json`). E-Mail-Adressen, Telefonnummern und Anreden mit Namen werden maskiert, Personennamen nicht gesucht; Transkripte enthalten Daten Dritter und gehören nur mit
+Einverständnis ins Projekt. Was bleibt (Qualitätsverständnis, gewünschte Rückfrage), klärt das Interview. Details und Grenzen: `skills/agent-mapper/references/kontext-aus-dokumenten.md`.
+
+Für ein ganzes Team entsteht beim Aufruf mit mehreren Rollen zusätzlich `Teamstart.md`, eine Agenda für einen Mini-Hackathon (Rahmen, Rollen.md, Agent, erste Skills, Erfolgsmoment),
+und je Rolle ein `skill-ideen-prompt.md`, der aus der gefüllten Rollen.md fünf lohnende Skills vorschlagen lässt.
+
 ### Setup-Paket je Rolle: ein Arbeitsagent auf Zuruf
 
 Die Analyse sagt, welche Aufgaben sich lohnen. Eine Person braucht außerdem etwas, das sie am Montagmorgen öffnen kann. Auf Zuruf („Baue das Setup für
@@ -414,7 +457,7 @@ den Forderungsmanager“) erzeugt `build_role_setup.py` für genau diese Rolle e
 
 | Datei | Inhalt | Woher |
 |---|---|---|
-| `kontext/kontextprofil.md` | Fünf Bereiche: Unternehmen, Rolle, Team und Schnittstellen, Ziele und Prioritäten, Arbeitsweise | vorbelegt aus dem Graphen, Rest „❓ offen“ |
+| `kontext/Rollen.md` | Die fünf Abschnitte: Firmenprofil, Rollenprofil, Team-Kontext, Prioritäten & Ziele, Arbeits- & Kommunikationsstil | vorbelegt aus dem Graphen, Rest „❓ offen“ |
 | `kontext/interview-prompt.md` | Interview, das die offenen Felder füllt; verbietet Erfinden | eigener Text |
 | `agent/systemprompt.md` | Schlank: Kontext laden, einordnen, Skill wählen, prüfen, bei Lücke fragen. Keine Aufgaben | eigener Text |
 | `skills/<skill>/` | Drei bis fünf Skills nach Zeitanteil × Automatisierbarkeit, mit `evals/cases.json` (mindestens fünf Fälle) und Testprotokoll | Capability Contract oder Aufgabendaten |

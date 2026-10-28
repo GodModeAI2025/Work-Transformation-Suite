@@ -83,8 +83,11 @@ class TestContextProfile(unittest.TestCase):
 
     def test_unknowable_fields_stay_open(self):
         text, filled, open_n = brs.kontextprofil(self.g, self.r, self.groups)
-        for label in ("Geschäftsmodell", "Produkte und Leistungen", "Tonalität", "Qualitätsverständnis", "Persönliche Prioritäten"):
-            self.assertRegex(text, rf"\*\*{label}[^\n]*\*\*:? ?\*?\*? ?{brs.OPEN}|{label}[^\n]*{brs.OPEN}")
+        for label in ("Was das Unternehmen tut", "Produkte und Leistungen", "Tonalität", "Qualitätsverständnis", "Woran du gerade arbeitest",
+                      "Don'ts für KI-Texte"):
+            hits = [ln for ln in text.splitlines() if ln.startswith("- **") and label in ln]
+            self.assertTrue(hits, label)
+            self.assertTrue(all(brs.OPEN in ln for ln in hits), f"{label} darf nicht aus dem Graphen erfunden werden")
         self.assertGreater(open_n, 0)
         self.assertGreater(filled, 0)
 
@@ -116,7 +119,7 @@ class TestPackage(unittest.TestCase):
         self.files = brs.build_package(self.g, self.r, 4)
 
     def test_expected_files_exist(self):
-        for rel in ("README.md", "kontext/kontextprofil.md", "kontext/interview-prompt.md", "agent/systemprompt.md", "tools/anbindungen.md",
+        for rel in ("README.md", "kontext/Rollen.md", "kontext/interview-prompt.md", "agent/systemprompt.md", "tools/anbindungen.md",
                     "routinen/routinen.json", "routinen/routinen.md", "pflege/pflege.md"):
             self.assertIn(rel, self.files)
         self.assertTrue(any(k.endswith("/SKILL.md") for k in self.files))
@@ -187,7 +190,7 @@ class TestPackage(unittest.TestCase):
         g = example_graph()
         for r in g["roles"]:
             files = brs.build_package(g, r, 4)
-            self.assertIn("kontext/kontextprofil.md", files, r["name"])
+            self.assertIn("kontext/Rollen.md", files, r["name"])
 
 
 class TestWriteAndProtect(unittest.TestCase):
@@ -208,15 +211,15 @@ class TestWriteAndProtect(unittest.TestCase):
 
     def test_edited_file_is_never_overwritten(self):
         brs.write_package(self.out, self.files)
-        prof = self.out / "kontext" / "kontextprofil.md"
+        prof = self.out / "kontext" / "Rollen.md"
         prof.write_text(prof.read_text(encoding="utf-8").replace(brs.OPEN, "Antwort", 1), encoding="utf-8")
         edited = prof.read_text(encoding="utf-8")
         files2 = dict(self.files)
-        files2["kontext/kontextprofil.md"] = self.files["kontext/kontextprofil.md"] + "\nNeue Zeile aus dem Graphen\n"
+        files2["kontext/Rollen.md"] = self.files["kontext/Rollen.md"] + "\nNeue Zeile aus dem Graphen\n"
         written, proposed, _ = brs.write_package(self.out, files2)
-        self.assertIn("kontext/kontextprofil.md", proposed)
+        self.assertIn("kontext/Rollen.md", proposed)
         self.assertEqual(prof.read_text(encoding="utf-8"), edited)
-        self.assertTrue((self.out / "kontext" / "kontextprofil.md.vorschlag").exists())
+        self.assertTrue((self.out / "kontext" / "Rollen.md.vorschlag").exists())
 
     def test_untouched_file_is_updated(self):
         brs.write_package(self.out, self.files)

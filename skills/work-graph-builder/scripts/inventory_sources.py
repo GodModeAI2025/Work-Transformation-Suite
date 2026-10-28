@@ -46,6 +46,8 @@ KINDS: dict[str, tuple[str, list[str], list[str]]] = {
                                   ["agent_suggestions"]),
     "usecaseregister": ("Register eigener Use Cases", ["usecases", "use-cases", "use cases", "usecase register"], ["use_cases"]),
     "nutzungsstand": ("Nutzungsstand je Rolle und Agent", ["adoption", "nutzungsstand"], ["adoption"]),
+    # Material für die Rollen.md: liegt unter 00_input/kontext/ (firma/, <rolle>/texte, transkripte, projekte)
+    "kontextmaterial": ("Material für die Rollen.md (Texte, Transkripte, Projektdokumente)", [], ["context", "rules"]),
     "stellenbeschreibung": ("Stellenbeschreibung (intern)", ["stellenbeschreibung", "rollenbeschreibung", "rollenprofil", "funktionsbeschreibung", "tätigkeitsprofil", "taetigkeitsprofil"],
                             ["roles", "tasks", "skills", "level"]),
     "stellenanzeige": ("Stellenanzeige (extern)", ["stellenanzeige", "stellenausschreibung", "jobposting", "wir suchen", "wir bieten", "bewirb", "ihr profil", "dein profil"],
@@ -98,6 +100,12 @@ METHODS: list[dict[str, Any]] = [
     {"id": "adoption", "title": "Nutzungsstand aggregiert importieren", "cmd": "agent-mapper/scripts/import_adoption.py",
      "result": "Stand je Rolle × Agent, unter fünf Stellen unterdrückt", "when": lambda s: "nutzungsstand" in s["kinds"],
      "why": "Nutzungsstand vorhanden"},
+    {"id": "context_material", "title": "Vorschläge für die Rollen.md aus vorhandenem Material holen", "cmd": "agent-mapper/scripts/extract_context_evidence.py",
+     "result": "Vorschläge mit Quelle und Zitat für Prioritäten, Zeitfresser, Kanäle, Firmenprofil, Stil", "when": lambda s: "kontextmaterial" in s["kinds"],
+     "why": "Material unter 00_input/kontext/ vorhanden — spart Fragen im Interview"},
+    {"id": "context_offer", "title": "Material ablegen, statt alles per Frage und Antwort zu erfragen", "cmd": "00_input/kontext/ (firma/, <rolle>/texte, transkripte, projekte)",
+     "result": "eigene Texte, Meeting-Transkripte und Projektdokumente liefern Stil, Prioritäten und Zeitfresser als Vorschläge",
+     "when": lambda s: s["have_graph"] and "kontextmaterial" not in s["kinds"], "why": "noch kein Material für die Rollen.md abgelegt (freiwillig)"},
     {"id": "completeness", "title": "Vollständigkeit gegen die Rollenvorlage prüfen", "cmd": "check_completeness.py",
      "result": "Lückenliste je Rolle, mit Hinweis, woher die Lücke zu füllen wäre", "when": lambda s: s["have_graph"],
      "why": "Graph vorhanden"},
@@ -115,6 +123,9 @@ METHODS: list[dict[str, Any]] = [
 
 def classify(path: Path, peek: str) -> tuple[str, str]:
     """(Quellenart, Grund). Dateiname vor Inhalt; bei Gleichstand die Reihenfolge von KINDS."""
+    parts = path.parts
+    if "kontext" in parts and "00_input" in parts and parts.index("00_input") < parts.index("kontext"):
+        return "kontextmaterial", "liegt unter 00_input/kontext/"
     name = wl.normalize_name(path.name.replace("_", " ").replace("-", " "))
     for kind in KIND_ORDER:
         for kw in KINDS[kind][1]:

@@ -18,12 +18,12 @@ Auf Zuruf („Baue das Setup für die Rolle X“) wird das Paket für genau dies
 ## Prinzipien und wie die Suite sie umsetzt
 
 Die Grundstruktur stammt aus einem öffentlichen Playbook zum persönlichen KI-Setup (Stand Herbst 2026):
-Kontextprofil, ein zentraler Agent, Skills, Tool-Anbindungen, Routinen. Die Vorlagen und Texte in diesem Paket sind eigene Formulierungen
+Rollen.md (Kontext), ein zentraler Agent, Skills, Tool-Anbindungen, Routinen. Die Vorlagen und Texte in diesem Paket sind eigene Formulierungen
 nach dieser Struktur; die verlinkten Originalvorlagen des Autors wurden nicht übernommen.
 
 | Prinzip | Umsetzung |
 |---|---|
-| Kontext zuerst | `kontext/kontextprofil.md` mit den fünf Bereichen Unternehmen, Rolle, Team und Schnittstellen, Ziele und Prioritäten, Arbeitsweise. Vorbelegt aus dem Graphen, Rest „offen“ |
+| Kontext zuerst | `kontext/Rollen.md` mit den fünf Abschnitten Firmenprofil, Rollenprofil, Team-Kontext, Prioritäten & Ziele, Arbeits- & Kommunikationsstil. Vorbelegt aus dem Graphen, Rest „offen“. Dieselbe Datei erzeugt `build_rollen_md.py` für eine oder mehrere Rollen |
 | Die KI als Interviewer | `kontext/interview-prompt.md` füllt die offenen Felder; er verbietet Erfinden und lässt Graph-Zeilen nur mit Bestätigung ändern |
 | Ein zentraler Agent, schlanker Prompt | `agent/systemprompt.md`: steuert nur die Zusammenarbeit (Kontext laden, einordnen, Skill wählen, prüfen, bei Lücke fragen). `check_role_setup.py` begrenzt die Länge |
 | Wiederkehrende Aufgaben als Skills | Drei bis fünf Skills je Rolle, gewählt nach Zeitanteil × Automatisierbarkeit; gleicher Agent heißt ein Skill. Mit Capability Contract entsteht das Gerüst aus dem Vertrag (wie `export_skill.py`), sonst aus den Aufgabendaten |
