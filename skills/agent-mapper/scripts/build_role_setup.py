@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 build_role_setup.py — baut für eine bestimmte Rolle das Setup-Paket, das ein persönlicher Arbeitsagent
-braucht: Kontextprofil, schlanker Agenten-Prompt, drei bis fünf Skills mit Testfall-Gerüst, Tool-Anbindungen
+braucht: Rollen.md, schlanker Agenten-Prompt, drei bis fünf Skills mit Testfall-Gerüst, Tool-Anbindungen
 und Routinen. Soweit der Arbeitsgraph etwas weiß, ist es vorbelegt; was er nicht wissen kann, steht als „offen“.
 
 Aufruf:
@@ -11,7 +11,7 @@ Aufruf:
 
 Ausgabe: 40_output/rollen_setup/<rolle>/
     README.md                         Reihenfolge, was vorbelegt und was offen ist
-    kontext/kontextprofil.md          fünf Bereiche; jede Zeile mit Herkunft (Graph) oder „offen“
+    kontext/Rollen.md                 fünf Abschnitte; jede Zeile mit Herkunft (Graph) oder „offen“
     kontext/interview-prompt.md       Interview, das die offenen Felder füllt
     agent/systemprompt.md             schlank: steuert die Zusammenarbeit, enthält keine Aufgaben
     skills/<skill>/SKILL.md           je Skill eine Anleitung (Entwurf, ungetestet)
@@ -46,12 +46,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import workgraph_lib as wl  # noqa: E402
 import export_skill as es  # noqa: E402
 import export_contracts as ec  # noqa: E402
+import rollen_md as rm  # noqa: E402
 
 DEFAULT_SKILLS, MIN_SKILLS, MAX_SKILLS = 4, 3, 5
 MIN_CASES = 5
 MIN_LOOPS = 2
-OPEN = "❓ offen"
-GRAPH = "✓ Graph"
+OPEN = rm.OPEN
+GRAPH = rm.GRAPH
 HAS_LABEL = {1: "H1 — der Agent kann es allein", 2: "H2 — Mensch prüft stichprobenartig", 3: "H3 — Mensch und Agent gleichberechtigt",
              4: "H4 — Mensch führt, Agent unterstützt", 5: "H5 — Mensch unverzichtbar"}
 FREQ_LABEL = {"daily": "täglich", "weekly": "wöchentlich", "monthly": "monatlich", "quarterly": "quartalsweise", "adhoc": "bei Bedarf"}
@@ -124,105 +125,33 @@ def names(graph: dict[str, Any], coll: str, ids: list[str]) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
-# Kontextprofil
+# Rollen.md (Kontext der Rolle)
 # ---------------------------------------------------------------------------
 
-def line(label: str, value: Any, source: str = GRAPH) -> str:
-    if value in (None, "", [], {}):
-        return f"- **{label}:** {OPEN}"
-    return f"- **{label}:** {value} _({source})_"
-
-
 def kontextprofil(graph: dict[str, Any], role: dict[str, Any], groups: list[dict[str, Any]]) -> tuple[str, int, int]:
-    meta = graph["meta"]
-    roles = wl.index_by_id(graph["roles"])
-    clusters = wl.index_by_id(graph["job_clusters"])
-    cl = clusters.get(role.get("cluster_id"), {})
-    tasks = sorted((t for t in graph["tasks"] if t.get("role_id") == role["id"]),
-                   key=lambda t: (-float(t.get("share_of_time") or 0), t["name"]))
-    steps = steps_of_role(graph, role)
-    proc_ids = sorted({s["process_id"] for s in steps})
-    procs = [p for p in graph["processes"] if p["id"] in proc_ids]
-    gates = []
-    for s in steps:
-        hg = s.get("human_gate")
-        if isinstance(hg, dict) and hg.get("when"):
-            gates.append(f"{hg['when']} → {roles.get(hg.get('role_id'), {}).get('name', 'Mensch')} ({s['name']})")
-        dec = s.get("decision")
-        if isinstance(dec, dict) and dec.get("scope"):
-            gates.append(f"Entscheidung „{s['name']}“: {ec.SCOPE_LABEL.get(dec['scope'], dec['scope'])}" + (f"; Eskalation: {dec['escalation']}" if dec.get("escalation") else ""))
-    skills_core = [f"{sk['name']} (Niveau {s['level']}/5)" for s in role.get("skills", []) if s.get("importance") == "core"
-                   for sk in [wl.index_by_id(graph["skills"]).get(s["skill_id"], {"name": s["skill_id"]})]]
-    collab = [c for c in wl.collaboration_pairs(graph) if role["id"] in (c["role_a_id"], c["role_b_id"])]
-    partners = []
-    for c in collab[:8]:
-        other = c["role_b"] if c["role_a_id"] == role["id"] else c["role_a"]
-        how = c["handover_types"] or ("gemeinsame Stelle" if c["shared_positions"] else f"gleiche Einheit ({c['shared_units']})")
-        partners.append(f"{other} — {how}" + (f" ({c['processes']})" if c["processes"] else ""))
-    outcomes = sorted({o["name"] for p in procs for o in graph["outcomes"] if o["id"] == p.get("outcome_id")})
-    beneficiaries = sorted({p.get("beneficiary") for p in procs if p.get("beneficiary")})
-    metrics = []
-    for m in graph["metrics"]:
-        if m.get("process_id") in proc_ids:
-            v, b = wl.metric_value(m, "baseline")
-            metrics.append(f"{m['name']}" + (f" (heute {v} {m.get('unit', '')}, {b})" if v is not None else ""))
-    tx = sorted(((t, task_weight(t)) for t in tasks), key=lambda x: (-x[1], x[0]["name"]))
-    first = [t["name"] for t, _ in tx[:3]]
-    L: list[str] = []
-    L += [f"# Kontextprofil — {role['name']}", "",
-          "Wer ist die Person in dieser Rolle, und wie arbeitet sie? Das ist der wichtigste Baustein: Ohne Kontext beginnt jedes Gespräch bei null. "
-          f"Zeilen mit „{GRAPH}“ stammen aus dem Arbeitsgraphen und sind nur so gut wie er; Zeilen mit „{OPEN}“ weiß der Graph nicht. "
-          "Die offenen Felder füllt das Interview in `interview-prompt.md` (Richtwert aus dem Playbook: rund 60 Minuten). Das Profil ist ein lebendes "
-          "Dokument und muss am Anfang nicht perfekt sein.", ""]
-    L += ["## 1. Unternehmen", "",
-          line("Organisation", meta.get("organization")), line("Bereich", meta.get("scope")), line("Sprache", meta.get("language")),
-          line("Geschäftsmodell", None), line("Kunden und Empfänger der Ergebnisse", ", ".join(beneficiaries)),
-          line("Produkte und Leistungen", None), line("Sprachgebrauch im Haus (Fachbegriffe, Anrede)", None), ""]
-    L += ["## 2. Rolle", "",
-          line("Rolle", role["name"]), line("Zweck", role.get("purpose")), line("Beschreibung", role.get("description")),
-          line("Jobcluster", cl.get("name")), line("Level", role.get("level")),
-          line("Reguliert", "ja — Ergebnisse müssen nachvollziehbar und begründet sein" if role.get("regulated") else "nein (Annahme, ggf. vom Fachexperten bestätigt)"),
-          "- **Verantwortung und Aufgaben** (nach Zeitanteil):"]
-    for t in tasks:
-        L.append(f"  - {t['name']} — {float(t.get('share_of_time') or 0):.0f} % _({GRAPH})_")
-    L += [line("Entscheidungsräume (wo ein Mensch entscheidet)", "; ".join(gates)),
-          line("Kern-Skills", "; ".join(skills_core)), ""]
-    L += ["## 3. Team und Schnittstellen", ""]
-    L.append(line("Zusammenarbeit mit anderen Rollen", "; ".join(partners)) if partners else f"- **Zusammenarbeit mit anderen Rollen:** {OPEN} (keine Prozess- oder Positionsdaten im Graphen)")
-    L += [line("Führungskraft und Ansprechpersonen (Namen)", None), line("Wer erhält meine Ergebnisse?", ", ".join(beneficiaries)), ""]
-    L += ["## 4. Ziele und Prioritäten", "",
-          line("Ergebnisse der Prozesse, in denen die Rolle arbeitet", "; ".join(outcomes)),
-          line("Gemessene oder geschätzte Kennzahlen", "; ".join(metrics)),
-          line("Wo Unterstützung sich zuerst lohnt (Zeitanteil × Automatisierbarkeit)", "; ".join(first)),
-          line("Persönliche Prioritäten dieses Quartals", None), line("Woran merkst du, dass es gut läuft?", None), ""]
-    L += ["## 5. Arbeits- und Kommunikationsweise", "",
-          line("Qualitätsverständnis (was ist ein gutes Ergebnis?)", None), line("Bevorzugte Formate (Tabelle, Stichpunkte, Fließtext, Länge)", None),
-          line("Tonalität", None), line("Wie viel Rückfrage ist gewünscht?", None),
-          line("Was soll der Agent nie ohne Rückfrage tun?", None), ""]
-    text = "\n".join(L) + "\n"
-    open_n = text.count(OPEN)
-    filled = text.count(GRAPH)
-    return text, filled, open_n
+    """Rollen.md für diese eine Rolle. Gleicher Text wie `build_rollen_md.py --role`, damit es eine Quelle gibt."""
+    return rm.compose(graph, [role], title=f"Rollen — {role['name']}")
 
 
 def interview_prompt(role: dict[str, Any], open_n: int) -> str:
-    return f"""# Interview: Kontextprofil für die Rolle „{role['name']}“
+    return f"""# Interview: Rollen.md für die Rolle „{role['name']}“
 
-Kopiere den Text unten in dein KI-Werkzeug, hänge `kontextprofil.md` an und beantworte die Fragen per Spracheingabe oder Text.
-Ein Durchlauf dauert erfahrungsgemäß rund eine Stunde. Im Profil sind {open_n} Felder offen.
+Kopiere den Text unten in dein KI-Werkzeug, hänge `Rollen.md` an und beantworte die Fragen per Spracheingabe oder Text.
+Ein Durchlauf dauert erfahrungsgemäß rund eine Stunde. In der Datei sind {open_n} Felder offen.
 
 ---
 
-Du bist mein Interviewer. Ich arbeite in der Rolle „{role['name']}“. Im Anhang steht ein Kontextprofil mit fünf Bereichen:
-Unternehmen, Rolle, Team und Schnittstellen, Ziele und Prioritäten, Arbeits- und Kommunikationsweise. Felder mit „❓ offen“ fehlen noch.
+Du bist mein Interviewer. Ich arbeite in der Rolle „{role['name']}“. Im Anhang steht meine Rollen.md mit fünf Abschnitten:
+1) Firmenprofil, 2) Rollenprofil, 3) Team-Kontext, 4) Prioritäten & Ziele, 5) Arbeits- & Kommunikationsstil. Felder mit „❓ offen“ fehlen noch.
 
 Regeln:
-1. Stelle genau eine Frage auf einmal, und zwar zu einem offenen Feld. Beginne mit dem Bereich, der am meisten fehlt.
+1. Stelle genau eine Frage auf einmal, und zwar zu einem offenen Feld. Beginne mit dem Abschnitt, der am meisten fehlt.
 2. Frage nach, wenn eine Antwort vage ist („Woran würdest du das merken?“, „Kannst du ein Beispiel aus der letzten Woche nennen?“).
 3. Erfinde nichts. Wenn ich etwas nicht weiß, schreibe „offen“ und frage später noch einmal.
 4. Gib mir keine Ratschläge, solange das Interview läuft. Sammle nur.
-5. Widerspricht eine Antwort dem, was schon im Profil steht (Zeilen mit „✓ Graph“), sag es mir und frage, was gilt. Ändere Graph-Zeilen nicht ohne meine Bestätigung.
-6. Am Ende: Gib mir das vollständige Profil in derselben Gliederung zurück. Lass „❓ offen“ stehen, wo ich keine Antwort hatte, und liste die noch offenen Felder am Schluss auf.
+5. Widerspricht eine Antwort dem, was schon dasteht (Zeilen mit „✓ Graph“), sag es mir und frage, was gilt. Ändere Graph-Zeilen nicht ohne meine Bestätigung. Zeilen mit „abgeleitet“ sind Vorschläge: Frage, ob sie stimmen.
+6. Bei Abschnitt 5 frage nach echten Beispielen: ein Text, den ich selbst geschrieben habe und gut finde; eine Formulierung, die ich nie schreiben würde.
+7. Am Ende: Gib mir die vollständige Rollen.md in derselben Gliederung zurück. Lass „❓ offen“ stehen, wo ich keine Antwort hatte, und liste die noch offenen Felder am Schluss auf.
 
 Beginne jetzt mit der ersten Frage.
 """
@@ -285,7 +214,7 @@ def generic_skill_md(graph: dict[str, Any], role: dict[str, Any], g: dict[str, A
               "Trage das Ergebnis hier ein (Leitfaden: `references/interview-leitfaden.md` im Skill work-graph-builder).", ""]
     L += ["## Eingaben und Ausgaben", "", "Eingaben:", es._bullets(inputs) if inputs else f"- {OPEN}", "", "Ausgaben:", es._bullets(outputs) if outputs else f"- {OPEN}", "",
           "## Systeme", "", es._bullets(systems) if systems else f"- {OPEN}", "", "## Qualitätskriterien", ""]
-    L += [f"- {c}" for c in crit] + [f"- {OPEN}: Woran erkennst du ein gutes Ergebnis? (Format, Detailgrad, Tonalität — siehe Kontextprofil, Bereich 5)", ""]
+    L += [f"- {c}" for c in crit] + [f"- {OPEN}: Woran erkennst du ein gutes Ergebnis? (Format, Detailgrad, Tonalität — siehe Rollen.md, Bereich 5)", ""]
     L += ["## Wo ein Mensch entscheidet", "", es._bullets(gates) if gates else f"- {OPEN}: Welche Entscheidung gehört nie an den Agenten?", "",
           "## Status", "", "**Entwurf, ungetestet.** Einsetzen erst nach mindestens fünf echten Testfällen und zwei bis drei Testschleifen (`evals/`). "
           "Eine Automatisierung (Zeitplan oder Ereignis) kommt erst danach.", ""]
@@ -371,13 +300,13 @@ und prüfst, was du lieferst. Dieser Prompt steuert nur die Zusammenarbeit. Aufg
 
 ## Vor jeder Arbeit
 
-1. Lade `kontext/kontextprofil.md`. Fehlt dir Kontext, den du brauchst, frage nach. Rate nicht.
+1. Lade `kontext/Rollen.md`. Fehlt dir Kontext, den du brauchst, frage nach. Rate nicht.
 2. Ordne die Aufgabe ein: Gehört sie zu einem Skill aus der Liste unten? Dann lade ihn und halte dich daran.
 3. Gibt es keinen passenden Skill, hilf im Chat und frage am Ende, ob daraus ein Skill werden soll, wenn die Aufgabe wiederkehrt.
 
 ## Nach jeder Arbeit
 
-4. Prüfe das Ergebnis gegen die Qualitätskriterien des Skills und gegen das Kontextprofil (Format, Tonalität). Benenne Abweichungen, statt sie zu glätten.
+4. Prüfe das Ergebnis gegen die Qualitätskriterien des Skills und gegen die Rollen.md (Format, Tonalität). Benenne Abweichungen, statt sie zu glätten.
 5. Wo laut Skill ein Mensch entscheidet, entscheidest du nicht. Du bereitest vor und übergibst.
 
 ## Grenzen
@@ -484,7 +413,7 @@ Nach dem Aufbau beginnt die eigentliche Lernphase. Ohne Pflege bleibt das Setup 
 
 - [ ] Neue wiederkehrende Aufgabe → neuer Skill (einzeln, nicht im Akkord).
 - [ ] Skill nicht mehr gebraucht → entfernen.
-- [ ] Neue Prioritäten, Rollenwechsel, andere Qualitätsanforderungen → Kontextprofil anpassen.
+- [ ] Neue Prioritäten, Rollenwechsel, andere Qualitätsanforderungen → Rollen.md anpassen.
 - [ ] Meeting-Transkripte und Projektdokumente nach und nach als Kontext ergänzen.
 
 ## Wenn Informationen sich widersprechen
@@ -503,13 +432,13 @@ def readme(role: dict[str, Any], skills: list[dict[str, Any]], filled: int, open
     L = [f"# Setup-Paket — {role['name']}", "",
          "Ein Startpunkt für einen persönlichen Arbeitsagenten. Aus dem Arbeitsgraphen vorbelegt ist, was der Graph weiß; alles andere steht als „❓ offen“. "
          "Nichts hier ist getestet, freigegeben oder aktiv.", "",
-         f"Vorbelegt: {filled} Zeilen aus dem Graphen · Offen im Kontextprofil: {open_n} Felder · Skills: {len(skills)} (alle im Entwurf) · Systeme: {tool_rows}", ""]
+         f"Vorbelegt: {filled} Zeilen aus dem Graphen · Offen in der Rollen.md: {open_n} Felder · Skills: {len(skills)} (alle im Entwurf) · Systeme: {tool_rows}", ""]
     if note:
         L += [f"**Hinweis:** {note}", ""]
     L += ["## Reihenfolge", "",
           "Richtwert aus dem Playbook: rund vier konzentrierte Stunden für das Grundsetup. Das ist eine Schätzung des Autors, keine Messung.", "",
           "| # | Schritt | Datei | Richtwert |", "|---|---|---|---|",
-          "| 1 | Kontextprofil per Interview vervollständigen | `kontext/interview-prompt.md` → `kontext/kontextprofil.md` | ca. 60 Min |",
+          "| 1 | Rollen.md per Interview vervollständigen | `kontext/interview-prompt.md` → `kontext/Rollen.md` | ca. 60 Min |",
           "| 2 | Agenten einrichten: Systemprompt einfügen, Profil ablegen, wo er es lesen und aktualisieren kann | `agent/systemprompt.md` | ca. 30 Min |",
           "| 3 | Ersten Skill mit echten Fällen testen, zwei bis drei Schleifen | `skills/<skill>/evals/` | ca. 90 Min |",
           "| 4 | Systeme prüfen lassen und lesend anbinden | `tools/anbindungen.md` | je nach Freigabe |",
@@ -572,7 +501,7 @@ def build_package(graph: dict[str, Any], role: dict[str, Any], n_skills: int) ->
                            "tasks": ", ".join(t["name"] for t in g["tasks"]), "origin": origin,
                            "time": TIME_TRIGGER.get(top), "event": trig})
     kp, filled, open_n = kontextprofil(graph, role, groups)
-    files["kontext/kontextprofil.md"] = kp
+    files["kontext/Rollen.md"] = kp
     files["kontext/interview-prompt.md"] = interview_prompt(role, open_n)
     files["agent/systemprompt.md"] = systemprompt(graph, role, skill_meta)
     tools_md, tool_rows = tool_table(graph, role, groups)

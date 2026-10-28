@@ -4,6 +4,29 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.6.0] — Rollen.md für ein oder mehrere Rollen
+
+Ein Agenten-Harness braucht eine Datei, in der geklärt ist, wer hier arbeitet. Diese Version erzeugt sie aus dem Arbeitsgraphen — für eine Rolle oder
+für mehrere ausgewählte.
+
+### Neu
+
+- **`build_rollen_md.py`** (agent-mapper): `--role` (mehrfach oder `A;B`), `--all`, `--split`. Eine `Rollen.md` mit den Abschnitten 1) Firmenprofil
+  (einmal), 2) Rollenprofil, 3) Team-Kontext, 4) Prioritäten & Ziele, 5) Arbeits- & Kommunikationsstil (je Rolle).
+- **Zeitfresser** im Rollenprofil: größte gebundene Zeit, Reibung aus der Prozessaufnahme (`pain`), längste Liegezeit und meiste Rückläufer.
+- **Kanäle im Team-Kontext:** Übergaben mit Richtung und Art (System, E-Mail, Ticket, Telefon, Meeting), dazu Eskalationen und Organisationseinheit.
+- **Herkunft je Zeile:** „✓ Graph“, „✓ abgeleitet — bitte bestätigen“ oder „❓ offen“. Prioritäten, Tonalität, Do's und Don'ts werden nicht erfunden.
+- Schutz bearbeiteter Dateien auch hier (`.vorschlag`).
+
+### Geändert
+
+- Das Setup-Paket nutzt dieselbe Rollen.md (`kontext/Rollen.md` statt `kontext/kontextprofil.md`); Interview-Prompt und Prüfung entsprechend angepasst.
+
+### Grenzen
+
+- Der Graph beschreibt eine Rolle, keine Person. Abschnitte 4 und 5 sind überwiegend offen, bis jemand sie im Gespräch füllt.
+- Zeitfresser aus den Daten sind Hinweise aus Aufgabenanteilen und Prozessmessungen, keine Selbstauskunft.
+
 ## [0.5.0] — Rollen-Setup auf Zuruf
 
 Eine Analyse sagt, welche Aufgaben sich lohnen. Diese Version baut daraus für eine bestimmte Rolle das, was eine Person tatsächlich benutzt: ein Setup-Paket für einen

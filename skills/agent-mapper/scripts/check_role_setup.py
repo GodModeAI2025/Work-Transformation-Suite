@@ -13,7 +13,7 @@ Je Skill ein Reifegrad:
 Dazu die Regeln des Playbooks als Prüfungen:
 - Der Systemprompt ist schlank (Zeilen- und Zeichengrenze). Ein überladener Prompt macht Ergebnisse unklarer.
 - Routinen sind nur für live-reife Skills aktiv. Erst erweitern, dann automatisieren.
-- Das Kontextprofil nennt, wie viele Felder noch offen sind.
+- Die Rollen.md nennt, wie viele Felder noch offen sind.
 - Jeder Skill hat gültigen Frontmatter und ein Testfallgerüst.
 - Die Tool-Tabelle gibt keine Freigabe, solange dort „offen“ steht.
 
@@ -76,16 +76,16 @@ def check(package: Path) -> tuple[list[str], list[str], list[dict[str, Any]], di
     skills_out: list[dict[str, Any]] = []
     summary: dict[str, Any] = {}
 
-    for rel in ("README.md", "kontext/kontextprofil.md", "agent/systemprompt.md", "tools/anbindungen.md", "routinen/routinen.json", "pflege/pflege.md"):
+    for rel in ("README.md", "kontext/Rollen.md", "agent/systemprompt.md", "tools/anbindungen.md", "routinen/routinen.json", "pflege/pflege.md"):
         if not (package / rel).exists():
             problems.append(f"{rel} fehlt")
 
-    prof = package / "kontext" / "kontextprofil.md"
+    prof = package / "kontext" / "Rollen.md"
     if prof.exists():
         n_open = prof.read_text(encoding="utf-8").count(OPEN)
         summary["open_fields"] = n_open
         if n_open:
-            notes.append(f"Kontextprofil: {n_open} Felder noch offen (Interview in kontext/interview-prompt.md)")
+            notes.append(f"Rollen.md: {n_open} Felder noch offen (Interview in kontext/interview-prompt.md)")
 
     sp = package / "agent" / "systemprompt.md"
     if sp.exists():
