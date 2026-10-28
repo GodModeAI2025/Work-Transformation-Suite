@@ -130,6 +130,12 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       findet eine Aufgabenanalyse fünf automatisierbare Aufgaben. Ein Redesign streicht vier
       Prüfungen und drei Übergaben — und der Rest braucht gar keinen Agenten mehr.
     </p>
+    <p class="lead">
+      Seit 0.3 kommen drei Dinge dazu, die in der Praxis über Erfolg entscheiden: die Unterscheidung
+      zwischen technisch möglich und tatsächlich auffangbar, eine Datenaufbereitung, die Quellen sichtet
+      und Methoden vorschlägt, statt still zu rechnen, und ein Setup-Paket für einen persönlichen
+      Arbeitsagenten, das auf Zuruf für genau eine Rolle entsteht.
+    </p>
     <div class="cta">
       <a class="btn btn-primary" href="https://github.com/GodModeAI2025/Work-Transformation-Suite">Repository auf GitHub</a>
       <a class="btn btn-ghost" href="https://github.com/GodModeAI2025/Work-Transformation-Suite#installation">Anleitung lesen</a>
@@ -225,9 +231,55 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
    ▼  score_processes.py    → Prioritätsbänder mit Sensitivität
    │  Claude plant Piloten  → 20_graph/experiments.json
    ▼  make_experiments.py · compare_scenarios.py · apply_governance.py
-   ▼  build_dashboard.py    → 40_output/dashboard.html, CSV, report.md</div>
+   ▼  build_dashboard.py    → 40_output/dashboard.html, CSV, report.md, HR- und IT-Bericht
+
+Optional, auf Zuruf oder bei Bedarf:
+   inventory_sources.py      → Quellen sichten, Methoden vorschlagen
+   check_completeness.py · dedupe_tasks.py · derive_collaboration.py · import_levels.py
+   build_target_roles.py     → Zielbild je Rolle (Entwurf)
+   import_usecases.py · import_adoption.py · export_reach.py
+   build_role_setup.py       → Setup-Paket für einen Arbeitsagenten je Rolle</div>
     <div class="note">
       <p><code>python3 skills/work-transformation/scripts/run_pipeline.py --project projekte/kundenservice</code> führt alle Skript-Schritte hintereinander aus. Fehlt eine Claude-Eingabe, stoppt der Lauf mit Exit-Code 3 und einer klaren Meldung. Derselbe Befehl ist das „weiter machen“ nach jeder Korrektur.</p>
+    </div>
+  </div>
+</section>
+
+<section id="neu">
+  <div class="wrap">
+    <h2>Neu seit 0.3</h2>
+    <p class="sub">Alles optional und additiv. Ein Projekt, das nichts davon füttert, läuft unverändert; Schema 1.0 und 1.1 hebt <code>migrate_graph.py</code> verlustfrei auf 1.2.</p>
+    <div class="grid g3">
+      <div class="card">
+        <p class="num">KAPAZITÄT</p>
+        <h3>Technisch möglich, auffangbar</h3>
+        <p>Je Rolle zwei Zahlen: Was die Bewertung technisch frei setzt, und was die Organisation durch Wachstum, Fluktuation oder Umbesetzung auffangen kann. Fehlt die Angabe, steht „nicht bewertet“ — nie null. Dazu ein Zielbild je Rolle, ausdrücklich als Entwurf.</p>
+      </div>
+      <div class="card">
+        <p class="num">AUFGABENKARTE</p>
+        <h3>Welche Aufgabe zuerst?</h3>
+        <p>Alle bewerteten Aufgaben quer über alle Rollen auf einer Karte, Größe nach gebundener Arbeit, Farbe nach Modus. Die Rangliste ordnet nach Exposition; die Fehlerfolge steht daneben, denn „am besten automatisierbar“ ist nicht „sicher delegierbar“.</p>
+      </div>
+      <div class="card">
+        <p class="num">DATENAUFBEREITUNG</p>
+        <h3>Sichten, vorschlagen, anbieten</h3>
+        <p>Das Quelleninventar ordnet <code>00_input/</code> Quellenarten zu, zeigt die Lücken im Modell und schlägt Methoden mit Befehl vor: Vollständigkeitsprüfung gegen eine anpassbare Vorlage, Aufgabencluster über Rollen, Zusammenarbeit aus Prozessen und Positionen, allgemeine Regeln, Level und Kostensatz, Referenzautomatisierungen mit Quelle und Evidenzgrad. Nichts füllt Lücken still auf.</p>
+      </div>
+      <div class="card">
+        <p class="num">ROLLEN-SETUP</p>
+        <h3>Ein Arbeitsagent für genau diese Rolle</h3>
+        <p>Auf Zuruf entsteht ein Paket: Kontextprofil (vorbelegt aus dem Graphen, der Rest „offen“), Interview-Prompt, schlanker Agenten-Prompt, drei bis fünf Skills mit Testfall-Gerüst, Tool-Tabelle, inaktive Routinen. Reifegrade von Entwurf bis live-reif; eine Routine nur für live-reife Skills. Erst erweitern, dann automatisieren.</p>
+      </div>
+      <div class="card">
+        <p class="num">NUTZUNG</p>
+        <h3>Reichweite, Blindflecken, Nutzungsstand</h3>
+        <p>Für wie viele Rollen und FTE gilt ein Agent? Welche hochwertigen Prozesse hat niemand angefragt? Der Nutzungsstand kommt nur aggregiert je Rolle und Agent; unter fünf Stellen wird nichts gezeigt, und der Validator lehnt jeden Satz darunter ab.</p>
+      </div>
+      <div class="card">
+        <p class="num">KEIN KI-FALL</p>
+        <h3>Nicht jeder Schritt braucht KI</h3>
+        <p>Wer 84 PDFs von Hand öffnet, braucht eine Schnittstelle, kein Sprachmodell. Jeder Soll-Schritt trägt eine Lösungsklasse, der Szenarienvergleich zählt die Schritte ohne KI. Dazu ein Interviewleitfaden und die Regel, den Rahmen vor dem Gespräch zu klären.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -270,7 +322,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 <section id="ehrlichkeit">
   <div class="wrap">
     <h2>Sagt, wie belastbar das Ergebnis ist</h2>
-    <p class="sub">Sechs Vorkehrungen, damit aus einer Analyse kein Scheinergebnis wird.</p>
+    <p class="sub">Acht Vorkehrungen, damit aus einer Analyse kein Scheinergebnis wird.</p>
     <div class="grid g2">
       <div class="card">
         <h3>Belastbarkeit je Rolle</h3>
@@ -295,6 +347,14 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <div class="card">
         <h3>Bänder statt Rangliste</h3>
         <p>Prozesse landen in „Jetzt“, „Als Nächstes“, „Später“ oder „Zurückstellen“. Zu jedem wird geprüft, ob das Band schon kippt, wenn ein einzelner Faktor um ±1 danebenliegt. Wenn ja, steht das im Dashboard — eine Reihenfolge auf zwei Nachkommastellen wäre hier eine Lüge.</p>
+      </div>
+      <div class="card">
+        <h3>„Nicht bewertet“ ist nicht „null“</h3>
+        <p>Wo die Angabe fehlt, wie frei werdende Kapazität aufgefangen wird, bleibt die Zahl leer und steht als „nicht bewertet“ im Bericht. Eine stille Null würde das Potenzial schönrechnen oder wegrechnen.</p>
+      </div>
+      <div class="card">
+        <h3>Kandidaten, bis jemand mit Namen bestätigt</h3>
+        <p>Aufgabencluster, Agentenvorschläge und Referenzen sind Heuristiken. Sie bleiben „Kandidat“ oder „heuristic“, bis ein Fachexperte sie mit Namen bestätigt. Eine Referenz ohne Quelle wird nicht geführt.</p>
       </div>
     </div>
   </div>
@@ -343,12 +403,13 @@ python3 skills/work-graph-builder/scripts/init_project.py \
     <ul class="plain">
       <li>Kein Freigabeworkflow mit Rollen und Rechten. Freigaben sind ein nachvollziehbares Log mit Name, Datum und Begründung — mehr nicht.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
+      <li>Das Rollen-Setup ist ein Startpunkt: ungetestet, ohne Systemfreigabe, ohne Aussage zur Zeitersparnis. Kontext, den der Graph nicht kennt, bleibt „offen“, und die Testfälle sind Gerüste, bis jemand echte einträgt.</li>
       <li>Keine Telemetrie der Agentennutzung, keine Prozess-Mining-Anbindung. Nutzung kennt die Suite nur als aggregierten Stand je Rolle und Agent, mit Mindestgruppe von fünf Stellen.</li>
       <li>Ein umbenannter Task bekommt eine neue ID und verliert Bewertung und Overrides. Namen also stabil halten.</li>
       <li><b>Ein Soll-Prozess aus Interviews und Stellenbeschreibungen ist ein Entwurf, keine Prognose.</b> Aus Rollendaten allein lässt sich kein Unternehmen verlässlich „neu bauen“. Dafür braucht es Prozessbeobachtungen, Systemdaten und gemessene Ausgangswerte.</li>
     </ul>
     <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:16px 0 0">
-      Für die ersten drei Punkte verkaufen kommerzielle Plattformen ihr Produkt. Für die Frage,
+      Für die Punkte zu Integration, Telemetrie und Prozess-Mining verkaufen kommerzielle Plattformen ihr Produkt. Für die Frage,
       ob eine solche Analyse für einen Bereich überhaupt belastbare Ergebnisse liefert, reicht die
       Suite. Bis über 200 Rollen ist sie bisher gelaufen. Und wo Zahlen geschätzt sind, steht das
       dran — in jeder Ausgabe.
