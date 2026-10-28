@@ -407,6 +407,29 @@ Suite bietet sie an und wählt nicht still. Katalog mit Eingaben, Ergebnissen un
 Ehrlich zu den Grenzen: Die Aufgabencluster beruhen auf gleichen Wörtern, nicht auf gleicher Bedeutung. Die Suite scrapt keine öffentlichen
 Daten und füllt keine Lücken still auf; was sie nicht aus einer Quelle hat, bleibt „ergänzt“ oder „geschätzt“.
 
+### Setup-Paket je Rolle: ein Arbeitsagent auf Zuruf
+
+Die Analyse sagt, welche Aufgaben sich lohnen. Eine Person braucht außerdem etwas, das sie am Montagmorgen öffnen kann. Auf Zuruf („Baue das Setup für
+den Forderungsmanager“) erzeugt `build_role_setup.py` für genau diese Rolle ein Paket nach der Struktur eines persönlichen KI-Setups:
+
+| Datei | Inhalt | Woher |
+|---|---|---|
+| `kontext/kontextprofil.md` | Fünf Bereiche: Unternehmen, Rolle, Team und Schnittstellen, Ziele und Prioritäten, Arbeitsweise | vorbelegt aus dem Graphen, Rest „❓ offen“ |
+| `kontext/interview-prompt.md` | Interview, das die offenen Felder füllt; verbietet Erfinden | eigener Text |
+| `agent/systemprompt.md` | Schlank: Kontext laden, einordnen, Skill wählen, prüfen, bei Lücke fragen. Keine Aufgaben | eigener Text |
+| `skills/<skill>/` | Drei bis fünf Skills nach Zeitanteil × Automatisierbarkeit, mit `evals/cases.json` (mindestens fünf Fälle) und Testprotokoll | Capability Contract oder Aufgabendaten |
+| `tools/anbindungen.md` | Systeme der Rolle, Datenklassen, Zugriff; Freigabe „offen“ | Graph |
+| `routinen/routinen.json` | Zeit- und ereignisbasierte Vorschläge, **alle inaktiv** | Graph |
+| `pflege/pflege.md` | Wie das Setup lebendig bleibt | eigener Text |
+
+`check_role_setup.py` sagt, wie weit ein Paket ist: **entwurf** (unter fünf echten Testfällen), **im Test**, **live-reif** (fünf echte Fälle, zwei Schleifen,
+alle bestanden). Eine Routine darf nur für live-reife Skills aktiv sein; sonst meldet `--strict` einen Fehler. Erst erweitern, dann automatisieren.
+
+Was das Paket nicht ist: Es ist ungetestet, ohne Freigabe von Systemzugriffen und ohne Aussage zur Zeitersparnis. Kontext, den der Graph nicht kennt
+(Geschäftsmodell, Prioritäten, was „gut“ heißt), bleibt offen, bis jemand ihn nennt. Die Testfälle sind Gerüste; echte Fälle trägt der Nutzer ein. Ein erneuter
+Lauf überschreibt keine bearbeitete Datei, der neue Stand liegt als `.vorschlag` daneben. Begründung und Grenzen:
+`skills/agent-mapper/references/rollen-setup.md`.
+
 ### Zwei Berichte, ein Graph
 
 Das Dashboard schreibt neben `report_vNNN.md` zwei Fassungen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — in der Sprache

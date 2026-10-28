@@ -4,6 +4,28 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.5.0] — Rollen-Setup auf Zuruf
+
+Eine Analyse sagt, welche Aufgaben sich lohnen. Diese Version baut daraus für eine bestimmte Rolle das, was eine Person tatsächlich benutzt: ein Setup-Paket für einen
+persönlichen Arbeitsagenten, nach der Struktur Kontextprofil, zentraler Agent, Skills mit Testfällen, Tool-Anbindungen, Routinen.
+
+### Neu
+
+- **`build_role_setup.py`** (agent-mapper): `--list`, `--role "<Name>"`, `--all`, `--skills n`. Erzeugt `40_output/rollen_setup/<rolle>/` mit Kontextprofil
+  (vorbelegt aus dem Graphen, Rest „offen“), Interview-Prompt, schlankem Agenten-Prompt, drei bis fünf Skills mit Testfall-Gerüst und Protokoll, Tool-Tabelle,
+  inaktiven Routinen, Pflegeleitfaden und Manifest.
+- **`check_role_setup.py`**: Reifegrade je Skill (`entwurf`, `im Test`, `live-reif`), Längengrenze für den Systemprompt, aktive Routinen nur für live-reife Skills
+  (`--strict`).
+- **Schutz bearbeiteter Dateien:** Ein erneuter Lauf überschreibt nichts, was jemand geändert hat; der neue Stand liegt als `.vorschlag` daneben.
+- `references/rollen-setup.md`: Prinzipien, Umsetzung, was aus dem Graphen kommt und was nicht, Grenzen.
+- `collaboration_pairs` wanderte in die gemeinsame Bibliothek (von `derive_collaboration.py` und dem Rollen-Setup genutzt).
+
+### Grenzen
+
+- Das Paket ist ein Startpunkt: ungetestet, ohne Systemfreigabe, ohne Aussage zur Zeitersparnis.
+- Die Testfälle sind Gerüste. Echte Fälle (`real_data: true`) kann nur der Nutzer eintragen.
+- Kontext, den der Graph nicht kennt, wird nicht erfunden.
+
 ## [0.4.0] — Datenaufbereitung
 
 Gute Analysen hängen mehr an der Aufbereitung als am Modell. Diese Version bringt die Methoden, die sich in der Praxis bewährt haben,

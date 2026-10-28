@@ -212,3 +212,9 @@ du es von jemandem hast, der es wissen kann. Der Validator warnt sonst.
 
 **Realisierbar ist nicht technisch.** Nenne beide Zahlen. Fehlt die Angabe, wie frei werdende Kapazität aufgefangen wird,
 sag „nicht bewertet“, nicht „null“.
+
+## Rollen-Setup auf Zuruf
+
+Fragt der Nutzer nach einem Arbeitsagenten für eine bestimmte Rolle (Kontextprofil, Skills, Testfälle, Tools, Routinen), nutze `agent-mapper/scripts/build_role_setup.py`
+(Details im SKILL.md des agent-mapper). Voraussetzung ist ein bewerteter Graph. Das Paket ist ein Startpunkt: Kontext, der nicht im Graphen steht, bleibt „offen“, und
+Skills sind erst nach fünf echten Testfällen und zwei Schleifen einsatzbereit.

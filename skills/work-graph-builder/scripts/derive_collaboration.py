@@ -33,60 +33,9 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import workgraph_lib as wl  # noqa: E402
 
-HANDOVER_LABEL = {"none": "keine", "system": "System", "document": "Dokument", "email": "E-Mail", "ticket": "Ticket",
-                   "call": "Telefon", "meeting": "Meeting"}
-W_HANDOVER, W_POSITION, W_UNIT = 3, 2, 1
-
-
-def derive(graph: dict[str, Any]) -> list[dict[str, Any]]:
-    roles = wl.index_by_id(graph["roles"])
-    steps = wl.index_by_id(graph.get("process_steps", []))
-    pairs: dict[tuple[str, str], dict[str, Any]] = {}
-
-    def entry(a: str, b: str) -> dict[str, Any]:
-        key = (a, b) if a < b else (b, a)
-        return pairs.setdefault(key, {"a": key[0], "b": key[1], "handovers": 0, "types": {}, "processes": set(),
-                                      "positions": set(), "units": set()})
-
-    for e in graph.get("process_edges", []):
-        s1, s2 = steps.get(e.get("from_step_id")), steps.get(e.get("to_step_id"))
-        if not s1 or not s2:
-            continue
-        r1, r2 = s1.get("role_id"), s2.get("role_id")
-        if r1 in roles and r2 in roles and r1 != r2:
-            p = entry(r1, r2)
-            p["handovers"] += 1
-            ht = e.get("handover") or "none"
-            p["types"][ht] = p["types"].get(ht, 0) + 1
-            p["processes"].add(e.get("process_id"))
-    processes = wl.index_by_id(graph.get("processes", []))
-    units: dict[str, set[str]] = {}
-    for pos in graph.get("positions", []):
-        rids = sorted(rs["role_id"] for rs in pos.get("role_shares", []) if rs["role_id"] in roles)
-        for i in range(len(rids)):
-            for j in range(i + 1, len(rids)):
-                entry(rids[i], rids[j])["positions"].add(pos.get("position_id") or pos["id"])
-        if pos.get("org_unit"):
-            units.setdefault(pos["org_unit"], set()).update(rids)
-    for unit, rids in units.items():
-        rl = sorted(rids)
-        for i in range(len(rl)):
-            for j in range(i + 1, len(rl)):
-                entry(rl[i], rl[j])["units"].add(unit)
-
-    out = []
-    for p in pairs.values():
-        strength = W_HANDOVER * p["handovers"] + W_POSITION * len(p["positions"]) + W_UNIT * len(p["units"])
-        out.append({
-            "role_a": roles[p["a"]]["name"], "role_b": roles[p["b"]]["name"], "role_a_id": p["a"], "role_b_id": p["b"],
-            "handovers": p["handovers"],
-            "handover_types": ", ".join(f"{HANDOVER_LABEL.get(k, k)} {v}×" for k, v in sorted(p["types"].items())),
-            "processes": "; ".join(sorted(processes[x]["name"] for x in p["processes"] if x in processes)),
-            "shared_positions": len(p["positions"]), "shared_units": "; ".join(sorted(p["units"])),
-            "strength": strength,
-        })
-    out.sort(key=lambda r: (-r["strength"], r["role_a"], r["role_b"]))
-    return out
+HANDOVER_LABEL = wl.COLLAB_HANDOVER_LABEL
+W_HANDOVER, W_POSITION, W_UNIT = wl.COLLAB_W_HANDOVER, wl.COLLAB_W_POSITION, wl.COLLAB_W_UNIT
+derive = wl.collaboration_pairs
 
 
 def render(rows: list[dict[str, Any]], graph: dict[str, Any]) -> str:
