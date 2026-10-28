@@ -349,3 +349,41 @@ class TestMigration12(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+tv = load("transformation-dashboard", "task_views")
+
+
+class TestTaskView(unittest.TestCase):
+    def test_all_scored_tasks_appear_ranked_by_exposure(self):
+        g = example_graph()
+        items, unit = tv.rows(g)
+        self.assertEqual(len(items), len([t for t in g["tasks"] if t.get("scores")]))
+        self.assertEqual(unit, "FTE")
+        html, script, nav = tv.section(g, {"manual": "#111", "ai_assisted": "#222", "agent_delegated": "#333"},
+                                       {"manual": "manuell", "ai_assisted": "KI", "agent_delegated": "Agent"}, {})
+        self.assertEqual(nav, "#aufgaben")
+        self.assertIn("nach Exposition", html)
+        self.assertIn("window.__TASKS__", script)
+
+    def test_exposure_and_consequence_are_separate_columns(self):
+        items, _ = tv.rows(example_graph())
+        costly = [i for i in items if i["caution"]]
+        self.assertTrue(costly, "Das Beispiel enthält automatisierbare Aufgaben mit teurer Fehlerfolge")
+        self.assertTrue(all(i["coe"] >= tv.CAUTION_COE for i in costly))
+
+    def test_without_complete_headcounts_everything_is_percent(self):
+        g = example_graph()
+        g["roles"][0].pop("headcount", None)
+        g["roles"][0].pop("headcount_from_positions", None)
+        _, unit = tv.rows(g)
+        self.assertNotEqual(unit, "FTE", "FTE und Prozent dürfen nicht gemischt verglichen werden")
+
+    def test_overlapping_scores_are_spread_deterministically(self):
+        items = [{"id": f"ta_{i}", "ap": 8.0, "hj": 2.0} for i in range(4)]
+        a, b = tv._spread(items), tv._spread(list(reversed(items)))
+        self.assertEqual(a, b)
+        self.assertEqual(len(set(a.values())), 4)
+
+    def test_no_scored_tasks_means_no_section(self):
+        self.assertEqual(tv.section(wl.empty_graph(), {}, {}, {}), ("", "", ""))

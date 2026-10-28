@@ -96,6 +96,11 @@ Wer das Layout ändern will, ändert `CSS`, `JS` oder die Bausteinfunktionen in
 
 ## Ab Schema 1.2
 
+Die **Aufgabenkarte** zeigt alle bewerteten Aufgaben quer über alle Rollen: Automatisierungspotenzial gegen Urteil, Größe nach
+gebundener Arbeit (FTE, sonst Prozent), Farbe nach Modus, schwarzer Rand bei teurer Fehlerfolge. Darunter die Rangliste nach
+Exposition (Potenzial ÷ 10 × gebundene Arbeit). **Exposition und Fehlerfolge sind getrennte Spalten:** Was am meisten Arbeit bindet
+und gut automatisierbar ist, ist nicht automatisch das, was man delegieren sollte.
+
 Das Dashboard zeigt zusätzlich, sobald Daten vorliegen: **Kapazität** (technisch gegenüber auffangbar je Jobfamilie), **Zielbild** je
 Rolle, **Nutzungsstand** je Rolle und Agent (unterdrückt unter 5 Stellen) sowie **Reichweite und Blindflecken**. Die Agentenbibliothek
 zeigt den Evidenzgrad.

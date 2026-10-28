@@ -381,6 +381,12 @@ eigenen Ersetzung führen können, antwortet vorsichtig, und die Datenlage wird 
 eine Nutzungsmeldung, die nur Zählwerte schickt. Es ist ein Gerüst: Die Systemaufrufe sind `TODO`, die Testmenge leer.
 Eine Skill-Anweisung allein ist ein Prompt; was deterministisch sein soll, gehört in ein Skript.
 
+### Aufgabenkarte
+
+Neben der Rollenmatrix zeigt das Dashboard alle bewerteten Aufgaben auf einer Karte und in einer Rangliste. Die Rangliste
+sortiert nach **Exposition** (Automatisierungspotenzial ÷ 10 × gebundene Arbeit), die **Fehlerfolge** steht daneben. Eine
+Aufgabe mit hoher Exposition und hoher Fehlerfolge bekommt den Hinweis „Fehler teuer“: Dort gehört ein Mensch in den Ablauf.
+
 ### Zwei Berichte, ein Graph
 
 Das Dashboard schreibt neben `report_vNNN.md` zwei Fassungen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — in der Sprache

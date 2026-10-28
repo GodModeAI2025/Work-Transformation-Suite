@@ -45,6 +45,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import workgraph_lib as wl  # noqa: E402
 import capacity_views as cv  # noqa: E402
+import task_views as tv  # noqa: E402
 
 TYPE_ORDER = ["eliminated", "transformed", "augmented", "emerging", "stable", "unscored"]
 TYPE_LABEL = {
@@ -237,7 +238,7 @@ th{background:#f5f2ef;color:var(--ink2);font-weight:600;position:sticky;top:46px
 .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.col{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
 .col h4{margin:0 0 8px;font-size:15px;color:var(--primary);font-family:var(--f-head)}.col ul{margin:0;padding-left:18px;font-size:13px}.col li{margin:3px 0}
 footer{padding:20px 32px;color:var(--ink3);font-size:12px;border-top:1px solid var(--line)}
-.hidden{display:none!important}.nojs{margin:6px 0 10px;padding:8px 12px;border:1px solid #E6B800;background:#FFF8DB;border-radius:6px;font-size:13px;color:#5a4a00}
+.scroller{overflow-x:auto}.tdot{cursor:pointer}.tdot:hover circle{stroke:var(--ink)}.hidden{display:none!important}.nojs{margin:6px 0 10px;padding:8px 12px;border:1px solid #E6B800;background:#FFF8DB;border-radius:6px;font-size:13px;color:#5a4a00}
 /* Szenarien umschalten ohne JavaScript: verborgene Radios steuern über
    :checked ~ die Sichtbarkeit der zugehörigen Tafel. Die Radios bleiben
    fokussierbar, damit die Umschaltung auch per Tastatur funktioniert. */
@@ -1003,6 +1004,10 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
         governance_section = ""
         roles_intro = ("Sortiert nach Disruptionsscore. Je Rolle: Zeitverteilung, "
                        "Transformationslogik, nächster Schritt, Kennwerte, Skills und Aufgaben.")
+    task_html, task_js, task_nav = tv.section(graph, MODE_COLOR, MODE_LABEL, HORIZON_LABEL)
+    if task_nav:
+        at = next((i for i, (h, _t) in enumerate(nav_items) if h == "#rollen"), len(nav_items))
+        nav_items = nav_items[:at] + [(task_nav, "Aufgabenkarte")] + nav_items[at:]
     cap_sections, cap_nav = cv.sections(graph)
     if cap_nav:
         # Kapazität, Zielbild, Nutzung und Reichweite direkt vor den Rollenüberblick.
@@ -1029,6 +1034,8 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
 <div class="matrix" id="matrix-box">{matrix_svg(data['roles'])}<div class="tip" id="tip"></div></div>
 <div class="legend">{"".join(f'<span><i style="background:{TYPE_COLOR[t]}"></i>{TYPE_LABEL[t]}</span>' for t in TYPE_ORDER if k["types"][t])}</div></section>
 
+{task_html}
+
 <section id="rollen"><h2>Rollenanalyse</h2><p>{esc(roles_intro)}</p>
 <div class="cards">{cards}</div></section>
 
@@ -1045,7 +1052,7 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
 <p>Aufgaben wurden nach sechs Kriterien (0–10) bewertet: Automatisierbarkeit durch KI/Software, durch Robotik, benötigtes menschliches Urteil, Produktivitätshebel, Datenlage, Fehlerfolgen. Ausführungsmodus: <em>an Agent delegiert</em> bei Potenzial ≥ 7, Urteil ≤ 3 und Fehlerfolge ≤ 5 (reguliert ≤ 3); <em>KI-unterstützt</em> bei Potenzial ≥ 4 oder Hebel ≥ 5; sonst <em>manuell</em>. Rollenwerte sind zeitanteilgewichtete Mittel. Disruptionsscore = 0,5·Potenzial + 0,3·Hebel + 0,2·(10 − Urteil). Typen: eliminiert (≥ 60 % delegierbar, Urteil ≤ 3), transformiert (≥ 30 % delegierbar oder Potenzial ≥ 6 bei Urteil ≤ 5), augmentiert (≥ 40 % automatisierbar oder Hebel ≥ 5), entstehend (neue Rolle), stabil. HAS = Human Agency Scale (H1 Agent allein … H5 Mensch unverzichtbar) nach Stanford WORKBank. Bewertungen sind KI-generiert und durch Expertenkorrekturen (Overrides) überschreibbar; der Status je Rolle zeigt den Prüfstand.</p>{method_extra}</section>
 </main>
 <footer>Erzeugt mit der Work-Transformation-Suite (work-graph-builder → task-scorer → agent-mapper → process-redesigner → transformation-dashboard) aus {esc(wl.LATEST_GRAPH)} Version {meta.get('version')}. Schema {esc(meta.get('schema_version'))}.</footer>
-<script>window.__ROLES__={json.dumps(roles_js, ensure_ascii=False, sort_keys=True)};{JS}</script>
+<script>window.__ROLES__={json.dumps(roles_js, ensure_ascii=False, sort_keys=True)};{JS}{task_js}</script>
 </body></html>
 """
 

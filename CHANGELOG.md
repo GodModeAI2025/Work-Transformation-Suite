@@ -43,6 +43,9 @@ Alles ist optional und additiv. Ein Projekt ohne die neuen Eingaben läuft unver
 - **Review-Liste:** „Split prüfen“ bei zehn und mehr Aufgaben oder fremden Aufgabenpaaren; Frage nach
   dem Auffangweg.
 - Dashboard-Abschnitte Kapazität, Zielbild, Nutzungsstand, Reichweite (nur mit Daten).
+- **Aufgabenkarte** (`task_views.py`): alle bewerteten Aufgaben quer über alle Rollen als Karte (Potenzial gegen
+  Urteil, Größe nach gebundener Arbeit, Farbe nach Modus, Rand bei teurer Fehlerfolge) und als Rangliste nach
+  Exposition. Exposition und Fehlerfolge bleiben getrennte Spalten. Filter nach Modus und Rolle, Tabellenalternative.
 
 ### Geändert
 

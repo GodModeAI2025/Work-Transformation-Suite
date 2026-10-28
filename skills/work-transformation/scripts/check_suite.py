@@ -38,7 +38,7 @@ REQUIRED = {
     "process-redesigner": ["export_process_candidates.py", "build_blueprints.py",
                            "validate_blueprints.py", "compare_scenarios.py", "score_processes.py",
                            "make_experiments.py", "redesign_lib.py"],
-    "transformation-dashboard": ["build_dashboard.py", "capacity_views.py"],
+    "transformation-dashboard": ["build_dashboard.py", "capacity_views.py", "task_views.py"],
     "work-transformation": ["run_pipeline.py", "check_suite.py"],
 }
 # Dateien, die ein Skill zusätzlich zu scripts/ braucht (Referenzen, Konfiguration).
