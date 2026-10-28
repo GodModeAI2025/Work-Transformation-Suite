@@ -17,7 +17,7 @@ Auf Zuruf („Baue das Setup für die Rolle X“) wird das Paket für genau dies
 
 ## Prinzipien und wie die Suite sie umsetzt
 
-Die Grundstruktur stammt aus einem öffentlichen Playbook zum persönlichen KI-Setup (Podcast AI FIRST #99, September 2026, Extrakt mit Stand 28. Oktober 2026):
+Die Grundstruktur stammt aus einem öffentlichen Playbook zum persönlichen KI-Setup (Stand Herbst 2026):
 Kontextprofil, ein zentraler Agent, Skills, Tool-Anbindungen, Routinen. Die Vorlagen und Texte in diesem Paket sind eigene Formulierungen
 nach dieser Struktur; die verlinkten Originalvorlagen des Autors wurden nicht übernommen.
 

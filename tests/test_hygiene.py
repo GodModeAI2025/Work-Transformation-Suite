@@ -18,7 +18,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from context import ROOT  # noqa: E402
 
 FORBIDDEN = [re.compile(p, re.IGNORECASE) for p in (
-    "co" + r"[\s\-_]?" + "brain", "con" + "brain", "ko" + r"[\s\-_]?" + "brain")]
+    "co" + r"[\s\-_]?" + "brain", "con" + "brain", "ko" + r"[\s\-_]?" + "brain",
+    # Quelle des Rollen-Setups: weder Sendung noch Person noch Dateiname der Vorlage werden genannt.
+    "ai" + r"[\s\-_]?" + "first" + r"\b", "pod" + "cast", "schlen" + "ther", "fel" + "ix" + r"\s+schl", "inst" + "inct")]
 
 
 def tracked_files() -> list[Path]:
