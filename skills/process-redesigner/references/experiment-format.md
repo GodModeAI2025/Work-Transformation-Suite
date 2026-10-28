@@ -79,6 +79,8 @@ Freigabe, kein Risiko und liefert trotzdem eine belastbare Trefferquote.
 | `rollback` | ja | Wie man zurückkommt, und wie schnell |
 | `owner_role` | ja | Rolle, die den Pilot verantwortet |
 | `status` | nein | `draft`, `ready`, `running`, `stopped`, `completed` |
+| `frame_confirmed` | vor Start | `true`, wenn der Rahmen steht: Beschäftigtenvertretung beteiligt, Zusagen zur Beschäftigung benannt, Zweck der Erhebung klar. Der Validator warnt bei `ready` und `running` ohne |
+| `frame_note` | bei `frame_confirmed` | Wer hat was zugesagt, wo steht es? Ein Verweis, keine Zusammenfassung |
 | `results` | nach Lauf | Gemessene Werte |
 
 `guardrail_metrics[]`: `{"metric": "…", "limit": Zahl, "direction": "max"|"min"}`.

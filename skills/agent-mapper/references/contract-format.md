@@ -96,6 +96,14 @@ Modellname im Vertrag auftaucht.
 | `evaluation_set` | Pflicht ab Status `pilot` | Testmenge, Herkunft, Schwellen |
 | `cost_ceiling` | empfohlen ab `pilot` | `{"amount": …, "currency": …, "period": …}` |
 | `capability_profile` | empfohlen | Die gebrauchte Fähigkeit, anbieterneutral |
+| `telemetry` | optional | `{"level": "aggregate", "fields": ["outcome"]}`. Nur Zählwerte je Agent und Ausgang (`ok`, `escalated`, `failed`). `level` muss `aggregate` sein; Felder wie Person oder Fallinhalt lehnt der Validator ab. Der Skill-Export (`export_skill.py`) legt dazu ein Meldeskript an, das ohne Adresse nichts tut |
+
+## Evidenzgrad des Vorschlags
+
+Jeder Agent trägt `evidence_grade` (an der Agentenebene, nicht im Vertrag): `heuristic` (Standard — Musterzuordnung aus
+Aufgabentext), `expert_confirmed` (ein Fachexperte hat die Passung bestätigt) oder `proven` (im Betrieb mit Testmenge
+belegt). Das beantwortet die Frage, woher man weiß, dass ein vorgeschlagener Agent zum eigenen Haus passt: gar nicht, bis
+jemand es bestätigt. Das Dashboard zeigt den Grad in der Agentenbibliothek.
 
 ## Regeln, die der Validator durchsetzt
 

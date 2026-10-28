@@ -1,0 +1,3 @@
+agent;role;prioritized;building;in_use
+Auftragserfassungs-Agent;Auftragssachbearbeiter;3;2;1
+Zahlungszuordnungs-Agent;Forderungsmanager;1;1;0

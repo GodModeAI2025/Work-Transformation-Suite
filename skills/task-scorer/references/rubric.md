@@ -142,6 +142,18 @@ gebraucht), `declining_skills` überwiegend an delegierten Aufgaben (Bedarf sink
 Wo die abgeleiteten Werte stehen: je Aufgabe als Felder `automation_potential`, `mode`,
 `has_level`, `horizon` direkt am Task-Objekt; je Rolle im Block `roles[].analysis`.
 
+### Kapazität: technisch gegenüber realisierbar (Schema 1.2)
+
+Die Bewertung sagt, was technisch frei wird. Ob Produktivität entsteht, hängt davon ab, ob die Organisation die frei
+werdende Zeit auffängt. Beides steht je Rolle in `roles[].analysis`:
+
+- `fte_released_technical` = Headcount × (delegierter Zeitanteil + 0,2 × assistierter Zeitanteil) ÷ 100. Assistierte Arbeit zählt nur zu einem Fünftel: KI verkürzt, ersetzt nicht.
+- `fte_realisable` = `fte_released_technical` × `absorption_pct` ÷ 100.
+- `absorption` an der Rolle (Override): `growth` (Wachstum), `attrition` (Fluktuation, Altersteilzeit), `redeployment` (Umbesetzung), `none`. `absorption_pct` Standard: 100, bei `none` 0.
+- Fehlt `absorption`, bleibt `fte_realisable` leer. **Leer ist nicht null:** Es heißt „nicht bewertet“.
+- Headcount-Basis: `headcount_from_positions`, sonst `headcount`. Ohne beides entfällt die FTE-Rechnung.
+- Optional `day_rate_eur` an der Rolle: damit rechnet die Suite einen geschätzten Jahreswert (Tagessatz × 220 Tage × FTE). Bleibt eine Schätzung.
+
 Belastbarkeit (`evidence`): Punkte für Zeitanteile aus Quelle (+2), Expertenreview (+2, freigegeben
 +3), weniger als 20 % der Zeit aus abgeleiteten Aufgaben (+1), Headcount bekannt (+1);
 high ≥ 5, medium ≥ 2, sonst low.

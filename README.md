@@ -19,6 +19,12 @@ Wert entsteht auf der Ebene des Ablaufs, nicht der Einzelaufgabe.
 
 Der Diagnosemodus bleibt für sich vollständig. Ein Projekt darf darin bleiben.
 
+**Zwei Spuren, ein Graph.** Spur B ist das Prozessredesign: Ketten, Übergaben, Wert je Prozess. Das ist der
+belastbarere Weg, weil eine einzelne Rolle nur Teile eines Ablaufs sieht — fünfmal 2,8 gesparte Stunden sind keine
+zehn, wenn die Übergaben bleiben. Spur A ist die Rollenaggregation je Jobfamilie: technisches und realisierbares
+Potenzial, Zielbild je Rolle. Sie ist schneller und gröber und der richtige Anfang, solange noch keine
+Prozessaufnahme vorliegt. Der Bericht sagt, welche Spur ihn trägt.
+
 ## Was drin ist
 
 ```
@@ -191,7 +197,7 @@ Prozessen ist die Liegezeit der eigentliche Hebel, und wer beides vermischt, ver
 Blick. Wenn die Summe der modellierten Schritte deutlich unter einer gemessenen Durchlaufzeit liegt,
 sagt das Skript es — dann fehlen Schritte, und jedes spätere Delta rechnet auf zu kleiner Grundmenge.
 
-Ein Projekt nach Schema 1.0 hebt `migrate_graph.py` verlustfrei auf 1.1. Die Migration rät nichts:
+Ein Projekt nach Schema 1.0 oder 1.1 hebt `migrate_graph.py` verlustfrei auf 1.2. Die Migration rät nichts:
 Sie legt die neuen Sammlungen leer an, mehr nicht.
 
 ### Schritt 3: agent-mapper (Claude)
@@ -320,6 +326,120 @@ bedeutet nichts, solange die Eingaben Schätzungen auf einer Zehnerskala sind. E
 ist auch kein Mangel, sondern ein Befund: Es zeigt, welchen einen Faktor man mit einem Fachexperten
 klären sollte, statt über die Reihenfolge zu streiten.
 
+## Realisierbarkeit, Zielbild und Nutzungsstand (ab Schema 1.2)
+
+Alles in diesem Abschnitt ist optional und additiv. Ein Projekt, das nichts davon füttert, läuft unverändert.
+
+### Technisch möglich gegenüber auffangbar
+
+Die Bewertung sagt, wie viel Arbeit technisch frei wird. Ob daraus Produktivität entsteht, hängt davon ab, ob die
+Organisation die Zeit auffängt: durch Wachstum, durch Fluktuation und Altersteilzeit oder durch Umbesetzung. Sonst
+startet man zwanzig Automatisierungen und bekommt einen Effekt, der nirgends ankommt.
+
+An der Rolle stehen dazu Overrides: `absorption` (`growth`, `attrition`, `redeployment`, `none`), optional
+`absorption_pct` und `day_rate_eur`. Daraus rechnet `score_roles.py` je Rolle `fte_released_technical` und
+`fte_realisable`. **Fehlt die Angabe, bleibt die Zahl leer — „nicht bewertet“ ist nicht „null“.** Das Dashboard zeigt
+beide Werte je Jobfamilie nebeneinander.
+
+### Zielbild je Rolle
+
+`build_target_roles.py` leitet aus den Aufgabenmodi ab, was je Rolle bleibt, wie viele FTE danach übrig sind, was
+davon die Organisation auffangen kann und welche Rollen im selben Cluster sich zusammenlegen ließen. Das ist ein Entwurf
+aus Schätzungen. Welche Rollen das Unternehmen künftig will, ist eine Strategiefrage, die diese Zahlen vorbereiten, aber
+nicht beantworten.
+
+### Reichweite, Blindflecken und Use-Case-Register
+
+`import_usecases.py` liest die eigenen Use Cases (`00_input/usecases.csv`). `export_reach.py` beantwortet danach zwei
+Fragen: Für wie viele Rollen und FTE gilt dieser Agent oder Use Case, und welche hochwertigen Prozesse hat bisher
+niemand angefragt? Letzteres ist die Liste, die man nicht sieht, wenn man nur bedient, was am lautesten gefordert wird.
+
+### Nutzungsstand, nur aggregiert
+
+`import_adoption.py` liest, in wie vielen Stellen einer Rolle ein Agent priorisiert, im Bau oder in Nutzung ist. Nur Rolle
+× Agent, nie Person × Agent. Rollen mit weniger als fünf Stellen werden unterdrückt gespeichert, ohne Zahlen, und der
+Validator lehnt jeden Satz darunter ab. Eine Quote für drei Stellen wäre eine Aussage über drei Menschen. Capability
+Contracts dürfen eine `telemetry` mit `level: "aggregate"` tragen; Felder wie Person oder Fallinhalt lehnt der Validator ab.
+
+### Kein KI-Fall
+
+Jeder Soll-Schritt kann eine `solution_class` tragen: `ai`, `interface`, `process_change` oder `rule_or_rpa`. Wer
+84 PDFs von Hand öffnet, braucht eine Schnittstelle, kein Sprachmodell. Der Szenarienvergleich zählt die Schritte ohne KI.
+Dazu gehört der Interviewleitfaden in `work-graph-builder/references/interview-leitfaden.md`: drei Fragen (Schritte,
+Systeme, Gefühl), das Feld `pain` am Prozessschritt und die Regel, zuerst zu fragen, ob ein Schritt überhaupt gebraucht wird.
+
+### Rahmen vor dem Pilot
+
+Piloten tragen `frame_confirmed` und `frame_note`. Ohne bestätigten Rahmen — Beschäftigtenvertretung beteiligt, Zusagen
+zur Beschäftigung benannt, Zweck der Erhebung klar — warnt der Validator vor dem Start. Wer weiß, dass seine Antworten zur
+eigenen Ersetzung führen können, antwortet vorsichtig, und die Datenlage wird schlechter statt besser.
+
+### Skill-Export
+
+`export_skill.py` macht aus einem Capability Contract das Gerüst eines Skills: `SKILL.md`, ein deterministisches
+`run.py` (Eingabeprüfung, Idempotenz, Konfidenzschwelle, Kontrollpunkt, Rückfall, Audit), eine Hülle für die Testmenge und
+eine Nutzungsmeldung, die nur Zählwerte schickt. Es ist ein Gerüst: Die Systemaufrufe sind `TODO`, die Testmenge leer.
+Eine Skill-Anweisung allein ist ein Prompt; was deterministisch sein soll, gehört in ein Skript.
+
+### Aufgabenkarte
+
+Neben der Rollenmatrix zeigt das Dashboard alle bewerteten Aufgaben auf einer Karte und in einer Rangliste. Die Rangliste
+sortiert nach **Exposition** (Automatisierungspotenzial ÷ 10 × gebundene Arbeit), die **Fehlerfolge** steht daneben. Eine
+Aufgabe mit hoher Exposition und hoher Fehlerfolge bekommt den Hinweis „Fehler teuer“: Dort gehört ein Mensch in den Ablauf.
+
+### Datenaufbereitung: sichten, vorschlagen, anbieten
+
+Gute Analysen hängen mehr an der Aufbereitung als am Modell. `inventory_sources.py` sichtet `00_input/`, ordnet jede Datei einer
+Quellenart zu (interne Stellenbeschreibung, externe Anzeige, Positionsliste, Level-Struktur, Prozessbeschreibung, Kursunterlage,
+Geschäftsbericht, …), zeigt, welche Teile des Modells noch ohne Quelle sind, und schlägt die passenden Methoden vor — mit Befehl. Die
+Suite bietet sie an und wählt nicht still. Katalog mit Eingaben, Ergebnissen und Grenzen:
+`skills/work-graph-builder/references/datenaufbereitung.md`.
+
+| Methode | Skript | Zweck |
+|---|---|---|
+| Vollständigkeitsprüfung | `check_completeness.py` | Rolle gegen eine anpassbare Vorlage prüfen; Lücken nennen, woher sie zu füllen sind. Füllt nichts auf |
+| Aufgabencluster | `dedupe_tasks.py` | Dieselbe Arbeit in mehreren Rollen finden. Kandidaten, bis ein Fachexperte mit Namen bestätigt |
+| Zusammenarbeit | `derive_collaboration.py` | Rollenpaare mit Belegen: Übergabe im Prozess, gemeinsame Stelle, gleiche Einheit |
+| Allgemeine Regeln | `apply_overrides.py` mit Selektoren | Eine Expertenaussage wirkt auf alle betroffenen Rollen (`cluster:`, `family:`, `role:`, `*`) |
+| Level und Kostensatz | `import_levels.py` | Planwert je Arbeitstag nach Level; gesetzte Werte bleiben |
+| Referenzautomatisierungen | `export_agent_candidates.py` | Kuratiertes Register mit Quelle und Evidenzgrad; Treffer erscheinen bei den Agentenkandidaten |
+
+Ehrlich zu den Grenzen: Die Aufgabencluster beruhen auf gleichen Wörtern, nicht auf gleicher Bedeutung. Die Suite scrapt keine öffentlichen
+Daten und füllt keine Lücken still auf; was sie nicht aus einer Quelle hat, bleibt „ergänzt“ oder „geschätzt“.
+
+### Setup-Paket je Rolle: ein Arbeitsagent auf Zuruf
+
+Die Analyse sagt, welche Aufgaben sich lohnen. Eine Person braucht außerdem etwas, das sie am Montagmorgen öffnen kann. Auf Zuruf („Baue das Setup für
+den Forderungsmanager“) erzeugt `build_role_setup.py` für genau diese Rolle ein Paket nach der Struktur eines persönlichen KI-Setups:
+
+| Datei | Inhalt | Woher |
+|---|---|---|
+| `kontext/kontextprofil.md` | Fünf Bereiche: Unternehmen, Rolle, Team und Schnittstellen, Ziele und Prioritäten, Arbeitsweise | vorbelegt aus dem Graphen, Rest „❓ offen“ |
+| `kontext/interview-prompt.md` | Interview, das die offenen Felder füllt; verbietet Erfinden | eigener Text |
+| `agent/systemprompt.md` | Schlank: Kontext laden, einordnen, Skill wählen, prüfen, bei Lücke fragen. Keine Aufgaben | eigener Text |
+| `skills/<skill>/` | Drei bis fünf Skills nach Zeitanteil × Automatisierbarkeit, mit `evals/cases.json` (mindestens fünf Fälle) und Testprotokoll | Capability Contract oder Aufgabendaten |
+| `tools/anbindungen.md` | Systeme der Rolle, Datenklassen, Zugriff; Freigabe „offen“ | Graph |
+| `routinen/routinen.json` | Zeit- und ereignisbasierte Vorschläge, **alle inaktiv** | Graph |
+| `pflege/pflege.md` | Wie das Setup lebendig bleibt | eigener Text |
+
+`check_role_setup.py` sagt, wie weit ein Paket ist: **entwurf** (unter fünf echten Testfällen), **im Test**, **live-reif** (fünf echte Fälle, zwei Schleifen,
+alle bestanden). Eine Routine darf nur für live-reife Skills aktiv sein; sonst meldet `--strict` einen Fehler. Erst erweitern, dann automatisieren.
+
+Was das Paket nicht ist: Es ist ungetestet, ohne Freigabe von Systemzugriffen und ohne Aussage zur Zeitersparnis. Kontext, den der Graph nicht kennt
+(Geschäftsmodell, Prioritäten, was „gut“ heißt), bleibt offen, bis jemand ihn nennt. Die Testfälle sind Gerüste; echte Fälle trägt der Nutzer ein. Ein erneuter
+Lauf überschreibt keine bearbeitete Datei, der neue Stand liegt als `.vorschlag` daneben. Begründung und Grenzen:
+`skills/agent-mapper/references/rollen-setup.md`.
+
+### Zwei Berichte, ein Graph
+
+Das Dashboard schreibt neben `report_vNNN.md` zwei Fassungen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — in der Sprache
+„Rolle verändert sich“) und `report_it_vNNN.md` (Backlog nach Wert, Use Cases, Prozessbänder, Blindflecken). Ein Glossar in
+`work-graph-builder/references/glossar.md` legt fest, wie die Wörter von HR und IT zueinander stehen.
+
+Weitere Hilfen: `import_process_house.py` übernimmt ein vorhandenes Prozesshaus als Prozessextraktion;
+die Review-Liste markiert Rollen mit zehn und mehr Aufgaben oder auffällig fremden Aufgabenpaaren mit „Split prüfen“; jeder Agent
+trägt einen Evidenzgrad (`heuristic`, `expert_confirmed`, `proven`), weil ein Vorschlag aus Mustern keine geprüfte Passung ist.
+
 ## Versionierung
 
 `project.json` zählt `graph_version` hoch. Jeder Schritt, der den Inhalt ändert, schreibt
@@ -350,8 +470,8 @@ Freigabeworkflow, aber es reicht für einen Piloten und lässt sich in Git versi
 
 ## Grenzen
 
-Keine Integration in SuccessFactors oder andere HR-Systeme, kein Tracking der Agentennutzung nach dem
-Rollout, keine Prozess-Mining-Anbindung. Für genau diese Dinge verkaufen kommerzielle Plattformen ihr
+Keine Integration in SuccessFactors oder andere HR-Systeme, keine Telemetrie der Agentennutzung (nur ein
+aggregierter Stand je Rolle und Agent), keine Prozess-Mining-Anbindung. Für genau diese Dinge verkaufen kommerzielle Plattformen ihr
 Produkt. Für die Frage, ob eine solche Analyse für einen Bereich überhaupt belastbare Ergebnisse
 liefert, reicht die Suite. Der Ablauf ist am Pilotbereich mit 20 bis 40 Rollen entstanden und bis über
 200 Rollen in einem Dashboard gelaufen.

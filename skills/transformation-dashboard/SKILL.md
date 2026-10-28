@@ -93,3 +93,21 @@ Keine externen Skripte, keine Webfonts, kein Tracking.
 
 Wer das Layout ändern will, ändert `CSS`, `JS` oder die Bausteinfunktionen in
 `scripts/build_dashboard.py` und baut neu. Handbearbeitetes HTML geht beim nächsten Lauf verloren.
+
+## Ab Schema 1.2
+
+Die **Aufgabenkarte** zeigt alle bewerteten Aufgaben quer über alle Rollen: Automatisierungspotenzial gegen Urteil, Größe nach
+gebundener Arbeit (FTE, sonst Prozent), Farbe nach Modus, schwarzer Rand bei teurer Fehlerfolge. Darunter die Rangliste nach
+Exposition (Potenzial ÷ 10 × gebundene Arbeit). **Exposition und Fehlerfolge sind getrennte Spalten:** Was am meisten Arbeit bindet
+und gut automatisierbar ist, ist nicht automatisch das, was man delegieren sollte.
+
+Das Dashboard zeigt zusätzlich, sobald Daten vorliegen: **Kapazität** (technisch gegenüber auffangbar je Jobfamilie), **Zielbild** je
+Rolle, **Nutzungsstand** je Rolle und Agent (unterdrückt unter 5 Stellen) sowie **Reichweite und Blindflecken**. Die Agentenbibliothek
+zeigt den Evidenzgrad.
+
+Neben `report_vNNN.md` entstehen zwei Berichte aus demselben Graphen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — für HR) und
+`report_it_vNNN.md` (Backlog nach Wert, Use Cases, Prozessbänder, Blindflecken — für IT). Die Sprache im HR-Bericht ist bewusst:
+„Rolle verändert sich“, nie „Rolle entfällt“. Alle Zahlen sind Schätzungen; wo etwas nicht bewertet ist, steht „nicht bewertet“.
+
+Unter der Aufgabenkarte steht, sobald Aufgabencluster vorliegen, die Tabelle **Wiederkehrende Aufgaben über Rollen**. Kandidaten sind als
+solche gekennzeichnet; verworfene Cluster erscheinen nicht.

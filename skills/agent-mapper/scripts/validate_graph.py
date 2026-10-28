@@ -145,6 +145,14 @@ def validate(graph: dict) -> tuple[list[str], list[str]]:
                 warnings.append(f"{w}: Zeitanteile summieren auf {total:.1f} statt 100")
         if r.get("headcount") is not None:
             check_range(errors, w, "headcount", r.get("headcount"), 0, 1_000_000)
+        # Schema 1.2: wie wird frei werdende Kapazität aufgefangen?
+        check_enum(errors, w, "absorption", r.get("absorption"), wl.ENUM_ABSORPTION, required=False)
+        if r.get("absorption_pct") is not None:
+            check_range(errors, w, "absorption_pct", r.get("absorption_pct"), 0, 100)
+            if r.get("absorption") is None:
+                warnings.append(f"{w}: absorption_pct ohne absorption")
+        if r.get("day_rate_eur") is not None:
+            check_range(errors, w, "day_rate_eur", r.get("day_rate_eur"), 0, 100_000)
         an = r.get("analysis")
         if an and an.get("scored"):
             check_enum(errors, w, "analysis.disruption_type", an.get("disruption_type"), wl.ENUM_DISRUPTION)
@@ -186,6 +194,7 @@ def validate(graph: dict) -> tuple[list[str], list[str]]:
         check_enum(errors, w, "specificity", a.get("specificity"), wl.ENUM_SPECIFICITY)
         check_enum(errors, w, "sourcing", a.get("sourcing"), wl.ENUM_SOURCING, required=False)
         check_enum(errors, w, "horizon", a.get("horizon"), wl.ENUM_HORIZON, required=False)
+        check_enum(errors, w, "evidence_grade", a.get("evidence_grade"), wl.ENUM_EVIDENCE_GRADE, required=False)
         for tid in a.get("task_ids", []):
             if tid not in tas:
                 errors.append(f"{w}: task_id {tid} unbekannt")
@@ -241,6 +250,20 @@ def validate_contract(agent: dict, w: str, ids: dict, errors: list, warnings: li
                wl.ENUM_DECISION_SCOPE)
     check_range(errors, w, "contract.confidence_threshold", c.get("confidence_threshold"), 0, 1)
     check_range(errors, w, "contract.timeout_seconds", c.get("timeout_seconds"), 1, 86400)
+
+    # Telemetrie ist erlaubt, aber nur als Zählung. Wer Person oder Fallinhalt meldet, macht aus
+    # einer Nutzungsmessung eine Leistungskontrolle — das lehnt der Validator ab.
+    tele = c.get("telemetry")
+    if tele is not None:
+        if not isinstance(tele, dict):
+            errors.append(f"{w}: contract.telemetry muss ein Objekt sein")
+        else:
+            if tele.get("level") != "aggregate":
+                errors.append(f"{w}: contract.telemetry.level muss 'aggregate' sein — "
+                              "nur Zählwerte je Agent und Ausgang, keine Person")
+            for field in tele.get("fields", []) or []:
+                if str(field).lower() in ("user", "user_id", "person", "name", "email", "case_content", "payload"):
+                    errors.append(f"{w}: contract.telemetry meldet '{field}' — personen- oder inhaltsbezogen, nicht erlaubt")
 
     writes = c.get("write_permissions") or []
     if writes:
@@ -487,6 +510,8 @@ def validate_process_layer(graph: dict, ids: dict, errors: list, warnings: list)
             errors.append(f"{w}: executor.type='system' braucht eine bekannte system_id")
         check_enum(errors, w, "value_type", st.get("value_type"), wl.ENUM_VALUE_TYPE)
         check_range(errors, w, "handling_time_min", st.get("handling_time_min"), 0, 100_000)
+        if st.get("pain") is not None and not isinstance(st.get("pain"), str):
+            errors.append(f"{w}: pain muss Text sein")
         check_range(errors, w, "wait_time_min", st.get("wait_time_min"), 0, 10_000_000)
         check_range(errors, w, "rework_pct", st.get("rework_pct"), 0, 100)
         for sid in st.get("system_ids", []):
@@ -574,6 +599,8 @@ def validate_process_layer(graph: dict, ids: dict, errors: list, warnings: list)
     _validate_blueprints(graph, ids, errors, warnings, controls, steps_by_id, processes)
     _validate_experiments(graph, ids, errors, warnings)
     _validate_governance(graph, ids, errors, warnings, prov_index)
+    _validate_adoption_layer(graph, ids, errors, warnings)
+    _validate_task_clusters(graph, ids, errors, warnings)
 
 
 def _validate_blueprints(graph, ids, errors, warnings, controls, steps_by_id, processes) -> None:
@@ -608,6 +635,11 @@ def _validate_blueprints(graph, ids, errors, warnings, controls, steps_by_id, pr
             if not st.get("name"):
                 errors.append(f"{sw}: name fehlt")
             check_enum(errors, sw, "operator", st.get("operator"), wl.ENUM_OPERATOR)
+            check_enum(errors, sw, "solution_class", st.get("solution_class"), wl.ENUM_SOLUTION_CLASS,
+                       required=False)
+            if st.get("solution_class") not in (None, "ai") and (st.get("executor") or {}).get("type") == "agent":
+                warnings.append(f"{sw}: solution_class '{st.get('solution_class')}' mit Agent als Ausführendem — "
+                                "entweder ist es keine KI-Lösung oder der Agent überflüssig")
             ex = st.get("executor") or {}
             check_enum(errors, sw, "executor.type", ex.get("type"), wl.ENUM_EXECUTOR)
             if ex.get("type") == "agent" and ex.get("id") and ex["id"] not in age:
@@ -729,8 +761,89 @@ def _validate_experiments(graph, ids, errors, warnings) -> None:
             errors.append(f"{w}: design='pre_post' ohne comparison_period")
         check_range(errors, w, "duration_days", x.get("duration_days"), 1, 3650)
         check_range(errors, w, "sample_size", x.get("sample_size"), 1, 10_000_000)
+        if x.get("status") in ("ready", "running") and x.get("frame_confirmed") is not True:
+            warnings.append(f"{w}: Rahmen nicht bestätigt (frame_confirmed) — vor dem Start klären, "
+                            "ob Beschäftigtenvertretung, Zusagen zur Beschäftigung und Kommunikation "
+                            "stehen; sonst bestätigt niemand ehrlich, was automatisierbar ist")
+        if x.get("frame_confirmed") is True and not x.get("frame_note"):
+            warnings.append(f"{w}: frame_confirmed ohne frame_note — wer hat was zugesagt?")
         if x.get("status") in ("running", "stopped", "completed") and not x.get("results"):
             warnings.append(f"{w}: Status '{x.get('status')}' ohne results")
+
+
+def _validate_task_clusters(graph, ids, errors, warnings) -> None:
+    """Aufgabencluster: gleiche Arbeit in mehreren Rollen. Ein Cluster mit einer Aufgabe ist keiner."""
+    tas, rol = ids["tasks"], ids["roles"]
+    tasks = wl.index_by_id(graph["tasks"])
+    for c in graph["task_clusters"]:
+        w = f"task_cluster {c['id']} ({c.get('name')})"
+        members = c.get("task_ids", [])
+        if len(members) < 2:
+            errors.append(f"{w}: weniger als zwei Aufgaben")
+        for tid in members:
+            if tid not in tas:
+                errors.append(f"{w}: task_id {tid} unbekannt")
+        for rid in c.get("role_ids", []):
+            if rid not in rol:
+                errors.append(f"{w}: role_id {rid} unbekannt")
+        roles_of_members = {tasks[t]["role_id"] for t in members if t in tasks}
+        if len(roles_of_members) < 2 and not any(t not in tas for t in members):
+            warnings.append(f"{w}: alle Aufgaben stehen in derselben Rolle — wiederkehrende Arbeit über Rollen zeigt das nicht")
+        check_enum(errors, w, "status", c.get("status"), wl.ENUM_CLUSTER_STATUS)
+
+
+def _validate_adoption_layer(graph, ids, errors, warnings) -> None:
+    """Schema 1.2: Zielbild, Use-Case-Register und aggregierter Nutzungsstand."""
+    rol, age, tas, prc = ids["roles"], ids["agents"], ids["tasks"], ids["processes"]
+    for tr in graph["target_roles"]:
+        w = f"target_role {tr['id']}"
+        if tr.get("role_id") not in rol:
+            errors.append(f"{w}: role_id unbekannt")
+        check_enum(errors, w, "basis", tr.get("basis"), wl.ENUM_TARGET_ROLE_BASIS)
+        for key in ("retained_task_ids", "delegated_task_ids"):
+            for tid in tr.get(key, []):
+                if tid not in tas:
+                    errors.append(f"{w}: {key} enthält unbekannte Aufgabe {tid}")
+        for rid in tr.get("merge_with_role_ids", []):
+            if rid not in rol:
+                errors.append(f"{w}: merge_with_role_ids enthält unbekannte Rolle {rid}")
+        for f in ("fte_current", "fte_remaining", "fte_released_technical"):
+            check_range(errors, w, f, tr.get(f), 0, 1_000_000)
+        if tr.get("fte_realisable") is not None:
+            check_range(errors, w, "fte_realisable", tr.get("fte_realisable"), 0, 1_000_000)
+            if tr["fte_realisable"] > (tr.get("fte_released_technical") or 0) + 0.051:
+                errors.append(f"{w}: fte_realisable übersteigt das technische Potenzial")
+
+    for uc in graph["usecases"]:
+        w = f"usecase {uc['id']} ({uc.get('name')})"
+        if not uc.get("name"):
+            errors.append(f"{w}: name fehlt")
+        for tid in uc.get("task_ids", []):
+            if tid not in tas:
+                errors.append(f"{w}: task_id {tid} unbekannt")
+        for aid in uc.get("agent_ids", []):
+            if aid not in age:
+                errors.append(f"{w}: agent_id {aid} unbekannt")
+        check_range(errors, w, "value_eur_per_year", uc.get("value_eur_per_year"), 0, 10_000_000_000)
+
+    for ad in graph["adoption"]:
+        w = f"adoption {ad['id']}"
+        if ad.get("role_id") not in rol:
+            errors.append(f"{w}: role_id unbekannt")
+        if ad.get("agent_id") not in age and ad.get("usecase_id") not in ids["usecases"]:
+            errors.append(f"{w}: weder agent_id noch usecase_id bekannt")
+        if ad.get("suppressed"):
+            # Ein unterdrückter Satz darf keine Zahlen tragen, sonst ist die Unterdrückung Fassade.
+            for f in ("prioritized", "building", "in_use"):
+                if ad.get(f) is not None:
+                    errors.append(f"{w}: unterdrückter Satz trägt trotzdem '{f}'")
+        else:
+            total = ad.get("group_size")
+            if not isinstance(total, int) or total < wl.ADOPTION_MIN_GROUP:
+                errors.append(f"{w}: group_size {total!r} unter der Mindestgruppengröße "
+                              f"{wl.ADOPTION_MIN_GROUP} — hätte unterdrückt werden müssen")
+            for f in ("prioritized", "building", "in_use"):
+                check_range(errors, w, f, ad.get(f), 0, 1_000_000, required=True)
 
 
 def _validate_governance(graph, ids, errors, warnings, prov_index) -> None:

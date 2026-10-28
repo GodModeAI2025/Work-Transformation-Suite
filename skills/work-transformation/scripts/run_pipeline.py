@@ -84,6 +84,9 @@ def main() -> int:
     if (project / wl.DIR_INPUT / "positions.csv").exists():
         if run([py, script("work-graph-builder", "import_positions.py"), "--project", proj], cwd):
             return 2
+    if (project / wl.DIR_INPUT / "levels.csv").exists():
+        if run([py, script("work-graph-builder", "import_levels.py"), "--project", proj], cwd):
+            return 2
     run([py, script("work-graph-builder", "make_review_list.py"), "--project", proj], cwd)
     if stop == 0:
         return 0
@@ -93,6 +96,13 @@ def main() -> int:
     if process_files:
         if run([py, script("work-graph-builder", "build_processes.py"), "--project", proj], cwd):
             return 2
+    # Datenaufbereitung: Quelleninventar, Aufgabencluster, Vollständigkeit, Zusammenarbeit.
+    # Alles Berichte oder additive Sammlungen; nichts davon hält die Pipeline an.
+    run([py, script("work-graph-builder", "inventory_sources.py"), "--project", proj], cwd)
+    if run([py, script("work-graph-builder", "dedupe_tasks.py"), "--project", proj], cwd):
+        return 2
+    run([py, script("work-graph-builder", "check_completeness.py"), "--project", proj], cwd)
+    run([py, script("work-graph-builder", "derive_collaboration.py"), "--project", proj], cwd)
     if stop == 1:
         return 0
 
@@ -109,6 +119,12 @@ def main() -> int:
         return 3
     if run([py, script("task-scorer", "score_roles.py"), "--project", proj], cwd):
         return 2
+    # Schema 1.2: Zielbild je Rolle und Register der eigenen Use Cases (beides optional).
+    if run([py, script("task-scorer", "build_target_roles.py"), "--project", proj], cwd):
+        return 2
+    if (project / wl.DIR_INPUT / "usecases.csv").exists():
+        if run([py, script("agent-mapper", "import_usecases.py"), "--project", proj], cwd):
+            return 2
     if stop == 2:
         return 0
 
@@ -134,6 +150,9 @@ def main() -> int:
         cmd.append("--shared-tasks")
     if run(cmd, cwd):
         return 2
+    if (project / wl.DIR_INPUT / "adoption.csv").exists():
+        if run([py, script("agent-mapper", "import_adoption.py"), "--project", proj], cwd):
+            return 2
     if stop == 3:
         return 0
 
@@ -199,6 +218,8 @@ def main() -> int:
         return 0
 
     # 5 Dashboard
+    if graph.get("agents") or graph.get("usecases"):
+        run([py, script("agent-mapper", "export_reach.py"), "--project", proj], cwd)
     cmd = [py, script("transformation-dashboard", "build_dashboard.py"), "--project", proj]
     if args.stamp:
         cmd += ["--stamp", args.stamp]

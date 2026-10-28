@@ -1,6 +1,6 @@
 ---
 name: agent-mapper
-description: "Bündelt die delegier- und assistierbaren Aufgaben eines bewerteten Arbeitsgraphen (work-graph.json nach task-scorer) zu einer Agentenbibliothek aus wiederverwendbaren KI-Agenten und berechnet deterministisch je Agent, welche Rollen er zu wie viel Prozent abdeckt, FTE-Äquivalent, Build/Buy/Hybrid, Zeithorizont und Priorität; gleicht bestehende KI-Anwendungen des Unternehmens ab. Dritter Schritt der Work-Transformation-Suite. IMMER verwenden bei: Agentenbibliothek, Agentic Workforce Library, welche Agenten brauchen wir, Agenten zu Rollen zuordnen, Rollenabdeckung durch Agenten, Build or Buy für KI-Agenten, Agent-Katalog, Agentenlandkarte, Automatisierungs-Backlog priorisieren, 'welcher Agent übernimmt was', KI-Use-Cases aus Aufgaben ableiten, Agent Coverage — auch wenn der Nutzer nur fragt 'was sollen wir zuerst automatisieren' und ein bewerteter work-graph existiert."
+description: "Bündelt die delegier- und assistierbaren Aufgaben eines bewerteten Arbeitsgraphen (work-graph.json nach task-scorer) zu einer Agentenbibliothek aus wiederverwendbaren KI-Agenten und berechnet deterministisch je Agent, welche Rollen er zu wie viel Prozent abdeckt, FTE-Äquivalent, Build/Buy/Hybrid, Zeithorizont und Priorität; gleicht bestehende KI-Anwendungen des Unternehmens ab; baut auf Zuruf für eine Rolle ein Setup-Paket (Kontext, Prompt, Skills, Tests, Tools, Routinen). Dritter Schritt der Work-Transformation-Suite. IMMER verwenden bei: Agentenbibliothek, Agentic Workforce Library, welche Agenten brauchen wir, Agenten zu Rollen zuordnen, Rollenabdeckung durch Agenten, Build or Buy für KI-Agenten, Agent-Katalog, Agentenlandkarte, Automatisierungs-Backlog priorisieren, 'welcher Agent übernimmt was', KI-Use-Cases aus Aufgaben ableiten, Rollen-Setup, Agent für diese Rolle einrichten — auch wenn der Nutzer nur fragt 'was sollen wir zuerst automatisieren' und ein bewerteter work-graph existiert."
 ---
 
 # agent-mapper
@@ -152,3 +152,39 @@ Wenn die Agentenbibliothek eine Aufsichtsrolle nahelegt (z. B. „Agent Manager 
 der Stichproben, Eskalationen und Regelpflege übernimmt), gehört sie als Rolle mit
 `is_new: true` in eine Extraktionsdatei von `work-graph-builder`, nicht in `agents.json`.
 Der Scorer klassifiziert sie dann als `emerging`.
+
+## Ab Schema 1.2
+
+- **Evidenzgrad.** Jeder Agent trägt `evidence_grade` (`heuristic`, `expert_confirmed`, `proven`; Standard `heuristic`). Ein
+  Vorschlag aus Musterzuordnung ist keine geprüfte Passung. Setze `expert_confirmed` nur, wenn ein Fachexperte zugestimmt hat.
+- **Use-Case-Register.** `scripts/import_usecases.py` liest `00_input/usecases.csv` (Name, Eigentümer, Wert, Aufgaben) ein.
+  Daraus entsteht, für wie viele Rollen und FTE ein Use Case gilt.
+- **Reichweite und Blindflecken.** `scripts/export_reach.py` schreibt `reach_vNNN.md/.csv`: je Agent und Use Case die betroffenen
+  Rollen mit Zeitanteil und FTE, und die Prozesse im Band „Jetzt“ oder „Als Nächstes“, für die niemand etwas angefragt hat.
+- **Nutzungsstand.** `scripts/import_adoption.py` liest `00_input/adoption.csv` (Agent, Rolle, priorisiert, im Bau, in Nutzung).
+  Nur Rolle × Agent, nie Person × Agent. Rollen mit weniger als 5 Stellen werden unterdrückt gespeichert. Das ist Datenschutz
+  als Regel: Der Validator lehnt jeden Satz darunter ab.
+- **Skill-Export.** `scripts/export_skill.py [--agent "Name"]` macht aus dem Vertrag ein Skill-Gerüst (SKILL.md, deterministisches
+  `run.py` mit Eingabeprüfung, Idempotenz, Konfidenzschwelle, Rückfall und Audit, Testmengen-Hülle, Nutzungsmeldung). Es ist ein
+  Gerüst: Die Systemaufrufe fehlen, die Testmenge ist leer. Sag das so.
+
+## Referenzautomatisierungen (ab 0.4)
+
+Liegt `00_input/referenzautomatisierungen.csv` vor (Format in `work-graph-builder/references/datenaufbereitung.md`), nennt
+`export_agent_candidates.py` je Aufgabenkandidat bis zu drei passende Referenzen mit Quelle und Evidenzgrad. Eine Referenz zeigt, dass es so etwas
+gibt, nicht, dass es hier passt. Ohne Quelle wird sie nicht geführt; der Agent bleibt `heuristic`, bis ein Fachexperte die Passung bestätigt.
+
+## Rollen-Setup auf Zuruf (ab 0.5)
+
+Sagt der Nutzer, für welche Rolle er einen Arbeitsagenten braucht („Baue das Setup für den Forderungsmanager“), erzeugst du ein Paket:
+
+```
+python3 <skill>/scripts/build_role_setup.py --project ./projekte/<name> --list                    # Rollen mit Skill-Kandidaten
+python3 <skill>/scripts/build_role_setup.py --project ./projekte/<name> --role "<Rolle>" [--skills 4]
+python3 <skill>/scripts/check_role_setup.py --package 40_output/rollen_setup/<rolle> [--strict]
+```
+
+Das Paket enthält Kontextprofil (vorbelegt aus dem Graphen, Rest „offen“), Interview-Prompt, schlanken Agenten-Prompt, drei bis fünf Skills mit
+Testfall-Gerüst, Tool-Tabelle und inaktive Routinen. Du sagst dem Nutzer ehrlich, was es ist: **ein Startpunkt, ungetestet, ohne Freigabe.**
+Erfinde keinen Kontext, schreibe keine echten Testfälle und aktiviere keine Routine; das tun der Nutzer und der Test. Die Begründung der Struktur und die
+Grenzen stehen in `references/rollen-setup.md`. Läuft das Skript erneut, überschreibt es bearbeitete Dateien nicht (`.vorschlag` daneben).

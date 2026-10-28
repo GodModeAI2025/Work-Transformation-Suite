@@ -140,6 +140,8 @@ def main() -> int:
             "specificity": spec,
             "sourcing": SOURCING[spec],
             "status": status,
+            "evidence_grade": (a.get("evidence_grade") if a.get("evidence_grade") in wl.ENUM_EVIDENCE_GRADE
+                               else "heuristic"),
             "complexity": complexity,
             "existing_system": a.get("existing_system") or None,
             "oversight": str(a.get("oversight", "")).strip(),

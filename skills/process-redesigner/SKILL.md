@@ -163,3 +163,13 @@ und gemessene Ausgangswerte. Sag das, bevor jemand die Deltas in eine Budgetplan
 Und: KI bringt innerhalb ihrer Fähigkeitsgrenze erhebliche Gewinne, außerhalb verschlechtert
 sie Ergebnisse. Deshalb sind Human Gates keine Zugeständnisse an die Skeptiker, sondern
 Teil des Entwurfs.
+
+## Ab Schema 1.2
+
+- **Lösungsklasse.** Jeder Soll-Schritt kann `solution_class` tragen (`ai`, `interface`, `process_change`, `rule_or_rpa`). Prüfe vor
+  jedem `automate`, ob das Problem überhaupt ein KI-Fall ist; die Regeln stehen in `references/redesign-rules.md`. Der Vergleichsbericht
+  zählt die Schritte ohne KI je Szenario.
+- **Rahmen vor dem Pilot.** Piloten tragen `frame_confirmed` und `frame_note`. Sie gehören nicht in `ready` oder `running`, bevor
+  Beschäftigtenvertretung, Zusagen zur Beschäftigung und Zweck der Erhebung geklärt sind.
+- **Ist-Prozess hinterfragen.** Wer nur automatisiert, was heute geschieht, festigt einen Umweg. Frage bei jedem Schritt, ob er
+  gebraucht wird, bevor du fragst, wie er schneller geht.

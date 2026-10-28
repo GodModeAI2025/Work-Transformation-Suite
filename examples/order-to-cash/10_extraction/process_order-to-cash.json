@@ -628,6 +628,7 @@
         {
           "name": "Differenz klären",
           "role": "Forderungsmanager",
+          "pain": "Ich suche die Gutschrift in drei Systemen und weiß nie, ob die Information aktuell ist.",
           "tasks": [
             "Offene Posten klären"
           ],

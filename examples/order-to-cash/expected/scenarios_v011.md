@@ -132,13 +132,14 @@ Der Wert in Klammern ist die Verbesserung gegenüber dem Ist (positiv heißt imm
 Der Ablauf bleibt wie er ist. Erfassung und Versand übernimmt ein Agent, alle übrigen Schritte werden durch bessere Vorbereitung kürzer. Jede heutige Kontrolle bleibt unverändert bestehen. Das ist die Untergrenze und der Vergleichsmaßstab für die beiden anderen Szenarien.
 
 **Angewandte Operatoren:** Automatisieren 2×, Human Gate 2×, Vereinfachen 6×  
+**Ohne KI gelöst:** 1 Schritt(e) über Schnittstelle, Prozessänderung oder feste Regel — oft die billigere und stabilere Lösung  
 **Status:** reviewed
 
 | # | Soll-Schritt | Operator | Wer | Aus Ist-Schritt | Begründung |
 |---|---|---|---|---|---|
 | 1 | Auftrag erfassen | Automatisieren | agent (Auftragserfassungs-Agent) | Auftrag erfassen | Die Übernahme aus Bestelldokumenten ist strukturiert und gut belegt; Fehler fallen in der anschließenden Prüfung ohnehin auf. · Human Gate: Konfidenz unter 0,9 oder kein gültiger Rahmenvertrag |
 | 2 | Auftragsdaten prüfen | Vereinfachen | human (Auftragssachbearbeiter) | Auftragsdaten prüfen | Der Agent liefert eine Abweichungsliste mit; geprüft wird nur noch, was abweicht, statt jede Position. |
-| 3 | Auftrag in Nachverfolgungsliste eintragen | Vereinfachen | human (Auftragssachbearbeiter) | Auftrag in Nachverfolgungsliste eintragen | Die Liste bleibt in diesem Szenario bestehen, wird aber aus dem ERP vorbefüllt statt von Hand geführt. |
+| 3 | Auftrag in Nachverfolgungsliste eintragen | Vereinfachen | human (Auftragssachbearbeiter) | Auftrag in Nachverfolgungsliste eintragen | Die Liste bleibt in diesem Szenario bestehen, wird aber aus dem ERP vorbefüllt statt von Hand geführt. · Lösung: Prozessänderung |
 | 4 | Bonität prüfen | Vereinfachen | human (Kreditprüfer) | Bonität prüfen | Die Auskunft wird automatisch angefragt und mit der internen Historie zusammengeführt; der Kreditprüfer bewertet nur noch. |
 | 5 | Limit freigeben | Human Gate | human (Teamleitung Order-to-Cash) | Limit freigeben | Die Freigabe über dem Limit bleibt unverändert bei der Teamleitung. In diesem Szenario wird an den Kontrollen nichts geändert. · Human Gate: Auftragswert über dem Kreditlimit |
 | 6 | Auftragsbestätigung senden | Vereinfachen | human (Auftragssachbearbeiter) | Auftragsbestätigung senden | Die Bestätigung wird aus dem freigegebenen Auftrag vorbefüllt; der Sachbearbeiter prüft und sendet. |

@@ -1,0 +1,25 @@
+{
+  "_hint": "Vorlage für eine vollständige Rollenbeschreibung. check_completeness.py prüft jede Rolle dagegen. Wer die Vorlage ändert, legt fest, was in diesem Haus als vollständig gilt (z. B. mehr Pflichtaufgaben oder eine Compliance-Angabe). Ein Abschnitt ohne Quelle bleibt sichtbar als Lücke, statt still aufgefüllt zu werden.",
+  "config_version": "1",
+  "sections": [
+    {"key": "purpose", "label": "Zweck der Rolle", "weight": 10, "check": "text_min", "min_chars": 20,
+     "fill_from": "Stellenbeschreibung (intern), sonst Stellenanzeige"},
+    {"key": "description", "label": "Beschreibung", "weight": 10, "check": "text_min", "min_chars": 40,
+     "fill_from": "Stellenbeschreibung (intern)"},
+    {"key": "tasks", "label": "Aufgaben", "weight": 25, "check": "tasks_min", "min_tasks": 4,
+     "fill_from": "Stellenbeschreibung (intern); Lücken aus Stellenanzeigen ergänzen (als „ergänzt“ führen)"},
+    {"key": "time_shares", "label": "Zeitanteile aus der Quelle", "weight": 10, "check": "time_shares_source",
+     "fill_from": "Interview oder Zeiterfassung; sonst bleibt es eine Schätzung"},
+    {"key": "skills", "label": "Skills mit Niveau", "weight": 15, "check": "skills_min", "min_skills": 3,
+     "fill_from": "Stellenbeschreibung, Zertifizierungs- und Kursunterlagen"},
+    {"key": "level", "label": "Level / Einstufung", "weight": 5, "check": "field_present", "field": "level",
+     "fill_from": "Level- und Tarifstruktur"},
+    {"key": "headcount", "label": "Headcount", "weight": 10, "check": "headcount_known",
+     "fill_from": "Positionsliste oder Stellenplan"},
+    {"key": "collaboration", "label": "Zusammenarbeit (mit wem, wo übergeben)", "weight": 10, "check": "collaboration",
+     "fill_from": "Prozessaufnahme, Positionsliste (gleiche Organisationseinheit), Interview"},
+    {"key": "regulated", "label": "Regulierung geklärt", "weight": 5, "check": "regulated_decided",
+     "fill_from": "Fachexperte (Review-Liste, Frage 5)"}
+  ],
+  "complete_at": 80
+}

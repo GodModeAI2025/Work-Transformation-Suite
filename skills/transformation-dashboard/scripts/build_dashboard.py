@@ -44,6 +44,8 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import workgraph_lib as wl  # noqa: E402
+import capacity_views as cv  # noqa: E402
+import task_views as tv  # noqa: E402
 
 TYPE_ORDER = ["eliminated", "transformed", "augmented", "emerging", "stable", "unscored"]
 TYPE_LABEL = {
@@ -236,7 +238,7 @@ th{background:#f5f2ef;color:var(--ink2);font-weight:600;position:sticky;top:46px
 .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.col{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
 .col h4{margin:0 0 8px;font-size:15px;color:var(--primary);font-family:var(--f-head)}.col ul{margin:0;padding-left:18px;font-size:13px}.col li{margin:3px 0}
 footer{padding:20px 32px;color:var(--ink3);font-size:12px;border-top:1px solid var(--line)}
-.hidden{display:none!important}.nojs{margin:6px 0 10px;padding:8px 12px;border:1px solid #E6B800;background:#FFF8DB;border-radius:6px;font-size:13px;color:#5a4a00}
+.scroller{overflow-x:auto}.tdot{cursor:pointer}.tdot:hover circle{stroke:var(--ink)}.hidden{display:none!important}.nojs{margin:6px 0 10px;padding:8px 12px;border:1px solid #E6B800;background:#FFF8DB;border-radius:6px;font-size:13px;color:#5a4a00}
 /* Szenarien umschalten ohne JavaScript: verborgene Radios steuern über
    :checked ~ die Sichtbarkeit der zugehörigen Tafel. Die Radios bleiben
    fokussierbar, damit die Umschaltung auch per Tastatur funktioniert. */
@@ -481,10 +483,10 @@ def agents_html(agents: list[dict[str, Any]]) -> str:
                   f'<div><div class="k">Aufsicht</div><p>{esc(a.get("oversight") or "–")}</p><div class="k">Vorbedingungen</div><ul>{pre}</ul></div></div></details>')
         rows.append(f'<tr><td class="n">{a.get("priority_rank", "–")}</td><td class="n">{a.get("sequence_rank", "–")}</td><td><b>{esc(a["name"])}</b><div class="meta">{esc(a.get("pattern"))}'
                     f'{(" · " + esc(a["existing_system"])) if a.get("existing_system") else ""}</div>{detail}</td>'
-                    f'<td>{STATUS_LABEL.get(a.get("status"), a.get("status"))}</td><td>{SOURCING_LABEL.get(a.get("sourcing"), "–")}</td>'
+                    f'<td>{STATUS_LABEL.get(a.get("status"), a.get("status"))}</td><td>{cv.GRADE_LABEL.get(a.get("evidence_grade"), "–")}</td><td>{SOURCING_LABEL.get(a.get("sourcing"), "–")}</td>'
                     f'<td>{HORIZON_LABEL.get(a.get("horizon"), "–")}</td><td class="n">{a.get("complexity", "–")}/5</td>'
                     f'<td class="n">{a.get("roles_covered_count", 0)}</td><td class="n">{pct(a.get("avg_coverage_pct"))}</td><td class="n">{fte}</td></tr>')
-    return ('<table><thead><tr><th class="n">Wert #</th><th class="n">Bau #</th><th>Agent</th><th>Status</th><th>Sourcing</th><th>Horizont</th><th class="n">Komplexität</th>'
+    return ('<table><thead><tr><th class="n">Wert #</th><th class="n">Bau #</th><th>Agent</th><th>Status</th><th>Evidenz</th><th>Sourcing</th><th>Horizont</th><th class="n">Komplexität</th>'
             '<th class="n">Rollen</th><th class="n">Ø Abdeckung</th><th class="n">FTE-Äquiv.</th></tr></thead><tbody>' + "".join(rows) + "</tbody></table>")
 
 
@@ -1002,6 +1004,15 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
         governance_section = ""
         roles_intro = ("Sortiert nach Disruptionsscore. Je Rolle: Zeitverteilung, "
                        "Transformationslogik, nächster Schritt, Kennwerte, Skills und Aufgaben.")
+    task_html, task_js, task_nav = tv.section(graph, MODE_COLOR, MODE_LABEL, HORIZON_LABEL)
+    if task_nav:
+        at = next((i for i, (h, _t) in enumerate(nav_items) if h == "#rollen"), len(nav_items))
+        nav_items = nav_items[:at] + [(task_nav, "Aufgabenkarte")] + nav_items[at:]
+    cap_sections, cap_nav = cv.sections(graph)
+    if cap_nav:
+        # Kapazität, Zielbild, Nutzung und Reichweite direkt vor den Rollenüberblick.
+        at = next((i for i, (h, _t) in enumerate(nav_items) if h in ("#ueberblick",)), len(nav_items))
+        nav_items = nav_items[:at] + cap_nav + nav_items[at:]
     nav_html = "".join(f'<a href="{h}">{esc(t)}</a>' for h, t in nav_items)
     method_extra = METHOD_PROCESS if has_processes else ""
     return f"""<!DOCTYPE html>
@@ -1012,6 +1023,7 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
 <nav>{nav_html}</nav>
 <main>
 {process_sections}
+{cap_sections}
 <section id="ueberblick"><h2>{'Rollenüberblick' if has_processes else 'Überblick'}</h2><p>Kennzahlen des analysierten Bereichs. Zeitanteile sind headcount-gewichtet, wo Headcounts bekannt sind ({k['headcount_known']} von {k['roles']} Rollen).</p>
 {tiles_html(k)}<div style="height:14px"></div>{dist_html(k)}
 <p class="meta" style="margin-top:10px">Datenqualität: {fmt(k['inferred_pct'], 0)} % der Aufgaben aus dem Berufsbild ergänzt (nicht aus Quelle) · {k['reviewed_roles']} von {k['roles']} Rollen durch Experten geprüft · Belastbarkeit: {k['evidence']['high']} belastbar, {k['evidence']['medium']} teilweise geprüft, {k['evidence']['low']} ungeprüft · Einstufung grenznah bei {k['borderline']}, wackelig bei {k['fragile']} Rollen. Unterschiede im Expositionswert unter 0,5 sind Rauschen; belastbar sind die Quadranten, nicht die Rangfolge innerhalb.</p></section>
@@ -1021,6 +1033,8 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
 <div class="nojs" id="nojs">Die Filter, Tooltips und Sprungmarken brauchen JavaScript. In Datei-Vorschauen (Chat, Cloud-Speicher, E-Mail) wird es meist nicht ausgeführt: Datei herunterladen und direkt im Browser öffnen.</div>
 <div class="matrix" id="matrix-box">{matrix_svg(data['roles'])}<div class="tip" id="tip"></div></div>
 <div class="legend">{"".join(f'<span><i style="background:{TYPE_COLOR[t]}"></i>{TYPE_LABEL[t]}</span>' for t in TYPE_ORDER if k["types"][t])}</div></section>
+
+{task_html}
 
 <section id="rollen"><h2>Rollenanalyse</h2><p>{esc(roles_intro)}</p>
 <div class="cards">{cards}</div></section>
@@ -1038,7 +1052,7 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
 <p>Aufgaben wurden nach sechs Kriterien (0–10) bewertet: Automatisierbarkeit durch KI/Software, durch Robotik, benötigtes menschliches Urteil, Produktivitätshebel, Datenlage, Fehlerfolgen. Ausführungsmodus: <em>an Agent delegiert</em> bei Potenzial ≥ 7, Urteil ≤ 3 und Fehlerfolge ≤ 5 (reguliert ≤ 3); <em>KI-unterstützt</em> bei Potenzial ≥ 4 oder Hebel ≥ 5; sonst <em>manuell</em>. Rollenwerte sind zeitanteilgewichtete Mittel. Disruptionsscore = 0,5·Potenzial + 0,3·Hebel + 0,2·(10 − Urteil). Typen: eliminiert (≥ 60 % delegierbar, Urteil ≤ 3), transformiert (≥ 30 % delegierbar oder Potenzial ≥ 6 bei Urteil ≤ 5), augmentiert (≥ 40 % automatisierbar oder Hebel ≥ 5), entstehend (neue Rolle), stabil. HAS = Human Agency Scale (H1 Agent allein … H5 Mensch unverzichtbar) nach Stanford WORKBank. Bewertungen sind KI-generiert und durch Expertenkorrekturen (Overrides) überschreibbar; der Status je Rolle zeigt den Prüfstand.</p>{method_extra}</section>
 </main>
 <footer>Erzeugt mit der Work-Transformation-Suite (work-graph-builder → task-scorer → agent-mapper → process-redesigner → transformation-dashboard) aus {esc(wl.LATEST_GRAPH)} Version {meta.get('version')}. Schema {esc(meta.get('schema_version'))}.</footer>
-<script>window.__ROLES__={json.dumps(roles_js, ensure_ascii=False, sort_keys=True)};{JS}</script>
+<script>window.__ROLES__={json.dumps(roles_js, ensure_ascii=False, sort_keys=True)};{JS}{task_js}</script>
 </body></html>
 """
 
@@ -1059,6 +1073,8 @@ def export_csv(project: Path, graph: dict[str, Any], data: dict[str, Any], versi
                       "human_judgment": an.get("human_judgment"), "productivity_boost": an.get("productivity_boost"), "data_readiness": an.get("data_readiness"),
                       "share_human_core": an.get("share_human_core"), "share_ai_assisted": an.get("share_ai_assisted"), "share_agent_delegated": an.get("share_agent_delegated"),
                       "horizon": an.get("horizon"), "readiness": an.get("readiness"), "evidence": an.get("evidence"), "stability": an.get("stability"), "flip_share": an.get("flip_share"), "next_action": an.get("next_action"),
+                      "fte_released_technical": an.get("fte_released_technical"), "fte_realisable": an.get("fte_realisable"),
+                      "absorption": an.get("absorption"),
                       "core_skills": "; ".join(an.get("retained_skills", [])), "declining_skills": "; ".join(an.get("declining_skills", []))})
     p = out / f"roles_v{version:03d}.csv"
     wl.write_csv(p, rrows, list(rrows[0].keys()) if rrows else ["role_id"])
@@ -1080,7 +1096,7 @@ def export_csv(project: Path, graph: dict[str, Any], data: dict[str, Any], versi
 
     arows = []
     for a in data["agents"]:
-        arows.append({"agent_id": a["id"], "priority_rank": a.get("priority_rank"), "sequence_rank": a.get("sequence_rank"), "agent": a["name"], "pattern": a.get("pattern"), "status": a.get("status"),
+        arows.append({"agent_id": a["id"], "priority_rank": a.get("priority_rank"), "sequence_rank": a.get("sequence_rank"), "agent": a["name"], "pattern": a.get("pattern"), "status": a.get("status"), "evidence_grade": a.get("evidence_grade"),
                       "specificity": a.get("specificity"), "sourcing": a.get("sourcing"), "horizon": a.get("horizon"), "complexity": a.get("complexity"),
                       "roles_covered_count": a.get("roles_covered_count"), "avg_coverage_pct": a.get("avg_coverage_pct"), "coverage_points": a.get("coverage_points"),
                       "fte_equivalent": a.get("fte_equivalent"), "tasks": len(a.get("task_ids", [])), "existing_system": a.get("existing_system"),
@@ -1253,8 +1269,15 @@ def main() -> int:
     csvs = export_csv(project, graph, data, version)
     rep = out / f"report_v{version:03d}.md"
     wl.write_text(rep, report_md(graph, data, k, title))
+    extra = []
+    if cv.has_any(graph):
+        hr = out / f"report_hr_v{version:03d}.md"
+        wl.write_text(hr, cv.hr_report(graph, title))
+        it = out / f"report_it_v{version:03d}.md"
+        wl.write_text(it, cv.it_backlog(graph, title, data["agents"]))
+        extra = [hr, it]
     print(f"Geschrieben: {wl.relpath(html_path)}")
-    for p in csvs + [rep]:
+    for p in csvs + [rep] + extra:
         print(f"Geschrieben: {wl.relpath(p)}")
     print(f"Rollen={k['roles']} bewertet={k['roles_scored']} Agenten={k['agents']} | " + ", ".join(f"{TYPE_LABEL[t]}={k['types'][t]}" for t in TYPE_ORDER if k["types"][t]))
     return 0

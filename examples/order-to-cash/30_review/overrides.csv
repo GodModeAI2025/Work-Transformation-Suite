@@ -1,1 +1,10 @@
 entity_type;entity_id;field;value;reviewer;comment
+role;ro_5d42f48ee610;absorption;attrition;Beispiel Personalplanung;Altersteilzeit: vier Stellen bis Ende 2028
+role;ro_5d42f48ee610;absorption_pct;70;Beispiel Personalplanung;Rest nicht über Fluktuation auffangbar
+role;ro_1d3cedfc16c3;absorption;growth;Beispiel Personalplanung;Auftragsvolumen wächst laut Planung um 15 %
+role;ro_409de267032f;absorption;redeployment;Beispiel Personalplanung;Umbesetzung in die Klärfallbearbeitung
+role;ro_71b3185c093f;absorption;none;Beispiel Personalplanung;Kein Wachstum, keine Fluktuation in der Rolle
+role;ro_5d42f48ee610;day_rate_eur;420;Beispiel Controlling;Planwert Vollkosten je Tag
+role;ro_1d3cedfc16c3;day_rate_eur;430;Beispiel Controlling;Planwert Vollkosten je Tag
+role;ro_409de267032f;day_rate_eur;480;Beispiel Controlling;Planwert Vollkosten je Tag
+role;ro_71b3185c093f;day_rate_eur;520;Beispiel Controlling;Planwert Vollkosten je Tag

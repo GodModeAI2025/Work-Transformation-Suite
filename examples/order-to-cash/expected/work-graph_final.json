@@ -1,4 +1,24 @@
 {
+  "adoption": [
+    {
+      "agent_id": "ag_3f598ad08e40",
+      "building": 2,
+      "group_size": 9,
+      "id": "ad_6f3e779d1f3c",
+      "in_use": 1,
+      "prioritized": 3,
+      "role_id": "ro_5d42f48ee610",
+      "usecase_id": null
+    },
+    {
+      "agent_id": "ag_b5e114255475",
+      "group_size": 4,
+      "id": "ad_aca81628c4bc",
+      "role_id": "ro_409de267032f",
+      "suppressed": true,
+      "usecase_id": null
+    }
+  ],
   "agents": [
     {
       "avg_coverage_pct": 8.0,
@@ -33,6 +53,7 @@
         "write_permissions": []
       },
       "coverage_points": 8.0,
+      "evidence_grade": "heuristic",
       "existing_system": null,
       "fte_equivalent": 0.7,
       "horizon": "mid",
@@ -126,6 +147,7 @@
         ]
       },
       "coverage_points": 60.5,
+      "evidence_grade": "heuristic",
       "existing_system": null,
       "fte_equivalent": 5.4,
       "horizon": "near",
@@ -212,6 +234,7 @@
         ]
       },
       "coverage_points": 17.5,
+      "evidence_grade": "heuristic",
       "existing_system": null,
       "fte_equivalent": 0.7,
       "horizon": "mid",
@@ -276,6 +299,7 @@
         "write_permissions": []
       },
       "coverage_points": 22.0,
+      "evidence_grade": "heuristic",
       "existing_system": null,
       "fte_equivalent": 0.2,
       "horizon": "near",
@@ -370,6 +394,7 @@
         ]
       },
       "coverage_points": 71.5,
+      "evidence_grade": "heuristic",
       "existing_system": null,
       "fte_equivalent": 2.1,
       "horizon": "near",
@@ -447,6 +472,7 @@
         "write_permissions": []
       },
       "coverage_points": 0.0,
+      "evidence_grade": "heuristic",
       "existing_system": null,
       "fte_equivalent": null,
       "horizon": null,
@@ -538,6 +564,7 @@
         ]
       },
       "coverage_points": 74.0,
+      "evidence_grade": "heuristic",
       "existing_system": null,
       "fte_equivalent": 4.4,
       "horizon": "near",
@@ -637,6 +664,7 @@
         ]
       },
       "coverage_points": 34.0,
+      "evidence_grade": "heuristic",
       "existing_system": null,
       "fte_equivalent": 1.4,
       "horizon": "near",
@@ -766,6 +794,7 @@
         "waste_steps": 0
       },
       "name": "Rechnung bis Zahlungseingang — Zuordnung automatisiert, Rest unverändert",
+      "non_ai_steps": 0,
       "open_assumptions": [
         "Ob Klärfälle im ERP zuverlässig gekennzeichnet sind, ist nicht geprüft."
       ],
@@ -839,6 +868,7 @@
           "parallel_group": null,
           "rationale": "Der Abgleich zwischen Verwendungszweck und offenen Posten ist ein Datenabgleich mit sehr guter Datenlage.",
           "rework_pct": 8.0,
+          "solution_class": "ai",
           "step_id": "ps_8e07daa8a154",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -865,6 +895,7 @@
           "parallel_group": null,
           "rationale": "Der Agent liefert eine Erklärungshypothese mit; recherchiert werden muss nur noch, was sie nicht erklärt.",
           "rework_pct": 18.0,
+          "solution_class": "ai",
           "step_id": "ps_57d114e2b276",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -892,6 +923,7 @@
           "parallel_group": null,
           "rationale": "Die Vorschlagsliste ist vorgefiltert um Kunden mit laufender Klärung; durchgesehen wird nur der Rest.",
           "rework_pct": 7.0,
+          "solution_class": "ai",
           "step_id": "ps_8a6b1d9d5747",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -923,6 +955,7 @@
           "parallel_group": null,
           "rationale": "Eine Mahnung an einen zahlenden Kunden kostet Vertrauen. Die Freigabe bleibt unverändert bei der Teamleitung.",
           "rework_pct": 4.0,
+          "solution_class": "ai",
           "step_id": "ps_fbe0bdd056e0",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -949,6 +982,7 @@
           "parallel_group": null,
           "rationale": "Der Versand erfolgt gesammelt aus der freigegebenen Liste statt einzeln.",
           "rework_pct": 1.0,
+          "solution_class": "ai",
           "step_id": "ps_08e292972703",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -976,6 +1010,7 @@
           "parallel_group": null,
           "rationale": "Ratenpläne werden aus Vorlagen vorgerechnet; verhandelt wird wie bisher.",
           "rework_pct": 10.0,
+          "solution_class": "ai",
           "step_id": "ps_6eb87336da7d",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1081,6 +1116,7 @@
         "waste_steps": 1
       },
       "name": "Auftrag bis Rechnung — Schritte zusammengelegt, Menschen entscheiden Ausnahmen",
+      "non_ai_steps": 0,
       "open_assumptions": [
         "Die Kreditvollmacht bis 50.000 EUR für Kreditprüfer ist heute nicht geregelt.",
         "Der Archivzugang über eine Schnittstelle muss geschaffen werden."
@@ -1167,6 +1203,7 @@
           "parallel_group": null,
           "rationale": "Erfassung und Vertragsabgleich arbeiten auf denselben Daten. Getrennt gehalten kosten sie vier Stunden Liegezeit für eine Übergabe an dieselbe Rolle.",
           "rework_pct": 5.0,
+          "solution_class": "ai",
           "step_id": "ps_7a61b1c3763f",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -1196,6 +1233,7 @@
           "parallel_group": null,
           "rationale": "Auskunft einholen und mit der Zahlungshistorie verrechnen ist eine Datenzusammenführung. Der Agent schlägt vor, er entscheidet nicht.",
           "rework_pct": 4.0,
+          "solution_class": "ai",
           "step_id": "ps_00f842a2825f",
           "system_ids": [
             "sy_302e3421417f",
@@ -1228,6 +1266,7 @@
           "parallel_group": null,
           "rationale": "Die Kontrolle bleibt vollständig erhalten, rückt aber näher an die Fachkenntnis. Die Teamleitung entscheidet nur noch die großen Fälle statt jeden.",
           "rework_pct": 3.0,
+          "solution_class": "ai",
           "step_id": "ps_46c9a306b9d5",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1254,6 +1293,7 @@
           "parallel_group": null,
           "rationale": "Aus einem freigegebenen Auftrag entsteht die Bestätigung regelbasiert; ein menschlicher Zwischenschritt fügt nichts hinzu.",
           "rework_pct": 2.0,
+          "solution_class": "ai",
           "step_id": "ps_dd4e297fbbb1",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -1282,6 +1322,7 @@
           "parallel_group": null,
           "rationale": "Nachweise zusammenstellen und daraus die Rechnung erzeugen ist ein Arbeitsgang, der heute nur getrennt ist, weil er in zwei Postkörben liegt. Hier entsteht die meiste Nacharbeit.",
           "rework_pct": 8.0,
+          "solution_class": "ai",
           "step_id": "ps_587963dea982",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1315,6 +1356,7 @@
           "parallel_group": null,
           "rationale": "Freigabe und Versand sind heute zwei Schritte mit vier Stunden Liegezeit dazwischen. Mit der Freigabe löst derselbe Klick Versand und Archivierung aus; das Vier-Augen-Prinzip bleibt unverändert.",
           "rework_pct": 4.0,
+          "solution_class": "ai",
           "step_id": "ps_164831435948",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -1421,6 +1463,7 @@
         "waste_steps": 1
       },
       "name": "Auftrag bis Rechnung — KI assistiert, Kontrollen unverändert",
+      "non_ai_steps": 1,
       "open_assumptions": [
         "Der Archivzugang über eine Schnittstelle ist heute nicht vorhanden und muss geschaffen werden."
       ],
@@ -1494,6 +1537,7 @@
           "parallel_group": null,
           "rationale": "Die Übernahme aus Bestelldokumenten ist strukturiert und gut belegt; Fehler fallen in der anschließenden Prüfung ohnehin auf.",
           "rework_pct": 6.0,
+          "solution_class": "ai",
           "step_id": "ps_f2ec5e45782d",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -1521,6 +1565,7 @@
           "parallel_group": null,
           "rationale": "Der Agent liefert eine Abweichungsliste mit; geprüft wird nur noch, was abweicht, statt jede Position.",
           "rework_pct": 12.0,
+          "solution_class": "ai",
           "step_id": "ps_a8020cab9275",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1547,6 +1592,7 @@
           "parallel_group": null,
           "rationale": "Die Liste bleibt in diesem Szenario bestehen, wird aber aus dem ERP vorbefüllt statt von Hand geführt.",
           "rework_pct": 5.0,
+          "solution_class": "process_change",
           "step_id": "ps_a02073742783",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1575,6 +1621,7 @@
           "parallel_group": null,
           "rationale": "Die Auskunft wird automatisch angefragt und mit der internen Historie zusammengeführt; der Kreditprüfer bewertet nur noch.",
           "rework_pct": 5.0,
+          "solution_class": "ai",
           "step_id": "ps_fcef49bdbd8a",
           "system_ids": [
             "sy_302e3421417f",
@@ -1607,6 +1654,7 @@
           "parallel_group": null,
           "rationale": "Die Freigabe über dem Limit bleibt unverändert bei der Teamleitung. In diesem Szenario wird an den Kontrollen nichts geändert.",
           "rework_pct": 3.0,
+          "solution_class": "ai",
           "step_id": "ps_7aba1f691db7",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1633,6 +1681,7 @@
           "parallel_group": null,
           "rationale": "Die Bestätigung wird aus dem freigegebenen Auftrag vorbefüllt; der Sachbearbeiter prüft und sendet.",
           "rework_pct": 3.0,
+          "solution_class": "ai",
           "step_id": "ps_43b10ccba566",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -1660,6 +1709,7 @@
           "parallel_group": null,
           "rationale": "Lieferscheine und Stundennachweise werden vorgeschlagen zugeordnet; offen bleibt nur, was nicht eindeutig ist.",
           "rework_pct": 16.0,
+          "solution_class": "ai",
           "step_id": "ps_21c13163d74b",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1686,6 +1736,7 @@
           "parallel_group": null,
           "rationale": "Positionen und Steuerkennzeichen werden aus der Abrechnungsgrundlage vorgeschlagen.",
           "rework_pct": 7.0,
+          "solution_class": "ai",
           "step_id": "ps_58ef67c850f8",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1717,6 +1768,7 @@
           "parallel_group": null,
           "rationale": "Die Rechnung ist der Moment, in dem sich das Unternehmen festlegt. Das Vier-Augen-Prinzip bleibt unverändert.",
           "rework_pct": 5.0,
+          "solution_class": "ai",
           "step_id": "ps_f9ee60c923d0",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -1745,6 +1797,7 @@
           "parallel_group": null,
           "rationale": "Versand und Archivierung sind technische Schritte mit klaren Regeln; die Archivierungspflicht bleibt als Kontrolle bestehen.",
           "rework_pct": 1.0,
+          "solution_class": "ai",
           "step_id": "ps_0d4de42cde7f",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -1849,6 +1902,7 @@
         "waste_steps": 0
       },
       "name": "Rechnung bis Zahlungseingang — Klärung und Mahnung gleichzeitig",
+      "non_ai_steps": 0,
       "open_assumptions": [
         "Parallele Mahnung und Klärung setzt voraus, dass strittige Posten sofort markiert werden. Heute geschieht das erst bei der Klärung."
       ],
@@ -1923,6 +1977,7 @@
           "parallel_group": "klaerung",
           "rationale": "Zuordnung und Klärung sind derselbe Vorgang, sobald die Erklärung belegt werden kann. Übrig bleibt der Fall, in dem der Kunde widerspricht — und genau der gehört zu einem Menschen.",
           "rework_pct": 5.0,
+          "solution_class": "ai",
           "step_id": "ps_a1f033294569",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -1957,6 +2012,7 @@
           "parallel_group": "klaerung",
           "rationale": "Das Mahnwesen wartet heute auf die Klärung, obwohl es nur die unstrittigen Posten betrifft. Beides kann gleichzeitig laufen; die Freigabe ab Stufe 3 bleibt als Kontrolle unverändert bestehen.",
           "rework_pct": 3.0,
+          "solution_class": "ai",
           "step_id": "ps_91bf68909b99",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -1987,6 +2043,7 @@
           "parallel_group": null,
           "rationale": "Eine Zahlungsvereinbarung ist eine Zusage mit rechtlicher Wirkung und Ermessensspielraum. Sie bleibt vollständig beim Menschen, auch in einem agent-nativen Prozess.",
           "rework_pct": 6.0,
+          "solution_class": "ai",
           "step_id": "ps_bdac73d074ae",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -2092,6 +2149,7 @@
         "waste_steps": 1
       },
       "name": "Auftrag bis Rechnung — vom Ergebnis her gebaut",
+      "non_ai_steps": 0,
       "open_assumptions": [
         "Bonitätsanfrage vor abgeschlossener Auftragsprüfung ist vertraglich mit der Auskunftei zu klären.",
         "Die Kreditvollmacht bis 50.000 EUR für Kreditprüfer ist heute nicht geregelt.",
@@ -2181,6 +2239,7 @@
           "parallel_group": "eingang",
           "rationale": "Erfassen, prüfen und bestätigen arbeiten auf demselben Datensatz und trennen sich heute nur durch Postkörbe. Zusammengelegt entfallen zwei Übergaben und drei Wartestrecken.",
           "rework_pct": 3.0,
+          "solution_class": "ai",
           "step_id": "ps_32f8d1c2f690",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -2214,6 +2273,7 @@
           "parallel_group": "eingang",
           "rationale": "Die Bonität hängt am Kunden, nicht am Auftragsinhalt. Sie kann gleichzeitig mit der Auftragsaufnahme laufen statt danach — das spart die gesamte Wartestrecke von acht Stunden.",
           "rework_pct": 3.0,
+          "solution_class": "ai",
           "step_id": "ps_060f0ba465d0",
           "system_ids": [
             "sy_302e3421417f",
@@ -2242,6 +2302,7 @@
           "parallel_group": null,
           "rationale": "Nachweise, Rechnung und Prüfbefund entstehen aus demselben Datenbestand in einem Lauf. Getrennt gehalten kosten sie dreizehn Stunden Liegezeit.",
           "rework_pct": 4.0,
+          "solution_class": "ai",
           "step_id": "ps_f0f1729c16a2",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -2275,6 +2336,7 @@
           "parallel_group": null,
           "rationale": "Hier legt sich das Unternehmen gegenüber dem Kunden fest, und der Schritt ist nicht umkehrbar. Diese Verantwortungsgrenze bleibt auch in einem agent-nativen Prozess beim Menschen.",
           "rework_pct": 3.0,
+          "solution_class": "ai",
           "step_id": "ps_88f4fbc5e39e",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -2379,6 +2441,7 @@
         "waste_steps": 0
       },
       "name": "Rechnung bis Zahlungseingang — Zuordnung und Vorklärung zusammen",
+      "non_ai_steps": 0,
       "open_assumptions": [],
       "operator_counts": {
         "automate": 1,
@@ -2451,6 +2514,7 @@
           "parallel_group": null,
           "rationale": "Zuordnung und Vorklärung arbeiten auf denselben Daten. Die Trennung kostet heute zwölf Stunden Liegezeit für eine Übergabe innerhalb derselben Rolle.",
           "rework_pct": 8.0,
+          "solution_class": "ai",
           "step_id": "ps_e8521f2de470",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -2478,6 +2542,7 @@
           "parallel_group": null,
           "rationale": "Die Stufenlogik ist ein Regelwerk. Der Agent wendet es an und begründet jeden Ausschluss.",
           "rework_pct": 5.0,
+          "solution_class": "ai",
           "step_id": "ps_f67df4e66e41",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -2510,6 +2575,7 @@
           "parallel_group": null,
           "rationale": "Freigabe und Versand sind heute zwei Schritte mit fünf Stunden Liegezeit dazwischen. Mit der Freigabe geht die Mahnung raus.",
           "rework_pct": 3.0,
+          "solution_class": "ai",
           "step_id": "ps_8ce89b038e62",
           "system_ids": [
             "sy_44ea05c927d5",
@@ -2537,6 +2603,7 @@
           "parallel_group": null,
           "rationale": "Die Verhandlung bleibt menschlich; vorbereitet wird sie mit gerechneten Ratenvarianten und der Zahlungshistorie.",
           "rework_pct": 8.0,
+          "solution_class": "ai",
           "step_id": "ps_4f9e1ac61964",
           "system_ids": [
             "sy_44ea05c927d5"
@@ -2656,6 +2723,8 @@
       "design": "ab_test",
       "design_rationale": "A/B-Test möglich: rund 21.000 Fälle im Jahr, keine Aufsicht, keine irreversiblen Entscheidungen. Die Zuteilung erfolgt über die Prüfziffer der Belegnummer, damit sie nicht mit Kundengröße oder Region korreliert.",
       "duration_days": 42,
+      "frame_confirmed": true,
+      "frame_note": "Dienstvereinbarung KI-Pilotierung 2026, Abschnitt 3; Betriebsrat beteiligt",
       "guardrail_metric_ids": [
         "me_9ed950c8c380",
         "me_b2e25cf8adf6"
@@ -2716,6 +2785,8 @@
       "design": "shadow",
       "design_rationale": "Schattenbetrieb vorgeschlagen, weil der Prozess eine irreversible Entscheidung enthält (die Rechnungsfreigabe). Die Agenten rechnen mit und entscheiden nichts; ihre Vorschläge werden gegen die tatsächliche Bearbeitung gehalten. Das kostet keine Freigabe und kein Risiko.",
       "duration_days": 42,
+      "frame_confirmed": false,
+      "frame_note": "",
       "guardrail_metric_ids": [
         "me_5e8f5d3ecf41",
         "me_c25b13a22852"
@@ -2768,12 +2839,26 @@
   ],
   "meta": {
     "language": "de",
+    "levels": [
+      {
+        "day_rate_eur": 450.0,
+        "description": "Ausführende Fachaufgaben mit Prüfverantwortung",
+        "label": "EG 8–9",
+        "level": "Fachkraft"
+      },
+      {
+        "day_rate_eur": 640.0,
+        "description": "Fachliche und disziplinarische Führung eines Teams",
+        "label": "EG 12",
+        "level": "Führung"
+      }
+    ],
     "organization": "Beispiel GmbH",
     "project": "Order-to-Cash (Referenzbeispiel)",
-    "schema_version": "1.1",
+    "schema_version": "1.2",
     "scope": "Order-to-Cash",
     "stage": "governance",
-    "version": 8
+    "version": 12
   },
   "metrics": [
     {
@@ -3103,6 +3188,7 @@
       "outputs": [
         "Rechnungsentwurf"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 9.0,
       "role_id": "ro_1d3cedfc16c3",
@@ -3140,6 +3226,7 @@
         "Archivbeleg",
         "versendete Rechnung"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 2.0,
       "role_id": "ro_1d3cedfc16c3",
@@ -3180,6 +3267,7 @@
       "outputs": [
         "Mahnvorschlag"
       ],
+      "pain": "",
       "process_id": "pr_8ff57eea0689",
       "rework_pct": 10.0,
       "role_id": "ro_409de267032f",
@@ -3217,6 +3305,7 @@
         "Auftragskopf",
         "Auftragspositionen"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 12.0,
       "role_id": "ro_5d42f48ee610",
@@ -3252,6 +3341,7 @@
       "outputs": [
         "geklärte Zuordnung"
       ],
+      "pain": "Ich suche die Gutschrift in drei Systemen und weiß nie, ob die Information aktuell ist.",
       "process_id": "pr_8ff57eea0689",
       "rework_pct": 25.0,
       "role_id": "ro_409de267032f",
@@ -3292,6 +3382,7 @@
       "outputs": [
         "freigegebene Mahnung"
       ],
+      "pain": "",
       "process_id": "pr_8ff57eea0689",
       "rework_pct": 4.0,
       "role_id": "ro_e70a9399feff",
@@ -3335,6 +3426,7 @@
       "outputs": [
         "freigegebene Rechnung"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 5.0,
       "role_id": "ro_1d3cedfc16c3",
@@ -3369,6 +3461,7 @@
       "outputs": [
         "versendete Mahnung"
       ],
+      "pain": "",
       "process_id": "pr_8ff57eea0689",
       "rework_pct": 1.0,
       "role_id": "ro_409de267032f",
@@ -3408,6 +3501,7 @@
       "outputs": [
         "Ratenplan"
       ],
+      "pain": "",
       "process_id": "pr_8ff57eea0689",
       "rework_pct": 12.0,
       "role_id": "ro_409de267032f",
@@ -3443,6 +3537,7 @@
       "outputs": [
         "Abrechnungsgrundlage"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 22.0,
       "role_id": "ro_1d3cedfc16c3",
@@ -3478,6 +3573,7 @@
       "outputs": [
         "geprüfter Auftrag"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 18.0,
       "role_id": "ro_5d42f48ee610",
@@ -3513,6 +3609,7 @@
       "outputs": [
         "Auftragsbestätigung"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 4.0,
       "role_id": "ro_5d42f48ee610",
@@ -3557,6 +3654,7 @@
         "Bonitätsurteil",
         "Kreditlimit"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 6.0,
       "role_id": "ro_71b3185c093f",
@@ -3597,6 +3695,7 @@
         "Restdifferenz",
         "Zuordnung"
       ],
+      "pain": "",
       "process_id": "pr_8ff57eea0689",
       "rework_pct": 14.0,
       "role_id": "ro_409de267032f",
@@ -3637,6 +3736,7 @@
       "outputs": [
         "Freigabe"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 3.0,
       "role_id": "ro_e70a9399feff",
@@ -3671,6 +3771,7 @@
       "outputs": [
         "Listeneintrag"
       ],
+      "pain": "",
       "process_id": "pr_94ace8f57651",
       "rework_pct": 8.0,
       "role_id": "ro_5d42f48ee610",
@@ -3979,7 +4080,9 @@
   ],
   "roles": [
     {
+      "absorption": "growth",
       "analysis": {
+        "absorption": "growth",
         "automation_ai": 7.4,
         "automation_physical": 0.0,
         "automation_potential": 7.4,
@@ -3990,11 +4093,11 @@
         ],
         "disruption_score": 7.3,
         "disruption_type": "transformed",
-        "evidence": "medium",
-        "evidence_points": 4,
+        "evidence": "high",
+        "evidence_points": 6,
         "evidence_reasons": [
           "Zeitanteile aus Quelle",
-          "ungeprüft"
+          "von Experten geprüft"
         ],
         "flip_examples": [
           {
@@ -4005,6 +4108,9 @@
           }
         ],
         "flip_share": 4.2,
+        "fte_realisable": 3.6,
+        "fte_released_technical": 3.6,
+        "headcount_basis": 6.0,
         "horizon": "near",
         "horizon_label": "kurzfristig (0–2 Jahre)",
         "human_judgment": 2.6,
@@ -4026,12 +4132,17 @@
       },
       "archetype": "process-heavy",
       "cluster_id": "jc_1d8027deadc9",
+      "day_rate_eur": 430,
       "description": "Stellt Leistungsnachweise zusammen, erzeugt Rechnungen, prüft sie im Vier-Augen-Prinzip und archiviert sie.",
       "headcount": 6,
       "id": "ro_1d3cedfc16c3",
       "is_new": false,
       "level": "Fachkraft",
       "name": "Fakturierungssachbearbeiter",
+      "overrides_applied": [
+        "absorption",
+        "day_rate_eur"
+      ],
       "purpose": "Erstellt, prüft und versendet Rechnungen.",
       "regulated": false,
       "skills": [
@@ -4054,7 +4165,7 @@
       "source_refs": [
         "Stellenbeschreibungen Order-to-Cash, anonymisiert, Stand 2026-01"
       ],
-      "status": "generated",
+      "status": "reviewed",
       "task_ids": [
         "ta_55bea77e0a98",
         "ta_7f89abd945b0",
@@ -4064,7 +4175,9 @@
       "time_shares_source": "source"
     },
     {
+      "absorption": "redeployment",
       "analysis": {
+        "absorption": "redeployment",
         "automation_ai": 5.6,
         "automation_physical": 0.0,
         "automation_potential": 5.6,
@@ -4073,14 +4186,17 @@
         "declining_skills": [],
         "disruption_score": 5.9,
         "disruption_type": "transformed",
-        "evidence": "medium",
-        "evidence_points": 4,
+        "evidence": "high",
+        "evidence_points": 6,
         "evidence_reasons": [
           "Zeitanteile aus Quelle",
-          "ungeprüft"
+          "von Experten geprüft"
         ],
         "flip_examples": [],
         "flip_share": 0.0,
+        "fte_realisable": 1.6,
+        "fte_released_technical": 1.6,
+        "headcount_basis": 4.0,
         "horizon": "near",
         "horizon_label": "kurzfristig (0–2 Jahre)",
         "human_judgment": 4.7,
@@ -4103,12 +4219,17 @@
       },
       "archetype": "control-heavy",
       "cluster_id": "jc_1d8027deadc9",
+      "day_rate_eur": 480,
       "description": "Gleicht Zahlungen gegen offene Posten ab, klärt Differenzen mit Kunden und bereitet Mahnläufe vor.",
       "headcount": 4,
       "id": "ro_409de267032f",
       "is_new": false,
       "level": "Fachkraft",
       "name": "Forderungsmanager",
+      "overrides_applied": [
+        "absorption",
+        "day_rate_eur"
+      ],
       "purpose": "Ordnet Zahlungseingänge zu, klärt offene Posten und steuert das Mahnwesen.",
       "regulated": false,
       "skills": [
@@ -4131,7 +4252,7 @@
       "source_refs": [
         "Stellenbeschreibungen Order-to-Cash, anonymisiert, Stand 2026-01"
       ],
-      "status": "generated",
+      "status": "reviewed",
       "task_ids": [
         "ta_2d4a03b5c486",
         "ta_7ceba3598bd3",
@@ -4141,7 +4262,10 @@
       "time_shares_source": "source"
     },
     {
+      "absorption": "attrition",
+      "absorption_pct": 70,
       "analysis": {
+        "absorption": "attrition",
         "automation_ai": 6.9,
         "automation_physical": 0.0,
         "automation_potential": 6.9,
@@ -4153,11 +4277,11 @@
         ],
         "disruption_score": 6.8,
         "disruption_type": "eliminated",
-        "evidence": "medium",
-        "evidence_points": 4,
+        "evidence": "high",
+        "evidence_points": 6,
         "evidence_reasons": [
           "Zeitanteile aus Quelle",
-          "ungeprüft"
+          "von Experten geprüft"
         ],
         "flip_examples": [
           {
@@ -4180,6 +4304,9 @@
           }
         ],
         "flip_share": 23.3,
+        "fte_realisable": 4.6,
+        "fte_released_technical": 6.5,
+        "headcount_basis": 9.0,
         "horizon": "near",
         "horizon_label": "kurzfristig (0–2 Jahre)",
         "human_judgment": 3.0,
@@ -4201,12 +4328,18 @@
       },
       "archetype": "process-heavy",
       "cluster_id": "jc_1d8027deadc9",
+      "day_rate_eur": 420,
       "description": "Erfasst Aufträge aus Bestellungen, klärt Abweichungen mit dem Vertrieb und pflegt Änderungen ein.",
       "headcount": 9,
       "id": "ro_5d42f48ee610",
       "is_new": false,
       "level": "Fachkraft",
       "name": "Auftragssachbearbeiter",
+      "overrides_applied": [
+        "absorption",
+        "absorption_pct",
+        "day_rate_eur"
+      ],
       "purpose": "Nimmt Kundenaufträge auf, prüft sie gegen Vertrag und Stammdaten und bestätigt sie.",
       "regulated": false,
       "skills": [
@@ -4229,7 +4362,7 @@
       "source_refs": [
         "Stellenbeschreibungen Order-to-Cash, anonymisiert, Stand 2026-01"
       ],
-      "status": "generated",
+      "status": "reviewed",
       "task_ids": [
         "ta_29d3bbba9966",
         "ta_4ad99613ac35",
@@ -4240,7 +4373,9 @@
       "time_shares_source": "source"
     },
     {
+      "absorption": "none",
       "analysis": {
+        "absorption": "none",
         "automation_ai": 7.2,
         "automation_physical": 0.0,
         "automation_potential": 7.2,
@@ -4249,14 +4384,17 @@
         "declining_skills": [],
         "disruption_score": 6.7,
         "disruption_type": "transformed",
-        "evidence": "medium",
-        "evidence_points": 4,
+        "evidence": "high",
+        "evidence_points": 6,
         "evidence_reasons": [
           "Zeitanteile aus Quelle",
-          "ungeprüft"
+          "von Experten geprüft"
         ],
         "flip_examples": [],
         "flip_share": 0.0,
+        "fte_realisable": 0.0,
+        "fte_released_technical": 0.6,
+        "headcount_basis": 3.0,
         "horizon": "near",
         "horizon_label": "kurzfristig (0–2 Jahre)",
         "human_judgment": 3.6,
@@ -4280,12 +4418,17 @@
       },
       "archetype": "control-heavy",
       "cluster_id": "jc_1d8027deadc9",
+      "day_rate_eur": 520,
       "description": "Holt Auskünfte ein, bewertet sie, legt Limits fest und dokumentiert die Entscheidung.",
       "headcount": 3,
       "id": "ro_71b3185c093f",
       "is_new": false,
       "level": "Fachkraft",
       "name": "Kreditprüfer",
+      "overrides_applied": [
+        "absorption",
+        "day_rate_eur"
+      ],
       "purpose": "Bewertet die Bonität von Kunden und legt Kreditlimits fest.",
       "regulated": true,
       "skills": [
@@ -4308,7 +4451,7 @@
       "source_refs": [
         "Stellenbeschreibungen Order-to-Cash, anonymisiert, Stand 2026-01"
       ],
-      "status": "generated",
+      "status": "reviewed",
       "task_ids": [
         "ta_1c3f2f2b05a5",
         "ta_2bb0fb48a3f5",
@@ -4319,6 +4462,7 @@
     },
     {
       "analysis": {
+        "absorption": null,
         "automation_ai": 3.2,
         "automation_physical": 0.0,
         "automation_potential": 3.2,
@@ -4336,6 +4480,9 @@
         ],
         "flip_examples": [],
         "flip_share": 0.0,
+        "fte_realisable": null,
+        "fte_released_technical": 0.1,
+        "headcount_basis": 1.0,
         "horizon": "mid",
         "horizon_label": "mittelfristig (2–5 Jahre)",
         "human_judgment": 7.5,
@@ -4359,6 +4506,8 @@
       },
       "archetype": "relationship-heavy",
       "cluster_id": "jc_1d8027deadc9",
+      "day_rate_eur": 640.0,
+      "day_rate_source": "level",
       "description": "Entscheidet Eskalationen, berichtet Kennzahlen, führt und entwickelt das Team.",
       "headcount": 1,
       "id": "ro_e70a9399feff",
@@ -4518,6 +4667,137 @@
       "system_of_record": true
     }
   ],
+  "target_roles": [
+    {
+      "absorption": "redeployment",
+      "basis": "estimated",
+      "delegated_task_ids": [
+        "ta_8a4b6cdac553"
+      ],
+      "disruption_type": "transformed",
+      "fte_current": 4.0,
+      "fte_realisable": 1.6,
+      "fte_released_technical": 1.6,
+      "fte_remaining": 2.4,
+      "id": "tr_6301b4b4a336",
+      "merge_with_role_ids": [],
+      "name": "Forderungsmanager",
+      "retained_share_pct": 70.0,
+      "retained_task_ids": [
+        "ta_2d4a03b5c486",
+        "ta_7ceba3598bd3",
+        "ta_fbea64b998cc"
+      ],
+      "role_id": "ro_409de267032f",
+      "status": "draft",
+      "summary": "Bleibt: 70 % der heutigen Arbeitszeit (3 Aufgaben); 4.0 → 2.4 FTE technisch; davon 1.6 FTE auffangbar.",
+      "value_eur_estimated": 168960.0
+    },
+    {
+      "absorption": "attrition",
+      "basis": "estimated",
+      "delegated_task_ids": [
+        "ta_4ad99613ac35",
+        "ta_b21bca1cbb28",
+        "ta_c3dfbf2863f9"
+      ],
+      "disruption_type": "eliminated",
+      "fte_current": 9.0,
+      "fte_realisable": 4.6,
+      "fte_released_technical": 6.5,
+      "fte_remaining": 2.5,
+      "id": "tr_663a3a8fc6b3",
+      "merge_with_role_ids": [
+        "ro_e70a9399feff"
+      ],
+      "name": "Auftragssachbearbeiter",
+      "retained_share_pct": 35.0,
+      "retained_task_ids": [
+        "ta_29d3bbba9966",
+        "ta_5ecf0745976d"
+      ],
+      "role_id": "ro_5d42f48ee610",
+      "status": "draft",
+      "summary": "Bleibt: 35 % der heutigen Arbeitszeit (2 Aufgaben); 9.0 → 2.5 FTE technisch; davon 4.6 FTE auffangbar; Zusammenlegung prüfen.",
+      "value_eur_estimated": 425040.0
+    },
+    {
+      "absorption": null,
+      "basis": "estimated",
+      "delegated_task_ids": [],
+      "disruption_type": "augmented",
+      "fte_current": 1.0,
+      "fte_realisable": null,
+      "fte_released_technical": 0.1,
+      "fte_remaining": 0.9,
+      "id": "tr_9893a38e0c98",
+      "merge_with_role_ids": [
+        "ro_5d42f48ee610"
+      ],
+      "name": "Teamleitung Order-to-Cash",
+      "retained_share_pct": 100.0,
+      "retained_task_ids": [
+        "ta_229b5a36a9be",
+        "ta_8f4b9538fdd7",
+        "ta_ac35d9860588",
+        "ta_f3d9de4013f4"
+      ],
+      "role_id": "ro_e70a9399feff",
+      "status": "draft",
+      "summary": "Bleibt: 100 % der heutigen Arbeitszeit (4 Aufgaben); 1.0 → 0.9 FTE technisch; Auffangbarkeit nicht bewertet; Zusammenlegung prüfen.",
+      "value_eur_estimated": null
+    },
+    {
+      "absorption": "none",
+      "basis": "estimated",
+      "delegated_task_ids": [],
+      "disruption_type": "transformed",
+      "fte_current": 3.0,
+      "fte_realisable": 0.0,
+      "fte_released_technical": 0.6,
+      "fte_remaining": 2.4,
+      "id": "tr_c46ef79671d3",
+      "merge_with_role_ids": [],
+      "name": "Kreditprüfer",
+      "retained_share_pct": 100.0,
+      "retained_task_ids": [
+        "ta_1c3f2f2b05a5",
+        "ta_2bb0fb48a3f5",
+        "ta_5a2c259ad1d4",
+        "ta_f8667a3d51a4"
+      ],
+      "role_id": "ro_71b3185c093f",
+      "status": "draft",
+      "summary": "Bleibt: 100 % der heutigen Arbeitszeit (4 Aufgaben); 3.0 → 2.4 FTE technisch; davon 0.0 FTE auffangbar.",
+      "value_eur_estimated": 0.0
+    },
+    {
+      "absorption": "growth",
+      "basis": "estimated",
+      "delegated_task_ids": [
+        "ta_d4e8ee45590f",
+        "ta_f209fed482e7"
+      ],
+      "disruption_type": "transformed",
+      "fte_current": 6.0,
+      "fte_realisable": 3.6,
+      "fte_released_technical": 3.6,
+      "fte_remaining": 2.4,
+      "id": "tr_c4b15784ed94",
+      "merge_with_role_ids": [],
+      "name": "Fakturierungssachbearbeiter",
+      "retained_share_pct": 50.0,
+      "retained_task_ids": [
+        "ta_55bea77e0a98",
+        "ta_7f89abd945b0"
+      ],
+      "role_id": "ro_1d3cedfc16c3",
+      "status": "draft",
+      "summary": "Bleibt: 50 % der heutigen Arbeitszeit (2 Aufgaben); 6.0 → 2.4 FTE technisch; davon 3.6 FTE auffangbar.",
+      "value_eur_estimated": 340560.0
+    }
+  ],
+  "task_clusters": [],
   "tasks": [
     {
       "agent_ids": [
@@ -5184,6 +5464,32 @@
       ],
       "status": "generated",
       "workflow_steps": []
+    }
+  ],
+  "usecases": [
+    {
+      "agent_ids": [],
+      "description": "Kontoauszugspositionen den offenen Posten zuordnen",
+      "id": "uc_1a6f3bb64787",
+      "name": "Zahlungseingang automatisch zuordnen",
+      "owner": "Finanzbuchhaltung",
+      "status": "pilot",
+      "task_ids": [
+        "ta_8a4b6cdac553"
+      ],
+      "value_eur_per_year": 48000.0
+    },
+    {
+      "agent_ids": [],
+      "description": "Bestätigung ohne Handarbeit erzeugen und versenden",
+      "id": "uc_2ad7b0f34d50",
+      "name": "Auftragsbestätigung aus Bestelldaten",
+      "owner": "Vertriebsinnendienst",
+      "status": "idea",
+      "task_ids": [
+        "ta_c3dfbf2863f9"
+      ],
+      "value_eur_per_year": null
     }
   ]
 }

@@ -4,6 +4,117 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.5.0] — Rollen-Setup auf Zuruf
+
+Eine Analyse sagt, welche Aufgaben sich lohnen. Diese Version baut daraus für eine bestimmte Rolle das, was eine Person tatsächlich benutzt: ein Setup-Paket für einen
+persönlichen Arbeitsagenten, nach der Struktur Kontextprofil, zentraler Agent, Skills mit Testfällen, Tool-Anbindungen, Routinen.
+
+### Neu
+
+- **`build_role_setup.py`** (agent-mapper): `--list`, `--role "<Name>"`, `--all`, `--skills n`. Erzeugt `40_output/rollen_setup/<rolle>/` mit Kontextprofil
+  (vorbelegt aus dem Graphen, Rest „offen“), Interview-Prompt, schlankem Agenten-Prompt, drei bis fünf Skills mit Testfall-Gerüst und Protokoll, Tool-Tabelle,
+  inaktiven Routinen, Pflegeleitfaden und Manifest.
+- **`check_role_setup.py`**: Reifegrade je Skill (`entwurf`, `im Test`, `live-reif`), Längengrenze für den Systemprompt, aktive Routinen nur für live-reife Skills
+  (`--strict`).
+- **Schutz bearbeiteter Dateien:** Ein erneuter Lauf überschreibt nichts, was jemand geändert hat; der neue Stand liegt als `.vorschlag` daneben.
+- `references/rollen-setup.md`: Prinzipien, Umsetzung, was aus dem Graphen kommt und was nicht, Grenzen.
+- `collaboration_pairs` wanderte in die gemeinsame Bibliothek (von `derive_collaboration.py` und dem Rollen-Setup genutzt).
+
+### Grenzen
+
+- Das Paket ist ein Startpunkt: ungetestet, ohne Systemfreigabe, ohne Aussage zur Zeitersparnis.
+- Die Testfälle sind Gerüste. Echte Fälle (`real_data: true`) kann nur der Nutzer eintragen.
+- Kontext, den der Graph nicht kennt, wird nicht erfunden.
+
+## [0.4.0] — Datenaufbereitung
+
+Gute Analysen hängen mehr an der Aufbereitung als am Modell. Diese Version bringt die Methoden, die sich in der Praxis bewährt haben,
+als Funktionen der Suite — sichten, vorschlagen, anbieten, nie still ausführen. Alles ist optional und additiv.
+
+### Neu
+
+- **Quelleninventar** (`inventory_sources.py`): ordnet `00_input/` Quellenarten zu, nennt Lücken im Modell und schlägt Methoden mit Befehl vor.
+- **Vollständigkeitsprüfung** (`check_completeness.py`, `assets/role-template.json`): Rolle gegen eine anpassbare Vorlage; Lücken mit Hinweis,
+  woher sie zu füllen wären. Füllt nichts auf.
+- **Aufgabencluster** (`dedupe_tasks.py`, Sammlung `task_clusters`): dieselbe Arbeit in mehreren Rollen. Kandidaten, bis ein Fachexperte mit
+  Namen bestätigt (`30_review/task_clusters.csv`); Dashboard-Tabelle „Wiederkehrende Aufgaben über Rollen“.
+- **Zusammenarbeit** (`derive_collaboration.py`): Rollenpaare mit Belegen nach Stärke.
+- **Allgemeine Regeln:** Selektoren in `overrides.csv` (`*`, `cluster:`, `family:`, `role:`); `delete` als Regel ist ausgeschlossen.
+- **Level und Kostensatz** (`import_levels.py`).
+- **Referenzautomatisierungen** (`00_input/referenzautomatisierungen.csv`): Treffer mit Quelle und Evidenzgrad in `agents_todo.json`.
+- **Katalog** `references/datenaufbereitung.md` mit Eingaben, Ergebnissen und Grenzen jeder Methode.
+- **Hygiene-Test:** prüft, dass ein bestimmter Anbietername weder in Dateien noch in den Skill-Paketen steht.
+
+### Behoben
+
+- Importe nach dem Builder (Positionen, Level) machten einen zweiten Pipeline-Lauf zu zwei neuen Graph-Versionen, weil `build_graph.py` die
+  abgeleiteten Rollenwerte nicht übernahm. Behoben, mit Test.
+
+### Grenzen
+
+- Aufgabencluster beruhen auf gleichen Wörtern, nicht auf gleicher Bedeutung.
+- Das Inventar erkennt PDF, Word und Excel nur am Namen; ihren Inhalt liest Claude.
+- Die Suite scrapt keine öffentlichen Daten.
+
+## [0.3.0] — Realisierbarkeit, Zielbild und Nutzungsstand
+
+Auslöser war ein Gespräch mit einem Energieversorger über genau die Lücken, die ein
+Rollen-und-Aufgaben-Modell hat: Es sagt, was technisch möglich ist, aber nicht, was eine
+Organisation auffangen kann; es kennt den Einzelschritt, aber nicht die Kette; es empfiehlt
+Automatisierung, aber fragt nicht, ob ein Schritt überhaupt ein KI-Fall ist. Dazu kamen drei
+Regeln zum Umgang mit Menschen: nur aggregiert messen, den Rahmen vor dem Gespräch klären,
+von „Rolle verändert sich“ sprechen statt von „Rolle entfällt“.
+
+Alles ist optional und additiv. Ein Projekt ohne die neuen Eingaben läuft unverändert;
+`migrate_graph.py` hebt Schema 1.0 und 1.1 verlustfrei auf 1.2.
+
+### Neu
+
+- **Schema 1.2.** Sammlungen `target_roles`, `usecases`, `adoption`; Felder `absorption`,
+  `absorption_pct`, `day_rate_eur` (Rolle), `evidence_grade` (Agent), `pain` (Prozessschritt),
+  `solution_class` (Soll-Schritt), `frame_confirmed` und `frame_note` (Pilot), `telemetry` (Vertrag).
+- **Technisch gegenüber realisierbar.** `score_roles.py` rechnet je Rolle `fte_released_technical`
+  und, sobald der Auffangweg bekannt ist (Wachstum, Fluktuation, Umbesetzung, keiner),
+  `fte_realisable`. Fehlt die Angabe, bleibt der Wert leer: „nicht bewertet“ ist nicht „null“.
+- **Zielbild je Rolle** (`build_target_roles.py`): was bleibt, FTE heute und danach, auffangbar,
+  Zusammenlegungskandidaten im Cluster. Ausdrücklich ein Entwurf.
+- **Zwei Spuren, zwei Berichte.** Spur A (Rollenaggregation) und Spur B (Prozessredesign) stehen
+  im Orchestrator und im README; das Dashboard schreibt `report_hr_vNNN.md` und `report_it_vNNN.md`.
+- **Reichweite und Blindflecken** (`export_reach.py`), **Use-Case-Register** (`import_usecases.py`).
+- **Nutzungsstand nur aggregiert** (`import_adoption.py`). Rollen unter fünf Stellen werden
+  unterdrückt gespeichert; der Validator lehnt jeden Satz darunter ab. Vertragstelemetrie nur mit
+  `level: "aggregate"`, ohne Person- oder Inhaltsfelder.
+- **Kein KI-Fall.** `solution_class` (`ai`, `interface`, `process_change`, `rule_or_rpa`);
+  der Szenarienvergleich zählt Schritte ohne KI.
+- **Interviewleitfaden** (drei Fragen, Nachfrageschema, Rahmen vorab), **Glossar** für HR und IT,
+  **Prozesshaus-Import** (`import_process_house.py`).
+- **Rahmen vor dem Pilot:** Warnung bei `ready` und `running` ohne bestätigten Rahmen.
+- **Skill-Export** (`export_skill.py`): Gerüst aus dem Capability Contract mit deterministischem
+  `run.py`, Testmengen-Hülle und aggregierter Nutzungsmeldung.
+- **Evidenzgrad je Agent** (`heuristic`, `expert_confirmed`, `proven`), im Dashboard sichtbar.
+- **Review-Liste:** „Split prüfen“ bei zehn und mehr Aufgaben oder fremden Aufgabenpaaren; Frage nach
+  dem Auffangweg.
+- Dashboard-Abschnitte Kapazität, Zielbild, Nutzungsstand, Reichweite (nur mit Daten).
+- **Aufgabenkarte** (`task_views.py`): alle bewerteten Aufgaben quer über alle Rollen als Karte (Potenzial gegen
+  Urteil, Größe nach gebundener Arbeit, Farbe nach Modus, Rand bei teurer Fehlerfolge) und als Rangliste nach
+  Exposition. Exposition und Fehlerfolge bleiben getrennte Spalten. Filter nach Modus und Rolle, Tabellenalternative.
+
+### Geändert
+
+- `build_graph.py` übernimmt die neuen Sammlungen aus der Vorversion. Ohne das legte jeder zweite
+  Lauf neue Graph-Versionen an.
+- Das Referenzbeispiel enthält Auffangwege, Use Cases, Nutzungsstand, einen `pain`-Eintrag, eine
+  Lösungsklasse und einen Rahmenvermerk; `expected/` ist neu erzeugt (Versionsnummern 010 und 011).
+- Die Pipeline führt `build_target_roles.py` aus und liest, wo vorhanden, `usecases.csv` und
+  `adoption.csv`.
+
+### Grenzen
+
+- Realisierbar heißt: Die Angabe zum Auffangweg stammt von Menschen. Die Suite prüft sie nicht gegen
+  Verträge, Altersstrukturen oder Personalplanung.
+- `export_skill.py` liefert ein Gerüst, keinen fertigen Skill. Systemaufrufe und Testmenge fehlen.
+- Nutzungsstand kommt als Datei, nicht aus einer Telemetrie-Pipeline.
+
 ## [0.2.0] — Vom Arbeitsgraphen zum KI-nativen Betriebsmodell
 
 Bis 0.1 beantwortete die Suite eine Frage: **Welche heutige Arbeit kann KI übernehmen?**

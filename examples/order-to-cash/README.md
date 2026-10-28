@@ -38,6 +38,11 @@ entfernt sie.
 | `20_graph/process_value.json` | Claude/Fachexperte | Neun Wertfaktoren je Prozess |
 | `20_graph/experiments.json` | Claude/Fachexperte | Zwei Piloten, einer mit Messergebnissen |
 | `30_review/decisions.csv` | Mensch | Fünf Entscheidungen, darunter eine Freigabe |
+| `30_review/overrides.csv` | Mensch | Auffangwege (`absorption`) und Tagessätze je Rolle; die Teamleitung bleibt bewusst „nicht bewertet“ |
+| `00_input/levels.csv` | Mensch | Planwert je Arbeitstag nach Level; die Teamleitung erhält ihren Satz daraus, die übrigen Rollen behalten ihre gesetzten Werte |
+| `00_input/referenzautomatisierungen.csv` | Mensch | Vier Referenzen, eine ohne Quelle (wird übersprungen) und eine als `heuristic` |
+| `00_input/usecases.csv` | Mensch | Zwei eigene Use Cases mit Zuordnung zu Aufgaben |
+| `00_input/adoption.csv` | Mensch | Nutzungsstand je Rolle und Agent; die Rolle mit vier Stellen wird unterdrückt |
 | `expected/` | Testlauf | Erwartetes Endergebnis mit Prüfsummen |
 
 ## Was das Beispiel zeigen soll

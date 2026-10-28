@@ -63,6 +63,53 @@ def suggest_pattern(text: str) -> str:
     return "workflow-orchestration"
 
 
+REF_FILE = "referenzautomatisierungen.csv"
+EVIDENCE_RANK = {"proven": 0, "expert_confirmed": 1, "heuristic": 2}
+
+
+def load_references(project: Path) -> tuple[list[dict], list[str]]:
+    """Register bekannter Automatisierungen aus 00_input/referenzautomatisierungen.csv.
+
+    Spalten (Trennzeichen ;): name;beschreibung;stichwoerter;quelle;evidenz
+    stichwoerter  mit | getrennt; ein Treffer, wenn ein Stichwort im Aufgabentext vorkommt
+    quelle        woher die Referenz stammt (Forum, Herstellerdoku, eigenes Projekt, Studie), mit Fundstelle
+    evidenz       heuristic (Schnipsel, ungeprüft) | expert_confirmed | proven (im Betrieb belegt)
+
+    Das Register ist kuratiert, nicht gescrapt: Eine Referenz ohne Quelle wird übersprungen, eine ohne
+    Evidenzangabe gilt als `heuristic`. Eine Referenz sagt, dass es so etwas gibt — nicht, dass es hier passt.
+    """
+    path = project / wl.DIR_INPUT / REF_FILE
+    problems: list[str] = []
+    refs: list[dict] = []
+    if not path.exists():
+        return refs, problems
+    for i, row in enumerate(wl.read_csv(path), start=2):
+        name = (row.get("name") or "").strip()
+        if not name:
+            continue
+        if not (row.get("quelle") or "").strip():
+            problems.append(f"Zeile {i}: Referenz {name!r} ohne Quelle — übersprungen")
+            continue
+        grade = (row.get("evidenz") or "").strip().lower() or "heuristic"
+        if grade not in EVIDENCE_RANK:
+            problems.append(f"Zeile {i}: evidenz {grade!r} unbekannt — als heuristic geführt")
+            grade = "heuristic"
+        kws = [wl.normalize_name(k) for k in (row.get("stichwoerter") or "").split("|") if k.strip()]
+        if not kws:
+            problems.append(f"Zeile {i}: Referenz {name!r} ohne Stichwörter — nie zugeordnet")
+            continue
+        refs.append({"name": name, "description": (row.get("beschreibung") or "").strip(),
+                     "source": row["quelle"].strip(), "evidence": grade, "keywords": kws})
+    return refs, problems
+
+
+def match_references(refs: list[dict], text: str) -> list[dict]:
+    norm = wl.normalize_name(text)
+    hits = [r for r in refs if any(k in norm for k in r["keywords"])]
+    hits.sort(key=lambda r: (EVIDENCE_RANK[r["evidence"]], r["name"]))
+    return [{"name": r["name"], "source": r["source"], "evidence": r["evidence"]} for r in hits[:3]]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", required=True)
@@ -75,6 +122,9 @@ def main() -> int:
     clusters = wl.index_by_id(graph["job_clusters"])
     agents = wl.index_by_id(graph.get("agents", []))
 
+    refs, ref_problems = load_references(project)
+    for p in ref_problems:
+        print(f"HINWEIS  {p}")
     cands = []
     for t in graph["tasks"]:
         if t.get("mode") in ("ai_assisted", "agent_delegated"):
@@ -94,6 +144,8 @@ def main() -> int:
                 "suggested_pattern": suggest_pattern(t["name"] + " " + t.get("description", "")),
                 "current_agent": (t.get("agent_ids") or [None])[0],
             })
+            if refs:
+                cands[-1]["references"] = match_references(refs, t["name"] + " " + t.get("description", ""))
     if not cands:
         wl.fail("Keine bewerteten, nicht-manuellen Aufgaben; zuerst task-scorer ausführen")
     cands.sort(key=lambda c: (c["suggested_pattern"], c["cluster"], c["role"], -c["share_of_time"], c["task"]))
@@ -103,7 +155,9 @@ def main() -> int:
 
     out = {
         "_hint": "Aufgaben nach Mustervorschlag gruppiert. Bündle sie zu Agenten und schreibe 20_graph/agents.json. "
-                 "Vorschlag ist nur Startpunkt; fachlich sinnvolle Umgruppierung ist erwünscht.",
+                 "Vorschlag ist nur Startpunkt; fachlich sinnvolle Umgruppierung ist erwünscht. "
+                 "`references` nennt bekannte Automatisierungen aus dem Register (Quelle und Evidenzgrad dabei); "
+                 "sie zeigen, dass es so etwas gibt, nicht, dass es hier passt.",
         "existing_agents": [{"id": a["id"], "name": a["name"], "status": a.get("status")} for a in sorted(agents.values(), key=lambda a: a["id"])],
         "candidates_by_pattern": by_pattern,
     }

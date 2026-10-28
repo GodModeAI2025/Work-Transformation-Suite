@@ -175,6 +175,7 @@ eine namentliche Freigabe vorliegen.
 | `wait_time_min` | empfohlen | Liegezeit vor dem Schritt. Meist der größere Hebel |
 | `rework_pct` | empfohlen | Anteil der Fälle, die zurücklaufen |
 | `value_type` | empfohlen | `customer_value`, `business_required`, `waste` |
+| `pain` | empfohlen (Schema 1.2) | Was an diesem Schritt hakt, in den Worten des Gesprächspartners. Antwort auf „Wie fühlst du dich dabei?“ (siehe `interview-leitfaden.md`). Freitext, kein Score |
 | `human_gate` | nach Lage | `{"when": "Bedingung", "role": "Rollenname"}` |
 | `decision` | bei Entscheidungen | `{"scope": …, "accountable_role": …, "escalation": …}` |
 | `next` | nein | Kanten; fehlt `next` überall, wird linear verkettet |
@@ -196,6 +197,12 @@ Modellfehler. Genau diese Schleifen sind später die lohnendsten Redesign-Ziele.
    das Redesign — hier wird nur festgehalten, dass es sie gibt und worauf sie beruht.
 5. **Fünf bis fünfzehn Schritte.** Weniger verbirgt die Übergaben, mehr modelliert
    Klickfolgen statt Prozess.
+
+## Prozesshaus als Startpunkt
+
+Gibt es schon ein Prozesshaus (etwa für den IT-Betrieb), liest `scripts/import_process_house.py` es aus einer CSV
+als Prozessextraktion ein: eine Zeile je Schritt mit Prozess, Rolle, Aufgabe und optionalen Zeiten. Das liefert die
+Struktur, nicht die gelebte Wirklichkeit. Auslöser, Ergebnis und gemessene Zeiten ergänzt die Prozessaufnahme.
 
 ## Grenzen
 

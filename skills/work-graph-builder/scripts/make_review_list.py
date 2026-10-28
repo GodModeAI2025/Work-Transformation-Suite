@@ -27,6 +27,30 @@ import workgraph_lib as wl  # noqa: E402
 
 OVERRIDE_HEADER = "entity_type;entity_id;field;value;reviewer;comment\n"
 
+# Granularitätsprüfung: Eine Rolle, in der viele fachfremde Aufgaben zusammengepresst sind,
+# verliert beim Bewerten Kontext. Der Hinweis ist deterministisch und nur eine Frage an
+# den Fachexperten, kein Urteil.
+SPLIT_TASKS_MAX = 10
+SPLIT_MIN_TASKS_FOR_OVERLAP = 6
+SPLIT_DISJOINT_SHARE = 0.6
+
+
+def split_hint(task_list: list[dict]) -> str | None:
+    n = len(task_list)
+    if n >= SPLIT_TASKS_MAX:
+        return f"{n} Aufgaben in einer Rolle (ab {SPLIT_TASKS_MAX} prüfen)"
+    with_skills = [set(t.get("skill_ids", [])) for t in task_list if t.get("skill_ids")]
+    if n >= SPLIT_MIN_TASKS_FOR_OVERLAP and len(with_skills) >= SPLIT_MIN_TASKS_FOR_OVERLAP:
+        pairs = disjoint = 0
+        for i in range(len(with_skills)):
+            for j in range(i + 1, len(with_skills)):
+                pairs += 1
+                disjoint += 0 if with_skills[i] & with_skills[j] else 1
+        if pairs and disjoint / pairs >= SPLIT_DISJOINT_SHARE:
+            return (f"{round(100 * disjoint / pairs)} % der Aufgabenpaare teilen keinen Skill — "
+                    "mehrere Berufsbilder in einer Rolle?")
+    return None
+
 
 def main() -> int:
     ap = argparse.ArgumentParser()
@@ -62,7 +86,14 @@ def main() -> int:
         "task;ta_0f9e8d7c6b5a;share_of_time;35;M. Muster;ist eher ein Drittel",
         "task;ta_0f9e8d7c6b5a;status;reviewed;M. Muster;",
         "task;ta_0f9e8d7c6b5a;delete;true;M. Muster;gehört zu anderer Rolle",
+        "role;ro_1a2b3c4d5e6f;absorption;attrition;M. Muster;Altersteilzeit, 6 Stellen bis 2028",
+        "role;ro_1a2b3c4d5e6f;absorption_pct;60;M. Muster;Rest nicht auffangbar",
+        "role;ro_1a2b3c4d5e6f;day_rate_eur;640;M. Muster;Planwert Controlling",
         "```",
+        "",
+        "`absorption` sagt, wie frei werdende Kapazität aufgefangen wird: `growth` (Wachstum), `attrition` "
+        "(Fluktuation, Altersteilzeit), `redeployment` (Umbesetzung) oder `none`. Ohne Angabe bleibt das "
+        "realisierbare Potenzial leer — „nicht bewertet“ ist nicht „null“.",
         "",
     ]
     for r in roles:
@@ -105,10 +136,18 @@ def main() -> int:
             "5. Ist die Rolle reguliert (Netzbetrieb, Handel, Arbeitssicherheit, Datenschutz)? Aktuell: "
             + ("ja" if r.get("regulated") else "nein"),
             "",
+            "6. Wenn Kapazität frei wird: Wie wird sie aufgefangen (Wachstum, Fluktuation/Altersteilzeit, "
+            "Umbesetzung, gar nicht)? Eintrag `absorption` in overrides.csv.",
+            "",
             "Notizen:",
             "",
             "",
         ]
+        hint = split_hint([tasks[t] for t in r["task_ids"] if t in tasks])
+        if hint:
+            lines.insert(lines.index("### Aufgaben"), f"**Split prüfen:** {hint}. Besser in zwei Rollen schneiden? "
+                                                       "Gesamtgrößen und Kontext gehen sonst im Mittelwert unter.")
+            lines.insert(lines.index("### Aufgaben"), "")
 
     out = project / wl.DIR_REVIEW / f"review_v{version:03d}.md"
     out.parent.mkdir(parents=True, exist_ok=True)

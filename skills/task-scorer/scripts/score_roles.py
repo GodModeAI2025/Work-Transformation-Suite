@@ -48,6 +48,9 @@ TRANS_AP_MIN, TRANS_HJ_MAX = 6.0, 5.0
 AUG_AUTOMATABLE_MIN = 40.0
 AUG_PB_MIN = 5.0
 ROLE_HORIZON_SHARE = 30.0
+# Realisierbarkeit (Schema 1.2): Delegierte Arbeit wird voll als frei werdende Zeit gezählt,
+# assistierte nur zu einem Fünftel — KI-Unterstützung verkürzt eine Aufgabe, ersetzt sie nicht.
+ASSIST_FREED_FACTOR = wl.ASSIST_FREED_FACTOR
 
 TRANSFORMATION_LOGIC = {
     "eliminated": ("Redesign-Potenzial → Eliminiert → Retire-Critical",
@@ -209,6 +212,32 @@ def tipping_analysis(role: dict[str, Any], scored: list[dict[str, Any]], total: 
     return {"stability": stability, "flip_share": share, "examples": examples}
 
 
+def capacity(role: dict[str, Any], s_del: float, s_ass: float) -> dict[str, Any]:
+    """Frei werdende Kapazität: technisch möglich gegenüber tatsächlich auffangbar.
+
+    Technisch ist, was die Aufgabenbewertung hergibt. Realisierbar ist davon nur der Teil,
+    den die Organisation auffängt — durch Wachstum, Fluktuation und Altersteilzeit oder
+    durch Umbesetzung. Fehlt die Angabe, bleibt `fte_realisable` leer: „nicht bewertet“
+    ist eine andere Aussage als „null“.
+    """
+    hc = role.get("headcount_from_positions")
+    if hc is None:
+        hc = role.get("headcount")
+    if hc is None:
+        return {"headcount_basis": None, "fte_released_technical": None,
+                "fte_realisable": None, "absorption": role.get("absorption")}
+    hc = float(hc)
+    technical = wl.round1(hc * (s_del + ASSIST_FREED_FACTOR * s_ass) / 100.0)
+    absorption = role.get("absorption")
+    realisable = None
+    if absorption in wl.ENUM_ABSORPTION:
+        default_pct = 0.0 if absorption == "none" else 100.0
+        pct = float(role["absorption_pct"]) if role.get("absorption_pct") is not None else default_pct
+        realisable = wl.round1(technical * pct / 100.0)
+    return {"headcount_basis": hc, "fte_released_technical": technical,
+            "fte_realisable": realisable, "absorption": absorption}
+
+
 def aggregate_role(role: dict[str, Any], tasks: list[dict[str, Any]], skills: dict[str, dict]) -> dict[str, Any]:
     scored = [t for t in tasks if t.get("scores")]
     total = sum(float(t["share_of_time"]) for t in scored)
@@ -316,6 +345,7 @@ def aggregate_role(role: dict[str, Any], tasks: list[dict[str, Any]], skills: di
         "readiness_value": readiness_val,
         "transformation_logic": logic,
         "next_action": action,
+        **capacity(role, s_del, s_ass),
         "retained_skills": sorted(retained_skills),
         "declining_skills": sorted(declining_skills),
     }

@@ -131,6 +131,7 @@ Gesamtversprechen: Eine Zusage lässt sich schönschreiben, eine Summe über Sch
 |---|---|---|
 | `name` | ja | Verb-Objekt-Form |
 | `operator` | ja | `simplify`, `merge`, `parallelize`, `automate` oder `human_gate` (`eliminate` gehört nach `removed_steps`) |
+| `solution_class` | nein | `ai` (Standard), `interface`, `process_change` oder `rule_or_rpa`. Wo das Problem ohne KI zu lösen ist, nicht `ai` schreiben — der Bericht zählt solche Schritte ausdrücklich |
 | `from_steps` | fast immer | Namen der Ist-Schritte, aus denen dieser entsteht. Leer nur bei einem wirklich neuen Schritt |
 | `executor` | ja | `{"type": "human\|agent\|system\|rule", "name": "…"}` |
 | `systems`, `controls` | nach Lage | Namen aus dem Graphen |

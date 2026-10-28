@@ -172,7 +172,7 @@ Neuberechnung.
 python3 <skill>/scripts/migrate_graph.py --project ./projekte/<name> [--dry-run]
 ```
 
-Hebt ein Projekt vom Schema 1.0 auf 1.1: additiv, verlustfrei, idempotent. Die Migration rät
+Hebt ein Projekt vom Schema 1.0 oder 1.1 auf 1.2: additiv, verlustfrei, idempotent. Die Migration rät
 nichts — sie erzeugt insbesondere keine Prozesse aus `workflow_steps`. Diese Textliste
 beschreibt den Ablauf innerhalb einer Rolle, nicht den Fluss über Rollen und Systeme hinweg;
 daraus einen End-to-End-Prozess zu generieren, würde eine Genauigkeit vortäuschen, die die
@@ -208,3 +208,38 @@ an das Format, die Taxonomie und vorhandene Namen hältst.
 - Wartezeit in die Bearbeitungszeit gerechnet: verdeckt den größten Hebel.
 - Prozess ohne `outcome`: dann lässt er sich nicht redesignen, weil unklar ist, was erhalten
   bleiben muss.
+
+## Ab Schema 1.2
+
+**Interview statt Stellenbeschreibung.** Für Prozesse und Übergaben ist eine Stellenbeschreibung nur ein Drittel der Wahrheit.
+Der Leitfaden `references/interview-leitfaden.md` hat drei Fragen (Schritte, Systeme, Gefühl), ein Nachfrageschema und die
+Regel, zuerst zu prüfen, ob das Problem überhaupt ein KI-Fall ist. Was an einem Schritt hakt, kommt in `pain`.
+
+**Prozesshaus.** `scripts/import_process_house.py --project … [--file 00_input/prozesshaus.csv]` liest ein vorhandenes Prozesshaus
+als Prozessextraktion ein (Format im Skript). Es liefert Struktur, nicht Wirklichkeit.
+
+**Kapazität.** Overrides kennen `absorption` (`growth`, `attrition`, `redeployment`, `none`), `absorption_pct` und `day_rate_eur`
+je Rolle; `make_review_list.py` fragt danach.
+
+**Rollenzuschnitt.** Hat eine Rolle zehn und mehr Aufgaben, oder teilt die Mehrheit ihrer Aufgabenpaare keinen Skill, markiert
+die Review-Liste „Split prüfen“. In einer zu groben Rolle gehen beim Mitteln Kontext und Unterschiede verloren.
+
+**Glossar.** `references/glossar.md` legt Rolle, Position, Aufgabe, Prozessschritt, Agent und Use Case fest und sagt, wie HR und
+IT dieselben Wörter benutzen.
+
+## Datenaufbereitung (ab 0.4)
+
+Zuerst sichten, dann aufbereiten. Die Methoden und ihre Grenzen stehen in `references/datenaufbereitung.md`.
+
+1. `scripts/inventory_sources.py` — Quellenarten, Lücken, vorgeschlagene Methoden (`30_review/quellen_inventar.md`). Biete die Vorschläge
+   dem Nutzer an; wähle nicht still.
+2. Nach dem Bauen des Graphen: `scripts/check_completeness.py` prüft jede Rolle gegen `assets/role-template.json`. Lücken werden nicht
+   aufgefüllt; sie sagen, woher sie zu füllen wären (innen vor außen).
+3. `scripts/dedupe_tasks.py` findet dieselbe Arbeit in mehreren Rollen. **Das sind Kandidaten.** Das Verfahren kennt Wörter, nicht
+   Bedeutung; prüfe sie mit dem Fachexperten und trage Entscheidungen mit Namen in `30_review/task_clusters.csv` ein.
+4. `scripts/derive_collaboration.py` leitet Zusammenarbeit aus Prozesskanten und Positionslisten ab — als Gesprächsvorlage.
+5. `scripts/import_levels.py` ordnet Level Kostensätze zu (`00_input/levels.csv`); gesetzte Werte bleiben.
+6. Allgemeine Regeln: Wenn ein Experte etwas über viele Rollen sagt („im Netzbetrieb ist alles reguliert“), schreibe eine Regelzeile mit Selektor
+   (`cluster:`, `family:`, `role:`, `*`) in `overrides.csv`, nicht zwanzig Einzelzeilen.
+
+Externe Stellenanzeigen ergänzen nur, was intern fehlt, und werden als `confidence: inferred` geführt.
