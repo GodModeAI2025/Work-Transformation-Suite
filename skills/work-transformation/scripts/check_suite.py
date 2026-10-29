@@ -46,7 +46,8 @@ REQUIRED = {
     "transformation-dashboard": ["build_dashboard.py", "capacity_views.py", "task_views.py"],
     "transformation-roadmap": ["plan_waves.py", "build_documents.py", "roadmap_lib.py", "roadmap_views.py",
                                "render_lib.py"],
-    "work-transformation": ["run_pipeline.py", "check_suite.py"],
+    "work-transformation": ["run_pipeline.py", "check_suite.py", "project_lock.py", "snapshot_project.py",
+                            "restore_project.py", "release_project.py", "verify_release.py"],
 }
 # Dateien, die ein Skill zusätzlich zu scripts/ braucht (Referenzen, Konfiguration).
 REQUIRED_FILES = {

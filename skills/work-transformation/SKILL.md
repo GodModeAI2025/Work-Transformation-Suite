@@ -164,6 +164,24 @@ nachvollziehbar, was Maschine und was Mensch entschieden hat.
 `python3 <skill>/scripts/check_suite.py` prüft, ob alle Skills vorhanden, die gemeinsamen
 Bibliotheksdateien identisch und die Frontmatter-Blöcke gültig sind.
 
+### Stände, Freigaben und Zusammenarbeit
+
+Ein Projektordner ist der ganze Stand; welches Laufwerk ihn trägt, ist egal. Vier Skripte halten ihn belastbar:
+
+- `snapshot_project.py --project … [--label "…"]` legt einen Wiederherstellungspunkt unter `50_snapshots/` an
+  (alles Geschriebene plus der aktuelle Graph, mit Hash je Datei). `restore_project.py --snapshot <ordner>` stellt
+  ihn wieder her und sichert vorher den jetzigen Stand. Mach einen Snapshot vor jedem Review-Import und vor jeder
+  Massenänderung.
+- `release_project.py --project … --version X.Y.Z` friert einen geprüften Stand ein: ein Manifest mit dem Hash jeder
+  Datei unter `60_releases/<version>/` und eine unveränderliche Zeile in `releases.jsonl`, verkettet mit dem Vorgänger.
+  Ohne fehlerfreien Validator, ohne Ausgaben und bei fremdem Pflegeanspruch entsteht kein Stand.
+  `verify_release.py` sagt später, ob ein weitergegebener Ordner noch dem Stand entspricht und was sich geändert hat.
+- `project_lock.py acquire --owner <du> --operation "…" --token-file <außerhalb des Projekts>` meldet an, dass du
+  gerade am Projekt arbeitest. Hält jemand anderes einen gültigen Anspruch, hält `run_pipeline.py` an. Ein abgelaufener
+  Anspruch wird nie still übernommen (`--take-over --reason`). Allein arbeitend brauchst du das Lock nicht.
+
+Der Token steht nie in der Anspruchsdatei und nie im Chat. Nenne ihn nicht, auch wenn der Nutzer fragt; nenne die Datei.
+
 ### Was du am Ende lieferst
 
 Dashboard (HTML), die CSV-Exporte und den Bericht aus `40_output/`, plus eine Einordnung in

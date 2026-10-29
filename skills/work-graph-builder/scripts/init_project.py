@@ -37,6 +37,8 @@ Projektordner der Work-Transformation-Suite. Alle Skripte werden mit
 | 20_graph/ | work-graph_vNNN_<stage>.json, work-graph_latest.json | Skripte |
 | 30_review/ | review_vNNN.md, overrides.csv | Skripte / Fachexperten |
 | 40_output/ | dashboard_vNNN.html, roles_vNNN.csv, agents_vNNN.csv, report_vNNN.md | Skripte |
+| 50_snapshots/ | Wiederherstellungspunkte (snapshot_project.py) | Skripte |
+| 60_releases/ | Freigabestände mit Manifest (release_project.py) | Skripte |
 
 Reihenfolge: work-graph-builder -> task-scorer -> agent-mapper -> transformation-dashboard.
 """

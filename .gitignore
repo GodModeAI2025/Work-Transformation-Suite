@@ -10,6 +10,8 @@ projects/
 30_review/review_v*.md
 30_review/redesign_briefing_v*.md
 40_output/
+50_snapshots/
+.wts-lock/
 
 # Beim Release erzeugt, nicht eingecheckt
 dist/SHA256SUMS

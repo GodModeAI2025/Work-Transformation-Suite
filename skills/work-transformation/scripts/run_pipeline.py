@@ -53,6 +53,9 @@ def main() -> int:
                     help="Prozessredesign überspringen, auch wenn Prozesse erfasst sind")
     ap.add_argument("--stamp", default=None)
     ap.add_argument("--title", default=None)
+    ap.add_argument("--token-file", default=None,
+                    help="Tokendatei eines eigenen Pflegeanspruchs (project_lock.py acquire); ohne Angabe läuft die "
+                         "Pipeline nur, wenn niemand anderes einen gültigen Anspruch hält")
     args = ap.parse_args()
 
     here = Path(__file__).resolve().parent.parent  # Skill-Ordner work-transformation
@@ -68,6 +71,22 @@ def main() -> int:
         return wl.relpath(p, cwd)
 
     proj = wl.relpath(project, cwd)
+
+    # Pflege-Lock: Ein Projekt auf einem geteilten Laufwerk gehört in einem Lauf einer Person oder
+    # einem Agenten. Hält jemand anderes einen gültigen Anspruch, wird nichts geschrieben.
+    import project_lock as pl  # noqa: WPS433
+    token = pl.read_token(Path(args.token_file)) if args.token_file else None
+    if token is not None:
+        mine = pl.own_claim(project, token)
+        if mine is None or mine.get("_expired"):
+            print("STOPP: Der Pflegeanspruch zu dieser Tokendatei ist nicht gültig (verdrängt oder abgelaufen). "
+                  "project_lock.py acquire, dann erneut starten.")
+            return 3
+    holders = pl.foreign_holders(project, token=token)
+    if holders:
+        print("STOPP: Das Projekt wird gerade gepflegt von " + "; ".join(pl.describe(c) for c in holders)
+              + ". Warten, oder mit eigenem Anspruch und --token-file starten (project_lock.py).")
+        return 3
     order = ["builder", "processes", "scorer", "mapper", "redesign", "dashboard", "roadmap"]
     stop = order.index(args.until)
 

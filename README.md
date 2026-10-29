@@ -525,6 +525,22 @@ Weitere Hilfen: `import_process_house.py` übernimmt ein vorhandenes Prozesshaus
 die Review-Liste markiert Rollen mit zehn und mehr Aufgaben oder auffällig fremden Aufgabenpaaren mit „Split prüfen“; jeder Agent
 trägt einen Evidenzgrad (`heuristic`, `expert_confirmed`, `proven`), weil ein Vorschlag aus Mustern keine geprüfte Passung ist.
 
+## Stände: Snapshots, Freigaben, Pflege-Lock
+
+Ein Projektordner ist der ganze Stand. Damit er auf einem geteilten Laufwerk belastbar bleibt, gibt es im
+Orchestrator vier Skripte (alle `--project <ordner>`):
+
+| Skript | Was es tut |
+|---|---|
+| `snapshot_project.py [--label …]` | Wiederherstellungspunkt unter `50_snapshots/`: Eingaben, Extraktionen, Review, aktueller Graph, mit Hash je Datei. Ausgaben nicht, die entstehen neu |
+| `restore_project.py --snapshot <ordner> [--dry-run]` | stellt einen Snapshot byteidentisch wieder her; sichert vorher den jetzigen Stand |
+| `release_project.py --version X.Y.Z` | friert einen geprüften Stand ein: Manifest unter `60_releases/<version>/`, verkettete Zeile in `releases.jsonl`. Vorbedingungen: Validator ohne Fehler, bei Belegpflicht strict nichts unbelegt, Ausgaben vorhanden, kein fremder Pflegeanspruch, Version höher als die letzte |
+| `verify_release.py [--version …]` | prüft, ob der Ordner noch dem Freigabestand entspricht: verändert, fehlt, neu; und ob die Kette der Freigaben geschlossen ist |
+| `project_lock.py acquire\|verify\|heartbeat\|release\|withdraw\|status` | Pflegeanspruch in `.wts-lock/`: wer ihn hält, darf schreiben; `run_pipeline.py` hält bei fremdem Anspruch an. Abgelaufene Ansprüche werden nur mit `--take-over --reason` übernommen und protokolliert. Der Token liegt außerhalb des Projekts (0600) und steht nirgends im Klartext |
+
+Allein arbeitend braucht niemand das Lock. In einem Team ersetzt es nicht die Absprache, aber es verhindert, dass
+zwei Läufe denselben Graphen gleichzeitig schreiben.
+
 ## Versionierung
 
 `project.json` zählt `graph_version` hoch. Jeder Schritt, der den Inhalt ändert, schreibt

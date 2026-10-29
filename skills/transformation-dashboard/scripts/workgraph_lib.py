@@ -48,6 +48,15 @@ LATEST_GRAPH = "work-graph_latest.json"
 # Register als JSON-Zeilen. Belege im Graphen verweisen als "src-<hash>@<fundstelle>" darauf.
 DIR_SOURCES = "sources"
 SOURCE_REGISTER = "register.jsonl"
+# Stände (Schema 1.3): Wiederherstellungspunkte, verifizierte Freigabestände, Pflege-Lock.
+DIR_SNAPSHOTS = "50_snapshots"
+DIR_RELEASES = "60_releases"
+LOCK_DIR = ".wts-lock"
+RELEASE_LOG = "releases.jsonl"
+# Was zu einem Stand gehört: alles, was Menschen oder Claude geschrieben haben, plus der
+# aktuelle Graph. Erzeugte Ausgaben (40_output) nur in Freigabeständen, nie in Snapshots.
+CONTROLLED_DIRS = (DIR_INPUT, DIR_EXTRACTION, DIR_GRAPH, DIR_REVIEW)
+CONTROLLED_SKIP_PARTS = ("__pycache__", ".DS_Store", DIR_SNAPSHOTS, DIR_RELEASES, LOCK_DIR)
 SOURCE_ID_RE = re.compile(r"^src-[0-9a-f]{12}$")
 EVIDENCE_RE = re.compile(r"^(src-[0-9a-f]{12})@(\S.*)$")
 # Belegstand einer Aussage: belegt (mindestens ein gültiger Beleg), geschätzt (ausdrücklich
@@ -964,6 +973,42 @@ def portable_reference(value: str) -> bool:
     if v.startswith(("~/", "~\\")) or v.startswith(("/", "\\")) or re.match(r"^[A-Za-z]:[\\/]", v):
         return False
     return ".." not in v.replace("\\", "/").split("/")
+
+
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def controlled_files(project: Path, with_output: bool = False) -> list[str]:
+    """Relative Pfade aller Dateien, die einen Stand ausmachen, stabil sortiert.
+
+    Ältere Graph-Versionen (work-graph_vNNN_*.json) gehören nicht dazu: Sie sind Geschichte,
+    der Stand ist work-graph_latest.json plus alles, woraus er entstand.
+    """
+    out = [PROJECT_FILE] if (project / PROJECT_FILE).exists() else []
+    dirs = list(CONTROLLED_DIRS) + ([DIR_OUTPUT] if with_output else [])
+    for d in dirs:
+        base = project / d
+        if not base.is_dir():
+            continue
+        for p in sorted(base.rglob("*")):
+            if not p.is_file():
+                continue
+            rel = p.relative_to(project)
+            if any(part in CONTROLLED_SKIP_PARTS for part in rel.parts):
+                continue
+            if d == DIR_GRAPH and re.match(r"^work-graph_v\d{3}_", p.name):
+                continue
+            out.append(rel.as_posix())
+    return out
+
+
+def manifest_of(project: Path, files: list[str]) -> dict[str, str]:
+    return {rel: sha256_file(project / rel) for rel in files}
 
 
 def evidence_policy(project: Path) -> str:
