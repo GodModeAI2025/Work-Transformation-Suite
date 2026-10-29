@@ -146,6 +146,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <li><a href="#ablauf">Ablauf</a></li>
       <li><a href="#ergebnisse">Ergebnisse</a></li>
       <li><a href="#aufbereitung">Datenaufbereitung</a></li>
+      <li><a href="#quellen">Quellen und Stände</a></li>
       <li><a class="here" href="#rollen-md">Rollen.md</a></li>
       <li><a href="#fahrplan">Fahrplan</a></li>
       <li><a href="#skills">Skills</a></li>
@@ -316,6 +317,63 @@ Optional, auf Zuruf oder bei Bedarf:
           <tr><td>Referenzautomatisierungen</td><td>bekannte Automatisierungen mit Quelle und Evidenzgrad bei den Agentenkandidaten</td><td>eine Referenz ohne Quelle wird nicht geführt</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</section>
+
+<section id="quellen">
+  <div class="wrap">
+    <h2>Ein Ordner, der für sich steht</h2>
+    <p class="sub">Ein Projekt ist ein Ordner mit relativen Pfaden, auf jedem Laufwerk dasselbe. Damit er belastbar bleibt, nennt jede Aussage ihre Quelle, lässt sich jeder Stand sichern und freigeben, und was Menschen und Claude festhalten, steht als Markdown da. Die Register sind nur abgeleitet.</p>
+
+    <div class="grid g3">
+      <div class="card">
+        <p class="num">QUELLENREGISTER</p>
+        <h3>Treu, gehasht, portabel</h3>
+        <p>Jede Quelle kommt unverändert als Markdown nach <code>00_input/sources/</code>; die <code>source_id</code> ist der Hash des Inhalts. Das Original bleibt, wo es ist. Zugangsdaten und absolute Pfade stoppen die Aufnahme, dieselben Bytes werden nicht zweimal geführt.</p>
+      </div>
+      <div class="card">
+        <p class="num">BELEGE</p>
+        <h3>Jede Aussage mit Fundstelle</h3>
+        <p>Rollen, Aufgaben, Prozesse, Schritte, Kennzahlen und Kontrollen tragen Belege <code>src-&lt;hash&gt;@#anker</code>. Der Validator prüft Form und Register, der Belegbericht zählt belegt, geschätzt und unbelegt und prüft jede Fundstelle gegen den Quelltext. Mit Belegpflicht <code>strict</code> hält die Pipeline an.</p>
+      </div>
+      <div class="card">
+        <p class="num">SEITEN</p>
+        <h3>Markdown ist die Wahrheit</h3>
+        <p>Rollen, Aufgaben mit Bewertung und Agenten mit Vertrag liegen als Seiten unter <code>05_pages/</code>, mit flachem Kopf und Textabschnitten. Ein Compiler übersetzt sie vor jedem Lauf in die JSON-Register und meldet Fehler mit Datei und Zeile. Geraten wird nicht.</p>
+      </div>
+      <div class="card">
+        <p class="num">SNAPSHOTS</p>
+        <h3>Wiederherstellen, byteidentisch</h3>
+        <p>Ein Snapshot sichert alles Geschriebene plus den aktuellen Graphen mit Hash je Datei. Der Restore stellt genau diesen Stand her und sichert vorher den jetzigen.</p>
+      </div>
+      <div class="card">
+        <p class="num">FREIGABESTÄNDE</p>
+        <h3>Ein Manifest, eine Kette</h3>
+        <p>Ein Freigabestand ist ein Manifest mit dem Hash jeder Datei und eine verkettete Zeile im Freigabelog. Die Prüfung nennt später jede veränderte, fehlende und neue Datei. Ohne fehlerfreien Validator entsteht kein Stand.</p>
+      </div>
+      <div class="card">
+        <p class="num">PFLEGE-LOCK</p>
+        <h3>Wer gerade schreibt</h3>
+        <p>Ein Anspruch im Projekt sagt, wer es pflegt; die Pipeline hält bei fremdem Anspruch an. Abgelaufene Ansprüche werden nur mit Begründung übernommen und protokolliert. Der Token liegt außerhalb des Projekts und steht nirgends im Klartext.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 10px">Befehle</h3>
+<pre># Quelle registrieren, Fundstelle finden, Belege prüfen
+python3 skills/work-graph-builder/scripts/register_source.py --project projekte/kundenservice --file 00_input/stellen.md --title "Stellenbeschreibungen"
+python3 skills/work-graph-builder/scripts/locate_source.py --project projekte/kundenservice --source src-2c6249b3bd2f --find "Zeitanteile"
+python3 skills/work-graph-builder/scripts/check_evidence.py --project projekte/kundenservice
+
+# Seiten aus einem bestehenden Projekt erzeugen; danach gelten die Seiten
+python3 skills/work-graph-builder/scripts/export_pages.py --project projekte/kundenservice
+
+# Stand sichern, freigeben, prüfen
+python3 skills/work-transformation/scripts/snapshot_project.py --project projekte/kundenservice --label "vor Review"
+python3 skills/work-transformation/scripts/release_project.py --project projekte/kundenservice --version 1.0.0
+python3 skills/work-transformation/scripts/verify_release.py --project projekte/kundenservice</pre>
+    <div class="note">
+      <p>Prozesse, Blueprints und Experimente bleiben JSON: Ihre Struktur ist verschachtelt, ein flacher Seitenkopf würde sie verfälschen. PDF, Word und Excel liest Claude; das Register nimmt die treue Markdown-Fassung und den Hash des Originals.</p>
     </div>
   </div>
 </section>
@@ -636,6 +694,7 @@ python3 skills/work-graph-builder/scripts/init_project.py \
     <p class="sub">Was die Suite nicht kann, steht hier, damit niemand es im Piloten herausfinden muss.</p>
     <ul class="plain">
       <li>Kein Freigabeworkflow mit Rollen und Rechten. Freigaben sind ein nachvollziehbares Log mit Name, Datum und Begründung, mehr gibt es nicht.</li>
+      <li>Das Quellenregister liest nur Textformate selbst. Belege sind Fundstellen, keine Wahrheitsprüfung: Ob eine Quelle stimmt, entscheidet, wer sie freigibt. Das Lock ersetzt keine Absprache.</li>
       <li>Das Wellenraster ordnet, es optimiert nicht. Abhängigkeiten kennt es nur zwischen Orchestrator und Agenten, Zeiträume, Budgets und Teamkapazität gar nicht. Die Unterlagen entstehen als Markdown und HTML, nicht als Word-Datei.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
       <li>Rollen.md und Setup-Paket sind Startpunkte: ungetestet, ohne Systemfreigabe, ohne Aussage zur Zeitersparnis. Was der Graph nicht kennt, bleibt „offen“, und die Testfälle sind Gerüste, bis jemand echte einträgt.</li>
