@@ -182,7 +182,8 @@ class TestCheckEvidence(unittest.TestCase):
         r = self.run_check()
         self.assertEqual(r.returncode, 0, r.stdout)
         self.assertIn("unbelegt=0", r.stdout)
-        self.assertTrue((self.proj / "30_review" / "belege_v012.md").exists())
+        v = int(wl.load_latest_graph(self.proj)["meta"]["version"])
+        self.assertTrue((self.proj / "30_review" / f"belege_v{v:03d}.md").exists())
 
     def test_bad_anchor_is_reported(self):
         g = example_graph()

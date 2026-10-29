@@ -78,7 +78,9 @@ def render_board(p: dict, graph: dict, version: int) -> str:
             cards.append(f'<div class="{cls}"><b>{html.escape(c["name"] or "")}</b>'
                          f'<small>{rv.KIND_LABEL[c["kind"]]}, {html.escape(rv.STATUS_LABEL.get(c["status"], c["status"] or "–"))}'
                          f' | Score {score} | {html.escape(eur(c["value_eur"]))}</small><br>'
-                         f'<small>{html.escape(rv.state_of(p, key))}</small></div>')
+                         f'<small>{html.escape(rv.state_of(p, key))}</small>'
+                         + (f'<br><small>Beschäftigte: {html.escape(rv.zone_text(c))}</small>' if c.get("zone") else "")
+                         + '</div>')
         r = w["reach"]
         sums = (f'{html.escape(rv.period_of(w))} | {len(r["roles"])} Rollen | '
                 f'{num(r["fte_total"]) if r["roles"] else "–"} FTE | {html.escape(eur(r["value_eur"]))}')
@@ -104,12 +106,13 @@ def csv_rows(p: dict) -> list[dict]:
                          "score_basis": c["score_basis"], "wert_eur": "" if c["value_eur"] is None else c["value_eur"],
                          "wertquelle": c["value_source"], "fte": "" if c["fte"] is None else c["fte"],
                          "zuordnung": rl.PLACEMENT_LABEL[pl["state"]], "begruendung": pl["reason"],
-                         "entschieden_von": pl["decided_by"]})
+                         "entschieden_von": pl["decided_by"],
+                         "beschaeftigte": rv.zone_text(c) if c.get("zone") else ""})
     return rows
 
 
 CSV_FIELDS = ["welle", "vorhaben", "art", "status", "score", "score_basis", "wert_eur", "wertquelle", "fte",
-              "zuordnung", "begruendung", "entschieden_von"]
+              "zuordnung", "begruendung", "entschieden_von", "beschaeftigte"]
 
 
 def main() -> int:

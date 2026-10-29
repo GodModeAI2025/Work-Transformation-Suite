@@ -71,6 +71,9 @@ def check_config(cfg: dict[str, Any]) -> list[str]:
         cap = w.get("capacity")
         if cap is not None and (not isinstance(cap, int) or cap < 1):
             problems.append(f"Welle {w.get('id')}: capacity muss eine ganze Zahl ≥ 1 oder null sein")
+    red = cfg.get("max_red_zone_share_first_wave", 50)
+    if not isinstance(red, (int, float)) or not 0 <= red <= 100:
+        problems.append("max_red_zone_share_first_wave muss zwischen 0 und 100 liegen")
     weights = cfg.get("weights") or {}
     if set(weights) != set(COMPONENTS):
         problems.append("weights braucht genau: " + ", ".join(COMPONENTS))
@@ -125,6 +128,32 @@ def reach_of_tasks(graph: dict[str, Any], task_ids) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Kandidaten
 # ---------------------------------------------------------------------------
+
+def zone_of_tasks(graph: dict[str, Any], task_ids) -> dict[str, Any] | None:
+    """Beschäftigtensicht einer Aufgabenmenge: Anteil der Zonen an der befragten Zeit (Schema 1.4).
+
+    Gewichtet wird mit dem Zeitanteil der Aufgabe in ihrer Rolle. Ohne befragte Aufgabe gibt es
+    keine Aussage (None), nicht „alles in Ordnung“.
+    """
+    tasks = wl.index_by_id(graph.get("tasks", []))
+    zones: dict[str, float] = {}
+    rated = total = 0.0
+    for tid in sorted(set(task_ids)):
+        t = tasks.get(tid)
+        if not t:
+            continue
+        w = float(t.get("share_of_time") or 0) or 1.0
+        total += w
+        z = (t.get("agency") or {}).get("zone")
+        if z:
+            zones[z] = zones.get(z, 0.0) + w
+            rated += w
+    if not rated:
+        return None
+    shares = {z: wl.round1(100.0 * v / rated) for z, v in sorted(zones.items())}
+    main = sorted(shares.items(), key=lambda kv: (-kv[1], wl.ENUM_AGENCY_ZONE.index(kv[0])))[0][0]
+    return {"shares": shares, "main": main, "rated_pct": wl.round1(100.0 * rated / total) if total else None}
+
 
 def _task_bands(graph: dict[str, Any], cfg: dict[str, Any]) -> dict[str, tuple[str, float]]:
     """Beste Prioritätsstufe je Aufgabe aus den Prozessen, in denen sie vorkommt."""
@@ -188,6 +217,7 @@ def build_candidates(graph: dict[str, Any], cfg: dict[str, Any]) -> list[dict[st
         c["bands"] = sorted({bands[t][0] for t in c["task_ids"] if t in bands},
                             key=lambda b: -cfg["band_score"][b])
         c["band_score"] = max((bands[t][1] for t in c["task_ids"] if t in bands), default=None)
+        c["zone"] = zone_of_tasks(graph, c["task_ids"])
     return out
 
 
@@ -282,6 +312,10 @@ def assign_waves(cands, cfg, decisions):
     notes: list[str] = []
     by_key = {c["key"]: c for c in cands}
     running = set(cfg.get("running_statuses") or [])
+    red_max = float(cfg.get("max_red_zone_share_first_wave", 50))
+
+    def red_share(c) -> float:
+        return float(((c.get("zone") or {}).get("shares") or {}).get("red", 0.0))
 
     for key, d in sorted(decisions.items()):
         placement[key] = {"wave": d["wave"], "state": "confirmed", "reason": d["reason"] or "Entscheidung",
@@ -302,11 +336,18 @@ def assign_waves(cands, cfg, decisions):
             wid = ids[idx]
             if idx == 0 and c["complexity"] is not None and c["complexity"] > int(cfg.get("max_complexity_first_wave", 5)):
                 continue
+            if idx == 0 and red_share(c) > red_max:
+                # Arbeit, die die Beschäftigten nicht abgeben wollen, beginnt nicht ohne Entscheidung.
+                gated.add(c["key"])
+                continue
             if cap[wid] is None or count[wid] < cap[wid]:
                 if min_wave_index and idx == min_wave_index:
                     reason = "frühestens nach den gesteuerten Agenten"
                 elif idx == 0:
                     reason = "Rang nach Score"
+                elif c["key"] in gated:
+                    reason = (f"Vorsichtszone überwiegt ({red_share(c):.0f} % der befragten Zeit): nicht in der ersten Welle "
+                              "ohne Entscheidung")
                 else:
                     reason = "Rang nach Score, frühere Wellen belegt oder zu schwer"
                 placement[c["key"]] = {"wave": wid, "state": "proposed", "reason": reason,
@@ -320,6 +361,7 @@ def assign_waves(cands, cfg, decisions):
         count[wid] += 1
         notes.append(f"{c['name']}: Kapazität der Wellen überschritten, in {waves[-1]['label']} gelegt")
 
+    gated: set[str] = set()
     rest = sorted((c for c in cands if c["key"] not in placement), key=rank)
     leaders = [c for c in rest if not c["orchestrates"]]
     orchestrators = [c for c in rest if c["orchestrates"]]
@@ -329,6 +371,13 @@ def assign_waves(cands, cfg, decisions):
         member_waves = [ids.index(placement[m]["wave"]) for m in c["orchestrates"] if m in placement]
         place(c, min(len(ids) - 1, max(member_waves) + 1) if member_waves else 0)
 
+    for c in cands:
+        if c["key"] in gated:
+            notes.append(f"{c['name']}: überwiegend Vorsichtszone (machbar, von den Beschäftigten nicht gewünscht), "
+                         "deshalb nicht in der ersten Welle; Gespräch vor dem Start")
+        elif red_share(c) > red_max and placement.get(c["key"], {}).get("wave") == ids[0]:
+            notes.append(f"{c['name']}: liegt in der ersten Welle, obwohl die Arbeit überwiegend in der Vorsichtszone liegt "
+                         "(Entscheidung oder laufendes Vorhaben); Gespräch mit den Beschäftigten einplanen")
     # Abhängigkeitsverstöße durch bestätigte Entscheidungen melden, nicht stillschweigend ändern.
     for c in cands:
         if not c["orchestrates"] or c["key"] not in placement:

@@ -51,8 +51,15 @@ Was eine gute Bewertung ausmacht:
 - Bei mehr als etwa 60 Aufgaben: in Blöcken je Rolle arbeiten, nach jedem Block speichern,
   damit nichts verloren geht. Das Skript nimmt Teilstände an (`--force` nur bei Neubewertung).
 
+**Zwei Merkmale (optional, Schema 1.4).** Setze `interpersonal: true`, wenn die Aufgabe von Beziehung, Einfühlung
+oder Verhandlung lebt (nicht schon, weil telefoniert wird), und `tacit_expertise: true`, wenn sie an Erfahrung hängt,
+die nirgends aufgeschrieben ist. Die Befragung der Stanford-Studie zeigt beide als Kennzeichen hoher Human Agency;
+das Skript hebt die HAS-Stufe dann auf mindestens H4 beziehungsweise H3. Modus und Delegation ändern sich dadurch
+nicht. Wird eine markierte Aufgabe trotzdem delegiert, meldet das Skript den Widerspruch.
+
 **Mit Seiten** (`05_pages/` vorhanden): Die Bewertung gehört in den Kopf der Aufgabenseite (`score_automation_ai`
-… `score_consequence_of_error`, alle sechs) und die Begründung in den Abschnitt „Begründung der Bewertung“.
+… `score_consequence_of_error`, alle sechs; dazu bei Bedarf `score_interpersonal`, `score_tacit_expertise`) und die
+Begründung in den Abschnitt „Begründung der Bewertung“.
 `scores.json` entsteht daraus beim nächsten Lauf; eine Änderung dort ginge verloren.
 
 ### 3. Rechnen
@@ -91,6 +98,11 @@ Lies die Rollenwerte aus dem Graphen (`roles[].analysis`; je Aufgabe stehen `mod
 - Ist die Verteilung plausibel? In einer typischen Sachbearbeitungsabteilung landen die meisten
   Rollen bei `transformed` oder `augmented`; nur `stable` oder nur `eliminated` ist ein Warnsignal.
 - Passen `retained_skills` (bleiben gebraucht) und `declining_skills` (Bedarf sinkt) zu dem, was ein Personaler erwarten würde?
+- Meldet das Skript `PLAUSIBILITÄT`? Mehr als ein Viertel der Rollen mit überwiegend H1 ist ungewöhnlich (in der
+  Stanford-Erhebung 16 von 104 Berufen). Lies dann Urteilsbedarf und Fehlerfolge dieser Rollen gegen.
+
+Je Skill steht in `skills[].analysis` die **Kompetenzverschiebung**: mittlere nötige Human Agency der Aufgaben, an
+denen der Skill hängt, und die heute daran gebundene Arbeit. Der HR-Bericht stellt beide Rangfolgen gegenüber.
 
 Berichte dem Nutzer je Rolle: Disruptionstyp, Score, Anteile (menschlicher Kern = manuell /
 KI-assistiert / an Agent delegiert),
@@ -113,6 +125,22 @@ Abweichung ≥ 0,75), und welche Rollenwirkungen sich durch die Korrekturen geä
 einer Systematik verschiebst du den Anker in `references/rubric.md` oder die Schwelle in
 `scripts/score_roles.py`, statt still weiter einzeln zu korrigieren; sag dem Nutzer, was du
 änderst und warum.
+
+## Zweitbewertung
+
+Die Stanford-Erhebung lässt jede Aufgabe von mindestens zwei Fachleuten bewerten. Dasselbe geht hier: Eine zweite Person
+oder ein zweiter, unabhängiger Lauf füllt `export_scoring_sheet.py --all` aus, ohne die erste Bewertung zu sehen, und
+speichert das Ergebnis als `20_graph/scores_zweitbewertung.json`. Dann:
+
+```
+python3 <skill>/scripts/compare_scores.py --project ./projekte/<name> [--max-diff 1]
+```
+
+`30_review/zweitbewertung_vNNN.md` zeigt je Feld den Anteil innerhalb ±1, den mittleren Abstand und Krippendorffs Alpha,
+dazu die Aufgaben mit größerem Abstand oder anderer HAS-Stufe. Einigung geht über `overrides.csv`. Ein Feld mit Alpha
+unter 0,667 heißt: Die Anker der Rubrik tragen für dieses Feld nicht; schärfe sie, bevor weiter bewertet wird.
+
+Wenn du selbst die Zweitbewertung machst, lies die erste vorher nicht. Sonst misst der Vergleich nichts.
 
 ## Ab Schema 1.2: Kapazität und Zielbild
 

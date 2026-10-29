@@ -352,7 +352,8 @@ class TestCli(unittest.TestCase):
     def test_pipeline_runs_roadmap_stage(self):
         self.assertEqual(self.pipe.returncode, 0, self.pipe.stdout + self.pipe.stderr)
         out = self.proj / "40_output"
-        for f in ("fahrplan_v012.md", "fahrplan_v012.html", "fahrplan_v012.csv", "roadmap_v012.json"):
+        v = int(wl.load_latest_graph(self.proj)["meta"]["version"])
+        for f in (f"fahrplan_v{v:03d}.md", f"fahrplan_v{v:03d}.html", f"fahrplan_v{v:03d}.csv", f"roadmap_v{v:03d}.json"):
             self.assertTrue((out / f).exists(), f)
         for d in ("entscheidungsvorlage", "hr-einseiter", "anhang-potenziale", "methodik"):
             self.assertTrue((out / "dokumente" / f"{d}.md").exists(), d)
@@ -362,7 +363,8 @@ class TestCli(unittest.TestCase):
         md = (self.proj / "40_output" / "dokumente" / "entscheidungsvorlage.md").read_text(encoding="utf-8")
         self.assertIn("Quelle:", md)
         self.assertIn("**Stand: Entwurf**", md)
-        data = json.loads((self.proj / "40_output" / "roadmap_v012.json").read_text(encoding="utf-8"))
+        v = int(wl.load_latest_graph(self.proj)["meta"]["version"])
+        data = json.loads((self.proj / "40_output" / f"roadmap_v{v:03d}.json").read_text(encoding="utf-8"))
         confirmed = [i for i in data["items"] if i["placement"]["state"] == "confirmed"]
         self.assertEqual(sorted(i["name"] for i in confirmed), ["Mahnlauf-Agent", "Vertriebsklärungs-Assistent"])
 

@@ -13,6 +13,10 @@ projects/
 50_snapshots/
 .wts-lock/
 05_pages/.compiled.json
+20_graph/agency.json
+30_review/beschaeftigtensicht_v*.md
+30_review/befragung/
+30_review/zweitbewertung_v*.md
 
 # Beim Release erzeugt, nicht eingecheckt
 dist/SHA256SUMS

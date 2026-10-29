@@ -13,6 +13,7 @@ Ausgabe:
     - je Feld: Anzahl Korrekturen, mittlere Abweichung (Experte − generiert), Richtung
     - Liste der korrigierten Aufgaben mit alt/neu
     - Rollen, deren Rollenwirkung sich durch die Korrekturen geändert hat
+    - Plausibilität: auffällig viele Rollen mit überwiegend H1, Widersprüche zwischen Merkmal und Delegation
     - Hinweis, ab wann eine Schwellen- oder Ankeranpassung sinnvoll ist
 
 Deterministisch: reine Auswertung, keine Änderung am Graphen.
@@ -44,10 +45,10 @@ def main() -> int:
         wl.fail("Kein Graph gefunden")
     scores_path = project / wl.DIR_GRAPH / "scores.json"
     ov_path = project / wl.DIR_REVIEW / "overrides.csv"
-    if not scores_path.exists() or not ov_path.exists():
-        wl.fail("scores.json und overrides.csv werden benötigt")
+    if not scores_path.exists():
+        wl.fail("scores.json wird benötigt")
     generated = wl.read_json(scores_path)
-    rows = [r for r in wl.read_csv(ov_path) if (r.get("entity_type") or "").strip() == "task" and (r.get("field") or "").startswith("scores.")]
+    rows = [r for r in (wl.read_csv(ov_path) if ov_path.exists() else []) if (r.get("entity_type") or "").strip() == "task" and (r.get("field") or "").startswith("scores.")]
     tasks = wl.index_by_id(graph["tasks"])
     roles = wl.index_by_id(graph["roles"])
 
@@ -117,6 +118,12 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         changed.append(f"- (Vergleich nicht möglich: {e})")
     out += ["", "## Rollen, deren Wirkung sich durch Korrekturen geändert hat", ""] + (changed or ["- keine"])
+    try:
+        from score_roles import plausibility  # noqa: E402
+        plaus = plausibility(graph)
+    except Exception as e:  # noqa: BLE001
+        plaus = [f"(Prüfung nicht möglich: {e})"]
+    out += ["", "## Plausibilität", ""] + ([f"- {n}" for n in plaus] or ["- Keine Auffälligkeit im Muster der HAS-Stufen."])
     out += ["", "## Empfehlung", ""] + (suggestions or [f"- Noch keine Systematik erkennbar (Schwelle: mindestens {MIN_N} Korrekturen je Feld mit mittlerer Abweichung ≥ {MIN_BIAS}). Weiter über Overrides korrigieren."])
     path = project / wl.DIR_REVIEW / f"calibration_v{version:03d}.md"
     wl.write_text(path, "\n".join(out) + "\n")

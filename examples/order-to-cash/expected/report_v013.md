@@ -1,6 +1,6 @@
 # KI-Transformationsdashboard — Order-to-Cash
 
-Beispiel GmbH · Order-to-Cash · Work-Graph Version 12
+Beispiel GmbH · Order-to-Cash · Work-Graph Version 13
 
 ## Kennzahlen
 

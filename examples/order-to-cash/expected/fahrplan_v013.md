@@ -1,6 +1,6 @@
 # Fahrplan-Raster: Order-to-Cash
 
-Graph-Version 12. Das Raster ist ein Vorschlag, bis eine benannte Person die Zuordnung bestätigt hat. Zeiträume nennt es nur, wenn jemand sie festgelegt hat.
+Graph-Version 13. Das Raster ist ein Vorschlag, bis eine benannte Person die Zuordnung bestätigt hat. Zeiträume nennt es nur, wenn jemand sie festgelegt hat.
 
 ## Überblick
 
@@ -17,13 +17,13 @@ Wert ist die heute gebundene Arbeitszeit der betroffenen Aufgaben mal Tagessatz 
 
 ### Welle 1: Referenz und Grundlagen
 
-| Vorhaben | Art | Status | Score | Wert/Jahr | FTE | Zuordnung |
-|---|---|---|---:|---:|---:|---|
-| Auftragserfassungs-Agent | Agent | Pilot | 7.8 | 665 280 € | 7.2 | läuft bereits |
-| Fakturierungs-Agent | Agent | Pilot | 7.0 | 567 600 € | 6.0 | läuft bereits |
-| Bonitäts-Agent | Agent | Pilot | 5.7 | 343 200 € | 3.0 | läuft bereits |
-| Zahlungszuordnungs-Agent | Agent | Pilot | 4.9 | 232 320 € | 2.2 | läuft bereits |
-| Zahlungseingang automatisch zuordnen | Use Case | Pilot | 3.5 | 48 000 € | 1.2 | läuft bereits |
+| Vorhaben | Art | Status | Score | Wert/Jahr | FTE | Zuordnung | Sicht der Beschäftigten |
+|---|---|---|---:|---:|---:|---|---|
+| Auftragserfassungs-Agent | Agent | Pilot | 7.8 | 665 280 € | 7.2 | läuft bereits | Freigabe 75 % |
+| Fakturierungs-Agent | Agent | Pilot | 7.0 | 567 600 € | 6.0 | läuft bereits | Freigabe 80 % |
+| Bonitäts-Agent | Agent | Pilot | 5.7 | 343 200 € | 3.0 | läuft bereits | nicht befragt |
+| Zahlungszuordnungs-Agent | Agent | Pilot | 4.9 | 232 320 € | 2.2 | läuft bereits | nicht befragt |
+| Zahlungseingang automatisch zuordnen | Use Case | Pilot | 3.5 | 48 000 € | 1.2 | läuft bereits | nicht befragt |
 
 Voraussetzungen laut Agentenbibliothek:
 
@@ -43,12 +43,12 @@ Betroffene Rollen:
 
 ### Welle 2: Ausweiten
 
-| Vorhaben | Art | Status | Score | Wert/Jahr | FTE | Zuordnung |
-|---|---|---|---:|---:|---:|---|
-| Vertriebsklärungs-Assistent | Agent | geplant | 4.6 | 166 320 € | 1.8 | bestätigt (Teamleitung Order-to-Cash) |
-| Mahnlauf-Agent | Agent | geplant | 3.6 | 105 600 € | 1.0 | bestätigt (Teamleitung Order-to-Cash) |
-| Auftragsbestätigung aus Bestelldaten | Use Case | Idee | 2.9 | 129 360 € | 1.4 | Vorschlag |
-| Analyse- und Berichtscopilot | Agent | Vorschlag | 2.7 | 56 320 € | 0.4 | Vorschlag |
+| Vorhaben | Art | Status | Score | Wert/Jahr | FTE | Zuordnung | Sicht der Beschäftigten |
+|---|---|---|---:|---:|---:|---|---|
+| Vertriebsklärungs-Assistent | Agent | geplant | 4.6 | 166 320 € | 1.8 | bestätigt (Teamleitung Order-to-Cash) | Nachrang 100 % |
+| Mahnlauf-Agent | Agent | geplant | 3.6 | 105 600 € | 1.0 | bestätigt (Teamleitung Order-to-Cash) | nicht befragt |
+| Auftragsbestätigung aus Bestelldaten | Use Case | Idee | 2.9 | 129 360 € | 1.4 | Vorschlag | Freigabe 100 % |
+| Analyse- und Berichtscopilot | Agent | Vorschlag | 2.7 | 56 320 € | 0.4 | Vorschlag | nicht befragt |
 
 Voraussetzungen laut Agentenbibliothek:
 
@@ -66,9 +66,9 @@ Betroffene Rollen:
 
 ### Welle 3: Breite
 
-| Vorhaben | Art | Status | Score | Wert/Jahr | FTE | Zuordnung |
-|---|---|---|---:|---:|---:|---|
-| Order-to-Cash-Orchestrator | Agent | Vorschlag | 2.7 | nicht bewertet | – | Vorschlag |
+| Vorhaben | Art | Status | Score | Wert/Jahr | FTE | Zuordnung | Sicht der Beschäftigten |
+|---|---|---|---:|---:|---:|---|---|
+| Order-to-Cash-Orchestrator | Agent | Vorschlag | 2.7 | nicht bewertet | – | Vorschlag | nicht befragt |
 
 Voraussetzungen laut Agentenbibliothek:
 
@@ -83,6 +83,7 @@ Keine: Jeder Prozess mit hohem Rang hat mindestens ein Vorhaben.
 
 - Wellenzuordnung bestätigen (bisher Vorschlag): Welle 2: Ausweiten; Welle 3: Breite
 - Zeiträume festlegen: Welle 1: Referenz und Grundlagen; Welle 2: Ausweiten; Welle 3: Breite
+- Ohne Sicht der Beschäftigten (keine befragte Aufgabe): Analyse- und Berichtscopilot, Bonitäts-Agent, Mahnlauf-Agent, Zahlungseingang automatisch zuordnen, Zahlungszuordnungs-Agent
 - Welle 1: Referenz und Grundlagen: 5 Vorhaben bei Kapazität 3 (laufende oder bestätigte Vorhaben zählen immer)
 
 ## Wie das Raster entsteht

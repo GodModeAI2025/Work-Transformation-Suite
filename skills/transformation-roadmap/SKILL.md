@@ -37,7 +37,9 @@ Welle), `.csv` und `roadmap_vNNN.json`.
 Wie das Raster entsteht, steht in `references/wellenlogik.md`. Kurz: Jedes Vorhaben erhält einen Score
 aus Wert, Reichweite, Umsetzbarkeit, Reifegrad und Prozessrang. Laufende Vorhaben liegen in Welle 1,
 schwere beginnen dort nicht, Orchestratoren folgen den Agenten, die sie steuern. Fehlende Größen
-fehlen auch im Score und werden benannt.
+fehlen auch im Score und werden benannt. Liegt eine Befragung vor (Skill `agency-audit`), trägt jedes Vorhaben seine
+überwiegende Zone; liegt mehr als die Hälfte seiner befragten Arbeit in der Vorsichtszone, beginnt es nicht in Welle 1, außer
+jemand entscheidet es in `wellen.csv` (`max_red_zone_share_first_wave`).
 
 ### 2. Entscheidungen festhalten
 
@@ -88,6 +90,8 @@ versandfertig ist.
 - Passt die Sprache zur Runde? Wörter, die in den Textfeldern nicht vorkommen sollen, trägt die Konfiguration unter
   `flag_words` ein; das Skript meldet Funde und streicht nichts.
 - Sagt die Unterlage etwas über einzelne Personen? Sie darf es nicht.
+- Liegt ein Vorhaben in Welle 1, obwohl die Beschäftigten die Arbeit nicht abgeben wollen? Dann steht es unter „Noch offen“;
+  sprich es in der Runde an.
 
 ## Was das Skill nicht tut
 

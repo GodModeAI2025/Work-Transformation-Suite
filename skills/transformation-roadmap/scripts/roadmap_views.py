@@ -14,6 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import roadmap_lib as rl  # noqa: E402
+import workgraph_lib as wl  # noqa: E402
 from render_lib import OPEN, eur, md_table, num  # noqa: E402
 
 STATUS_LABEL = {"live": "im Betrieb", "pilot": "Pilot", "building": "im Bau", "planned": "geplant",
@@ -57,13 +58,20 @@ def wave_detail(p: dict, level: str = "###") -> str:
             out += ["Keine Vorhaben in dieser Welle.", ""]
             continue
         rows = []
+        surveyed = any(c.get("zone") for c in p["candidates"])
         for key in w["items"]:
             c = p["by_key"][key]
-            rows.append([c["name"], KIND_LABEL[c["kind"]], STATUS_LABEL.get(c["status"], c["status"] or "–"),
-                         num(c["score"]) if c["score"] is not None else "nicht bewertet",
-                         eur(c["value_eur"]), num(c["fte"]), state_of(p, key)])
-        out += [md_table(["Vorhaben", "Art", "Status", "Score", "Wert/Jahr", "FTE", "Zuordnung"], rows,
-                         ["l", "l", "l", "r", "r", "r", "l"]), ""]
+            row = [c["name"], KIND_LABEL[c["kind"]], STATUS_LABEL.get(c["status"], c["status"] or "–"),
+                   num(c["score"]) if c["score"] is not None else "nicht bewertet",
+                   eur(c["value_eur"]), num(c["fte"]), state_of(p, key)]
+            if surveyed:
+                row.append(zone_text(c))
+            rows.append(row)
+        heads = ["Vorhaben", "Art", "Status", "Score", "Wert/Jahr", "FTE", "Zuordnung"]
+        align = ["l", "l", "l", "r", "r", "r", "l"]
+        if surveyed:
+            heads, align = heads + ["Sicht der Beschäftigten"], align + ["l"]
+        out += [md_table(heads, rows, align), ""]
         prereq = [(p["by_key"][k]["name"], p["by_key"][k]["prerequisites"]) for k in w["items"]
                   if p["by_key"][k]["prerequisites"]]
         if prereq:
@@ -76,6 +84,14 @@ def wave_detail(p: dict, level: str = "###") -> str:
             out += ["Betroffene Rollen:", "",
                     md_table(["Rolle", "Stellen", "Zeitanteil", "FTE", "Wert/Jahr"], rr, ["l", "r", "r", "r", "r"]), ""]
     return "\n".join(out)
+
+
+def zone_text(c: dict) -> str:
+    """„Freigabe 80 %“ aus der Zonenverteilung eines Vorhabens; „nicht befragt“ ohne Daten."""
+    z = c.get("zone")
+    if not z:
+        return "nicht befragt"
+    return f"{wl.AGENCY_ZONE_SHORT[z['main']]} {z['shares'][z['main']]:.0f} %"
 
 
 def candidates_table(p: dict) -> str:
@@ -139,5 +155,9 @@ def open_points(p: dict, graph: dict) -> list[str]:
         pts.append("Vorhaben ohne ausreichende Angaben für einen Score: " + ", ".join(unscored))
     if p["gaps"]:
         pts.append("Prozesse mit hohem Rang ohne Vorhaben prüfen: " + ", ".join(g["name"] for g in p["gaps"]))
+    if any(c.get("zone") for c in p["candidates"]):
+        unsurveyed = sorted(c["name"] for c in p["candidates"] if not c.get("zone") and c["task_ids"])
+        if unsurveyed:
+            pts.append("Ohne Sicht der Beschäftigten (keine befragte Aufgabe): " + ", ".join(unsurveyed))
     pts += p["notes"]
     return pts

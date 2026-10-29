@@ -96,6 +96,9 @@ def task_page(t: dict, role_name: str, scores: dict | None) -> tuple[Path, dict,
         for k in SCORE_KEYS:
             if scores.get(k) is not None:
                 meta[f"score_{k}"] = scores[k]
+        for flag in ("interpersonal", "tacit_expertise"):
+            if isinstance(scores.get(flag), bool):
+                meta[f"score_{flag}"] = scores[flag]
         rationale = str(scores.get("rationale") or "")
     steps = "\n".join(f"{i}. {s}" for i, s in enumerate(t.get("workflow_steps") or [], start=1))
     body = (f"## Beschreibung\n\n{t.get('description') or ''}\n\n## Schritte\n\n{steps}\n\n"

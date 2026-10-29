@@ -70,7 +70,9 @@ Skript-Pfade sind relativ zum jeweiligen Skill-Ordner, Projektpfade relativ zum 
    ▼  build_processes.py → Prozesse, Schritte, Kanten, Systeme, Kontrollen, Kennzahlen
    │  check_evidence.py → 30_review/belege_vNNN.md (hält bei evidence_policy strict an)
    │  task-scorer: export_scoring_sheet.py → Claude bewertet → 20_graph/scores.json
-   ▼  score_roles.py → Modus, HAS, Horizont, Disruptionstyp je Rolle
+   ▼  score_roles.py → Modus, HAS, Horizont, Disruptionstyp je Rolle, Kompetenzverschiebung je Skill
+   │  agency-audit: export_audit_sheet.py → Befragung → 00_input/befragung/*.csv              [optional]
+   ▼  import_audit.py · score_agency.py → Zone und Agency-Lücke je Aufgabe, Reibung je Rolle
    │  agent-mapper: export_agent_candidates.py → Claude bündelt → 20_graph/agents.json
    ▼  compute_coverage.py → Abdeckung, FTE, Sourcing, Priorität, Capability Contracts
    │  process-redesigner: export_process_candidates.py                               [nur mit Prozessen]
@@ -131,6 +133,14 @@ Systemexporten oder Prozessbeobachtung. Sag das, bevor jemand erwartet, dass aus
 Stellenbeschreibungen ein Soll-Betriebsmodell fällt.
 
 Mehr Fragen braucht es nicht; alles Weitere klärt das Expertenreview.
+
+### Sicht der Beschäftigten
+
+Biete nach der Bewertung eine Befragung an (`../agency-audit/SKILL.md`): Sie fragt die Menschen, die die Arbeit tun,
+was sie abgeben wollen und wie viel sie beteiligt bleiben wollen. Die Pipeline wertet sie selbst aus, sobald Antworten
+unter `00_input/befragung/` liegen. Sag dem Nutzer vorher, dass die Beschäftigtenvertretung beteiligt sein muss
+(Personalfragebogen) und dass nur Zusammenfassungen ab fünf Antworten erscheinen. Danach gilt: Vorsichtszone zuerst
+besprechen, nicht automatisieren.
 
 ### Fahrplan und Unterlagen
 

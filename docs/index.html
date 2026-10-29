@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Work-Transformation-Suite</title>
-<meta name="description" content="Sieben Claude-Skills: aus Stellenbeschreibungen oder der Referenzbibliothek ein bewerteter Arbeitsgraph mit Belegen, daraus KI-native Soll-Prozesse mit gerechneten Deltas, ein Wellenraster für die Entscheidungsrunde und eine Rollen.md, die einem Agenten den Kontext seiner Rolle gibt.">
+<meta name="description" content="Acht Claude-Skills: aus Stellenbeschreibungen oder der Referenzbibliothek ein bewerteter Arbeitsgraph mit Belegen, daneben die Sicht der Beschäftigten aus einer Befragung, daraus KI-native Soll-Prozesse mit gerechneten Deltas, ein Wellenraster für die Entscheidungsrunde und eine Rollen.md, die einem Agenten den Kontext seiner Rolle gibt.">
 <meta property="og:title" content="Work-Transformation-Suite">
 <meta property="og:description" content="Welche Arbeit kann KI übernehmen, wie sähe der Prozess vom Ergebnis her neu gebaut aus, und was muss ein Agent über seine Rolle wissen? Claude urteilt, Skripte rechnen.">
 <meta property="og:type" content="website">
@@ -122,7 +122,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 
 <header>
   <div class="wrap">
-    <p class="kicker">Sieben Claude-Skills · Python 3.9+ · keine Abhängigkeiten · Version 0.11.0</p>
+    <p class="kicker">Acht Claude-Skills · Python 3.9+ · keine Abhängigkeiten · Version 0.12.0</p>
     <h1>Vom <b>bewerteten Arbeitsgraphen</b> zum <b>Agenten, der seine Rolle kennt</b>.</h1>
     <p class="lead">
       Rollen, Aufgaben und Skills eines Bereichs, jede Aufgabe auf KI-Automatisierbarkeit bewertet, jede Rolle als
@@ -143,8 +143,13 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
     </p>
     <p class="lead">
       Wer nicht bei null anfangen will, nimmt den Vorrat: eine <b>Referenzbibliothek</b> mit 119 typischen Rollen aus
-      13 Branchen, 66 Rechtsthemen für Deutschland und vier Plattformprofilen. Jede Zahl im Projekt trägt einen Beleg, und
+      13 Branchen, 67 Rechtsthemen für Deutschland und vier Plattformprofilen. Jede Zahl im Projekt trägt einen Beleg, und
       jeder Stand lässt sich wiederherstellen.
+    </p>
+    <p class="lead">
+      Neben der Bewertung steht eine zweite Stimme: die der <b>Beschäftigten</b>. Eine Befragung je Aufgabe zeigt, was die
+      Menschen gern abgeben würden und wie viel sie beteiligt bleiben wollen. Daraus folgen vier Zonen, und die Suite plant
+      Arbeit, die niemand abgeben will, nicht in die erste Welle.
     </p>
     <ul class="anchors" aria-label="Auf dieser Seite">
       <li><a href="#idee">Idee</a></li>
@@ -153,6 +158,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <li><a href="#aufbereitung">Datenaufbereitung</a></li>
       <li><a href="#belege">Quellen und Stände</a></li>
       <li><a href="#bibliothek">Referenzbibliothek</a></li>
+      <li><a href="#beschaeftigte">Sicht der Beschäftigten</a></li>
       <li><a class="here" href="#rollen-md">Rollen.md</a></li>
       <li><a href="#fahrplan">Fahrplan</a></li>
       <li><a href="#skills">Skills</a></li>
@@ -172,6 +178,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <span class="badge">HAS H1–H5</span>
       <span class="badge">ESCO-kompatible Skills</span>
       <span class="badge">13 Branchenpakete</span>
+      <span class="badge">Befragung ab 5 Antworten</span>
       <span class="badge">Apache 2.0</span>
     </div>
   </div>
@@ -211,7 +218,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 
 <section id="ablauf">
   <div class="wrap">
-    <h2>Sechs Schritte, ein Datenformat</h2>
+    <h2>Sieben Schritte, ein Datenformat</h2>
     <p class="sub">Alle Schritte arbeiten auf derselben <code>work-graph.json</code> in einem Projektordner. Jeder Schritt, der etwas ändert, legt eine neue Version an. Ein Schritt ohne Änderung meldet „Unverändert“.</p>
     <div class="pipe">
       <div class="step">
@@ -222,7 +229,12 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <div class="step">
         <p class="who">Claude + Skript</p>
         <h3>task-scorer</h3>
-        <p>Bewertet jede Aufgabe nach sechs Werten der Rubrik und leitet ab: Modus, HAS-Level, Zeithorizont, Disruptionsscore und -typ je Rolle, bleibende und sinkende Skills.</p>
+        <p>Bewertet jede Aufgabe nach sechs Werten der Rubrik und leitet ab: Modus, HAS-Level, Zeithorizont, Disruptionsscore und -typ je Rolle, bleibende und sinkende Skills, Kompetenzverschiebung je Skill. Eine Zweitbewertung zeigt, wo zwei Bewertende auseinanderliegen.</p>
+      </div>
+      <div class="step">
+        <p class="who">Menschen + Skript</p>
+        <h3>agency-audit</h3>
+        <p>Fragt die Beschäftigten je Aufgabe nach Wunsch und gewünschter Beteiligung, wertet nur ab fünf Antworten aus und legt Zone, Agency-Lücke und Reibung neben die Bewertung.</p>
       </div>
       <div class="step">
         <p class="who">Claude + Skript</p>
@@ -255,7 +267,9 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
    │  Claude nimmt Prozesse auf → 10_extraction/process_*.json        [optional]
    ▼  build_processes.py    → Prozesse, Schritte, Kanten, Kontrollen, Kennzahlen
    │  Claude bewertet       → 20_graph/scores.json
-   ▼  score_roles.py        → Modus, HAS, Horizont, Disruptionstyp
+   ▼  score_roles.py        → Modus, HAS, Horizont, Disruptionstyp, Kompetenzverschiebung
+   │  Beschäftigte antworten → 00_input/befragung/*.csv                 [optional]
+   ▼  import_audit.py · score_agency.py → Zone, Agency-Lücke, Reibung
    │  Claude bündelt        → 20_graph/agents.json (+ Capability Contracts)
    ▼  compute_coverage.py   → Abdeckung, FTE, Sourcing, Priorität
    │  Claude entwirft       → 20_graph/blueprints.json (3 Szenarien je Prozess)
@@ -278,6 +292,8 @@ Optional, auf Zuruf oder bei Bedarf:
    import_usecases.py · import_adoption.py · export_reach.py
    build_rollen_md.py        → Rollen.md für eine oder mehrere Rollen
    build_role_setup.py       → Setup-Paket für einen Arbeitsagenten je Rolle
+   export_audit_sheet.py     → Fragebogen je Rolle und Antwortvorlage
+   compare_scores.py         → Zweitbewertung: Übereinstimmung je Feld, Aufgaben mit Klärungsbedarf
    plan_waves.py · build_documents.py → Wellenraster und Unterlagen einzeln neu bauen</div>
     <div class="note">
       <p><code>python3 skills/work-transformation/scripts/run_pipeline.py --project projekte/kundenservice</code> führt alle Skript-Schritte hintereinander aus. Fehlt eine Claude-Eingabe, stoppt der Lauf mit Exit-Code 3 und einer klaren Meldung. Derselbe Befehl ist das „weiter machen“ nach jeder Korrektur.</p>
@@ -414,7 +430,7 @@ python3 skills/work-transformation/scripts/verify_release.py --project projekte/
       <div class="card">
         <p class="num">RECHTSRAUM DE</p>
         <h3>Prüfaufträge mit Fundstelle</h3>
-        <p>66 Themen mit Gesetz, Paragraf und Pflicht, von der Mitbestimmung nach § 87 BetrVG über DSGVO und KI-Verordnung bis zu EnWG, TrinkwV, VOB/B, IATF 16949, MDR, GwG, DORA, GMP, ADR und § 35a VwVfG. Review-Liste und Rollen.md nennen je Rolle, was sie berührt. Keine Rechtsberatung, aber eine Liste, die niemand vergisst.</p>
+        <p>67 Themen mit Gesetz, Paragraf und Pflicht, von der Mitbestimmung nach § 87 BetrVG über DSGVO und KI-Verordnung bis zu EnWG, TrinkwV, VOB/B, IATF 16949, MDR, GwG, DORA, GMP, ADR, § 35a VwVfG und dem Personalfragebogen nach § 94 BetrVG. Review-Liste und Rollen.md nennen je Rolle, was sie berührt. Keine Rechtsberatung, aber eine Liste, die niemand vergisst.</p>
       </div>
       <div class="card">
         <p class="num">PLATTFORMPROFIL</p>
@@ -435,6 +451,56 @@ python3 skills/work-graph-builder/scripts/seed_from_library.py --project projekt
 python3 skills/work-graph-builder/scripts/seed_from_library.py --project projekte/netz --branche allgemein --rollen "Datenschutzbeauftragter;Controller"</pre>
     <div class="note">
       <p>Die Bibliothek kennt typische Rollen, nicht die des Hauses. Zeitanteile sind typische Verteilungen, Stellenzahlen bleiben leer, Rechtsgrundlagen haben den Stand ihrer Erstellung, Dienstnamen ändern sich. Prozesse enthält sie nicht; Abläufe sind zu hausspezifisch für einen Vorrat.</p>
+    </div>
+  </div>
+</section>
+
+<section id="beschaeftigte">
+  <div class="wrap">
+    <h2>Sicht der Beschäftigten: Wunsch neben Machbarkeit</h2>
+    <p class="sub">Die Bewertung sagt, was Technik kann. Die Menschen, die die Arbeit machen, wissen, welche Aufgaben sie gern abgeben und wo sie beteiligt bleiben wollen. Der Skill <code>agency-audit</code> fragt genau das, je Aufgabe, und legt die Antworten neben die Bewertung. Der Auditrahmen folgt der Stanford-Studie zu Agenten in der Arbeitswelt, übertragen auf ein Haus.</p>
+
+    <div class="grid g3">
+      <div class="card">
+        <p class="num">FRAGEBOGEN</p>
+        <h3>Je Rolle, je Aufgabe</h3>
+        <p>Fünf offene Fragen zur eigenen Arbeit, dann je Aufgabe: selbst erledigt oder nicht, Sorge um den Arbeitsplatz, Freude, Wunsch nach Automatisierung mit Gründen, vier Merkmale und die gewünschte Beteiligung von H1 bis H5. Die Vorlage nennt den Rechtsrahmen gleich mit.</p>
+      </div>
+      <div class="card">
+        <p class="num">DATENSCHUTZ</p>
+        <h3>Im Code, nicht im Vertrauen</h3>
+        <p>Spalten mit Name, E-Mail oder Personalnummer lehnt der Import ab. Gezählt wird nur, wer die Aufgabe selbst erledigt. Ausgewertet wird ab fünf Antworten je Aufgabe und fünf Teilnehmenden je Rolle; darunter bleibt alles unsichtbar, und der Validator lehnt kleinere Gruppen ab.</p>
+      </div>
+      <div class="card">
+        <p class="num">VIER ZONEN</p>
+        <h3>Freigabe, Vorsicht, Entwicklung, Nachrang</h3>
+        <p>Gewünscht und machbar ist Freigabe. Machbar, aber nicht gewünscht ist Vorsicht: dort zuerst reden. Gewünscht, aber noch nicht machbar ist Entwicklung: dort fehlt ein Werkzeug. Der Rest hat Nachrang.</p>
+      </div>
+      <div class="card">
+        <p class="num">LÜCKE UND REIBUNG</p>
+        <h3>Gewünschte gegen nötige Beteiligung</h3>
+        <p>Je Aufgabe die Differenz zwischen gewünschter und technisch nötiger Stufe. Je Rolle die Reibung als Abstand der beiden Verteilungen, von 0 deckungsgleich bis 1 völlig verschieden. Hohe Reibung heißt: Bewertung und Beschäftigte sehen die Arbeit verschieden.</p>
+      </div>
+      <div class="card">
+        <p class="num">WIRKUNG</p>
+        <h3>In jeder Ausgabe</h3>
+        <p>Das Dashboard zeigt Landschaft, Beteiligungsmatrix und Zonen je Cluster. Der HR-Bericht nennt die Vorsichtszone, der IT-Bericht die latente Nachfrage. Der Fahrplan legt Vorhaben, die überwiegend in der Vorsichtszone liegen, nicht in Welle 1. Rollen.md sagt, was die Rolle selbst will.</p>
+      </div>
+      <div class="card">
+        <p class="num">BEWERTUNG</p>
+        <h3>Zweitbewertung und Kompetenzverschiebung</h3>
+        <p>Zwei unabhängige Bewertungsläufe lassen sich vergleichen, mit Übereinstimmung je Feld und einer Liste der Aufgaben mit Klärungsbedarf. Je Skill zeigt die Suite, ob er an Arbeit hängt, die Menschen auch mit Agenten tragen, oder an Arbeit, die wegfällt.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 10px">Erzeugen</h3>
+<pre>python3 skills/agency-audit/scripts/export_audit_sheet.py --project projekte/kundenservice
+# Antworten als CSV nach 00_input/befragung/, dann
+python3 skills/agency-audit/scripts/import_audit.py --project projekte/kundenservice
+python3 skills/agency-audit/scripts/score_agency.py --project projekte/kundenservice
+# oder einfach run_pipeline.py: sobald Antworten da sind, läuft die Auswertung mit</pre>
+    <div class="note">
+      <p>Vor dem Versand gehört die Beschäftigtenvertretung an den Tisch: Ein Fragebogen zu Tätigkeiten, Sorgen und Wünschen ist ein Personalfragebogen. Ohne diesen Rahmen antwortet niemand ehrlich, und die Zahlen werden schlechter als gar keine.</p>
     </div>
   </div>
 </section>
@@ -580,7 +646,7 @@ python3 skills/agent-mapper/scripts/extract_context_evidence.py --project projek
       <div class="card">
         <p class="num">2 · WELLEN</p>
         <h3>Regeln, die man nachlesen kann</h3>
-        <p>Laufende Vorhaben liegen in Welle 1, schwere beginnen dort nicht, ein Orchestrator kommt nach den Agenten, die er steuert. Zeiträume setzt nur ein Mensch; bis dahin steht „❓ offen“ da.</p>
+        <p>Laufende Vorhaben liegen in Welle 1, schwere beginnen dort nicht, ein Orchestrator kommt nach den Agenten, die er steuert. Arbeit, die die Beschäftigten überwiegend nicht abgeben wollen, beginnt nicht in Welle 1, außer jemand entscheidet es. Zeiträume setzt nur ein Mensch; bis dahin steht „❓ offen“ da.</p>
       </div>
       <div class="card">
         <p class="num">3 · WIRKUNG</p>
@@ -638,7 +704,7 @@ python3 skills/transformation-roadmap/scripts/build_documents.py --project proje
 
 <section id="skills">
   <div class="wrap">
-    <h2>Die sieben Skills</h2>
+    <h2>Die acht Skills</h2>
     <p class="sub">Jeder Skill bringt <code>SKILL.md</code>, deterministische Skripte und Referenzen mit. Gemeinsame Bibliotheken liegen als identische Kopien in jedem Skill, damit keiner vom anderen abhängt. <code>check_suite.py</code> prüft die Kopien.</p>
     <div class="scroller">
       <table class="tbl">
@@ -646,7 +712,8 @@ python3 skills/transformation-roadmap/scripts/build_documents.py --project proje
         <tbody>
           <tr><td>work-transformation</td><td>Orchestrator: sagt, welcher Schritt dran ist, und hält die Arbeitsteilung sauber</td><td>Pipeline-Lauf, Suite-Check</td></tr>
           <tr><td>work-graph-builder</td><td>Extraktion aus Quellen, Zusammenführung, Review-Liste, Overrides, Stellen-Import, Prozesshaus-Import, Interviewleitfaden</td><td><code>work-graph.json</code>, <code>review.md</code></td></tr>
-          <tr><td>task-scorer</td><td>Aufgabenbewertung nach Rubrik, Rollenaggregation, Kipp-Analyse, Kalibrierung, Kapazität und Zielbild</td><td>Modus, HAS, Horizont, Disruptionstyp, technisch und realisierbar frei werdende FTE</td></tr>
+          <tr><td>task-scorer</td><td>Aufgabenbewertung nach Rubrik, Rollenaggregation, Kipp-Analyse, Kalibrierung, Zweitbewertung, Kapazität und Zielbild</td><td>Modus, HAS, Horizont, Disruptionstyp, technisch und realisierbar frei werdende FTE, Kompetenzverschiebung</td></tr>
+          <tr><td>agency-audit</td><td>Befragung der Beschäftigten je Aufgabe, Import nur ab Mindestgruppe, Zonen und Beteiligung neben der Bewertung</td><td>Fragebogen, Zone und Agency-Lücke je Aufgabe, Reibung je Rolle, Prüfliste</td></tr>
           <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung, Capability Contracts, Use-Case-Register, Reichweite, Nutzungsstand, Rollen.md und Setup-Paket je Rolle</td><td><code>agents.json</code>, Verträge, <code>Rollen.md</code>, Skill-Gerüste</td></tr>
           <tr><td>process-redesigner</td><td>Drei Soll-Szenarien je Prozess, sechs Operatoren, Prozesswert, Pilotkarten</td><td>Blueprints mit Deltas, Prioritätsbänder, Experimente</td></tr>
           <tr><td>transformation-dashboard</td><td>Visualisierung und Export, Ist/Soll-Vergleich</td><td>HTML, CSV-Exporte, Bericht für HR und Bericht für IT</td></tr>
@@ -720,7 +787,7 @@ python3 skills/transformation-roadmap/scripts/build_documents.py --project proje
     <div class="grid g3">
       <div class="card">
         <h3>In Claude (Cowork / claude.ai)</h3>
-        <p>Die sieben <code>.skill</code>-Dateien aus <code>dist/</code> einzeln in den Chat ziehen und auf „Skill speichern“ klicken. Reihenfolge egal.</p>
+        <p>Die acht <code>.skill</code>-Dateien aus <code>dist/</code> einzeln in den Chat ziehen und auf „Skill speichern“ klicken. Reihenfolge egal.</p>
       </div>
       <div class="card">
         <h3>In Claude Code</h3>
@@ -764,6 +831,7 @@ python3 skills/work-graph-builder/scripts/seed_from_library.py \
       <li>Das Quellenregister liest nur Textformate selbst. Belege sind Fundstellen, keine Wahrheitsprüfung: Ob eine Quelle stimmt, entscheidet, wer sie freigibt. Das Lock ersetzt keine Absprache.</li>
       <li>Das Wellenraster ordnet, es optimiert nicht. Abhängigkeiten kennt es nur zwischen Orchestrator und Agenten, Zeiträume, Budgets und Teamkapazität gar nicht. Die Unterlagen entstehen als Markdown und HTML, nicht als Word-Datei.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
+      <li>Die Befragung misst Einschätzungen, keine Fähigkeiten, und die Teilnehmenden sind nicht zufällig gewählt. Eine Zone ist ein Gesprächsanlass, kein Veto. Kleine Rollen unter fünf Teilnehmenden bleiben ohne Beschäftigtensicht; das ist Absicht.</li>
       <li>Rollen.md und Setup-Paket sind Startpunkte: ungetestet, ohne Systemfreigabe, ohne Aussage zur Zeitersparnis. Was der Graph nicht kennt, bleibt „offen“, und die Testfälle sind Gerüste, bis jemand echte einträgt.</li>
       <li>Vorschläge aus Dokumenten beruhen auf Mustern und Messungen, nicht auf Verständnis. Ein Stilprofil beschreibt die gemessenen Texte, nicht die ganze Person.</li>
       <li>Keine Telemetrie der Agentennutzung, keine Prozess-Mining-Anbindung. Nutzung kennt die Suite nur als aggregierten Stand je Rolle und Agent, mit Mindestgruppe von fünf Stellen.</li>
@@ -783,7 +851,7 @@ python3 skills/work-graph-builder/scripts/seed_from_library.py \
     <h2>Methodische Quellen</h2>
     <p class="sub">Die Metriken stammen aus veröffentlichter Forschung und aus dem, was kommerzielle Transformationsdashboards messen.</p>
     <ul class="plain">
-      <li>Stanford, „Future of Work with AI Agents“ (Shao et al. 2025, WORKBank, Human Agency Scale H1–H5, arXiv 2506.06576)</li>
+      <li>Stanford, „Future of Work with AI Agents“ (Shao et al. 2025, WORKBank, Human Agency Scale H1–H5, arXiv 2506.06576). Daraus stammen Befragung je Aufgabe, die vier Zonen aus Wunsch und Machbarkeit, der Abstand zwischen gewünschter und nötiger Beteiligung, die Zweitbewertung und die Kompetenzverschiebung</li>
       <li>Anthropic Economic Index, Automation gegen Augmentation auf O*NET-Task-Ebene</li>
       <li>ESCO v1.2, die EU-Skill-Taxonomie</li>
       <li>Metriken kommerzieller AI-Transformation-Dashboards: Automation Potential, Human Judgment, Disruption Score, Rollentypen</li>

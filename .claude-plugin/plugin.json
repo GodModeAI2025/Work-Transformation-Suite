@@ -1,7 +1,7 @@
 {
   "name": "work-transformation-suite",
-  "version": "0.11.0",
-  "description": "Sieben Claude-Skills: aus Stellenbeschreibungen und Prozessaufnahmen eines Bereichs ein bewerteter Arbeitsgraph mit Rollen, Aufgaben, Skills, KI-Automatisierbarkeit, Agentenbibliothek mit Capability Contracts — daraus KI-native Soll-Prozesse in drei Szenarien, Pilotplan und Dashboard, und zuletzt ein Wellenraster mit den Unterlagen für die Entscheidungsrunde.",
+  "version": "0.12.0",
+  "description": "Acht Claude-Skills: aus Stellenbeschreibungen und Prozessaufnahmen eines Bereichs ein bewerteter Arbeitsgraph mit Rollen, Aufgaben, Skills, KI-Automatisierbarkeit, Agentenbibliothek mit Capability Contracts, dazu die Sicht der Beschäftigten aus einer Befragung (Wunsch gegen Machbarkeit, gewünschte Beteiligung) — daraus KI-native Soll-Prozesse in drei Szenarien, Pilotplan und Dashboard, und zuletzt ein Wellenraster mit den Unterlagen für die Entscheidungsrunde.",
   "author": {
     "name": "Mark Zimmermann"
   },

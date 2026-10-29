@@ -46,6 +46,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import workgraph_lib as wl  # noqa: E402
 import capacity_views as cv  # noqa: E402
 import task_views as tv  # noqa: E402
+import agency_views as av  # noqa: E402
 
 TYPE_ORDER = ["eliminated", "transformed", "augmented", "emerging", "stable", "unscored"]
 TYPE_LABEL = {
@@ -60,11 +61,12 @@ DEFAULT_THEME_PATH = Path(__file__).resolve().parent.parent / "assets" / "theme.
 THEME: dict[str, Any] = {}
 TYPE_COLOR: dict[str, str] = {}
 MODE_COLOR: dict[str, str] = {}
+ZONE_COLOR: dict[str, str] = {}
 
 
 def load_theme(path: Path | None) -> None:
     """Theme laden (Standard: assets/theme.json neben dem Skript). Fehlende Schlüssel fallen auf den Standard zurück."""
-    global THEME, TYPE_COLOR, MODE_COLOR
+    global THEME, TYPE_COLOR, MODE_COLOR, ZONE_COLOR
     base = json.loads(DEFAULT_THEME_PATH.read_text(encoding="utf-8"))
     if path:
         custom = json.loads(path.read_text(encoding="utf-8"))
@@ -76,6 +78,7 @@ def load_theme(path: Path | None) -> None:
     THEME = base
     TYPE_COLOR = dict(base["type_colors"])
     MODE_COLOR = dict(base["mode_colors"])
+    ZONE_COLOR = dict(base.get("zone_colors") or {})
 MODE_LABEL = {"manual": "manuell", "ai_assisted": "KI-unterstützt", "agent_delegated": "an Agent delegiert"}
 HORIZON_LABEL = {"near": "kurzfristig", "mid": "mittelfristig", "long": "langfristig", None: "–"}
 SOURCING_LABEL = {"build": "Build", "buy": "Buy", "hybrid": "Hybrid"}
@@ -214,6 +217,7 @@ h2{font-family:var(--f-head);color:var(--primary);font-size:22px;margin:0 0 4px}
 .tile .v{font-family:var(--f-head);font-size:32px;color:var(--primary);line-height:1.1}.tile .l{font-size:13px;color:var(--ink3);margin-top:4px}
 .bar{display:flex;height:22px;border-radius:4px;overflow:hidden;gap:2px;background:var(--surface)}
 .bar span{display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:600;min-width:0;overflow:hidden;white-space:nowrap}
+.hasm td,.hasm th{text-align:center}.hasm th:first-child{text-align:left}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;margin:8px 0 0}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 12px;font-size:13px}
 .filters label{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
@@ -1013,6 +1017,10 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
         # Kapazität, Zielbild, Nutzung und Reichweite direkt vor den Rollenüberblick.
         at = next((i for i, (h, _t) in enumerate(nav_items) if h in ("#ueberblick",)), len(nav_items))
         nav_items = nav_items[:at] + cap_nav + nav_items[at:]
+    agency_section, agency_nav = av.section(graph, ZONE_COLOR)
+    if agency_nav:
+        at = next((i for i, (h, _t) in enumerate(nav_items) if h in ("#ueberblick",)), len(nav_items))
+        nav_items = nav_items[:at] + agency_nav + nav_items[at:]
     nav_html = "".join(f'<a href="{h}">{esc(t)}</a>' for h, t in nav_items)
     method_extra = METHOD_PROCESS if has_processes else ""
     return f"""<!DOCTYPE html>
@@ -1024,6 +1032,7 @@ def build_html(graph: dict[str, Any], data: dict[str, Any], k: dict[str, Any], t
 <main>
 {process_sections}
 {cap_sections}
+{agency_section}
 <section id="ueberblick"><h2>{'Rollenüberblick' if has_processes else 'Überblick'}</h2><p>Kennzahlen des analysierten Bereichs. Zeitanteile sind headcount-gewichtet, wo Headcounts bekannt sind ({k['headcount_known']} von {k['roles']} Rollen).</p>
 {tiles_html(k)}<div style="height:14px"></div>{dist_html(k)}
 <p class="meta" style="margin-top:10px">Datenqualität: {fmt(k['inferred_pct'], 0)} % der Aufgaben aus dem Berufsbild ergänzt (nicht aus Quelle) · {k['reviewed_roles']} von {k['roles']} Rollen durch Experten geprüft · Belastbarkeit: {k['evidence']['high']} belastbar, {k['evidence']['medium']} teilweise geprüft, {k['evidence']['low']} ungeprüft · Einstufung grenznah bei {k['borderline']}, wackelig bei {k['fragile']} Rollen. Unterschiede im Expositionswert unter 0,5 sind Rauschen; belastbar sind die Quadranten, nicht die Rangfolge innerhalb.</p></section>

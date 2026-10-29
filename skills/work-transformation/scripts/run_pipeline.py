@@ -7,7 +7,7 @@ Aufruf:
     python3 <skill>/scripts/run_pipeline.py --project ./mein-projekt --skills ../
         [--until builder|processes|scorer|mapper|redesign|dashboard|roadmap] [--stamp "..."]
 
---skills  Ordner, in dem die Skills liegen (work-graph-builder, task-scorer, agent-mapper,
+--skills  Ordner, in dem die Skills liegen (work-graph-builder, task-scorer, agency-audit, agent-mapper,
           process-redesigner, transformation-dashboard, transformation-roadmap). Standard:
           Elternordner dieses Skills.
 
@@ -161,6 +161,17 @@ def main() -> int:
     if (project / wl.DIR_INPUT / "usecases.csv").exists():
         if run([py, script("agent-mapper", "import_usecases.py"), "--project", proj], cwd):
             return 2
+    # Schema 1.4: Beschäftigtensicht. Liegen Antworten der Befragung vor, kommen Zonen, Agency-Lücke
+    # und Reibung neben die Bewertung. Ohne Antworten bleibt alles wie bisher; nichts hält an.
+    audit_dir = project / wl.DIR_INPUT / "befragung"
+    if audit_dir.is_dir() and any(audit_dir.glob("*.csv")):
+        if not (skills / "agency-audit" / "scripts" / "import_audit.py").exists():
+            print("HINWEIS: Antworten unter 00_input/befragung/, aber Skill agency-audit nicht gefunden (--skills prüfen).")
+        else:
+            if run([py, script("agency-audit", "import_audit.py"), "--project", proj], cwd):
+                return 2
+            if run([py, script("agency-audit", "score_agency.py"), "--project", proj], cwd):
+                return 2
     if stop == 2:
         return 0
 

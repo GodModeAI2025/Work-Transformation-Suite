@@ -1,0 +1,97 @@
+teilnehmer;rolle;aufgabe_id;aufgabe;bekannt;erfahrung;zeitanteil;kernfaehigkeit;sorge;freude;wunsch;gruende_wunsch;koerperlich;unsicherheit;fachwissen;zwischenmenschlich;zusammenarbeit;gruende_zusammenarbeit
+AUF-01;Auftragssachbearbeiter;ta_29d3bbba9966;Auftragsänderungen einpflegen;ja;einsteiger;10;4;3;2;3;qualitaet|wiederholung;1;2;3;1;2;
+AUF-01;Auftragssachbearbeiter;ta_4ad99613ac35;Auftrag aus Bestellung erfassen;ja;durchschnitt;10;4;3;3;5;qualitaet|wiederholung;1;1;2;2;1;
+AUF-01;Auftragssachbearbeiter;ta_5ecf0745976d;Rückfragen mit Vertrieb klären;ja;durchschnitt;10;3;1;3;1;;1;2;4;4;4;entscheidung|pruefung
+AUF-01;Auftragssachbearbeiter;ta_b21bca1cbb28;Auftragsdaten gegen Rahmenvertrag prüfen;ja;experte;50;3;4;5;3;belastung|zeit;1;2;2;4;3;fachwissen|kommunikation
+AUF-01;Auftragssachbearbeiter;ta_c3dfbf2863f9;Auftragsbestätigung versenden;ja;experte;50;5;3;1;4;qualitaet|zeit;1;1;1;1;1;
+AUF-02;Auftragssachbearbeiter;ta_29d3bbba9966;Auftragsänderungen einpflegen;ja;einsteiger;30;5;1;1;4;belastung|zeit;1;3;2;1;2;
+AUF-02;Auftragssachbearbeiter;ta_4ad99613ac35;Auftrag aus Bestellung erfassen;ja;durchschnitt;50;3;2;1;4;qualitaet|zeit;1;2;1;1;1;
+AUF-02;Auftragssachbearbeiter;ta_5ecf0745976d;Rückfragen mit Vertrieb klären;ja;durchschnitt;10;4;2;4;1;;1;2;4;4;4;fachwissen|kommunikation
+AUF-02;Auftragssachbearbeiter;ta_b21bca1cbb28;Auftragsdaten gegen Rahmenvertrag prüfen;ja;einsteiger;50;2;3;3;2;;1;3;3;4;4;entscheidung|fachwissen
+AUF-02;Auftragssachbearbeiter;ta_c3dfbf2863f9;Auftragsbestätigung versenden;ja;experte;10;3;4;3;4;qualitaet|zeit;1;1;1;1;1;
+AUF-03;Auftragssachbearbeiter;ta_29d3bbba9966;Auftragsänderungen einpflegen;nein;;;;;;;;;;;;;
+AUF-03;Auftragssachbearbeiter;ta_4ad99613ac35;Auftrag aus Bestellung erfassen;ja;experte;50;3;3;1;4;wiederholung|zeit;1;1;2;2;1;
+AUF-03;Auftragssachbearbeiter;ta_5ecf0745976d;Rückfragen mit Vertrieb klären;ja;experte;50;2;2;3;1;;1;3;3;4;4;entscheidung|fachwissen
+AUF-03;Auftragssachbearbeiter;ta_b21bca1cbb28;Auftragsdaten gegen Rahmenvertrag prüfen;ja;experte;30;2;2;4;2;;1;2;3;4;3;entscheidung|pruefung
+AUF-03;Auftragssachbearbeiter;ta_c3dfbf2863f9;Auftragsbestätigung versenden;ja;durchschnitt;30;2;3;3;5;qualitaet|wiederholung;1;1;1;1;1;
+AUF-04;Auftragssachbearbeiter;ta_29d3bbba9966;Auftragsänderungen einpflegen;ja;experte;30;4;2;1;3;qualitaet|zeit;1;2;3;1;2;
+AUF-04;Auftragssachbearbeiter;ta_4ad99613ac35;Auftrag aus Bestellung erfassen;nein;;;;;;;;;;;;;
+AUF-04;Auftragssachbearbeiter;ta_5ecf0745976d;Rückfragen mit Vertrieb klären;ja;einsteiger;10;5;3;5;1;;1;4;3;4;4;entscheidung|kommunikation
+AUF-04;Auftragssachbearbeiter;ta_b21bca1cbb28;Auftragsdaten gegen Rahmenvertrag prüfen;ja;einsteiger;10;2;4;5;2;;1;2;2;4;3;entscheidung|fachwissen
+AUF-04;Auftragssachbearbeiter;ta_c3dfbf2863f9;Auftragsbestätigung versenden;nein;;;;;;;;;;;;;
+AUF-05;Auftragssachbearbeiter;ta_29d3bbba9966;Auftragsänderungen einpflegen;ja;durchschnitt;30;5;1;1;4;qualitaet|zeit;1;1;3;2;2;
+AUF-05;Auftragssachbearbeiter;ta_4ad99613ac35;Auftrag aus Bestellung erfassen;ja;einsteiger;50;5;2;3;5;wiederholung|zeit;1;1;2;1;1;
+AUF-05;Auftragssachbearbeiter;ta_5ecf0745976d;Rückfragen mit Vertrieb klären;nein;;;;;;;;;;;;;
+AUF-05;Auftragssachbearbeiter;ta_b21bca1cbb28;Auftragsdaten gegen Rahmenvertrag prüfen;ja;durchschnitt;30;2;4;3;2;;1;1;2;4;3;entscheidung|kommunikation
+AUF-05;Auftragssachbearbeiter;ta_c3dfbf2863f9;Auftragsbestätigung versenden;ja;experte;50;3;3;3;5;belastung|wiederholung;1;1;1;2;2;
+AUF-06;Auftragssachbearbeiter;ta_29d3bbba9966;Auftragsänderungen einpflegen;ja;einsteiger;30;4;1;1;4;belastung|qualitaet;1;2;3;1;2;
+AUF-06;Auftragssachbearbeiter;ta_4ad99613ac35;Auftrag aus Bestellung erfassen;ja;durchschnitt;30;5;2;3;5;belastung|zeit;1;1;2;2;1;
+AUF-06;Auftragssachbearbeiter;ta_5ecf0745976d;Rückfragen mit Vertrieb klären;nein;;;;;;;;;;;;;
+AUF-06;Auftragssachbearbeiter;ta_b21bca1cbb28;Auftragsdaten gegen Rahmenvertrag prüfen;ja;experte;10;5;3;3;1;;1;1;2;4;4;kommunikation|pruefung
+AUF-06;Auftragssachbearbeiter;ta_c3dfbf2863f9;Auftragsbestätigung versenden;ja;experte;10;4;4;3;5;qualitaet|zeit;1;1;1;2;2;
+AUF-07;Auftragssachbearbeiter;ta_29d3bbba9966;Auftragsänderungen einpflegen;ja;durchschnitt;50;4;2;2;3;belastung|qualitaet;1;1;3;2;2;
+AUF-07;Auftragssachbearbeiter;ta_4ad99613ac35;Auftrag aus Bestellung erfassen;ja;einsteiger;10;2;3;3;5;wiederholung|zeit;1;1;2;1;1;
+AUF-07;Auftragssachbearbeiter;ta_5ecf0745976d;Rückfragen mit Vertrieb klären;ja;einsteiger;30;3;2;3;1;;1;2;4;4;4;kommunikation|pruefung
+AUF-07;Auftragssachbearbeiter;ta_b21bca1cbb28;Auftragsdaten gegen Rahmenvertrag prüfen;ja;experte;30;2;4;3;1;;1;1;3;4;3;entscheidung|kommunikation
+AUF-07;Auftragssachbearbeiter;ta_c3dfbf2863f9;Auftragsbestätigung versenden;ja;durchschnitt;30;2;4;3;5;qualitaet|zeit;1;1;1;1;1;
+AUF-08;Auftragssachbearbeiter;ta_29d3bbba9966;Auftragsänderungen einpflegen;ja;einsteiger;30;5;2;3;4;belastung|zeit;1;3;3;2;3;pruefung
+AUF-08;Auftragssachbearbeiter;ta_4ad99613ac35;Auftrag aus Bestellung erfassen;ja;durchschnitt;50;3;4;1;4;qualitaet|zeit;1;1;1;1;1;
+AUF-08;Auftragssachbearbeiter;ta_5ecf0745976d;Rückfragen mit Vertrieb klären;ja;experte;30;5;3;4;1;;1;4;4;4;4;entscheidung|fachwissen
+AUF-08;Auftragssachbearbeiter;ta_b21bca1cbb28;Auftragsdaten gegen Rahmenvertrag prüfen;ja;durchschnitt;50;4;3;3;2;;1;2;2;4;4;entscheidung|kommunikation
+AUF-08;Auftragssachbearbeiter;ta_c3dfbf2863f9;Auftragsbestätigung versenden;nein;;;;;;;;;;;;;
+FAK-01;Fakturierungssachbearbeiter;ta_55bea77e0a98;Rechnung erstellen;ja;einsteiger;50;3;4;3;4;belastung|qualitaet;1;1;1;1;2;
+FAK-01;Fakturierungssachbearbeiter;ta_7f89abd945b0;Rechnung prüfen und freigeben;nein;;;;;;;;;;;;;
+FAK-01;Fakturierungssachbearbeiter;ta_d4e8ee45590f;Leistungsnachweise zusammenstellen;ja;durchschnitt;30;2;2;3;4;belastung|qualitaet;1;3;3;2;1;
+FAK-01;Fakturierungssachbearbeiter;ta_f209fed482e7;Rechnung versenden und archivieren;ja;experte;10;2;4;3;5;belastung|zeit;1;1;1;1;1;
+FAK-02;Fakturierungssachbearbeiter;ta_55bea77e0a98;Rechnung erstellen;ja;durchschnitt;30;4;3;2;5;belastung|zeit;1;2;1;2;1;
+FAK-02;Fakturierungssachbearbeiter;ta_7f89abd945b0;Rechnung prüfen und freigeben;ja;experte;10;2;3;2;5;qualitaet|zeit;1;1;3;1;4;dynamik
+FAK-02;Fakturierungssachbearbeiter;ta_d4e8ee45590f;Leistungsnachweise zusammenstellen;ja;experte;30;5;4;2;4;belastung|wiederholung;1;1;2;2;2;
+FAK-02;Fakturierungssachbearbeiter;ta_f209fed482e7;Rechnung versenden und archivieren;ja;experte;50;2;3;3;5;belastung|wiederholung;1;1;1;1;1;
+FAK-03;Fakturierungssachbearbeiter;ta_55bea77e0a98;Rechnung erstellen;ja;experte;30;5;2;1;3;belastung|wiederholung;1;1;1;1;1;
+FAK-03;Fakturierungssachbearbeiter;ta_7f89abd945b0;Rechnung prüfen und freigeben;ja;durchschnitt;50;2;2;3;4;belastung|qualitaet;1;2;3;2;3;dynamik
+FAK-03;Fakturierungssachbearbeiter;ta_d4e8ee45590f;Leistungsnachweise zusammenstellen;ja;durchschnitt;30;4;2;3;4;belastung|zeit;1;3;2;1;3;dynamik
+FAK-03;Fakturierungssachbearbeiter;ta_f209fed482e7;Rechnung versenden und archivieren;ja;einsteiger;30;4;2;1;4;wiederholung|zeit;1;1;1;2;1;
+FAK-04;Fakturierungssachbearbeiter;ta_55bea77e0a98;Rechnung erstellen;ja;experte;50;4;3;1;4;qualitaet|wiederholung;1;1;2;2;1;
+FAK-04;Fakturierungssachbearbeiter;ta_7f89abd945b0;Rechnung prüfen und freigeben;ja;einsteiger;10;4;1;3;5;qualitaet|zeit;1;1;3;2;3;pruefung
+FAK-04;Fakturierungssachbearbeiter;ta_d4e8ee45590f;Leistungsnachweise zusammenstellen;ja;experte;10;3;4;3;3;belastung|zeit;1;2;3;1;2;
+FAK-04;Fakturierungssachbearbeiter;ta_f209fed482e7;Rechnung versenden und archivieren;ja;experte;10;5;2;1;4;qualitaet|zeit;1;1;1;2;1;
+FAK-05;Fakturierungssachbearbeiter;ta_55bea77e0a98;Rechnung erstellen;ja;durchschnitt;50;5;2;1;5;qualitaet|wiederholung;1;1;1;2;1;
+FAK-05;Fakturierungssachbearbeiter;ta_7f89abd945b0;Rechnung prüfen und freigeben;ja;experte;10;3;2;1;5;belastung|zeit;1;1;3;1;3;dynamik
+FAK-05;Fakturierungssachbearbeiter;ta_d4e8ee45590f;Leistungsnachweise zusammenstellen;ja;experte;30;2;3;1;4;wiederholung|zeit;1;3;3;2;2;
+FAK-05;Fakturierungssachbearbeiter;ta_f209fed482e7;Rechnung versenden und archivieren;ja;einsteiger;30;3;3;3;4;belastung|wiederholung;1;1;1;1;1;
+FAK-06;Fakturierungssachbearbeiter;ta_55bea77e0a98;Rechnung erstellen;ja;experte;10;3;4;1;4;wiederholung|zeit;1;1;2;2;1;
+FAK-06;Fakturierungssachbearbeiter;ta_7f89abd945b0;Rechnung prüfen und freigeben;ja;einsteiger;50;4;1;1;5;qualitaet|wiederholung;1;3;3;2;4;dynamik
+FAK-06;Fakturierungssachbearbeiter;ta_d4e8ee45590f;Leistungsnachweise zusammenstellen;ja;einsteiger;50;5;3;3;4;wiederholung|zeit;1;2;2;2;3;pruefung
+FAK-06;Fakturierungssachbearbeiter;ta_f209fed482e7;Rechnung versenden und archivieren;ja;durchschnitt;10;5;2;2;4;qualitaet|zeit;1;1;1;1;1;
+FOR-01;Forderungsmanager;ta_2d4a03b5c486;Offene Posten klären;nein;;;;;;;;;;;;;
+FOR-01;Forderungsmanager;ta_7ceba3598bd3;Zahlungsvereinbarungen abstimmen;ja;experte;10;5;3;5;1;;1;3;5;4;5;entscheidung|kommunikation
+FOR-01;Forderungsmanager;ta_8a4b6cdac553;Zahlungseingänge zuordnen;ja;durchschnitt;10;5;3;2;4;qualitaet|wiederholung;1;1;1;2;1;
+FOR-01;Forderungsmanager;ta_fbea64b998cc;Mahnlauf vorbereiten und prüfen;ja;einsteiger;30;2;3;3;3;belastung|wiederholung;1;2;3;1;2;
+FOR-02;Forderungsmanager;ta_2d4a03b5c486;Offene Posten klären;ja;durchschnitt;30;5;2;5;1;;1;4;3;4;4;fachwissen|pruefung
+FOR-02;Forderungsmanager;ta_7ceba3598bd3;Zahlungsvereinbarungen abstimmen;ja;experte;30;3;2;5;1;;1;4;4;4;5;entscheidung|pruefung
+FOR-02;Forderungsmanager;ta_8a4b6cdac553;Zahlungseingänge zuordnen;ja;einsteiger;10;5;4;2;4;qualitaet|zeit;1;1;2;1;1;
+FOR-02;Forderungsmanager;ta_fbea64b998cc;Mahnlauf vorbereiten und prüfen;ja;experte;10;3;3;2;4;belastung|zeit;1;1;3;2;2;
+FOR-03;Forderungsmanager;ta_2d4a03b5c486;Offene Posten klären;ja;experte;30;3;1;5;1;;1;2;3;4;5;fachwissen|kommunikation
+FOR-03;Forderungsmanager;ta_7ceba3598bd3;Zahlungsvereinbarungen abstimmen;ja;experte;10;5;1;5;1;;1;4;5;4;5;fachwissen|kommunikation
+FOR-03;Forderungsmanager;ta_8a4b6cdac553;Zahlungseingänge zuordnen;ja;experte;30;3;4;3;3;wiederholung|zeit;1;1;2;1;1;
+FOR-03;Forderungsmanager;ta_fbea64b998cc;Mahnlauf vorbereiten und prüfen;ja;durchschnitt;30;4;3;3;4;qualitaet|wiederholung;1;3;2;1;2;
+FOR-04;Forderungsmanager;ta_2d4a03b5c486;Offene Posten klären;ja;experte;30;2;1;5;1;;1;3;3;4;4;entscheidung|fachwissen
+FOR-04;Forderungsmanager;ta_7ceba3598bd3;Zahlungsvereinbarungen abstimmen;ja;durchschnitt;30;3;1;4;1;;1;4;4;4;5;entscheidung|pruefung
+FOR-04;Forderungsmanager;ta_8a4b6cdac553;Zahlungseingänge zuordnen;ja;experte;10;5;3;1;4;qualitaet|zeit;1;2;2;1;1;
+FOR-04;Forderungsmanager;ta_fbea64b998cc;Mahnlauf vorbereiten und prüfen;ja;experte;10;4;4;2;3;qualitaet|zeit;1;3;3;1;3;pruefung
+KRE-01;Kreditprüfer;ta_1c3f2f2b05a5;Kreditakte dokumentieren;ja;experte;10;5;2;1;4;wiederholung|zeit;1;1;2;1;1;
+KRE-01;Kreditprüfer;ta_2bb0fb48a3f5;Limitüberschreitung eskalieren;ja;experte;10;4;1;5;1;;1;1;3;4;4;fachwissen|pruefung
+KRE-01;Kreditprüfer;ta_5a2c259ad1d4;Kreditlimit festlegen;ja;experte;10;5;1;2;4;qualitaet|zeit;1;4;4;2;4;dynamik
+KRE-01;Kreditprüfer;ta_f8667a3d51a4;Bonitätsauskunft einholen;ja;durchschnitt;10;3;2;2;4;belastung|zeit;1;2;1;1;1;
+KRE-02;Kreditprüfer;ta_1c3f2f2b05a5;Kreditakte dokumentieren;nein;;;;;;;;;;;;;
+KRE-02;Kreditprüfer;ta_2bb0fb48a3f5;Limitüberschreitung eskalieren;ja;einsteiger;30;5;2;5;2;;1;3;3;4;4;fachwissen|kommunikation
+KRE-02;Kreditprüfer;ta_5a2c259ad1d4;Kreditlimit festlegen;ja;experte;30;2;1;1;3;qualitaet|zeit;1;4;3;1;4;pruefung
+KRE-02;Kreditprüfer;ta_f8667a3d51a4;Bonitätsauskunft einholen;ja;einsteiger;10;4;4;2;5;belastung|wiederholung;1;1;1;2;1;
+KRE-03;Kreditprüfer;ta_1c3f2f2b05a5;Kreditakte dokumentieren;ja;einsteiger;10;3;3;1;4;belastung|zeit;1;1;1;1;1;
+KRE-03;Kreditprüfer;ta_2bb0fb48a3f5;Limitüberschreitung eskalieren;ja;einsteiger;10;4;2;4;1;;1;2;3;4;5;entscheidung|kommunikation
+KRE-03;Kreditprüfer;ta_5a2c259ad1d4;Kreditlimit festlegen;ja;einsteiger;10;3;3;3;3;belastung|wiederholung;1;4;3;2;2;
+KRE-03;Kreditprüfer;ta_f8667a3d51a4;Bonitätsauskunft einholen;ja;experte;10;2;4;2;5;belastung|zeit;1;1;1;1;2;
+TEA-01;Teamleitung Order-to-Cash;ta_229b5a36a9be;Kennzahlen berichten;ja;durchschnitt;10;4;3;3;4;wiederholung|zeit;1;1;2;1;2;
+TEA-01;Teamleitung Order-to-Cash;ta_8f4b9538fdd7;Prozessänderungen abstimmen;ja;einsteiger;50;3;3;1;3;qualitaet|zeit;1;3;5;2;5;pruefung
+TEA-01;Teamleitung Order-to-Cash;ta_ac35d9860588;Ausnahmen und Eskalationen entscheiden;ja;experte;10;5;1;5;1;;1;4;4;4;5;fachwissen|pruefung
+TEA-01;Teamleitung Order-to-Cash;ta_f3d9de4013f4;Team steuern und einarbeiten;ja;experte;30;4;1;2;1;;1;3;5;1;5;pruefung

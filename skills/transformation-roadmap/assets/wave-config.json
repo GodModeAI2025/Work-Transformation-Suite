@@ -1,5 +1,5 @@
 {
-  "_hint": "Regeln für das Wellenraster. Kopie anlegen, Werte ändern, mit --config <datei> übergeben. Zeiträume bleiben leer, solange niemand sie festgelegt hat; das Raster erfindet keine Termine. flag_words: Wörter, die in den Textfeldern der Unterlagen nicht vorkommen sollen (eine hausinterne Sprachregelung); das Skript meldet Funde, es streicht nichts.",
+  "_hint": "Regeln für das Wellenraster. Kopie anlegen, Werte ändern, mit --config <datei> übergeben. Zeiträume bleiben leer, solange niemand sie festgelegt hat; das Raster erfindet keine Termine. flag_words: Wörter, die in den Textfeldern der Unterlagen nicht vorkommen sollen (eine hausinterne Sprachregelung); das Skript meldet Funde, es streicht nichts. max_red_zone_share_first_wave: Liegt mehr als dieser Anteil (Prozent der befragten Zeit) eines Vorhabens in der Vorsichtszone der Beschäftigtenbefragung, beginnt es nicht in der ersten Welle, außer jemand entscheidet es in wellen.csv.",
   "version": "1.0",
   "waves": [
     {"id": 1, "label": "Welle 1: Referenz und Grundlagen", "capacity": 3, "period": ""},
@@ -11,6 +11,7 @@
   "band_score": {"now": 10, "next": 7, "later": 3, "hold": 0},
   "running_statuses": ["pilot", "live"],
   "max_complexity_first_wave": 3,
+  "max_red_zone_share_first_wave": 50,
   "min_components": 2,
   "flag_words": []
 }

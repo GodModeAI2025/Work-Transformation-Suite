@@ -26,6 +26,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -33,8 +34,8 @@ import unicodedata
 from pathlib import Path
 from typing import Any, Iterable
 
-SCHEMA_VERSION = "1.3"
-SCHEMA_VERSIONS_SUPPORTED = ("1.0", "1.1", "1.2", "1.3")
+SCHEMA_VERSION = "1.4"
+SCHEMA_VERSIONS_SUPPORTED = ("1.0", "1.1", "1.2", "1.3", "1.4")
 
 # Feste Ordnerstruktur eines Projekts (relativ zum Projektordner)
 DIR_INPUT = "00_input"
@@ -387,6 +388,109 @@ ADOPTION_MIN_GROUP = 5
 WORK_DAYS_PER_YEAR = 220
 # Assistierte Arbeit setzt nur einen Teil der Zeit frei: KI verkürzt, ersetzt nicht.
 ASSIST_FREED_FACTOR = 0.2
+
+# ---------------------------------------------------------------------------
+# Schema 1.4: Beschäftigtensicht (Skill agency-audit)
+# ---------------------------------------------------------------------------
+# Die Bewertung sagt, was Technik kann und wie viel Mensch sie technisch braucht. Die Befragung
+# sagt, was die Menschen wollen, die die Arbeit tun. Beides zusammen ergibt vier Zonen; die
+# Logik folgt dem Auditrahmen von Shao et al. 2025 (WORKBank), übertragen auf die Skalen der Suite.
+
+# Mindestzahl Antworten je Aufgabe und je Rolle. Darunter wird nichts gerechnet und nichts gezeigt:
+# Ein Mittelwert aus drei Antworten ist eine Aussage über drei Menschen.
+AUDIT_MIN_GROUP = ADOPTION_MIN_GROUP
+# Wunsch auf der Skala 1–5: über 3 gilt als Wunsch nach Automatisierung (Mitte der Skala).
+ZONE_DESIRE_MIN = 3.0
+# Automatisierungspotenzial (0–10) ab dem eine Aufgabe als technisch machbar gilt.
+ZONE_CAPABILITY_MIN = 6.0
+ENUM_AGENCY_ZONE = ["green", "red", "opportunity", "low"]
+AGENCY_ZONE_LABEL = {
+    "green": "Freigabezone (gewünscht und machbar)",
+    "red": "Vorsichtszone (machbar, nicht gewünscht)",
+    "opportunity": "Entwicklungszone (gewünscht, noch nicht machbar)",
+    "low": "Nachrang (weder gewünscht noch machbar)",
+}
+AGENCY_ZONE_SHORT = {"green": "Freigabe", "red": "Vorsicht", "opportunity": "Entwicklung", "low": "Nachrang"}
+ENUM_FRICTION = ["low", "medium", "high"]
+FRICTION_LABEL = {"low": "gering", "medium": "mittel", "high": "hoch"}
+# Jensen-Shannon-Distanz zwischen gewünschter und technisch nötiger HAS-Verteilung einer Rolle.
+FRICTION_MEDIUM_MIN = 0.25
+FRICTION_HIGH_MIN = 0.45
+# Gründe für einen Automatisierungswunsch und für Zusammenarbeit (Codes im Antwortbogen).
+AUDIT_REASONS_AUTOMATION = {
+    "zeit": "Zeit für wertvollere Arbeit",
+    "wiederholung": "wiederholend oder mühsam",
+    "qualitaet": "Qualität der Arbeit steigt",
+    "belastung": "belastend oder anstrengend",
+    "schwierig": "kompliziert oder schwierig",
+    "menge": "mehr Menge bewältigen",
+}
+AUDIT_REASONS_COLLAB = {
+    "koerperlich": "erfordert körperliche Tätigkeit",
+    "entscheidung": "folgenreiche Entscheidungen, die ich steuern will",
+    "fachwissen": "spezielles Fachwissen",
+    "kommunikation": "feine Kommunikation oder zwischenmenschliches Geschick",
+    "pruefung": "braucht Prüfung oder Aufsicht für die Qualität",
+    "dynamik": "ändert sich laufend, muss angepasst werden",
+    "ethik": "ethische, sensible oder subjektive Anteile",
+}
+HAS_LABEL = {
+    1: "H1 Agent allein, keine Beteiligung nötig",
+    2: "H2 Agent braucht an wenigen Stellen Eingaben",
+    3: "H3 gleichberechtigte Partnerschaft",
+    4: "H4 Agent braucht Eingaben, um die Aufgabe zu schaffen",
+    5: "H5 ohne laufende Beteiligung des Menschen geht es nicht",
+}
+
+
+def agency_zone(desire: float | None, automation_potential: float | None) -> str | None:
+    """Zone einer Aufgabe aus Wunsch (1–5) und Automatisierungspotenzial (0–10)."""
+    if desire is None or automation_potential is None:
+        return None
+    wanted = float(desire) > ZONE_DESIRE_MIN
+    able = float(automation_potential) >= ZONE_CAPABILITY_MIN
+    if wanted and able:
+        return "green"
+    if able:
+        return "red"
+    if wanted:
+        return "opportunity"
+    return "low"
+
+
+def has_distribution(levels: Iterable[int], weights: Iterable[float] | None = None) -> list[float]:
+    """Verteilung über H1–H5 (fünf Anteile, Summe 1). Leere Eingabe ergibt fünf Nullen."""
+    levels = list(levels)
+    ws = list(weights) if weights is not None else [1.0] * len(levels)
+    counts = [0.0] * 5
+    for lv, wt in zip(levels, ws):
+        if lv is not None and 1 <= int(lv) <= 5:
+            counts[int(lv) - 1] += float(wt)
+    total = sum(counts)
+    return [c / total for c in counts] if total > 0 else counts
+
+
+def jensen_shannon(p: list[float], q: list[float]) -> float | None:
+    """Jensen-Shannon-Distanz (Basis 2, 0 bis 1) zweier Verteilungen; None, wenn eine leer ist."""
+    if not sum(p) or not sum(q):
+        return None
+    m = [(a + b) / 2.0 for a, b in zip(p, q)]
+
+    def kl(x: list[float], y: list[float]) -> float:
+        return sum(a * math.log2(a / b) for a, b in zip(x, y) if a > 0 and b > 0)
+
+    div = 0.5 * kl(p, m) + 0.5 * kl(q, m)
+    return round(math.sqrt(max(0.0, div)), 3)
+
+
+def friction_level(jsd: float | None) -> str | None:
+    if jsd is None:
+        return None
+    if jsd >= FRICTION_HIGH_MIN:
+        return "high"
+    if jsd >= FRICTION_MEDIUM_MIN:
+        return "medium"
+    return "low"
 
 
 def empty_graph() -> dict[str, Any]:
