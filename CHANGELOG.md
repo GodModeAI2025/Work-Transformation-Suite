@@ -4,6 +4,31 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.8.0] — Fahrplan-Raster und Unterlagen für die Entscheidungsrunde
+
+Nach der Analyse stellen sich zwei Fragen: In welcher Reihenfolge gehen wir die Vorhaben an, und was legen wir der Runde vor, die
+darüber entscheidet? Ein siebtes Skill beantwortet beide aus dem Arbeitsgraphen.
+
+### Neu
+
+- **Skill `transformation-roadmap`** mit `plan_waves.py` und `build_documents.py`.
+- **Wellenraster** (`fahrplan_vNNN.md/.html/.csv`, `roadmap_vNNN.json`): Agenten und Use Cases erhalten einen Score aus Wert, Reichweite,
+  Umsetzbarkeit, Reifegrad und Prozessrang und werden auf Wellen verteilt. Laufende Vorhaben liegen in Welle 1, schwere beginnen dort
+  nicht, Orchestratoren folgen den Agenten, die sie steuern. Betroffene Rollen und FTE je Welle zählen jede Aufgabe einmal.
+- **Entscheidungen** in `30_review/wellen.csv`: Eine Zuordnung gilt erst mit benannter Person. Zeiträume setzt das Raster nicht selbst.
+- **Unterlagen** in `40_output/dokumente/`: Entscheidungsvorlage, Einseiter für HR, Anhang mit allen Vorhaben, Methodik, je Markdown und
+  HTML. Zahlen aus dem Graphen (Jobarchitektur heute und künftig, betroffene Rollen, Wert, Pilotstand), Erzählendes aus
+  `30_review/dokumente/texte.json` mit Quelle. Offene Felder bleiben „❓ offen“; jedes Dokument nennt seinen Stand (Entwurf oder
+  versandfertig), `--strict` macht einen Entwurf zum Fehler.
+- **Pipeline:** `run_pipeline.py` rechnet als letzten Schritt Raster und Unterlagen (`--until roadmap`), hält dabei aber nie an.
+- Beispielprojekt um zwei Wellenentscheidungen und vier Textfelder erweitert.
+
+### Grenzen
+
+- Der Score ordnet, er misst nicht. Abhängigkeiten kennt das Raster nur zwischen Orchestrator und Agenten.
+- Wert und FTE beschreiben gebundene Arbeit, nicht Einsparung.
+- Kein Word-Ausgabeformat; Markdown und druckbares HTML.
+
 ## [0.7.0] — Kontext aus Dokumenten statt aus Fragen
 
 Eine Rollen.md hat Felder, die ein Graph nicht kennt: Prioritäten, Ton, Zeitfresser aus Sicht der Person. Sie müssen nicht alle per Frage und Antwort kommen. Diese Version holt Vorschläge

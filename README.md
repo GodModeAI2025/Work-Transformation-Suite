@@ -1,6 +1,6 @@
 # Work-Transformation-Suite
 
-Sechs Claude-Skills mit zwei Betriebsarten.
+Sieben Claude-Skills mit zwei Betriebsarten.
 
 **Diagnose.** Aus Stellenbeschreibungen eines Bereichs entsteht ein bewerteter Arbeitsgraph: Rollen,
 Aufgaben, Skills, KI-Automatisierbarkeit je Aufgabe, Disruptionstyp je Rolle, Agentenbibliothek mit
@@ -40,7 +40,8 @@ Work-Transformation-Suite/
 │   ├── task-scorer/              Schritt 2: Aufgabenbewertung → Modus, HAS, Horizont, Disruptionstyp
 │   ├── agent-mapper/             Schritt 3: Agentenbibliothek → Abdeckung, Capability Contracts
 │   ├── process-redesigner/       Schritt 4: Soll-Szenarien, Prozesswert, Piloten
-│   └── transformation-dashboard/ Schritt 5: HTML-Dashboard, CSV, Bericht
+│   ├── transformation-dashboard/ Schritt 5: HTML-Dashboard, CSV, Bericht
+│   └── transformation-roadmap/   Schritt 6: Wellenraster, Entscheidungsvorlage, HR-Einseiter
 ├── examples/order-to-cash/       vollständiges Referenzprojekt mit erwartetem Ergebnis
 ├── tests/                        Testsuite (python -m unittest discover)
 ├── tools/                        Bibliothekskopien abgleichen, Pakete bauen, Beispiel auffrischen
@@ -63,7 +64,7 @@ Voraussetzung: Python 3.9 oder neuer, keine zusätzlichen Pakete.
 
 ### In Claude (Cowork oder claude.ai)
 
-Die sechs `.skill`-Dateien aus `dist/` einzeln in den Chat ziehen und auf „Skill speichern“ klicken.
+Die sieben `.skill`-Dateien aus `dist/` einzeln in den Chat ziehen und auf „Skill speichern“ klicken.
 Reihenfolge egal.
 
 ### In Claude Code
@@ -75,7 +76,7 @@ Als Plugin, direkt aus diesem Repository:
 /plugin install work-transformation-suite@work-transformation-suite
 ```
 
-Oder von Hand: Den Ordner `skills/` (oder die sechs Unterordner) nach `~/.claude/skills/` kopieren,
+Oder von Hand: Den Ordner `skills/` (oder die sieben Unterordner) nach `~/.claude/skills/` kopieren,
 projektbezogen auch nach `<repo>/.claude/skills/`. Die Skills finden sich gegenseitig über den
 Geschwister-Pfad `../<skillname>`, deshalb zusammen in einen Ordner legen.
 
@@ -92,7 +93,7 @@ deterministisch neu. `python3 tools/sync_shared.py` gleicht die Bibliothekskopie
 
 Release: Ein Tag `vX.Y.Z` löst `.github/workflows/release.yml` aus. Der Workflow lässt die
 gesamte Prüfung laufen, vergleicht Tag, Version in `.claude-plugin/plugin.json` und den
-Changelog-Abschnitt (`tools/check_release.py`), und hängt die sechs `.skill`-Pakete mit
+Changelog-Abschnitt (`tools/check_release.py`), und hängt die sieben `.skill`-Pakete mit
 einer `SHA256SUMS`-Datei an das Release. Die Prüfsummen sind der einzige Beleg dafür, dass
 eine heruntergeladene Paketdatei dem Stand des Tags entspricht.
 
@@ -250,6 +251,28 @@ Governance-Abschnitt, der zeigt, welche Zahl geschätzt, welche bestätigt und w
 Die Rollenansicht bleibt vollständig erhalten, rückt aber dahinter — als Folgenansicht des
 Prozessredesigns. Das ist Absicht: Sobald Organisationskästchen zuerst kommen, wird das Organigramm
 zum Designobjekt, und genau das verhindert ein Redesign vom Ergebnis her.
+
+### Schritt 6: transformation-roadmap (Skript, Texte von Claude)
+
+Verteilt Agenten und Use Cases auf Wellen und baut daraus die Unterlagen für eine Entscheidungsrunde.
+
+```
+python3 skills/transformation-roadmap/scripts/plan_waves.py --project projekte/kundenservice
+python3 skills/transformation-roadmap/scripts/build_documents.py --project projekte/kundenservice
+```
+
+- **Raster:** `fahrplan_vNNN.md/.html/.csv` und `roadmap_vNNN.json`. Jedes Vorhaben erhält einen Score aus Wert, Reichweite,
+  Umsetzbarkeit, Reifegrad und Prozessrang; fehlende Größen fehlen auch im Score und werden benannt. Laufende Vorhaben
+  liegen in Welle 1, Orchestratoren folgen den Agenten, die sie steuern. Betroffene Rollen und FTE je Welle zählen
+  jede Aufgabe einmal.
+- **Entscheidungen:** `30_review/wellen.csv` (`eintrag;welle;begruendung;entschieden_von;datum`). Ohne benannte Person
+  bleibt eine Zuordnung Vorschlag. Zeiträume setzt das Raster nicht selbst.
+- **Unterlagen** in `40_output/dokumente/`: Entscheidungsvorlage, Einseiter für HR, Anhang mit allen Vorhaben, Methodik, je als
+  Markdown und HTML. Tabellen kommen aus dem Graphen; Anlass, Pilot, Vorgehen, Beschluss und Kernbotschaft stehen als
+  Textfelder in `30_review/dokumente/texte.json`, jedes mit Quelle. Was das Material nicht hergibt, bleibt „❓ offen“.
+  Jedes Dokument nennt oben seinen Stand (Entwurf oder versandfertig); mit `--strict` wird ein Entwurf zum Fehler.
+
+Regeln und Grenzen: `skills/transformation-roadmap/references/wellenlogik.md` und `dokumente.md`.
 
 ### Alles auf einmal
 

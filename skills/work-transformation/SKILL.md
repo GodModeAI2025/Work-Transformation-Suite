@@ -78,7 +78,10 @@ Skript-Pfade sind relativ zum jeweiligen Skill-Ordner, Projektpfade relativ zum 
    ▼  make_experiments.py · compare_scenarios.py → 40_output/scenarios_vNNN.md
    │  apply_governance.py ← 30_review/decisions.csv (Freigaben, zuletzt angewendet)
    ▼  transformation-dashboard: build_dashboard.py
-      40_output/dashboard_vNNN.html, CSV-Exporte, report_vNNN.md
+   │  40_output/dashboard_vNNN.html, CSV-Exporte, report_vNNN.md
+   ▼  transformation-roadmap: plan_waves.py · build_documents.py
+      40_output/fahrplan_vNNN.*, roadmap_vNNN.json, dokumente/ (Entscheidungsvorlage, HR-Einseiter, Anhang, Methodik)
+      ← 30_review/wellen.csv (Entscheidungen) und 30_review/dokumente/texte.json (Textfelder, Claude)
 ```
 
 ## Wie du vorgehst
@@ -118,6 +121,14 @@ Systemexporten oder Prozessbeobachtung. Sag das, bevor jemand erwartet, dass aus
 Stellenbeschreibungen ein Soll-Betriebsmodell fällt.
 
 Mehr Fragen braucht es nicht; alles Weitere klärt das Expertenreview.
+
+### Fahrplan und Unterlagen
+
+Hat das Projekt Agenten oder Use Cases, rechnet die Pipeline am Ende ein Wellenraster und baut die Unterlagen
+für eine Entscheidungsrunde (`../transformation-roadmap/SKILL.md`). Sie hält dabei nie an: Das Raster ist ein
+Vorschlag, die Textfelder bleiben „❓ offen“, bis Claude sie aus Material mit Quelle füllt und eine benannte Person
+die Wellen entscheidet. Sag dem Nutzer, welche Felder offen sind, und frag nach Material, statt zu formulieren,
+was nicht belegt ist.
 
 ### Qualität statt Geschwindigkeit an drei Stellen
 

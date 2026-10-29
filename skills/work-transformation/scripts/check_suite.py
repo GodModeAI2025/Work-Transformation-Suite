@@ -22,7 +22,7 @@ from pathlib import Path
 
 SHARED = {
     "workgraph_lib.py": ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner",
-                         "transformation-dashboard", "work-transformation"],
+                         "transformation-dashboard", "transformation-roadmap", "work-transformation"],
     "validate_graph.py": ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner",
                           "transformation-dashboard"],
     "apply_overrides.py": ["work-graph-builder", "task-scorer"],
@@ -43,6 +43,8 @@ REQUIRED = {
                            "validate_blueprints.py", "compare_scenarios.py", "score_processes.py",
                            "make_experiments.py", "redesign_lib.py"],
     "transformation-dashboard": ["build_dashboard.py", "capacity_views.py", "task_views.py"],
+    "transformation-roadmap": ["plan_waves.py", "build_documents.py", "roadmap_lib.py", "roadmap_views.py",
+                               "render_lib.py"],
     "work-transformation": ["run_pipeline.py", "check_suite.py"],
 }
 # Dateien, die ein Skill zusätzlich zu scripts/ braucht (Referenzen, Konfiguration).
@@ -57,6 +59,7 @@ REQUIRED_FILES = {
                            "references/experiment-format.md", "references/value-rubric.md",
                            "assets/value-weights.json"],
     "transformation-dashboard": ["assets/theme.json"],
+    "transformation-roadmap": ["references/wellenlogik.md", "references/dokumente.md", "assets/wave-config.json"],
 }
 
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")

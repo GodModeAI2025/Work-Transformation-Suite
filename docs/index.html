@@ -82,6 +82,8 @@ h3{font-family:var(--f-head);font-size:17px;margin:0 0 6px}
 .step:nth-child(2){border-left-color:var(--step2)}
 .step:nth-child(3){border-left-color:var(--step3)}
 .step:nth-child(4){border-left-color:var(--step4)}
+.step:nth-child(5){border-left-color:var(--step2)}
+.step:nth-child(6){border-left-color:var(--step3)}
 .step .who{font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin:0 0 6px}
 .step h3{margin:0 0 6px;font-size:15.5px;font-family:var(--f-mono);color:var(--ink)}
 .step p{margin:0;font-size:14px;color:var(--ink2)}
@@ -136,7 +138,8 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
     </p>
     <p class="lead">
       Und für jede Rolle lässt sich die Datei erzeugen, die ein Agent braucht, um zu wissen, wer hier arbeitet:
-      die <b>Rollen.md</b>.
+      die <b>Rollen.md</b>. Und für die Runde, die über die Reihenfolge entscheidet, ein <b>Wellenraster</b> mit
+      Entscheidungsvorlage und Einseiter für HR.
     </p>
     <ul class="anchors" aria-label="Auf dieser Seite">
       <li><a href="#idee">Idee</a></li>
@@ -144,6 +147,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <li><a href="#ergebnisse">Ergebnisse</a></li>
       <li><a href="#aufbereitung">Datenaufbereitung</a></li>
       <li><a class="here" href="#rollen-md">Rollen.md</a></li>
+      <li><a href="#fahrplan">Fahrplan</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#ehrlichkeit">Belastbarkeit</a></li>
       <li><a href="#installation">Installation</a></li>
@@ -199,7 +203,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 
 <section id="ablauf">
   <div class="wrap">
-    <h2>Fünf Schritte, ein Datenformat</h2>
+    <h2>Sechs Schritte, ein Datenformat</h2>
     <p class="sub">Alle Schritte arbeiten auf derselben <code>work-graph.json</code> in einem Projektordner. Jeder Schritt, der etwas ändert, legt eine neue Version an. Ein Schritt ohne Änderung meldet „Unverändert“.</p>
     <div class="pipe">
       <div class="step">
@@ -227,6 +231,11 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
         <h3>transformation-dashboard</h3>
         <p>Baut ein einzelnes, offline lauffähiges HTML-Dashboard mit Ist/Soll-Vergleich, die CSV-Exporte und einen Bericht. Farben kommen aus einer Theme-Datei.</p>
       </div>
+      <div class="step">
+        <p class="who">Skript + Claude (Texte)</p>
+        <h3>transformation-roadmap</h3>
+        <p>Verteilt Agenten und Use Cases auf Wellen und baut Entscheidungsvorlage, Einseiter für HR, Anhang und Methodik. Zahlen aus dem Graphen, Texte mit Quelle, Offenes bleibt offen.</p>
+      </div>
     </div>
 <div class="flow">00_input/              Quellen (Mensch)
    │  Claude extrahiert     → 10_extraction/extract_*.json
@@ -246,6 +255,8 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
    │  Claude plant Piloten  → 20_graph/experiments.json
    ▼  make_experiments.py · compare_scenarios.py · apply_governance.py
    ▼  build_dashboard.py    → 40_output/dashboard.html, CSV, report.md, HR- und IT-Bericht
+   │  30_review/wellen.csv (Entscheidungen) · 30_review/dokumente/texte.json (Textfelder)
+   ▼  plan_waves.py · build_documents.py → 40_output/fahrplan.*, dokumente/
 
 Optional, auf Zuruf oder bei Bedarf:
    inventory_sources.py      → Quellen sichten, Methoden vorschlagen
@@ -253,7 +264,8 @@ Optional, auf Zuruf oder bei Bedarf:
    build_target_roles.py     → Zielbild je Rolle (Entwurf)
    import_usecases.py · import_adoption.py · export_reach.py
    build_rollen_md.py        → Rollen.md für eine oder mehrere Rollen
-   build_role_setup.py       → Setup-Paket für einen Arbeitsagenten je Rolle</div>
+   build_role_setup.py       → Setup-Paket für einen Arbeitsagenten je Rolle
+   plan_waves.py · build_documents.py → Wellenraster und Unterlagen einzeln neu bauen</div>
     <div class="note">
       <p><code>python3 skills/work-transformation/scripts/run_pipeline.py --project projekte/kundenservice</code> führt alle Skript-Schritte hintereinander aus. Fehlt eine Claude-Eingabe, stoppt der Lauf mit Exit-Code 3 und einer klaren Meldung. Derselbe Befehl ist das „weiter machen“ nach jeder Korrektur.</p>
     </div>
@@ -435,9 +447,79 @@ python3 skills/agent-mapper/scripts/extract_context_evidence.py --project projek
   </div>
 </section>
 
+<section id="fahrplan">
+  <div class="wrap">
+    <h2>Fahrplan und Unterlagen für die Entscheidungsrunde</h2>
+    <p class="sub">Nach der Analyse bleibt die Frage nach der Reihenfolge, und danach die, was einer Runde vorgelegt wird. Das Raster ordnet die Vorhaben in Wellen, die Unterlagen bauen darauf auf. Beides ist ein Vorschlag, bis eine benannte Person es bestätigt.</p>
+
+    <div class="grid g3">
+      <div class="card">
+        <p class="num">1 · SCORE</p>
+        <h3>Fünf Größen, ehrlich gerechnet</h3>
+        <p>Wert, Reichweite, Umsetzbarkeit, Reifegrad und Prozessrang. Fehlt eine Größe, rechnet der Score ohne sie und sagt, welche fehlt. Bei zu wenig Angaben bleibt er leer: „nicht bewertet“.</p>
+      </div>
+      <div class="card">
+        <p class="num">2 · WELLEN</p>
+        <h3>Regeln, die man nachlesen kann</h3>
+        <p>Laufende Vorhaben liegen in Welle 1, schwere beginnen dort nicht, ein Orchestrator kommt nach den Agenten, die er steuert. Zeiträume setzt nur ein Mensch; bis dahin steht „❓ offen“ da.</p>
+      </div>
+      <div class="card">
+        <p class="num">3 · WIRKUNG</p>
+        <h3>Betroffen, nicht eingespart</h3>
+        <p>Je Welle Rollen, Stellen, FTE und Wert. Eine Aufgabe, die mehrere Vorhaben berührt, zählt einmal. Der Wert ist gebundene Arbeit mal Tagessatz und sagt nicht, was eingespart wird.</p>
+      </div>
+      <div class="card">
+        <p class="num">4 · ENTSCHEIDUNG</p>
+        <h3>Zuordnung mit Namen</h3>
+        <p>Eine Welle gilt erst, wenn jemand sie in <code>wellen.csv</code> entschieden hat, mit Datum und Begründung. Eine Zeile ohne Person zählt nicht und wird gemeldet.</p>
+      </div>
+      <div class="card">
+        <p class="num">5 · UNTERLAGEN</p>
+        <h3>Vier Dokumente, Markdown und HTML</h3>
+        <p>Entscheidungsvorlage, Einseiter für HR in einfacher Sprache, Anhang mit allen Vorhaben und Methodik. Die Jobarchitektur zeigt je Rolle heute und künftig, mit Basis „geschätzt“ oder „bestätigt“.</p>
+      </div>
+      <div class="card">
+        <p class="num">6 · TEXTFELDER</p>
+        <h3>Zahlen aus dem Graphen, Texte mit Quelle</h3>
+        <p>Anlass, Pilot, Vorgehen, Beschluss und Kernbotschaft schreibt Claude aus Material, jeder Text mit Quelle. Gibt das Material nichts her, bleibt das Feld offen. Jede Unterlage nennt oben ihren Stand: Entwurf oder versandfertig.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 10px">Erzeugen</h3>
+<pre>python3 skills/transformation-roadmap/scripts/plan_waves.py --project projekte/kundenservice
+python3 skills/transformation-roadmap/scripts/build_documents.py --project projekte/kundenservice
+
+# Entscheidungen festhalten (30_review/wellen.csv)
+eintrag;welle;begruendung;entschieden_von;datum
+Mahnlauf-Agent;2;Ausschlussregeln noch nicht abgestimmt;Name der Person;2026-06-10
+
+# als Gate vor dem Versand: Exit-Code 1, solange etwas Entwurf ist
+python3 skills/transformation-roadmap/scripts/build_documents.py --project projekte/kundenservice --strict</pre>
+    <p style="color:var(--ink2);font-size:14.5px;max-width:70ch;margin:0 0 18px">
+      Ausgabe in <code>40_output/</code>: <code>fahrplan_vNNN.html</code> (eine Spalte je Welle), <code>.md</code>, <code>.csv</code> und <code>roadmap_vNNN.json</code>, dazu <code>dokumente/</code> mit den vier Unterlagen. Die Pipeline rechnet beides als letzten Schritt mit und hält dabei nie an.
+    </p>
+
+    <h3 style="margin:26px 0 10px">So sieht das Raster aus (Beispielprojekt)</h3>
+    <div class="scroller">
+      <table class="tbl">
+        <thead><tr><th>Welle</th><th>Zeitraum</th><th>Vorhaben</th><th>Rollen</th><th>FTE betroffen</th><th>Wert/Jahr (geschätzt)</th><th>Stand</th></tr></thead>
+        <tbody>
+          <tr><td>Welle 1: Referenz und Grundlagen</td><td>❓ offen</td><td>5</td><td>4</td><td>18.4</td><td>1 808 400 €</td><td>entschieden oder läuft bereits</td></tr>
+          <tr><td>Welle 2: Ausweiten</td><td>❓ offen</td><td>4</td><td>3</td><td>4.6</td><td>457 600 €</td><td>teils entschieden</td></tr>
+          <tr><td>Welle 3: Breite</td><td>❓ offen</td><td>1</td><td>0</td><td>–</td><td>nicht bewertet</td><td>Vorschlag</td></tr>
+          <tr><td>Alle Wellen zusammen</td><td></td><td>10</td><td>5</td><td>21.6</td><td>2 136 640 €</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <p>Die Zeile „Alle Wellen zusammen“ ist die Vereinigung der Aufgaben, nicht die Summe der Zeilen. Welle 3 hat keinen Wert, weil ihr einziges Vorhaben ein Orchestrator ohne eigene Aufgaben ist; das Raster zeigt das, statt eine Null zu rechnen.</p>
+    </div>
+  </div>
+</section>
+
 <section id="skills">
   <div class="wrap">
-    <h2>Die sechs Skills</h2>
+    <h2>Die sieben Skills</h2>
     <p class="sub">Jeder Skill bringt <code>SKILL.md</code>, deterministische Skripte und Referenzen mit. Gemeinsame Bibliotheken liegen als identische Kopien in jedem Skill, damit keiner vom anderen abhängt. <code>check_suite.py</code> prüft die Kopien.</p>
     <div class="scroller">
       <table class="tbl">
@@ -449,6 +531,7 @@ python3 skills/agent-mapper/scripts/extract_context_evidence.py --project projek
           <tr><td>agent-mapper</td><td>Agentenbibliothek nach Mustern, Abdeckung, Sourcing, Priorisierung, Capability Contracts, Use-Case-Register, Reichweite, Nutzungsstand, Rollen.md und Setup-Paket je Rolle</td><td><code>agents.json</code>, Verträge, <code>Rollen.md</code>, Skill-Gerüste</td></tr>
           <tr><td>process-redesigner</td><td>Drei Soll-Szenarien je Prozess, sechs Operatoren, Prozesswert, Pilotkarten</td><td>Blueprints mit Deltas, Prioritätsbänder, Experimente</td></tr>
           <tr><td>transformation-dashboard</td><td>Visualisierung und Export, Ist/Soll-Vergleich</td><td>HTML, CSV-Exporte, Bericht für HR und Bericht für IT</td></tr>
+          <tr><td>transformation-roadmap</td><td>Score und Wellenraster für Agenten und Use Cases, Jobarchitektur heute und künftig, Unterlagen für die Entscheidungsrunde</td><td>Raster (HTML, Markdown, CSV, JSON), Entscheidungsvorlage, Einseiter für HR, Anhang, Methodik</td></tr>
         </tbody>
       </table>
     </div>
@@ -518,7 +601,7 @@ python3 skills/agent-mapper/scripts/extract_context_evidence.py --project projek
     <div class="grid g3">
       <div class="card">
         <h3>In Claude (Cowork / claude.ai)</h3>
-        <p>Die sechs <code>.skill</code>-Dateien aus <code>dist/</code> einzeln in den Chat ziehen und auf „Skill speichern“ klicken. Reihenfolge egal.</p>
+        <p>Die sieben <code>.skill</code>-Dateien aus <code>dist/</code> einzeln in den Chat ziehen und auf „Skill speichern“ klicken. Reihenfolge egal.</p>
       </div>
       <div class="card">
         <h3>In Claude Code</h3>
@@ -553,6 +636,7 @@ python3 skills/work-graph-builder/scripts/init_project.py \
     <p class="sub">Was die Suite nicht kann, steht hier, damit niemand es im Piloten herausfinden muss.</p>
     <ul class="plain">
       <li>Kein Freigabeworkflow mit Rollen und Rechten. Freigaben sind ein nachvollziehbares Log mit Name, Datum und Begründung, mehr gibt es nicht.</li>
+      <li>Das Wellenraster ordnet, es optimiert nicht. Abhängigkeiten kennt es nur zwischen Orchestrator und Agenten, Zeiträume, Budgets und Teamkapazität gar nicht. Die Unterlagen entstehen als Markdown und HTML, nicht als Word-Datei.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>
       <li>Rollen.md und Setup-Paket sind Startpunkte: ungetestet, ohne Systemfreigabe, ohne Aussage zur Zeitersparnis. Was der Graph nicht kennt, bleibt „offen“, und die Testfälle sind Gerüste, bis jemand echte einträgt.</li>
       <li>Vorschläge aus Dokumenten beruhen auf Mustern und Messungen, nicht auf Verständnis. Ein Stilprofil beschreibt die gemessenen Texte, nicht die ganze Person.</li>

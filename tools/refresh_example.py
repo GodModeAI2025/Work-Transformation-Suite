@@ -31,7 +31,7 @@ sys.path.insert(0, str(ROOT / "skills" / "work-transformation" / "scripts"))
 import workgraph_lib as wl  # noqa: E402
 
 PIPELINE = ROOT / "skills" / "work-transformation" / "scripts" / "run_pipeline.py"
-READABLE_PREFIXES = ("report_v", "scenarios_v", "contracts_v")
+READABLE_PREFIXES = ("report_v", "scenarios_v", "contracts_v", "fahrplan_v")
 
 
 def sha(path: Path) -> str:

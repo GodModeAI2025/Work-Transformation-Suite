@@ -1,0 +1,16 @@
+{
+  "_hint": "Regeln für das Wellenraster. Kopie anlegen, Werte ändern, mit --config <datei> übergeben. Zeiträume bleiben leer, solange niemand sie festgelegt hat; das Raster erfindet keine Termine.",
+  "version": "1.0",
+  "waves": [
+    {"id": 1, "label": "Welle 1: Referenz und Grundlagen", "capacity": 3, "period": ""},
+    {"id": 2, "label": "Welle 2: Ausweiten", "capacity": 4, "period": ""},
+    {"id": 3, "label": "Welle 3: Breite", "capacity": null, "period": ""}
+  ],
+  "weights": {"value": 0.30, "reach": 0.20, "ease": 0.20, "readiness": 0.15, "process": 0.15},
+  "status_readiness": {"live": 10, "pilot": 8, "building": 7, "planned": 5, "proposed": 3, "idea": 2},
+  "band_score": {"now": 10, "next": 7, "later": 3, "hold": 0},
+  "running_statuses": ["pilot", "live"],
+  "max_complexity_first_wave": 3,
+  "min_components": 2,
+  "tone_flags": ["Auftragnehmer", "Auftraggeber", "Dienstleister"]
+}

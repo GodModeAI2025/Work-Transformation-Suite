@@ -5,10 +5,11 @@ Reihenfolge aus und meldet, wo Claude (oder ein Mensch) als Nächstes eingreifen
 
 Aufruf:
     python3 <skill>/scripts/run_pipeline.py --project ./mein-projekt --skills ../
-        [--until builder|processes|scorer|mapper|redesign|dashboard] [--stamp "..."]
+        [--until builder|processes|scorer|mapper|redesign|dashboard|roadmap] [--stamp "..."]
 
 --skills  Ordner, in dem die Skills liegen (work-graph-builder, task-scorer, agent-mapper,
-          process-redesigner, transformation-dashboard). Standard: Elternordner dieses Skills.
+          process-redesigner, transformation-dashboard, transformation-roadmap). Standard:
+          Elternordner dieses Skills.
 
 Der Ablauf hält an, wenn ein Eingabe-Artefakt fehlt, das nur Claude erzeugen kann
 (Extraktionsdateien, scores.json, agents.json, blueprints.json, process_value.json), und
@@ -46,8 +47,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", required=True)
     ap.add_argument("--skills", default=None, help="Ordner mit den Skills (Standard: ../ relativ zu diesem Skill)")
-    ap.add_argument("--until", choices=["builder", "processes", "scorer", "mapper", "redesign", "dashboard"],
-                    default="dashboard")
+    ap.add_argument("--until", choices=["builder", "processes", "scorer", "mapper", "redesign", "dashboard", "roadmap"],
+                    default="roadmap")
     ap.add_argument("--skip-redesign", action="store_true",
                     help="Prozessredesign überspringen, auch wenn Prozesse erfasst sind")
     ap.add_argument("--stamp", default=None)
@@ -67,7 +68,7 @@ def main() -> int:
         return wl.relpath(p, cwd)
 
     proj = wl.relpath(project, cwd)
-    order = ["builder", "processes", "scorer", "mapper", "redesign", "dashboard"]
+    order = ["builder", "processes", "scorer", "mapper", "redesign", "dashboard", "roadmap"]
     stop = order.index(args.until)
 
     # 1 Architekt
@@ -225,7 +226,23 @@ def main() -> int:
         cmd += ["--stamp", args.stamp]
     if args.title:
         cmd += ["--title", args.title]
-    return run(cmd, cwd)
+    rc = run(cmd, cwd)
+    if rc or stop == 5:
+        return rc
+
+    # 6 Fahrplan und Unterlagen. Hält die Pipeline nie an: Texte und Wellenentscheidungen
+    # sind Eingaben von Menschen, das Raster ist auch ohne sie ein gültiger Entwurf.
+    graph = wl.load_latest_graph(project)
+    if not (graph.get("agents") or graph.get("usecases")):
+        print("HINWEIS: Ohne Agenten und Use Cases gibt es kein Fahrplan-Raster.")
+        return 0
+    if not (skills / "transformation-roadmap" / "scripts" / "plan_waves.py").exists():
+        print("HINWEIS: Skill transformation-roadmap nicht gefunden, Fahrplan übersprungen (--skills prüfen).")
+        return 0
+    for name in ("plan_waves.py", "build_documents.py"):
+        if run([py, script("transformation-roadmap", name), "--project", proj], cwd):
+            return 2
+    return 0
 
 
 if __name__ == "__main__":
