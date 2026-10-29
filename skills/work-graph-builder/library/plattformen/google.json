@@ -1,0 +1,222 @@
+{
+  "grundsaetze": [
+    "Identität über Cloud Identity und IAM, Berechtigungen nach dem Prinzip der geringsten Rechte.",
+    "Vertex AI und Document AI in EU-Regionen; Auftragsverarbeitung nach Cloud Data Processing Addendum.",
+    "Protokollierung in Cloud Logging; Datenklassen über Dataplex und DLP API.",
+    "Apps Script und Workflows für leichte Flüsse, Cloud Run und Cloud Functions für Fachsystemanbindung."
+  ],
+  "hinweise": [
+    "Dienstnamen und Verfügbarkeit ändern sich; vor der Umsetzung den aktuellen Katalog prüfen.",
+    "Fachsysteme werden über ihre eigenen Schnittstellen angebunden, nicht ersetzt."
+  ],
+  "id": "google",
+  "label": "Google Workspace und Google Cloud",
+  "muster": {
+    "analysis-copilot": {
+      "dienste": [
+        "BigQuery",
+        "Looker",
+        "Vertex AI",
+        "Sheets API"
+      ]
+    },
+    "anomaly-detection": {
+      "dienste": [
+        "Vertex AI (AutoML Tabular / Forecasting)",
+        "BigQuery ML",
+        "Cloud Monitoring"
+      ]
+    },
+    "classification-routing": {
+      "dienste": [
+        "Vertex AI (Gemini)",
+        "Natural Language API",
+        "Gmail API",
+        "Workflows"
+      ]
+    },
+    "compliance-check": {
+      "dienste": [
+        "Vertex AI",
+        "Vertex AI Search (Regelwerke)",
+        "Dataplex / DLP API"
+      ]
+    },
+    "contract-change-handling": {
+      "dienste": [
+        "Cloud Run",
+        "Workflows",
+        "Vertex AI",
+        "Fachsystem-API (CRM, ERP)"
+      ]
+    },
+    "conversational-assistant": {
+      "dienste": [
+        "Dialogflow CX",
+        "Vertex AI Agent Builder",
+        "Google Chat oder Web als Kanal"
+      ]
+    },
+    "data-reconciliation": {
+      "dienste": [
+        "Cloud Functions",
+        "BigQuery",
+        "Dataflow",
+        "Vertex AI für Erklärungen"
+      ]
+    },
+    "dispatch-optimization": {
+      "dienste": [
+        "Google Maps Platform (Route Optimization API)",
+        "Vertex AI",
+        "AppSheet"
+      ]
+    },
+    "document-extraction": {
+      "dienste": [
+        "Document AI",
+        "Vertex AI (Gemini, EU-Region)",
+        "Workflows oder Apps Script"
+      ]
+    },
+    "drafting-assistant": {
+      "dienste": [
+        "Gemini for Google Workspace",
+        "Vertex AI",
+        "Docs und Slides API"
+      ]
+    },
+    "forecasting": {
+      "dienste": [
+        "Vertex AI Forecasting",
+        "BigQuery ML"
+      ]
+    },
+    "inspection-support": {
+      "dienste": [
+        "Vertex AI Vision",
+        "Vertex AI",
+        "Cloud IoT über Pub/Sub"
+      ]
+    },
+    "invoice-verification": {
+      "dienste": [
+        "Document AI (Invoice Parser)",
+        "Cloud Functions",
+        "ERP-API"
+      ]
+    },
+    "knowledge-qa": {
+      "dienste": [
+        "Vertex AI Search",
+        "Vertex AI (Gemini)",
+        "Dialogflow CX",
+        "Google Drive als Quelle"
+      ]
+    },
+    "market-communication": {
+      "dienste": [
+        "Cloud Run",
+        "Workflows",
+        "Fachsystem der Marktkommunikation (EDIFACT-Adapter)"
+      ]
+    },
+    "master-data-maintenance": {
+      "dienste": [
+        "Cloud Run",
+        "AppSheet",
+        "BigQuery",
+        "Dataplex"
+      ]
+    },
+    "meeting-assistant": {
+      "dienste": [
+        "Google Meet (Gemini-Notizen)",
+        "Google Calendar API",
+        "Google Tasks API"
+      ]
+    },
+    "meter-data-processing": {
+      "dienste": [
+        "BigQuery",
+        "Dataflow",
+        "Vertex AI (Ersatzwerte)"
+      ]
+    },
+    "onboarding-guide": {
+      "dienste": [
+        "Dialogflow CX",
+        "Google Sites und Drive als Wissensquelle",
+        "Workspace APIs"
+      ]
+    },
+    "quality-review": {
+      "dienste": [
+        "Vertex AI",
+        "Cloud DLP",
+        "Cloud Build bei Code"
+      ]
+    },
+    "regulatory-monitor": {
+      "dienste": [
+        "Vertex AI Search",
+        "Vertex AI (Gemini)",
+        "Cloud Scheduler"
+      ]
+    },
+    "report-generation": {
+      "dienste": [
+        "BigQuery",
+        "Looker Studio",
+        "Vertex AI",
+        "Google Drive API"
+      ]
+    },
+    "scheduling-coordination": {
+      "dienste": [
+        "Google Calendar API",
+        "Apps Script",
+        "Vertex AI"
+      ]
+    },
+    "standard-correspondence": {
+      "dienste": [
+        "Vertex AI (Gemini)",
+        "Gmail API",
+        "Google Docs API"
+      ]
+    },
+    "ticket-resolution": {
+      "dienste": [
+        "Ticketsystem-API",
+        "Vertex AI (Gemini)",
+        "Vertex AI Search"
+      ]
+    },
+    "workflow-orchestration": {
+      "dienste": [
+        "Workflows",
+        "Cloud Run",
+        "Pub/Sub",
+        "Eventarc"
+      ]
+    }
+  },
+  "werkzeuge": {
+    "calendar": "Google Calendar API",
+    "chat": "Google Chat API",
+    "crm": "Schnittstelle des CRM",
+    "data": "BigQuery / Cloud SQL",
+    "document": "Document AI",
+    "erp": "Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)",
+    "files": "Google Drive API",
+    "identity": "Cloud Identity / IAM",
+    "llm": "Vertex AI (EU-Region, kein Training mit Kundendaten)",
+    "log": "Cloud Logging",
+    "mail": "Gmail API",
+    "search": "Vertex AI Search",
+    "secrets": "Secret Manager",
+    "ticket": "Schnittstelle des Ticketsystems",
+    "workflow": "Workflows oder Apps Script"
+  }
+}

@@ -159,6 +159,7 @@ def build(project: Path) -> tuple:
     prev_processes = wl.index_by_id(graph.get("processes", []))
     decided = {d.get("subject_id") for d in graph.get("decisions", [])}
 
+    reference_ids = wl.reference_source_ids(project)
     idx = NameIndex(graph)
     outcomes: dict[str, dict] = {}
     systems: dict[str, dict] = {}
@@ -236,7 +237,7 @@ def build(project: Path) -> tuple:
                     "evidence": _str(c.get("evidence")),
                     "source_evidence": _evidence({"evidence": c.get("source_evidence")}),
                 })
-                controls[cid]["evidence_status"] = wl.evidence_status({"evidence": controls[cid]["source_evidence"]})
+                controls[cid]["evidence_status"] = wl.evidence_status({"evidence": controls[cid]["source_evidence"]}, reference_ids=reference_ids)
 
         for pr in ex.get("processes", []):
             pname = _str(pr.get("name"))
@@ -271,7 +272,8 @@ def build(project: Path) -> tuple:
                     "evidence": _evidence(m),
                 }
                 entry["evidence_status"] = wl.evidence_status(
-                    entry, estimated=(_value_block(m.get("baseline")) or {}).get("basis") == "estimated")
+                    entry, estimated=(_value_block(m.get("baseline")) or {}).get("basis") == "estimated",
+                    reference_ids=reference_ids)
                 for stage in VALUE_STAGES:
                     block = _value_block(m.get(stage))
                     if block is not None:
@@ -361,7 +363,7 @@ def build(project: Path) -> tuple:
                     "source_refs": [source],
                     "evidence": _evidence(st),
                 }
-                steps[sid]["evidence_status"] = wl.evidence_status(steps[sid])
+                steps[sid]["evidence_status"] = wl.evidence_status(steps[sid], reference_ids=reference_ids)
                 step_ids.append(sid)
                 stats["steps"] += 1
                 for pv in st.get("provenance", []) or []:
@@ -418,7 +420,7 @@ def build(project: Path) -> tuple:
                 "source_refs": [source],
                 "evidence": _evidence(pr),
             }
-            processes[pid]["evidence_status"] = wl.evidence_status(processes[pid])
+            processes[pid]["evidence_status"] = wl.evidence_status(processes[pid], reference_ids=reference_ids)
             if previous and previous.get("value") is not None:
                 # Die Prozessbewertung entsteht in score_processes.py und wird hier
                 # unverändert mitgenommen; sonst müsste sie nach jedem Lauf neu entstehen.

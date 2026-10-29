@@ -43,7 +43,7 @@ import workgraph_lib as wl  # noqa: E402
 
 VERBATIM = {".md", ".markdown", ".txt"}
 FENCED = {".csv": "csv", ".tsv": "tsv", ".json": "json"}
-KINDS = ["document", "interview", "system_export", "observation"]
+KINDS = ["document", "interview", "system_export", "observation", "reference"]
 EXTRACTORS = ["human", "claude", "script"]
 
 

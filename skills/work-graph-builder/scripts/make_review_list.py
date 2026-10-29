@@ -35,6 +35,11 @@ SPLIT_MIN_TASKS_FOR_OVERLAP = 6
 SPLIT_DISJOINT_SHARE = 0.6
 
 
+def last_index(lines: list[str], marker: str) -> int:
+    """Position des Markers im zuletzt angefügten Rollenblock (lines wächst über alle Rollen)."""
+    return len(lines) - 1 - lines[::-1].index(marker)
+
+
 def split_hint(task_list: list[dict]) -> str | None:
     n = len(task_list)
     if n >= SPLIT_TASKS_MAX:
@@ -143,11 +148,23 @@ def main() -> int:
             "",
             "",
         ]
+        topics = wl.legal_topics(graph, r)
+        if topics:
+            block = ["### Rechtsrahmen (Prüfauftrag aus der Referenzbibliothek, keine Rechtsberatung)", ""]
+            block += [f"- **{t['thema']}** ({t['gesetz']}, {t['fundstelle']}): {t['pflicht']}" for t in topics]
+            block.append("")
+            pos = last_index(lines, "### Fragen an den Fachexperten")
+            lines[pos:pos] = block
+        if r.get("evidence_status") == "reference":
+            pos = last_index(lines, "### Aufgaben")
+            lines[pos:pos] = ["**Aus der Referenzbibliothek übernommen.** Zweck, Aufgaben und Zeitanteile sind typische Werte, "
+                              "keine Aufnahme am Haus. Bitte bestätigen oder korrigieren; eine bestätigte Rolle bekommt "
+                              "`status;reviewed` in overrides.csv.", ""]
         hint = split_hint([tasks[t] for t in r["task_ids"] if t in tasks])
         if hint:
-            lines.insert(lines.index("### Aufgaben"), f"**Split prüfen:** {hint}. Besser in zwei Rollen schneiden? "
-                                                       "Gesamtgrößen und Kontext gehen sonst im Mittelwert unter.")
-            lines.insert(lines.index("### Aufgaben"), "")
+            lines.insert(last_index(lines, "### Aufgaben"), f"**Split prüfen:** {hint}. Besser in zwei Rollen schneiden? "
+                                                            "Gesamtgrößen und Kontext gehen sonst im Mittelwert unter.")
+            lines.insert(last_index(lines, "### Aufgaben"), "")
 
     out = project / wl.DIR_REVIEW / f"review_v{version:03d}.md"
     out.parent.mkdir(parents=True, exist_ok=True)

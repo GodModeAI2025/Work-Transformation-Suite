@@ -170,8 +170,26 @@ def gates_of(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
 # Abschnitte
 # ---------------------------------------------------------------------------
 
+REFERENCE = "✓ Referenzbibliothek, bitte prüfen"
+
+
+def rechtsrahmen(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
+    """Themen des Rechtsrahmens, die die Rolle berühren: Prüfaufträge aus der Bibliothek, keine Rechtsberatung."""
+    topics = wl.legal_topics(graph, role)
+    if not topics:
+        return [f"- **Rechtsrahmen:** {OPEN} (keine Referenzbibliothek oder kein Treffer; mit Fachexperten klären)"]
+    raum = ((graph.get("meta") or {}).get("profile") or {}).get("rechtsraum") or "DE"
+    out = [f"- **Rechtsrahmen ({raum}):**"]
+    out += [f"  - {t['thema']}: {t['gesetz']}, {t['fundstelle']}. {t['pflicht']} _({REFERENCE})_" for t in topics]
+    return out
+
+
 def firmenprofil(graph: dict[str, Any], roles: list[dict[str, Any]], ev: list[dict[str, Any]] | None = None) -> list[str]:
     meta = graph["meta"]
+    profile = meta.get("profile") or {}
+    index = wl.load_library_json("branchen", "index.json") or {}
+    branche = index.get(profile.get("branche") or "", {}).get("label")
+    plattform = wl.platform_profile(graph)
     rids = {r["id"] for r in roles}
     proc_ids = {s["process_id"] for s in graph["process_steps"] if s.get("role_id") in rids}
     procs = [p for p in graph["processes"] if p["id"] in proc_ids] or graph["processes"]
@@ -180,6 +198,9 @@ def firmenprofil(graph: dict[str, Any], roles: list[dict[str, Any]], ev: list[di
     return ["## 1) Firmenprofil", "",
             "_Was das Unternehmen tut und für wen. Damit ordnet die KI Aufgaben im richtigen Markt ein._", "",
             line("Organisation", meta.get("organization")), line("Bereich", meta.get("scope")), line("Sprache", meta.get("language")),
+            line("Branche", branche) if branche else f"- **Branche:** {OPEN} (project.json: profile.branche)",
+            line("Plattformprofil", plattform["label"]) if plattform else f"- **Plattformprofil:** {OPEN} (project.json: profile.plattform)",
+            line("Rechtsraum", profile.get("rechtsraum")) if profile.get("rechtsraum") else f"- **Rechtsraum:** {OPEN}",
             fld(xe.FIELD_KEYS["firma.geschaeftsmodell"], "firma.geschaeftsmodell", ev),
             fld(xe.FIELD_KEYS["firma.kunden"], "firma.kunden", ev, ", ".join(beneficiaries)),
             fld(xe.FIELD_KEYS["firma.markt"], "firma.markt", ev), fld(xe.FIELD_KEYS["firma.produkte"], "firma.produkte", ev),
@@ -201,6 +222,7 @@ def rollenprofil(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str,
          line("Reguliert", "ja, Ergebnisse müssen nachvollziehbar und begründet sein" if role.get("regulated")
               else "nein (Annahme, ggf. vom Fachexperten bestätigt)"),
          line("Tools und Systeme", "; ".join(systems_of(graph, role))), line("Kern-Skills", "; ".join(core)),
+         *rechtsrahmen(graph, role),
          "- **Wiederkehrende Aufgaben:**"]
     if tasks:
         for t in tasks:

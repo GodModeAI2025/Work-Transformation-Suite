@@ -129,6 +129,14 @@ Schnittstelle erfasst ist? Tragen seine Schritte Kontrollen, die der Vertrag nic
 Ein Agent kann andere koordinieren (`orchestrates`). Der Orchestrator sollte dann keine eigenen
 Schreibrechte haben — sonst ist im Fehlerfall nicht mehr feststellbar, wer geschrieben hat.
 
+### 4c. Umsetzung auf dem Plattformprofil
+
+Hat das Projekt ein Plattformprofil (`project.json: profile.plattform`), ergänzt `export_contracts.py` je Agent einen
+Vorschlag aus der Referenzbibliothek: die Dienste des Profils für das Agentenmuster und die Zuordnung der abstrakten
+Werkzeuge des Vertrags (`mail.*`, `document.*` …). Der Vertrag selbst bleibt anbieterneutral; der Vorschlag ist eine
+Beschaffungsgrundlage, kein Entscheid. Dasselbe erscheint in `tools/anbindungen.md` des Setup-Pakets.
+Profile: `work-graph-builder/references/referenzbibliothek.md`.
+
 ### 5. Ergebnis prüfen und berichten
 
 Sieh dir `agents[]` im Graphen an. Nenne dem Nutzer die fünf Agenten mit höchstem Wert

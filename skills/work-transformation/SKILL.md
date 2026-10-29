@@ -112,6 +112,12 @@ Die Migration ist additiv und verlustfrei; sie legt die Prozesssammlungen leer a
 
 ### Klärung am Anfang, einmal
 
+Zuerst das Profil des Hauses: Branche (`library_catalog.py` zeigt, welche die Referenzbibliothek kennt), Plattformprofil
+(`microsoft`, `google`, `mischbetrieb`, `unabhaengig`) und Rechtsraum (Standard `DE`). Die drei stehen in `project.json`
+(`init_project.py --branche … --plattform … --rechtsraum …`) und steuern, was die Suite aus der Bibliothek vorschlägt:
+Rollen und Aufgaben als Vorrat (`seed_from_library.py`), Rechtsthemen je Rolle, Dienste je Agentenmuster. Alles davon ist
+„reference“, bis das Haus es bestätigt.
+
 Bevor du extrahierst, kläre mit dem Nutzer vier Dinge (oder entscheide sie selbst und sage es,
 wenn niemand antwortet): Welcher Bereich genau (Scope, damit Jobfamilie/Cluster konsistent
 werden)? Gibt es Headcounts je Rolle (ohne sie kein FTE-Äquivalent, die Analyse funktioniert

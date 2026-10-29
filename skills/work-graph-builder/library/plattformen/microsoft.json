@@ -1,0 +1,221 @@
+{
+  "grundsaetze": [
+    "Identität über Microsoft Entra ID, Berechtigungen nach dem Prinzip der geringsten Rechte.",
+    "KI-Dienste in EU-Regionen betreiben; Auftragsverarbeitungsvertrag (Microsoft Products and Services DPA) prüfen.",
+    "Protokollierung in Azure Monitor; Datenklassen über Microsoft Purview kennzeichnen.",
+    "Low-Code (Power Platform) für Eingangs- und Freigabeflüsse, Code (Functions, Logic Apps) für Fachsystemanbindung."
+  ],
+  "hinweise": [
+    "Dienstnamen und Verfügbarkeit ändern sich; vor der Umsetzung den aktuellen Katalog prüfen.",
+    "Fachsysteme (ERP, CRM, Marktkommunikation) werden über ihre eigenen Schnittstellen angebunden, nicht ersetzt."
+  ],
+  "id": "microsoft",
+  "label": "Microsoft 365 und Azure",
+  "muster": {
+    "analysis-copilot": {
+      "dienste": [
+        "Microsoft Fabric / Power BI Copilot",
+        "Azure OpenAI Service",
+        "Excel über Graph"
+      ]
+    },
+    "anomaly-detection": {
+      "dienste": [
+        "Azure Machine Learning",
+        "Microsoft Fabric (Real-Time Intelligence)",
+        "Azure Monitor (Betriebsdaten)"
+      ]
+    },
+    "classification-routing": {
+      "dienste": [
+        "Azure OpenAI Service",
+        "Azure AI Language",
+        "Power Automate",
+        "Microsoft Graph (Mail)"
+      ]
+    },
+    "compliance-check": {
+      "dienste": [
+        "Azure OpenAI Service",
+        "Azure AI Search (Regelwerke)",
+        "Microsoft Purview (Datenklassen)"
+      ]
+    },
+    "contract-change-handling": {
+      "dienste": [
+        "Dataverse / Power Apps",
+        "Azure Functions",
+        "Azure OpenAI Service",
+        "Fachsystem-API (CRM, ERP)"
+      ]
+    },
+    "conversational-assistant": {
+      "dienste": [
+        "Copilot Studio",
+        "Azure AI Bot Service",
+        "Azure OpenAI Service",
+        "Teams als Kanal"
+      ]
+    },
+    "data-reconciliation": {
+      "dienste": [
+        "Azure Functions",
+        "Azure Data Factory",
+        "Microsoft Fabric / Dataflows",
+        "Azure OpenAI Service für Erklärungen"
+      ]
+    },
+    "dispatch-optimization": {
+      "dienste": [
+        "Azure Maps",
+        "Azure Machine Learning",
+        "Dynamics 365 Field Service"
+      ]
+    },
+    "document-extraction": {
+      "dienste": [
+        "Azure AI Document Intelligence",
+        "Azure OpenAI Service (EU-Region)",
+        "Power Automate (Eingangsverarbeitung)"
+      ]
+    },
+    "drafting-assistant": {
+      "dienste": [
+        "Microsoft 365 Copilot",
+        "Azure OpenAI Service",
+        "Word und PowerPoint über Graph"
+      ]
+    },
+    "forecasting": {
+      "dienste": [
+        "Azure Machine Learning",
+        "Microsoft Fabric"
+      ]
+    },
+    "inspection-support": {
+      "dienste": [
+        "Azure AI Vision",
+        "Azure Machine Learning",
+        "Azure IoT Hub"
+      ]
+    },
+    "invoice-verification": {
+      "dienste": [
+        "Azure AI Document Intelligence (Rechnungsmodell)",
+        "Azure Functions",
+        "ERP-API"
+      ]
+    },
+    "knowledge-qa": {
+      "dienste": [
+        "Azure AI Search (hybride Suche)",
+        "Azure OpenAI Service",
+        "Copilot Studio",
+        "SharePoint als Quelle"
+      ]
+    },
+    "market-communication": {
+      "dienste": [
+        "Azure Logic Apps (EDIFACT über Integration Account)",
+        "Azure Functions",
+        "Fachsystem der Marktkommunikation"
+      ]
+    },
+    "master-data-maintenance": {
+      "dienste": [
+        "Dataverse",
+        "Power Apps",
+        "Azure Functions",
+        "Microsoft Purview (Datenqualität)"
+      ]
+    },
+    "meeting-assistant": {
+      "dienste": [
+        "Teams-Transkription und Microsoft 365 Copilot",
+        "Microsoft Graph (Kalender, Aufgaben)",
+        "Planner / To Do"
+      ]
+    },
+    "meter-data-processing": {
+      "dienste": [
+        "Azure Data Explorer / Fabric",
+        "Azure Functions",
+        "Azure Machine Learning (Ersatzwerte)"
+      ]
+    },
+    "onboarding-guide": {
+      "dienste": [
+        "Copilot Studio",
+        "SharePoint als Wissensquelle",
+        "Microsoft Graph"
+      ]
+    },
+    "quality-review": {
+      "dienste": [
+        "Azure OpenAI Service",
+        "Azure AI Content Safety",
+        "GitHub Advanced Security bei Code"
+      ]
+    },
+    "regulatory-monitor": {
+      "dienste": [
+        "Azure AI Search",
+        "Azure OpenAI Service",
+        "Power Automate (Abonnements)"
+      ]
+    },
+    "report-generation": {
+      "dienste": [
+        "Microsoft Fabric / Power BI",
+        "Azure OpenAI Service",
+        "Microsoft Graph (SharePoint)"
+      ]
+    },
+    "scheduling-coordination": {
+      "dienste": [
+        "Microsoft Graph (Kalender, Bookings)",
+        "Power Automate",
+        "Azure OpenAI Service"
+      ]
+    },
+    "standard-correspondence": {
+      "dienste": [
+        "Azure OpenAI Service",
+        "Microsoft Graph (Mail, Teams)",
+        "Word-Vorlagen über Graph"
+      ]
+    },
+    "ticket-resolution": {
+      "dienste": [
+        "Dynamics 365 Customer Service oder Ticketsystem-API",
+        "Azure OpenAI Service",
+        "Azure AI Search"
+      ]
+    },
+    "workflow-orchestration": {
+      "dienste": [
+        "Azure Logic Apps",
+        "Power Automate",
+        "Azure Functions",
+        "Azure Service Bus"
+      ]
+    }
+  },
+  "werkzeuge": {
+    "calendar": "Microsoft Graph (Kalender)",
+    "chat": "Microsoft Graph (Teams)",
+    "crm": "Dynamics 365 oder Schnittstelle des CRM",
+    "data": "Microsoft Fabric / Azure SQL",
+    "document": "Azure AI Document Intelligence",
+    "erp": "Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)",
+    "files": "Microsoft Graph (SharePoint, OneDrive)",
+    "identity": "Microsoft Entra ID",
+    "llm": "Azure OpenAI Service (EU-Region, kein Training mit Kundendaten)",
+    "log": "Azure Monitor / Log Analytics",
+    "mail": "Microsoft Graph (Mail)",
+    "search": "Azure AI Search",
+    "secrets": "Azure Key Vault",
+    "ticket": "Schnittstelle des Ticketsystems",
+    "workflow": "Power Automate oder Logic Apps"
+  }
+}

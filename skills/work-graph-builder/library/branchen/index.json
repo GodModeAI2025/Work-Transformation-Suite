@@ -1,0 +1,143 @@
+{
+  "allgemein": {
+    "aufgaben": 75,
+    "beschreibung": "Rollen, die in fast jedem Unternehmen vorkommen: Finanzen, Personal, Einkauf, IT sowie Recht und Compliance. Sie ergänzen jedes Branchenpaket.",
+    "familien": [
+      "Einkauf",
+      "Finanzen und Controlling",
+      "IT",
+      "Personal",
+      "Recht und Compliance"
+    ],
+    "label": "Querschnittsfunktionen",
+    "rechtsthemen": [
+      "handelsrecht",
+      "steuern",
+      "mitbestimmung",
+      "datenschutz",
+      "informationssicherheit",
+      "vergabe",
+      "compliance",
+      "hinweisgeber",
+      "nachhaltigkeit"
+    ],
+    "rollen": 15,
+    "systeme": [
+      "ERP-System",
+      "HR-System",
+      "Dokumentenmanagementsystem",
+      "Ticketsystem"
+    ]
+  },
+  "automobilindustrie": {
+    "aufgaben": 55,
+    "beschreibung": "Fahrzeughersteller und Zulieferer: Entwicklung, Homologation, Produktion, Qualität, Lieferkette und Aftersales nach den Regelwerken der Branche.",
+    "familien": [
+      "Aftersales",
+      "Entwicklung",
+      "Produktion",
+      "Supply Chain"
+    ],
+    "label": "Automobilindustrie",
+    "rechtsthemen": [
+      "produktsicherheit",
+      "typgenehmigung",
+      "funktionale_sicherheit",
+      "cybersicherheit_fahrzeug",
+      "lieferkette",
+      "qualitaet_automotive",
+      "arbeitsschutz",
+      "mitbestimmung",
+      "datenschutz"
+    ],
+    "rollen": 11,
+    "systeme": [
+      "Produktlebenszyklus-Management (PLM)",
+      "Anforderungsmanagement-Werkzeug",
+      "Manufacturing Execution System (MES)",
+      "CAQ-System",
+      "ERP-System"
+    ]
+  },
+  "bauwirtschaft": {
+    "aufgaben": 45,
+    "beschreibung": "Bauunternehmen und Planungsbüros im Hoch-, Tief- und Ingenieurbau: Kalkulation, Arbeitsvorbereitung, Bauleitung, Abrechnung, Nachträge, Arbeitsschutz.",
+    "familien": [
+      "Arbeitsschutz",
+      "Bauausführung",
+      "Planung und Arbeitsvorbereitung"
+    ],
+    "label": "Bauwirtschaft",
+    "rechtsthemen": [
+      "bauvertrag",
+      "vergabe",
+      "arbeitsschutz",
+      "baurecht",
+      "honorar",
+      "mitbestimmung",
+      "datenschutz"
+    ],
+    "rollen": 9,
+    "systeme": [
+      "AVA-Software",
+      "CAD-/BIM-Software",
+      "Bautagebuch-App",
+      "ERP-System"
+    ]
+  },
+  "energieversorgung": {
+    "aufgaben": 55,
+    "beschreibung": "Netzbetreiber, Energievertriebe, Messstellenbetreiber und Stadtwerke: Netzbetrieb, Marktkommunikation, Abrechnung, Messwesen, Regulierung und Handel.",
+    "familien": [
+      "Markt und Abrechnung",
+      "Messwesen",
+      "Netz",
+      "Regulierung und Handel"
+    ],
+    "label": "Energieversorgung",
+    "rechtsthemen": [
+      "energierecht",
+      "marktkommunikation",
+      "messwesen",
+      "kritis",
+      "datenschutz",
+      "mitbestimmung",
+      "regulierung"
+    ],
+    "rollen": 11,
+    "systeme": [
+      "Abrechnungssystem Energie",
+      "Marktkommunikationssystem (EDIFACT)",
+      "Netzleitsystem (SCADA)",
+      "Geoinformationssystem (GIS)",
+      "Zählerfernauslesung (GWA/SMGW)"
+    ]
+  },
+  "wasserversorgung": {
+    "aufgaben": 45,
+    "beschreibung": "Kommunale und private Wasserversorger sowie Abwasserbetriebe: Gewinnung, Aufbereitung, Rohrnetz, Zählerwesen, Abwasserbehandlung, Gebühren und Abrechnung.",
+    "familien": [
+      "Abwasser",
+      "Kaufmännische Verwaltung",
+      "Wasserversorgung"
+    ],
+    "label": "Wasserversorgung und Abwasser",
+    "rechtsthemen": [
+      "trinkwasser",
+      "wasserrecht",
+      "abwasser",
+      "kritis",
+      "abgaben",
+      "arbeitsschutz",
+      "datenschutz"
+    ],
+    "rollen": 9,
+    "systeme": [
+      "Betriebsführungssystem Wasser",
+      "Laborinformationssystem (LIMS)",
+      "Geoinformationssystem (GIS)",
+      "Kanalinformationssystem",
+      "Abrechnungssystem Energie"
+    ]
+  }
+}

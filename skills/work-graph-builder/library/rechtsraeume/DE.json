@@ -1,0 +1,561 @@
+{
+  "hinweis": "Themen des Rechtsrahmens mit Stichwörtern, die gegen Rollen, Aufgaben, Skills und Jobfamilien abgeglichen werden. Eine Nennung ist ein Prüfauftrag, keine Rechtsberatung. Stand der Erstellung; Rechtsänderungen sind am Haus nachzuhalten.",
+  "label": "Deutschland",
+  "rechtsraum": "DE",
+  "themen": [
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§ 87 Abs. 1 Nr. 6, § 90, § 111 BetrVG",
+      "gesetz": "BetrVG",
+      "gilt": "jede Rolle, in der ein Agent Arbeitsergebnisse oder Nutzung protokolliert",
+      "id": "mitbestimmung",
+      "pflicht": "Einführung von KI-Werkzeugen, die Leistung oder Verhalten überwachen können, ist mitbestimmungspflichtig; Betriebsrat vor Einführung beteiligen (Betriebsvereinbarung, Rahmen für Piloten). Seit 2021 gilt KI ausdrücklich als Sachverständigenthema (§ 80 Abs. 3 BetrVG).",
+      "stichwoerter": [
+        "*"
+      ],
+      "thema": "Mitbestimmung bei technischen Einrichtungen und Arbeitsabläufen"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "Art. 5, 6, 13, 22, 28, 32, 35 DSGVO; § 26 BDSG",
+      "gesetz": "DSGVO, BDSG",
+      "gilt": "Rollen mit personenbezogenen Daten",
+      "id": "datenschutz",
+      "pflicht": "Rechtsgrundlage, Information, Auftragsverarbeitung bei Plattformdiensten, Datenschutz-Folgenabschätzung bei KI-Verarbeitung mit hohem Risiko, keine ausschließlich automatisierte Entscheidung mit Rechtswirkung (Art. 22).",
+      "stichwoerter": [
+        "kunde",
+        "personal",
+        "bewerb",
+        "beschaeftigt",
+        "mitarbeit",
+        "patient",
+        "nutzer",
+        "crm",
+        "personendaten",
+        "datenschutz",
+        "entgelt",
+        "personalakte"
+      ],
+      "thema": "Datenschutz bei Verarbeitung personenbezogener Daten"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "Art. 4 (KI-Kompetenz), Art. 6 und Anhang III (Hochrisiko, u. a. Beschäftigung, kritische Infrastruktur, Kreditwürdigkeit), Art. 50 (Transparenz)",
+      "gesetz": "Verordnung (EU) 2024/1689 (AI Act)",
+      "gilt": "Rollen, deren Agenten über Menschen entscheiden oder kritische Infrastruktur steuern",
+      "id": "ki_verordnung",
+      "pflicht": "KI-Kompetenz der Beschäftigten sicherstellen; Hochrisiko-Anwendungen (Personalauswahl, Bonität, Betrieb kritischer Infrastruktur) mit Risikomanagement, Aufsicht und Dokumentation; Transparenz gegenüber Betroffenen.",
+      "stichwoerter": [
+        "bewerb",
+        "recruit",
+        "bonität",
+        "kredit",
+        "netzfuehrer",
+        "leitstelle",
+        "wasserwerk",
+        "scoring",
+        "personalauswahl"
+      ],
+      "thema": "KI-Verordnung der EU"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 238 ff. HGB, §§ 146, 147 AO, § 14 UStG, GoBD",
+      "gesetz": "HGB, AO, UStG, GoBD",
+      "gilt": "Rechnungswesen, Abrechnung, Forderungsmanagement",
+      "id": "handelsrecht",
+      "pflicht": "Revisionssichere, unveränderbare Ablage; Aufbewahrung 8 bzw. 10 Jahre; E-Rechnungspflicht im B2B ab 2025; Verfahrensdokumentation auch für KI-gestützte Buchungsvorschläge.",
+      "stichwoerter": [
+        "rechnung",
+        "buchhalt",
+        "faktur",
+        "zahlung",
+        "mahn",
+        "abrechnung",
+        "konto",
+        "abschluss",
+        "gebuehr"
+      ],
+      "thema": "Buchführung, Aufbewahrung, elektronische Rechnung"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 38 ff. EStG, § 28a SGB IV",
+      "gesetz": "EStG, SGB IV",
+      "gilt": "Entgeltabrechnung",
+      "id": "steuern",
+      "pflicht": "Fristgerechte Meldungen (DEÜV, ELStAM); Haftung des Arbeitgebers für Lohnsteuerabzug.",
+      "stichwoerter": [
+        "entgelt",
+        "lohn",
+        "gehalt",
+        "sozialversicherung"
+      ],
+      "thema": "Lohnsteuer und Sozialversicherung"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 99, 102 BetrVG; §§ 1, 7, 15 AGG; § 2 NachwG",
+      "gesetz": "BetrVG, AGG, KSchG, NachwG",
+      "gilt": "Personalreferenten, Recruiter, Führungskräfte",
+      "id": "arbeitsrecht",
+      "pflicht": "Zustimmung des Betriebsrats bei Einstellung und Versetzung, Anhörung bei Kündigung; diskriminierungsfreie Auswahl, auch bei KI-gestützter Vorauswahl.",
+      "stichwoerter": [
+        "personal",
+        "bewerb",
+        "recruit",
+        "einstell",
+        "kuendig",
+        "versetz",
+        "zeugnis"
+      ],
+      "thema": "Beteiligung bei personellen Einzelmaßnahmen, Gleichbehandlung"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§ 8a BSIG, BSI-KritisV; NIS2UmsuCG (Registrierung, Meldung 24 h/72 h, Geschäftsleitungspflichten); Art. 32 DSGVO",
+      "gesetz": "BSIG, NIS2-Umsetzung, DSGVO",
+      "gilt": "IT-Rollen und Betreiber kritischer Anlagen",
+      "id": "informationssicherheit",
+      "pflicht": "Stand der Technik, Risikomanagement, Meldung erheblicher Sicherheitsvorfälle; Prüfung von Cloud- und KI-Diensten als Lieferkettenrisiko.",
+      "stichwoerter": [
+        "it",
+        "system",
+        "informationssicherheit",
+        "sicherheit",
+        "admin",
+        "netz",
+        "leitstelle",
+        "scada",
+        "cloud"
+      ],
+      "thema": "Informationssicherheit und Cyberresilienz"
+    },
+    {
+      "branchen": [
+        "allgemein",
+        "bauwirtschaft",
+        "energieversorgung",
+        "wasserversorgung"
+      ],
+      "fundstelle": "§§ 97 ff. GWB; VgV; UVgO; VOB/A",
+      "gesetz": "GWB, VgV, UVgO, VOB/A",
+      "gilt": "Einkauf und Kalkulation bei öffentlichen Auftraggebern",
+      "id": "vergabe",
+      "pflicht": "Bei öffentlichen Auftraggebern (Kommunen, Stadtwerke, Sektorenauftraggeber): Verfahren, Fristen, Dokumentation, Gleichbehandlung; Sektorenverordnung (SektVO) für Energie und Wasser.",
+      "stichwoerter": [
+        "einkauf",
+        "beschaff",
+        "vergabe",
+        "ausschreib",
+        "angebot"
+      ],
+      "thema": "Öffentliche Vergabe"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 12 ff. HinSchG; §§ 30, 130 OWiG",
+      "gesetz": "HinSchG, OWiG",
+      "gilt": "Compliance-Beauftragte, Geschäftsführung",
+      "id": "compliance",
+      "pflicht": "Interne Meldestelle ab 50 Beschäftigten, Fristen 7 Tage und 3 Monate, Vertraulichkeit; Aufsichtspflicht der Leitung.",
+      "stichwoerter": [
+        "compliance",
+        "hinweis",
+        "verdacht",
+        "korruption",
+        "richtlinie"
+      ],
+      "thema": "Hinweisgeberschutz und Aufsichtspflicht"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 3 ff. LkSG",
+      "gesetz": "LkSG, EU-CSDDD (Umsetzung ausstehend)",
+      "gilt": "Einkauf und Lieferantenmanagement",
+      "id": "lieferkette",
+      "pflicht": "Risikoanalyse, Präventions- und Abhilfemaßnahmen, Beschwerdeverfahren, Berichterstattung ab 1.000 Beschäftigten.",
+      "stichwoerter": [
+        "lieferant",
+        "einkauf",
+        "beschaff",
+        "disponent",
+        "lieferkette"
+      ],
+      "thema": "Sorgfaltspflichten in der Lieferkette"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 289b ff. HGB (geplant), ESRS",
+      "gesetz": "CSRD (Umsetzung in HGB), EU-Taxonomie",
+      "gilt": "Controlling, Nachhaltigkeitsmanagement",
+      "id": "nachhaltigkeit",
+      "pflicht": "Berichtspflicht nach Größenklassen; Datenerhebung aus Betrieb, Einkauf und Personal.",
+      "stichwoerter": [
+        "nachhaltig",
+        "esg",
+        "csrd",
+        "controll",
+        "bericht"
+      ],
+      "thema": "Nachhaltigkeitsberichterstattung"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 5, 6, 12 ArbSchG; § 6 ASiG; §§ 3, 14 BetrSichV; DGUV Vorschrift 1 und 3",
+      "gesetz": "ArbSchG, ASiG, BetrSichV, DGUV-Vorschriften",
+      "gilt": "gewerbliche und technische Rollen, Führungskräfte vor Ort",
+      "id": "arbeitsschutz",
+      "pflicht": "Gefährdungsbeurteilung, Unterweisung, Prüfung von Arbeitsmitteln; bei KI-gestützter Einsatzplanung die psychische Belastung mitbeurteilen.",
+      "stichwoerter": [
+        "baustelle",
+        "polier",
+        "montage",
+        "instandhalt",
+        "monteur",
+        "werk",
+        "anlage",
+        "schicht",
+        "sicherheit",
+        "gefaehrdung"
+      ],
+      "thema": "Arbeitsschutz und Gefährdungsbeurteilung"
+    },
+    {
+      "branchen": [
+        "bauwirtschaft"
+      ],
+      "fundstelle": "VOB/B §§ 2, 4, 6, 13, 14, 16; §§ 650a ff. BGB",
+      "gesetz": "VOB/B, BGB",
+      "gilt": "Bauleitung, Abrechnung, Nachtragsmanagement, Kalkulation",
+      "id": "bauvertrag",
+      "pflicht": "Ankündigung geänderter Leistungen, Behinderungsanzeige, prüfbare Abrechnung, Mängelhaftung, Fristen; Formvorgaben der VOB/B gelten für KI-erzeugte Schreiben gleichermaßen.",
+      "stichwoerter": [
+        "bau",
+        "nachtrag",
+        "aufmass",
+        "bauleit",
+        "polier",
+        "kalkul",
+        "vob"
+      ],
+      "thema": "Bauvertragsrecht"
+    },
+    {
+      "branchen": [
+        "bauwirtschaft"
+      ],
+      "fundstelle": "§§ 29 ff. BauGB; MBO §§ 52 ff. (Bauleiter); BaustellV §§ 2, 3",
+      "gesetz": "BauGB, Landesbauordnungen, BaustellV",
+      "gilt": "Bauleitung, Arbeitsvorbereitung, Arbeitsschutz",
+      "id": "baurecht",
+      "pflicht": "Bauleiterpflichten, Vorankündigung, Sicherheits- und Gesundheitsschutzplan, Koordinator.",
+      "stichwoerter": [
+        "bau",
+        "baustelle",
+        "sigeko",
+        "koordinat"
+      ],
+      "thema": "Öffentliches Baurecht und Baustellenordnung"
+    },
+    {
+      "branchen": [
+        "bauwirtschaft"
+      ],
+      "fundstelle": "HOAI 2021, Leistungsbilder §§ 34 ff.",
+      "gesetz": "HOAI",
+      "gilt": "Planungsrollen",
+      "id": "honorar",
+      "pflicht": "Honorarermittlung und Leistungsphasen bei Planungsleistungen; seit 2021 Orientierungswerte.",
+      "stichwoerter": [
+        "planung",
+        "bim",
+        "konstrukt",
+        "architekt"
+      ],
+      "thema": "Honorarordnung für Planungsleistungen"
+    },
+    {
+      "branchen": [
+        "energieversorgung"
+      ],
+      "fundstelle": "§§ 11, 17, 18, 20a, 40, 41, 52 EnWG; § 8 EEG; §§ 29 ff. MsbG",
+      "gesetz": "EnWG, EEG, MsbG",
+      "gilt": "alle Rollen im Netz, Vertrieb und Messwesen",
+      "id": "energierecht",
+      "pflicht": "Sicherer Netzbetrieb, Anschluss- und Lieferpflichten, Lieferantenwechsel in 24 Stunden, Rechnungsinhalte, Störungsmeldungen, Rollout intelligenter Messsysteme.",
+      "stichwoerter": [
+        "netz",
+        "energie",
+        "strom",
+        "gas",
+        "anschluss",
+        "einspeis",
+        "messstell",
+        "zaehler",
+        "abrechnung energie",
+        "lieferant"
+      ],
+      "thema": "Energiewirtschaftsrecht"
+    },
+    {
+      "branchen": [
+        "energieversorgung"
+      ],
+      "fundstelle": "GPKE, GeLi Gas, WiM, MaBiS, GaBi Gas; edi@energy-Formate",
+      "gesetz": "Festlegungen der Bundesnetzagentur",
+      "gilt": "Marktkommunikation, Bilanzkreismanagement, Messstellenbetrieb",
+      "id": "marktkommunikation",
+      "pflicht": "Prozesse, Fristen und Formate sind verbindlich; Formatumstellungen zu festen Terminen (April, Oktober).",
+      "stichwoerter": [
+        "marktkommunikation",
+        "lieferantenwechsel",
+        "bilanzkreis",
+        "edifact",
+        "wechsel",
+        "allokation"
+      ],
+      "thema": "Marktkommunikation und Bilanzierung"
+    },
+    {
+      "branchen": [
+        "energieversorgung"
+      ],
+      "fundstelle": "ARegV §§ 4 ff.; § 23a EnWG; Festlegungen der BNetzA",
+      "gesetz": "ARegV, StromNEV, GasNEV",
+      "gilt": "Regulierungsmanagement, Netzplanung",
+      "id": "regulierung",
+      "pflicht": "Erlösobergrenze, Effizienzvergleich, Kostenprüfung, Veröffentlichungspflichten.",
+      "stichwoerter": [
+        "regulierung",
+        "netzentgelt",
+        "erlös",
+        "anreiz"
+      ],
+      "thema": "Anreizregulierung und Netzentgelte"
+    },
+    {
+      "branchen": [
+        "energieversorgung",
+        "wasserversorgung"
+      ],
+      "fundstelle": "§ 8a BSIG; BSI-KritisV Anhänge 1 und 2; IT-Sicherheitskatalog",
+      "gesetz": "BSIG, BSI-KritisV, IT-Sicherheitskatalog nach § 11 Abs. 1a EnWG",
+      "gilt": "Netzführung, Leittechnik, Wasserwerk",
+      "id": "kritis",
+      "pflicht": "ISMS nach ISO 27001 für Netzleittechnik, Nachweise alle zwei Jahre, Meldepflichten; Schwellenwerte für Wasser (500.000 Personen) und Energie.",
+      "stichwoerter": [
+        "leitstelle",
+        "netzfuehr",
+        "scada",
+        "wasserwerk",
+        "leittechnik",
+        "prozessleit",
+        "netzbetrieb"
+      ],
+      "thema": "Kritische Infrastruktur"
+    },
+    {
+      "branchen": [
+        "wasserversorgung"
+      ],
+      "fundstelle": "§§ 6 ff., 31 ff., 39, 41, 42, 46 ff. TrinkwV",
+      "gesetz": "TrinkwV 2023, IfSG",
+      "gilt": "Wassermeister, Labor, Rohrnetz",
+      "id": "trinkwasser",
+      "pflicht": "Untersuchungspflichten, akkreditierte Labore, Anzeige- und Handlungspflichten bei Grenzwertüberschreitung, Risikomanagement nach § 35 ff. TrinkwV.",
+      "stichwoerter": [
+        "trinkwasser",
+        "wasserwerk",
+        "labor",
+        "probe",
+        "aufbereit",
+        "rohrnetz",
+        "hausanschluss"
+      ],
+      "thema": "Trinkwasserqualität"
+    },
+    {
+      "branchen": [
+        "wasserversorgung"
+      ],
+      "fundstelle": "§§ 8 ff., 50, 52, 57, 60 WHG",
+      "gesetz": "WHG, Landeswassergesetze",
+      "gilt": "Wasserversorgung und Abwasser",
+      "id": "wasserrecht",
+      "pflicht": "Erlaubnisse für Entnahme und Einleitung, Wasserschutzgebiete, Abwasseranlagen nach Stand der Technik, Eigenüberwachung nach Landesrecht.",
+      "stichwoerter": [
+        "wasser",
+        "abwasser",
+        "klaer",
+        "kanal",
+        "einleit",
+        "entnahme"
+      ],
+      "thema": "Wasserrecht"
+    },
+    {
+      "branchen": [
+        "wasserversorgung"
+      ],
+      "fundstelle": "AbwV Anhänge; AbwAG §§ 1 ff.",
+      "gesetz": "AbwV, AbwAG",
+      "gilt": "Kläranlage, Kanalnetz",
+      "id": "abwasser",
+      "pflicht": "Einleitwerte, Eigenkontrolle, Abwasserabgabe.",
+      "stichwoerter": [
+        "abwasser",
+        "klaer",
+        "kanal"
+      ],
+      "thema": "Abwassereinleitung"
+    },
+    {
+      "branchen": [
+        "wasserversorgung"
+      ],
+      "fundstelle": "KAG des Landes; Entwässerungs- und Wasserversorgungssatzung",
+      "gesetz": "Kommunalabgabengesetze der Länder, Satzungen",
+      "gilt": "Gebührensachbearbeitung",
+      "id": "abgaben",
+      "pflicht": "Kostendeckende Kalkulation, Bescheidform, Widerspruchsverfahren.",
+      "stichwoerter": [
+        "gebuehr",
+        "beitrag",
+        "bescheid",
+        "abrechnung wasser"
+      ],
+      "thema": "Kommunale Gebühren und Beiträge"
+    },
+    {
+      "branchen": [
+        "automobilindustrie"
+      ],
+      "fundstelle": "§§ 1 ff. ProdHaftG; §§ 3, 6 ProdSG",
+      "gesetz": "ProdHaftG, ProdSG",
+      "gilt": "Entwicklung, Qualität, Aftersales",
+      "id": "produktsicherheit",
+      "pflicht": "Fehlerfreiheit, Entwicklungs- und Fertigungsdokumentation als Entlastungsbeweis, Rückruf und Marktüberwachung.",
+      "stichwoerter": [
+        "entwickl",
+        "qualitaet",
+        "garantie",
+        "produkt",
+        "komponente",
+        "freigabe"
+      ],
+      "thema": "Produkthaftung und Produktsicherheit"
+    },
+    {
+      "branchen": [
+        "automobilindustrie"
+      ],
+      "fundstelle": "Art. 22 ff., 31 EU 2018/858; UNECE R155, R156",
+      "gesetz": "EU 2018/858, EG-FGV, StVZO, UNECE-Regelungen",
+      "gilt": "Homologation, Softwareentwicklung",
+      "id": "typgenehmigung",
+      "pflicht": "Genehmigung vor Inverkehrbringen, Übereinstimmung der Produktion, Cybersecurity- und Software-Update-Management als Voraussetzung.",
+      "stichwoerter": [
+        "homolog",
+        "typgenehm",
+        "zulass",
+        "software",
+        "cybersecurity"
+      ],
+      "thema": "Typgenehmigung"
+    },
+    {
+      "branchen": [
+        "automobilindustrie"
+      ],
+      "fundstelle": "ISO 26262 Teile 2 bis 9; ASPICE 4.0",
+      "gesetz": "ISO 26262, Automotive SPICE (Stand der Technik, vertraglich gefordert)",
+      "gilt": "Entwicklung",
+      "id": "funktionale_sicherheit",
+      "pflicht": "Sicherheitslebenszyklus, Nachweise; Prozessreife als Kundenanforderung.",
+      "stichwoerter": [
+        "software",
+        "funktion",
+        "sicherheit",
+        "e/e",
+        "entwickl"
+      ],
+      "thema": "Funktionale Sicherheit und Automotive SPICE"
+    },
+    {
+      "branchen": [
+        "automobilindustrie"
+      ],
+      "fundstelle": "R155 Anhang 5; CRA (EU) 2024/2847",
+      "gesetz": "UNECE R155/R156, ISO/SAE 21434, Cyber Resilience Act",
+      "gilt": "Softwareentwicklung, Homologation",
+      "id": "cybersicherheit_fahrzeug",
+      "pflicht": "Cybersecurity-Managementsystem über den Lebenszyklus, Schwachstellenmanagement, Updates.",
+      "stichwoerter": [
+        "software",
+        "cyber",
+        "update",
+        "steuerger"
+      ],
+      "thema": "Fahrzeug-Cybersicherheit"
+    },
+    {
+      "branchen": [
+        "automobilindustrie"
+      ],
+      "fundstelle": "IATF 16949 Abschnitte 8.3, 8.4, 10.2; VDA 2, VDA 6.3",
+      "gesetz": "IATF 16949, VDA-Bände (vertraglich)",
+      "gilt": "Qualität, Lieferantenqualität, Fertigungsplanung",
+      "id": "qualitaet_automotive",
+      "pflicht": "APQP, PPAP/PPF, 8D, Audits, Lieferantenentwicklung als Kundenanforderung.",
+      "stichwoerter": [
+        "qualitaet",
+        "lieferant",
+        "reklamation",
+        "audit",
+        "freigabe",
+        "fertigung"
+      ],
+      "thema": "Qualitätsmanagement in der Automobilindustrie"
+    },
+    {
+      "branchen": [
+        "energieversorgung"
+      ],
+      "fundstelle": "VO (EU) 1227/2011 Art. 3, 5, 8",
+      "gesetz": "REMIT, MiFID II, EMIR",
+      "gilt": "Portfoliomanagement",
+      "id": "handel_energie",
+      "pflicht": "Verbot von Insiderhandel und Marktmanipulation, Transaktionsmeldungen.",
+      "stichwoerter": [
+        "handel",
+        "portfolio",
+        "beschaffung energie",
+        "grosshandel"
+      ],
+      "thema": "Energiegroßhandel"
+    }
+  ]
+}

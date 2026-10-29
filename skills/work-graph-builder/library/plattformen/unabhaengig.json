@@ -1,0 +1,213 @@
+{
+  "grundsaetze": [
+    "Modelle und Dienste hinter einer eigenen Schnittstelle kapseln, damit ein Anbieterwechsel eine Beschaffungsentscheidung bleibt.",
+    "Offene Formate (OpenAPI, MCP, OIDC) und austauschbare Komponenten bevorzugen.",
+    "Betrieb in eigener Infrastruktur oder bei europäischen Anbietern, wenn Datenklassen es verlangen."
+  ],
+  "hinweise": [
+    "Höherer Betriebsaufwand; lohnt bei besonderen Datenklassen, Regulierung oder Abhängigkeitsrisiken."
+  ],
+  "id": "unabhaengig",
+  "label": "Plattformunabhängig (offene Schnittstellen, eigener Betrieb)",
+  "muster": {
+    "analysis-copilot": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "anomaly-detection": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "classification-routing": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "compliance-check": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "contract-change-handling": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "conversational-assistant": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "data-reconciliation": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "dispatch-optimization": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "document-extraction": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "drafting-assistant": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "forecasting": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "inspection-support": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "invoice-verification": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "knowledge-qa": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "market-communication": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "master-data-maintenance": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "meeting-assistant": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "meter-data-processing": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "onboarding-guide": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "quality-review": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "regulatory-monitor": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "report-generation": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "scheduling-coordination": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "standard-correspondence": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "ticket-resolution": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    },
+    "workflow-orchestration": {
+      "dienste": [
+        "Modell hinter eigener Schnittstelle (anbieterneutral)",
+        "Fachsystem-API",
+        "eigene Orchestrierung (Workflow-Engine, MCP-Server)"
+      ]
+    }
+  },
+  "werkzeuge": {
+    "calendar": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "chat": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "crm": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "data": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "document": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "erp": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "files": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "identity": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "llm": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "log": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "mail": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "search": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "secrets": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "ticket": "eigene Schnittstelle oder Standard-API des Fachsystems",
+    "workflow": "eigene Schnittstelle oder Standard-API des Fachsystems"
+  }
+}

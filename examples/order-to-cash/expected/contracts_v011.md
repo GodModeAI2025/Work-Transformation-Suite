@@ -43,6 +43,12 @@ Bereitet Rückfragen an den Vertrieb vor: fasst die Abweichung zusammen, schläg
 
 **Aufsicht im Betrieb:** Jede Nachricht wird vom Sachbearbeiter vor dem Versand freigegeben
 
+**Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
+
+- Dienste für dieses Muster: Microsoft 365 Copilot, Azure OpenAI Service, Word und PowerPoint über Graph, Gemini for Google Workspace, Vertex AI, Docs und Slides API
+- `erp.read_contract` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.read_order` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+
 ## Auftragserfassungs-Agent
 
 Liest Bestellungen aus E-Mail, Portal und EDI, legt den Auftrag im ERP an, gleicht Preise und Konditionen gegen den Rahmenvertrag ab und erzeugt die Auftragsbestätigung.
@@ -80,6 +86,14 @@ Liest Bestellungen aus E-Mail, Portal und EDI, legt den Auftrag im ERP an, gleic
 
 **Aufsicht im Betrieb:** Stichprobe 10 Prozent durch die Auftragssachbearbeitung; alle Aufträge ohne Rahmenvertrag im Gate
 
+**Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
+
+- Dienste für dieses Muster: Azure AI Document Intelligence, Azure OpenAI Service (EU-Region), Power Automate (Eingangsverarbeitung), Document AI, Vertex AI (Gemini, EU-Region), Workflows oder Apps Script
+- `erp.create_order` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.read_contract` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.update_order` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `mail.send_confirmation` → Microsoft Graph (Mail) oder Gmail API
+
 ## Mahnlauf-Agent
 
 Erzeugt den Mahnvorschlag, schließt Kunden mit laufender Klärung oder Zahlungsvereinbarung aus und formuliert die Mahnschreiben.
@@ -112,6 +126,13 @@ Erzeugt den Mahnvorschlag, schließt Kunden mit laufender Klärung oder Zahlungs
 
 **Aufsicht im Betrieb:** Ab Mahnstufe 3 gibt die Teamleitung jeden Fall einzeln frei
 
+**Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
+
+- Dienste für dieses Muster: Azure OpenAI Service, Microsoft Graph (Mail, Teams), Word-Vorlagen über Graph, Vertex AI (Gemini), Gmail API, Google Docs API
+- `erp.create_dunning_proposal` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.read_agreements` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.read_open_items` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+
 ## Analyse- und Berichtscopilot
 
 Bereitet Durchlaufzeiten, Außenstände und Fehlerquoten auf, erklärt Abweichungen und unterstützt bei der Wirkungsabschätzung von Prozessänderungen.
@@ -139,6 +160,11 @@ Bereitet Durchlaufzeiten, Außenstände und Fehlerquoten auf, erklärt Abweichun
 - Lesezugriff auf das Berichtswesen
 
 **Aufsicht im Betrieb:** Die Interpretation und jede Aussage nach außen bleibt bei der Teamleitung
+
+**Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
+
+- Dienste für dieses Muster: Microsoft Fabric / Power BI Copilot, Azure OpenAI Service, Excel über Graph, BigQuery, Looker, Vertex AI, Sheets API
+- `erp.read_metrics` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
 
 ## Bonitäts-Agent
 
@@ -176,6 +202,12 @@ Holt die externe Bonitätsauskunft, führt sie mit der internen Zahlungshistorie
 
 **Aufsicht im Betrieb:** Limitvorschlag wird immer von einem Kreditprüfer bestätigt; Überschreitungen gehen an die Teamleitung
 
+**Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
+
+- Dienste für dieses Muster: Azure Functions, Azure Data Factory, Microsoft Fabric / Dataflows, Azure OpenAI Service für Erklärungen, Cloud Functions, BigQuery, Dataflow, Vertex AI für Erklärungen
+- `erp.read_payment_history` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.write_credit_file` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+
 ## Order-to-Cash-Orchestrator
 
 Führt die Spezialagenten entlang des Prozesses zusammen: übergibt Ergebnisse, hält den Fallzustand, entscheidet, wann ein Mensch gebraucht wird, und stellt sicher, dass kein Fall liegen bleibt.
@@ -207,6 +239,11 @@ Führt die Spezialagenten entlang des Prozesses zusammen: übergibt Ergebnisse, 
 - Gemeinsamer Fallzustand im ERP
 
 **Aufsicht im Betrieb:** Eskaliert jeden Fall, der länger als die vereinbarte Frist ohne Fortschritt ist, an die Teamleitung
+
+**Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
+
+- Dienste für dieses Muster: Azure Logic Apps, Power Automate, Azure Functions, Azure Service Bus, Workflows, Cloud Run, Pub/Sub, Eventarc
+- `erp.read_case_state` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
 
 ## Fakturierungs-Agent
 
@@ -245,6 +282,14 @@ Stellt Leistungsnachweise zu einer Abrechnungsgrundlage zusammen, erzeugt den Re
 
 **Aufsicht im Betrieb:** Die Freigabe der Rechnung bleibt beim Menschen; der Agent liefert Entwurf und Prüfbefund
 
+**Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
+
+- Dienste für dieses Muster: Azure AI Document Intelligence (Rechnungsmodell), Azure Functions, ERP-API, Document AI (Invoice Parser), Cloud Functions, ERP-API
+- `erp.create_invoice_draft` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.read_delivery` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.read_order` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.send_invoice` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+
 ## Zahlungszuordnungs-Agent
 
 Ordnet Zahlungseingänge aus dem Kontoauszug den offenen Posten zu, teilt Teilzahlungen auf und schlägt für Differenzen eine Erklärung vor.
@@ -280,4 +325,21 @@ Ordnet Zahlungseingänge aus dem Kontoauszug den offenen Posten zu, teilt Teilza
 - Strukturierter Kontoauszugsimport
 
 **Aufsicht im Betrieb:** Zuordnungen unter Konfidenz 0,9 und alle Differenzen über 100 EUR gehen an das Forderungsmanagement
+
+**Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
+
+- Dienste für dieses Muster: Azure Functions, Azure Data Factory, Microsoft Fabric / Dataflows, Azure OpenAI Service für Erklärungen, Cloud Functions, BigQuery, Dataflow, Vertex AI für Erklärungen
+- `erp.assign_payment` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.read_customer` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+- `erp.read_open_items` → Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)
+
+## Plattformprofil: Grundsätze
+
+- Jede Datenart hat ein führendes System (System of Record); Agenten lesen und schreiben dort, nicht in Kopien.
+- Je Muster ein Dienst festlegen, nicht beide; die Wahl richtet sich nach dem System, das die Daten hält.
+- Identität föderieren (Entra ID als IdP oder Cloud Identity), damit Berechtigungen an einer Stelle gepflegt werden.
+- Protokolle an einer Stelle zusammenführen (SIEM), sonst sind Audits lückenhaft.
+
+- Die Listen nennen beide Optionen je Muster; die Entscheidung je Agent gehört in den Vertrag (Feld tools).
+- Doppelte Lizenzierung von Copilot-Funktionen vermeiden.
 

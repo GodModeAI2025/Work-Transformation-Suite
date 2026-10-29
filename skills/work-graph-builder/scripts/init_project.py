@@ -53,7 +53,14 @@ def main() -> int:
     ap.add_argument("--language", default="de")
     ap.add_argument("--evidence-policy", choices=wl.ENUM_EVIDENCE_POLICY, default="warn",
                     help="warn: unbelegte Aussagen werden gemeldet; strict: sie halten die Pipeline an")
+    ap.add_argument("--branche", default="", help="Branche aus der Referenzbibliothek (library_catalog.py --list)")
+    ap.add_argument("--plattform", default="", choices=[""] + wl.ENUM_PLATFORM,
+                    help="Plattformprofil des Hauses: microsoft, google, mischbetrieb, unabhaengig")
+    ap.add_argument("--rechtsraum", default="DE", help="Rechtsraum (Standard DE)")
     args = ap.parse_args()
+    index = wl.load_library_json("branchen", "index.json") or {}
+    if args.branche and args.branche not in index:
+        wl.fail(f"Branche {args.branche!r} nicht in der Referenzbibliothek. Bekannt: {', '.join(sorted(index)) or 'keine'}")
 
     project = wl.resolve_project(args.project)
     project.mkdir(parents=True, exist_ok=True)
@@ -72,6 +79,8 @@ def main() -> int:
             "schema_version": wl.SCHEMA_VERSION,
             # Belegpflicht: warn meldet unbelegte Aussagen, strict hält die Pipeline an.
             "evidence_policy": args.evidence_policy,
+            # Profil des Hauses: steuert Referenzbibliothek, Plattformvorschläge und Rechtsrahmen.
+            "profile": {"branche": args.branche, "plattform": args.plattform, "rechtsraum": args.rechtsraum},
         }
         wl.save_project_meta(project, meta)
     readme = project / "README.md"
