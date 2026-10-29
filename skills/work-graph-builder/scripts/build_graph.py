@@ -45,6 +45,14 @@ def _str(x: Any, default: str = "") -> str:
     return str(x).strip() if x is not None else default
 
 
+def _evidence(obj: Any) -> list[str]:
+    """Belege einer Extraktion: Strings der Form src-…@…, unverändert; der Validator meldet die falschen."""
+    raw = obj.get("evidence") if isinstance(obj, dict) else None
+    if isinstance(raw, str):
+        raw = [raw]
+    return sorted({str(x).strip() for x in (raw or []) if str(x).strip()})
+
+
 def _int_or_none(x: Any):
     if x is None or x == "":
         return None
@@ -120,6 +128,8 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                 role = roles[rid]
                 stats["roles_merged"] += 1
                 role["source_refs"] = sorted(set(role["source_refs"] + [source]))
+                role["evidence"] = sorted(set(role.get("evidence", []) + _evidence(r)))
+                role["evidence_status"] = wl.evidence_status(role, estimated=bool(role.get("is_new")))
             else:
                 stats["roles_new"] += 1
                 archetype = _str(r.get("archetype")) or None
@@ -137,9 +147,11 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                     "time_shares_source": _str(r.get("time_shares_source")) if _str(r.get("time_shares_source")) in ("source", "estimated") else "estimated",
                     "status": "generated",
                     "source_refs": [source],
+                    "evidence": _evidence(r),
                     "skills": [],
                     "task_ids": [],
                 }
+                role["evidence_status"] = wl.evidence_status(role, estimated=bool(r.get("is_new", False)))
                 prev = prev_roles.get(rid)
                 if prev:
                     # Reviewstatus und Analyse aus Vorversion behalten
@@ -206,10 +218,12 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                     "frequency": freq if freq in wl.ENUM_FREQUENCY else "weekly",
                     "nature": nature if nature in wl.ENUM_NATURE else "cognitive",
                     "confidence": _str(t.get("confidence")) or "inferred",
+                    "evidence": _evidence(t),
                     "skill_ids": sorted(set(task_skill_ids)),
                     "status": "generated",
                     "agent_ids": [],
                 }
+                task["evidence_status"] = wl.evidence_status(task, estimated=task["confidence"] == "inferred")
                 prev = prev_tasks.get(tid)
                 if prev:
                     task["status"] = prev.get("status", "generated")
@@ -260,6 +274,12 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
     graph["skills"] = list(skills.values())
     graph["agents"] = agents
     graph["positions"] = list(previous.get("positions", [])) if previous else []
+    # Quellenregister in den Graphen spiegeln, damit der Validator Belege ohne Projektzugriff prüfen kann.
+    graph["meta"]["sources"] = [
+        {"source_id": sid, "title": rec.get("title", ""), "content_sha256": rec.get("content_sha256", ""),
+         "kind": rec.get("kind", ""), "status": rec.get("status", "")}
+        for sid, rec in sorted(wl.load_source_register(project).items())
+    ]
     graph["courses"] = list(previous.get("courses", [])) if previous else []
 
     # Prozessebene, Redesign und Governance werden hier nicht neu gebaut — sie entstehen
@@ -308,7 +328,7 @@ def main() -> int:
         ov_applied, ov_problems = apply_overrides(graph, wl.read_csv(ov))
         for pmsg in ov_problems:
             print(f"HINWEIS  {pmsg}")
-    errors, warnings = validate(graph)
+    errors, warnings = validate(graph, strict_evidence=wl.evidence_policy(project) == "strict")
     for e in errors:
         print(f"FEHLER   {e}")
     for w in warnings:

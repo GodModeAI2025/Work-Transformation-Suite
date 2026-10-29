@@ -32,6 +32,7 @@ Projektordner der Work-Transformation-Suite. Alle Skripte werden mit
 | Ordner | Inhalt | Wer schreibt |
 |---|---|---|
 | 00_input/ | Quelldokumente | Mensch |
+| 00_input/sources/ | registrierte Quellen (treues Markdown, register.jsonl) | register_source.py |
 | 10_extraction/ | extract_<quelle>.json | Claude (work-graph-builder) |
 | 20_graph/ | work-graph_vNNN_<stage>.json, work-graph_latest.json | Skripte |
 | 30_review/ | review_vNNN.md, overrides.csv | Skripte / Fachexperten |
@@ -48,6 +49,8 @@ def main() -> int:
     ap.add_argument("--organization", default="")
     ap.add_argument("--scope", default="", help="Bereich/Abteilung, die analysiert wird")
     ap.add_argument("--language", default="de")
+    ap.add_argument("--evidence-policy", choices=wl.ENUM_EVIDENCE_POLICY, default="warn",
+                    help="warn: unbelegte Aussagen werden gemeldet; strict: sie halten die Pipeline an")
     args = ap.parse_args()
 
     project = wl.resolve_project(args.project)
@@ -65,6 +68,8 @@ def main() -> int:
             "language": args.language,
             "graph_version": 0,
             "schema_version": wl.SCHEMA_VERSION,
+            # Belegpflicht: warn meldet unbelegte Aussagen, strict hält die Pipeline an.
+            "evidence_policy": args.evidence_policy,
         }
         wl.save_project_meta(project, meta)
     readme = project / "README.md"
@@ -74,6 +79,7 @@ def main() -> int:
     if not overrides.exists():
         wl.write_text(overrides, "entity_type;entity_id;field;value;reviewer;comment\n",
                       newline="")
+    wl.sources_dir(project).mkdir(parents=True, exist_ok=True)
     print(f"Projekt angelegt: {wl.relpath(project)}")
     for d in wl.project_dirs(project).values():
         print(f"  {wl.relpath(d)}/")

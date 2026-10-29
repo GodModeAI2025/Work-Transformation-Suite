@@ -149,6 +149,24 @@ python3 skills/work-graph-builder/scripts/init_project.py --project projekte/kun
 Quellen (Stellenbeschreibungen als PDF/Word/Markdown, Organigramme, SAP-Exporte) nach
 `projekte/kundenservice/00_input/`.
 
+### Schritt 0b: Quellen registrieren
+
+```
+python3 skills/work-graph-builder/scripts/register_source.py --project projekte/kundenservice \
+  --file 00_input/stellenbeschreibungen.md --title "Stellenbeschreibungen Kundenservice"
+```
+
+Jede Quelle, auf die sich der Graph berufen soll, liegt danach treu als Markdown unter `00_input/sources/`,
+mit `source_id` (Hash des Inhalts), Titel, Herkunft und Datum in `register.jsonl`. PDF, Word und Excel liest
+Claude und legt die treue Fassung ab (`--original <datei>` hält den Hash des Originals fest, kopiert es
+aber nicht). Der Inhalt wird nicht verändert; Zugangsdaten und absolute Pfade stoppen die Aufnahme.
+
+Belege im Graphen haben die Form `src-<hash>@<fundstelle>` (Überschriftenanker, Zeile, Bereich oder
+Freitext). `locate_source.py` zeigt Anker und findet Zitate, `check_evidence.py` zählt je Sammlung belegt,
+geschätzt und unbelegt und prüft jede Fundstelle gegen den Quelltext (`30_review/belege_vNNN.md`). Mit
+`evidence_policy: strict` in `project.json` hält die Pipeline an, solange eine Aussage ohne Herkunft im
+Graphen steht; der Standard `warn` meldet sie nur.
+
 ### Schritt 1: work-graph-builder (Claude)
 
 Sagen: „Bau den Arbeitsgraphen für projekte/kundenservice aus den Dateien in 00_input.“
@@ -420,6 +438,7 @@ Suite bietet sie an und wählt nicht still. Katalog mit Eingaben, Ergebnissen un
 
 | Methode | Skript | Zweck |
 |---|---|---|
+| Quellenregister | `register_source.py`, `locate_source.py`, `check_evidence.py` | Quellen treu als Markdown mit `source_id` führen, Belege `src-…@…` je Aussage, Belegbericht mit Fundstellenprüfung |
 | Vollständigkeitsprüfung | `check_completeness.py` | Rolle gegen eine anpassbare Vorlage prüfen; Lücken nennen, woher sie zu füllen sind. Füllt nichts auf |
 | Aufgabencluster | `dedupe_tasks.py` | Dieselbe Arbeit in mehreren Rollen finden. Kandidaten, bis ein Fachexperte mit Namen bestätigt |
 | Zusammenarbeit | `derive_collaboration.py` | Rollenpaare mit Belegen: Übergabe im Prozess, gemeinsame Stelle, gleiche Einheit |

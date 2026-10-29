@@ -156,9 +156,12 @@ def scan(project: Path) -> list[dict[str, Any]]:
     rows = []
     if not root.is_dir():
         return rows
+    registered = {str(rec.get("origin")) for rec in wl.load_source_register(project).values()}
     for p in sorted(root.rglob("*")):
         if not p.is_file() or p.name.lower() == "readme.md" or p.name.startswith("."):
             continue
+        if wl.DIR_SOURCES in p.relative_to(root).parts:
+            continue  # registrierte Fassungen sind keine zweite Quelle
         readable = p.suffix.lower() in TEXT_SUFFIXES
         peek = ""
         if readable:
@@ -167,8 +170,9 @@ def scan(project: Path) -> list[dict[str, Any]]:
             except OSError:
                 readable = False
         kind, why = classify(p, peek)
-        rows.append({"path": p.relative_to(project).as_posix(), "kind": kind, "why": why,
-                     "bytes": p.stat().st_size, "readable": readable})
+        rel = p.relative_to(project).as_posix()
+        rows.append({"path": rel, "kind": kind, "why": why, "bytes": p.stat().st_size, "readable": readable,
+                     "registered": rel in registered})
     return rows
 
 
@@ -187,11 +191,17 @@ def render(rows: list[dict[str, Any]], st: dict[str, Any]) -> tuple[str, dict[st
     if not rows:
         lines += ["In `00_input/` liegt noch nichts. Anfangen mit Stellenbeschreibungen (je Rolle) und, wenn vorhanden, einer Positionsliste.", ""]
     else:
-        lines += ["## Dateien", "", "| Datei | Quellenart | Grund | Lesbar für Skripte |", "|---|---|---|---|"]
+        lines += ["## Dateien", "", "| Datei | Quellenart | Grund | Lesbar für Skripte | Registriert |", "|---|---|---|---|---|"]
         for r in rows:
             label = KINDS[r["kind"]][0] if r["kind"] in KINDS else "nicht erkannt"
-            lines.append(f"| `{r['path']}` | {label} | {r['why']} | {'ja' if r['readable'] else 'nein — Claude liest'} |")
+            lines.append(f"| `{r['path']}` | {label} | {r['why']} | {'ja' if r['readable'] else 'nein — Claude liest'} "
+                         f"| {'ja' if r.get('registered') else 'nein'} |")
         lines.append("")
+        missing = [r["path"] for r in rows if not r.get("registered") and r["kind"] not in ("kontextmaterial", "nutzungsstand", "usecaseregister")]
+        if missing:
+            lines += ["Noch nicht im Quellenregister: " + ", ".join(f"`{m}`" for m in missing) + ". "
+                      "Registrieren mit `register_source.py --file <datei> --title \"…\"`; erst dann lassen sich "
+                      "Aussagen im Graphen auf eine Fundstelle beziehen.", ""]
     filled = set()
     for kind in st["kinds"]:
         if kind in KINDS:

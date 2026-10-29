@@ -59,12 +59,14 @@ Skript-Pfade sind relativ zum jeweiligen Skill-Ordner, Projektpfade relativ zum 
 
 ```
 00_input/            Quellen (Mensch)
-   │  work-graph-builder: Claude extrahiert → 10_extraction/extract_*.json
+   │  register_source.py → 00_input/sources/ (treues Markdown, source_id, Register)
+   │  work-graph-builder: Claude extrahiert → 10_extraction/extract_*.json, Belege src-…@…
    ▼  build_graph.py → 20_graph/work-graph_vNNN_builder.json
    │  make_review_list.py → 30_review/review_vNNN.md  ← Fachexperten → overrides.csv
    ▼  apply_overrides.py (nur wenn overrides.csv Zeilen enthält)
    │  work-graph-builder: Claude nimmt Prozesse auf → 10_extraction/process_*.json   [optional]
    ▼  build_processes.py → Prozesse, Schritte, Kanten, Systeme, Kontrollen, Kennzahlen
+   │  check_evidence.py → 30_review/belege_vNNN.md (hält bei evidence_policy strict an)
    │  task-scorer: export_scoring_sheet.py → Claude bewertet → 20_graph/scores.json
    ▼  score_roles.py → Modus, HAS, Horizont, Disruptionstyp je Rolle
    │  agent-mapper: export_agent_candidates.py → Claude bündelt → 20_graph/agents.json

@@ -30,6 +30,7 @@ entfernt sie.
 | Datei | Wer schreibt sie | Inhalt |
 |---|---|---|
 | `00_input/*.md` | Mensch | Stellenbeschreibungen und Prozessaufnahme |
+| `00_input/sources/` | `register_source.py` | Beide Quellen registriert; alle Rollen, Aufgaben aus der Quelle, Prozesse, Schritte, gemessenen Kennzahlen und Kontrollen tragen Belege darauf, die vier ergänzten Aufgaben gelten als geschätzt |
 | `10_extraction/extract_*.json` | Claude | 5 Rollen, 21 Aufgaben, 11 Skills |
 | `10_extraction/process_*.json` | Claude | 2 End-to-End-Prozesse, 16 Schritte, 4 Kontrollen, 6 Kennzahlen |
 | `20_graph/scores.json` | Claude | Bewertung aller 21 Aufgaben nach sechs Kriterien |

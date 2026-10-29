@@ -231,8 +231,12 @@ def build(project: Path) -> tuple:
                     "mode": _enum(c.get("mode"), wl.ENUM_CONTROL_MODE, "detective"),
                     "mandatory": bool(c.get("mandatory", True)),
                     "legal_basis": _str(c.get("legal_basis")),
+                    # "evidence" einer Kontrolle ist seit 1.1 der Nachweis im System (Freitext);
+                    # Belege auf registrierte Quellen heißen hier deshalb "source_evidence".
                     "evidence": _str(c.get("evidence")),
+                    "source_evidence": _evidence({"evidence": c.get("source_evidence")}),
                 })
+                controls[cid]["evidence_status"] = wl.evidence_status({"evidence": controls[cid]["source_evidence"]})
 
         for pr in ex.get("processes", []):
             pname = _str(pr.get("name"))
@@ -264,7 +268,10 @@ def build(project: Path) -> tuple:
                     "kind": _enum(m.get("kind"), wl.ENUM_METRIC_KIND, "outcome"),
                     "unit": _str(m.get("unit")),
                     "direction": _enum(m.get("direction"), wl.ENUM_METRIC_DIRECTION, "lower_is_better"),
+                    "evidence": _evidence(m),
                 }
+                entry["evidence_status"] = wl.evidence_status(
+                    entry, estimated=(_value_block(m.get("baseline")) or {}).get("basis") == "estimated")
                 for stage in VALUE_STAGES:
                     block = _value_block(m.get(stage))
                     if block is not None:
@@ -352,7 +359,9 @@ def build(project: Path) -> tuple:
                     "human_gate": human_gate,
                     "decision": decision,
                     "source_refs": [source],
+                    "evidence": _evidence(st),
                 }
+                steps[sid]["evidence_status"] = wl.evidence_status(steps[sid])
                 step_ids.append(sid)
                 stats["steps"] += 1
                 for pv in st.get("provenance", []) or []:
@@ -407,7 +416,9 @@ def build(project: Path) -> tuple:
                 "step_ids": step_ids,
                 "status": status,
                 "source_refs": [source],
+                "evidence": _evidence(pr),
             }
+            processes[pid]["evidence_status"] = wl.evidence_status(processes[pid])
             if previous and previous.get("value") is not None:
                 # Die Prozessbewertung entsteht in score_processes.py und wird hier
                 # unverändert mitgenommen; sonst müsste sie nach jedem Lauf neu entstehen.
@@ -451,6 +462,13 @@ def build(project: Path) -> tuple:
     return graph, stats, idx.problems
 
 
+def _evidence(obj: Any) -> list[str]:
+    raw = obj.get("evidence") if isinstance(obj, dict) else None
+    if isinstance(raw, str):
+        raw = [raw]
+    return sorted({str(x).strip() for x in (raw or []) if str(x).strip()})
+
+
 def _add_provenance(store: dict, entity_type: str, entity_id: str, pv: Any, source: str,
                     default_field: str) -> None:
     if not isinstance(pv, dict):
@@ -481,7 +499,7 @@ def main() -> int:
     graph, stats, problems = build(project)
     for p in problems:
         print(f"HINWEIS  {p}")
-    errors, warnings = validate(graph)
+    errors, warnings = validate(graph, strict_evidence=wl.evidence_policy(project) == "strict")
     for e in errors:
         print(f"FEHLER   {e}")
     for w in warnings:

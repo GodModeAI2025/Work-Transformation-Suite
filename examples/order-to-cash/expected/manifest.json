@@ -23,12 +23,12 @@
   },
   "description": "Erwartete Ausgaben eines vollständigen Laufs dieses Beispielprojekts. Die Prüfsummen belegen, dass die Pipeline deterministisch ist: gleiche Eingaben, gleiche Bytes. Ein Unterschied hier ist entweder ein Fehler oder eine bewusste Änderung, die mit aktualisierten Prüfsummen festgehalten wird.",
   "files": {
-    "20_graph/work-graph_latest.json": "5daad16a5c16ce22decf2e1756674d91665e03d3914f139d61f1430ce54a6efe",
+    "20_graph/work-graph_latest.json": "a1d310f704817e32d718e21590835c3961a7a5f168b214c0e6cbedbd191d76e8",
     "40_output/agents_v012.csv": "a626d6360577bfffbb0b6b29d73c30c55370d890e95be49d417295960712f328",
     "40_output/blueprints_v012.csv": "7467081ee725a2750d7566935342f98c722a6c7dc2a95de69a9fbbb5ef81c311",
     "40_output/contracts_v011.json": "9216542f99ea92576286169c8c6039cfa6b07ed4f630809286c54b5ec0ec62db",
     "40_output/contracts_v011.md": "4f385fcf16f29a227b3d7a77895edc97f843544a37a2810b743f9f09c2530e42",
-    "40_output/dashboard_v012.html": "9fe9339f319630b1acb489b696cf378789c8499abfb3d054b7e2535311da87e8",
+    "40_output/dashboard_v012.html": "c86144e8db79b91cccae9d00bf667dc2241b5231bd7feae48ca3250b2ecfc8a3",
     "40_output/dokumente/anhang-potenziale.html": "e7db46a09467ab39c7ead853d0ad994e445dae7ecdcdd61eb4ea744ec63acfae",
     "40_output/dokumente/anhang-potenziale.md": "0717db3e8ced4990e72440907661f992c13b67a79edfe9194f11dba83a795299",
     "40_output/dokumente/entscheidungsvorlage.html": "4a7603cb5d97258eb25ea5f4647de1df3be70cc6f8f00a43db8c0270590cc4e4",
@@ -46,12 +46,12 @@
     "40_output/report_hr_v012.md": "d50c9a8e4a4d660b7cfbe1219e965e17bf4baad89551aa327bcc6798421bd5a0",
     "40_output/report_it_v012.md": "10e1a2701c11bf76bb6dd18a3714081747d942085c5dec53d21f1bbd88e144f0",
     "40_output/report_v012.md": "310d48b3c2c108d43c54137bfcc7fc409775b3560e84e0f262209c0e1060261b",
-    "40_output/roadmap_v012.json": "59809eee601881b290c626027eb79d1b72da49b060739e24712aa26aafc4b8e0",
+    "40_output/roadmap_v012.json": "b9db264c22ac8de5b90f203e5fd2b45428c35a21160338b6c3ef611164f53d7f",
     "40_output/roles_v012.csv": "d6c7f8d0a1ba03d24dc3af32bc9ca674b369f6ed0c00c94d66dc0c0a32514008",
     "40_output/scenarios_v011.csv": "67ae55300be55492521f52ac0dfa11bd4e44e06af281507669f94f9d1a0ed5c3",
     "40_output/scenarios_v011.md": "d28afe264e14afe62fd727cca5ef09dcc48d06bb3be43759442afaaf12e02e83",
     "40_output/tasks_v012.csv": "439bf26bd47e42ce43cd3f7f82a43ed08ebfbe923b76ea70df284dc1d7ca3a65"
   },
   "graph_version": 12,
-  "schema_version": "1.2"
+  "schema_version": "1.3"
 }

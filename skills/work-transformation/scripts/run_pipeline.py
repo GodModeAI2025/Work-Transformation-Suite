@@ -104,6 +104,11 @@ def main() -> int:
         return 2
     run([py, script("work-graph-builder", "check_completeness.py"), "--project", proj], cwd)
     run([py, script("work-graph-builder", "derive_collaboration.py"), "--project", proj], cwd)
+    # Belege: Bericht immer; bei strenger Belegpflicht hält die Pipeline an, solange Aussagen ohne
+    # Herkunft im Graphen stehen. Die Quelle registrieren und die Fundstelle eintragen ist Claudes
+    # Schritt, das Skript kann das nicht erfinden.
+    if run([py, script("work-graph-builder", "check_evidence.py"), "--project", proj], cwd) == 3:
+        return 3
     if stop == 1:
         return 0
 

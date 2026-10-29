@@ -8,6 +8,7 @@ Liste, was zu den vorliegenden Quellen passt, und schreibt den Vorschlag in `30_
 
 | # | Methode | Skript | Eingabe | Ergebnis | Ändert den Graphen |
 |---|---|---|---|---|---|
+| 0 | Quellenregister | `register_source.py`, `locate_source.py`, `check_evidence.py` | `00_input/<datei>` | treue Markdown-Fassung mit `source_id`, Belege `src-…@…` im Graphen, Belegbericht | nein (Belege kommen über die Extraktion) |
 | 1 | Quelleninventar | `inventory_sources.py` | `00_input/` | Quellenarten, Lücken, vorgeschlagene Methoden | nein |
 | 2 | Vollständigkeitsprüfung | `check_completeness.py` | Graph, `assets/role-template.json` | Füllgrad und Lücken je Rolle mit Hinweis, woher sie zu füllen wären | nein |
 | 3 | Aufgabencluster | `dedupe_tasks.py` | Graph, optional `30_review/task_clusters.csv` | dieselbe Arbeit in mehreren Rollen | ja (`task_clusters`) |
@@ -18,6 +19,20 @@ Liste, was zu den vorliegenden Quellen passt, und schreibt den Vorschlag in `30_
 | 8 | Prozesshaus | `import_process_house.py` | `00_input/prozesshaus.csv` | `process_<quelle>.json` | über `build_processes.py` |
 | 9 | Positionen | `import_positions.py` | `00_input/positions.csv` | Headcount und Stellen | ja |
 | 10 | Interview | `interview-leitfaden.md` | Gespräch | Schritte, Systeme, Übergaben, `pain` | über Extraktion |
+
+## 0. Quellenregister
+
+Eine Quelle wird einmal treu nach Markdown gebracht und unter `00_input/sources/` mit `source_id` (Hash des Inhalts),
+Titel, Herkunft und Datum registriert (`register.jsonl`). Der Graph beruft sich dann mit `src-<hash>@<fundstelle>` auf
+eine Stelle in dieser Fassung: Überschriftenanker, Zeile, Bereich oder Freitext. `locate_source.py` zeigt die Anker und
+findet Zitate; `check_evidence.py` zählt je Sammlung belegt, geschätzt und unbelegt und prüft, ob jede Fundstelle im
+Quelltext aufgeht.
+
+Drei Regeln: Der Inhalt wird nicht verändert (nicht zusammengefasst, nicht übersetzt). Das Original bleibt, wo es ist;
+das Register merkt sich nur seinen Hash. Zugangsdaten und absolute Pfade stoppen die Aufnahme.
+
+`evidence_policy` in `project.json` entscheidet, ob Unbelegtes gemeldet wird (`warn`, Standard) oder die Pipeline
+anhält (`strict`).
 
 ## 1. Quelleninventar
 

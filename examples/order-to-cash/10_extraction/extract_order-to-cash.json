@@ -1,153 +1,504 @@
 {
-  "source": "Stellenbeschreibungen Order-to-Cash, anonymisiert, Stand 2026-01",
-  "job_family": "Finanzen und Controlling",
-  "job_family_description": "Kaufmännische Abwicklung, Rechnungslegung und Forderungsmanagement.",
   "job_cluster": "Order-to-Cash",
   "job_cluster_description": "Vom eingehenden Auftrag bis zum zugeordneten Zahlungseingang.",
+  "job_family": "Finanzen und Controlling",
+  "job_family_description": "Kaufmännische Abwicklung, Rechnungslegung und Forderungsmanagement.",
   "roles": [
     {
-      "name": "Auftragssachbearbeiter",
-      "level": "Fachkraft",
-      "headcount": 9,
       "archetype": "process-heavy",
-      "purpose": "Nimmt Kundenaufträge auf, prüft sie gegen Vertrag und Stammdaten und bestätigt sie.",
       "description": "Erfasst Aufträge aus Bestellungen, klärt Abweichungen mit dem Vertrieb und pflegt Änderungen ein.",
-      "time_shares_source": "source",
+      "evidence": [
+        "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
+      ],
+      "headcount": 9,
+      "level": "Fachkraft",
+      "name": "Auftragssachbearbeiter",
+      "purpose": "Nimmt Kundenaufträge auf, prüft sie gegen Vertrag und Stammdaten und bestätigt sie.",
       "skills": [
-        {"name": "ERP-Auftragsabwicklung", "kind": "tool", "level": 4, "importance": "core"},
-        {"name": "Vertragsauslegung", "kind": "knowledge", "level": 3, "importance": "core"},
-        {"name": "Kundenkommunikation", "kind": "skill", "level": 3, "importance": "supporting"}
+        {
+          "importance": "core",
+          "kind": "tool",
+          "level": 4,
+          "name": "ERP-Auftragsabwicklung"
+        },
+        {
+          "importance": "core",
+          "kind": "knowledge",
+          "level": 3,
+          "name": "Vertragsauslegung"
+        },
+        {
+          "importance": "supporting",
+          "kind": "skill",
+          "level": 3,
+          "name": "Kundenkommunikation"
+        }
       ],
       "tasks": [
-        {"name": "Auftrag aus Bestellung erfassen", "share_of_time": 30, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Bestellungen aus E-Mail, Portal und PDF in das ERP übertragen.",
-         "skills": [{"name": "ERP-Auftragsabwicklung"}]},
-        {"name": "Auftragsdaten gegen Rahmenvertrag prüfen", "share_of_time": 20, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Preise, Konditionen und Lieferbedingungen gegen den gültigen Rahmenvertrag abgleichen.",
-         "skills": [{"name": "Vertragsauslegung"}]},
-        {"name": "Rückfragen mit Vertrieb klären", "share_of_time": 20, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Abweichungen zwischen Bestellung und Vertrag mit dem zuständigen Vertrieb abstimmen.",
-         "skills": [{"name": "Kundenkommunikation"}]},
-        {"name": "Auftragsbestätigung versenden", "share_of_time": 15, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Bestätigung erzeugen, prüfen und an den Kunden senden.",
-         "skills": [{"name": "ERP-Auftragsabwicklung"}]},
-        {"name": "Auftragsänderungen einpflegen", "share_of_time": 15, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Mengen-, Termin- und Adressänderungen nachziehen und Folgebelege anpassen.",
-         "skills": [{"name": "ERP-Auftragsabwicklung"}]}
-      ]
+        {
+          "confidence": "source",
+          "description": "Bestellungen aus E-Mail, Portal und PDF in das ERP übertragen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Auftrag aus Bestellung erfassen",
+          "nature": "cognitive",
+          "share_of_time": 30,
+          "skills": [
+            {
+              "name": "ERP-Auftragsabwicklung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Preise, Konditionen und Lieferbedingungen gegen den gültigen Rahmenvertrag abgleichen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Auftragsdaten gegen Rahmenvertrag prüfen",
+          "nature": "cognitive",
+          "share_of_time": 20,
+          "skills": [
+            {
+              "name": "Vertragsauslegung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Abweichungen zwischen Bestellung und Vertrag mit dem zuständigen Vertrieb abstimmen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Rückfragen mit Vertrieb klären",
+          "nature": "cognitive",
+          "share_of_time": 20,
+          "skills": [
+            {
+              "name": "Kundenkommunikation"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Bestätigung erzeugen, prüfen und an den Kunden senden.",
+          "evidence": [
+            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Auftragsbestätigung versenden",
+          "nature": "cognitive",
+          "share_of_time": 15,
+          "skills": [
+            {
+              "name": "ERP-Auftragsabwicklung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Mengen-, Termin- und Adressänderungen nachziehen und Folgebelege anpassen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Auftragsänderungen einpflegen",
+          "nature": "cognitive",
+          "share_of_time": 15,
+          "skills": [
+            {
+              "name": "ERP-Auftragsabwicklung"
+            }
+          ]
+        }
+      ],
+      "time_shares_source": "source"
     },
     {
-      "name": "Kreditprüfer",
-      "level": "Fachkraft",
-      "headcount": 3,
       "archetype": "control-heavy",
-      "regulated": true,
-      "purpose": "Bewertet die Bonität von Kunden und legt Kreditlimits fest.",
       "description": "Holt Auskünfte ein, bewertet sie, legt Limits fest und dokumentiert die Entscheidung.",
-      "time_shares_source": "source",
+      "evidence": [
+        "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+      ],
+      "headcount": 3,
+      "level": "Fachkraft",
+      "name": "Kreditprüfer",
+      "purpose": "Bewertet die Bonität von Kunden und legt Kreditlimits fest.",
+      "regulated": true,
       "skills": [
-        {"name": "Bonitätsbewertung", "kind": "knowledge", "level": 4, "importance": "core"},
-        {"name": "Risikoeinschätzung", "kind": "competence", "level": 4, "importance": "core"},
-        {"name": "ERP-Auftragsabwicklung", "kind": "tool", "level": 3, "importance": "supporting"}
+        {
+          "importance": "core",
+          "kind": "knowledge",
+          "level": 4,
+          "name": "Bonitätsbewertung"
+        },
+        {
+          "importance": "core",
+          "kind": "competence",
+          "level": 4,
+          "name": "Risikoeinschätzung"
+        },
+        {
+          "importance": "supporting",
+          "kind": "tool",
+          "level": 3,
+          "name": "ERP-Auftragsabwicklung"
+        }
       ],
       "tasks": [
-        {"name": "Bonitätsauskunft einholen", "share_of_time": 30, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Auskunft beim externen Dienstleister anfragen und mit internen Zahlungserfahrungen zusammenführen.",
-         "skills": [{"name": "Bonitätsbewertung"}]},
-        {"name": "Kreditlimit festlegen", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Limit aus Auskunft, Historie und Auftragsvolumen ableiten.",
-         "skills": [{"name": "Risikoeinschätzung"}]},
-        {"name": "Limitüberschreitung eskalieren", "share_of_time": 20, "frequency": "weekly", "nature": "cognitive", "confidence": "source",
-         "description": "Aufträge über dem Limit mit Begründung an die Teamleitung geben.",
-         "skills": [{"name": "Risikoeinschätzung"}]},
-        {"name": "Kreditakte dokumentieren", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Entscheidung, Grundlage und Gültigkeit revisionssicher festhalten.",
-         "skills": [{"name": "ERP-Auftragsabwicklung"}]}
-      ]
+        {
+          "confidence": "source",
+          "description": "Auskunft beim externen Dienstleister anfragen und mit internen Zahlungserfahrungen zusammenführen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+          ],
+          "frequency": "daily",
+          "name": "Bonitätsauskunft einholen",
+          "nature": "cognitive",
+          "share_of_time": 30,
+          "skills": [
+            {
+              "name": "Bonitätsbewertung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Limit aus Auskunft, Historie und Auftragsvolumen ableiten.",
+          "evidence": [
+            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+          ],
+          "frequency": "daily",
+          "name": "Kreditlimit festlegen",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "Risikoeinschätzung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Aufträge über dem Limit mit Begründung an die Teamleitung geben.",
+          "evidence": [
+            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+          ],
+          "frequency": "weekly",
+          "name": "Limitüberschreitung eskalieren",
+          "nature": "cognitive",
+          "share_of_time": 20,
+          "skills": [
+            {
+              "name": "Risikoeinschätzung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Entscheidung, Grundlage und Gültigkeit revisionssicher festhalten.",
+          "evidence": [
+            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+          ],
+          "frequency": "daily",
+          "name": "Kreditakte dokumentieren",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "ERP-Auftragsabwicklung"
+            }
+          ]
+        }
+      ],
+      "time_shares_source": "source"
     },
     {
-      "name": "Fakturierungssachbearbeiter",
-      "level": "Fachkraft",
-      "headcount": 6,
       "archetype": "process-heavy",
-      "purpose": "Erstellt, prüft und versendet Rechnungen.",
       "description": "Stellt Leistungsnachweise zusammen, erzeugt Rechnungen, prüft sie im Vier-Augen-Prinzip und archiviert sie.",
-      "time_shares_source": "source",
-      "skills": [
-        {"name": "Rechnungslegung", "kind": "knowledge", "level": 4, "importance": "core"},
-        {"name": "ERP-Auftragsabwicklung", "kind": "tool", "level": 4, "importance": "core"},
-        {"name": "Belegprüfung", "kind": "skill", "level": 3, "importance": "core"}
+      "evidence": [
+        "src-2c6249b3bd2f@#fakturierungssachbearbeiter-6-stellen"
       ],
-      "tasks": [
-        {"name": "Leistungsnachweise zusammenstellen", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Lieferscheine, Stundennachweise und Teilleistungen einem Auftrag zuordnen.",
-         "skills": [{"name": "Belegprüfung"}]},
-        {"name": "Rechnung erstellen", "share_of_time": 30, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Rechnung im ERP erzeugen, Positionen und Steuerkennzeichen setzen.",
-         "skills": [{"name": "Rechnungslegung"}]},
-        {"name": "Rechnung prüfen und freigeben", "share_of_time": 20, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Zweite Person prüft Positionen, Konditionen und Empfänger und gibt frei.",
-         "skills": [{"name": "Belegprüfung"}]},
-        {"name": "Rechnung versenden und archivieren", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Versand über den vereinbarten Kanal, Ablage im revisionssicheren Archiv.",
-         "skills": [{"name": "ERP-Auftragsabwicklung"}]}
-      ]
-    },
-    {
-      "name": "Forderungsmanager",
+      "headcount": 6,
       "level": "Fachkraft",
-      "headcount": 4,
-      "archetype": "control-heavy",
-      "purpose": "Ordnet Zahlungseingänge zu, klärt offene Posten und steuert das Mahnwesen.",
-      "description": "Gleicht Zahlungen gegen offene Posten ab, klärt Differenzen mit Kunden und bereitet Mahnläufe vor.",
-      "time_shares_source": "source",
+      "name": "Fakturierungssachbearbeiter",
+      "purpose": "Erstellt, prüft und versendet Rechnungen.",
       "skills": [
-        {"name": "Offene-Posten-Verwaltung", "kind": "knowledge", "level": 4, "importance": "core"},
-        {"name": "Kundenkommunikation", "kind": "skill", "level": 3, "importance": "core"},
-        {"name": "Verhandlungsführung", "kind": "competence", "level": 3, "importance": "supporting"}
+        {
+          "importance": "core",
+          "kind": "knowledge",
+          "level": 4,
+          "name": "Rechnungslegung"
+        },
+        {
+          "importance": "core",
+          "kind": "tool",
+          "level": 4,
+          "name": "ERP-Auftragsabwicklung"
+        },
+        {
+          "importance": "core",
+          "kind": "skill",
+          "level": 3,
+          "name": "Belegprüfung"
+        }
       ],
       "tasks": [
-        {"name": "Zahlungseingänge zuordnen", "share_of_time": 30, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Kontoauszüge gegen offene Posten abgleichen, Teilzahlungen aufteilen.",
-         "skills": [{"name": "Offene-Posten-Verwaltung"}]},
-        {"name": "Offene Posten klären", "share_of_time": 25, "frequency": "daily", "nature": "cognitive", "confidence": "source",
-         "description": "Differenzen recherchieren und mit Kunde oder Vertrieb klären.",
-         "skills": [{"name": "Kundenkommunikation"}]},
-        {"name": "Mahnlauf vorbereiten und prüfen", "share_of_time": 25, "frequency": "weekly", "nature": "cognitive", "confidence": "source",
-         "description": "Mahnvorschlagsliste durchsehen, Ausnahmen herausnehmen, Stufen festlegen.",
-         "skills": [{"name": "Offene-Posten-Verwaltung"}]},
-        {"name": "Zahlungsvereinbarungen abstimmen", "share_of_time": 20, "frequency": "weekly", "nature": "cognitive", "confidence": "source",
-         "description": "Ratenpläne und Stundungen mit Kunden verhandeln und dokumentieren.",
-         "skills": [{"name": "Verhandlungsführung"}]}
-      ]
+        {
+          "confidence": "source",
+          "description": "Lieferscheine, Stundennachweise und Teilleistungen einem Auftrag zuordnen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#fakturierungssachbearbeiter-6-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Leistungsnachweise zusammenstellen",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "Belegprüfung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Rechnung im ERP erzeugen, Positionen und Steuerkennzeichen setzen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#fakturierungssachbearbeiter-6-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Rechnung erstellen",
+          "nature": "cognitive",
+          "share_of_time": 30,
+          "skills": [
+            {
+              "name": "Rechnungslegung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Zweite Person prüft Positionen, Konditionen und Empfänger und gibt frei.",
+          "evidence": [
+            "src-2c6249b3bd2f@#fakturierungssachbearbeiter-6-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Rechnung prüfen und freigeben",
+          "nature": "cognitive",
+          "share_of_time": 20,
+          "skills": [
+            {
+              "name": "Belegprüfung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Versand über den vereinbarten Kanal, Ablage im revisionssicheren Archiv.",
+          "evidence": [
+            "src-2c6249b3bd2f@#fakturierungssachbearbeiter-6-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Rechnung versenden und archivieren",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "ERP-Auftragsabwicklung"
+            }
+          ]
+        }
+      ],
+      "time_shares_source": "source"
     },
     {
-      "name": "Teamleitung Order-to-Cash",
-      "level": "Führung",
-      "headcount": 1,
-      "archetype": "relationship-heavy",
-      "purpose": "Verantwortet den Prozess, entscheidet Ausnahmen und steuert das Team.",
-      "description": "Entscheidet Eskalationen, berichtet Kennzahlen, führt und entwickelt das Team.",
-      "time_shares_source": "estimated",
+      "archetype": "control-heavy",
+      "description": "Gleicht Zahlungen gegen offene Posten ab, klärt Differenzen mit Kunden und bereitet Mahnläufe vor.",
+      "evidence": [
+        "src-2c6249b3bd2f@#forderungsmanager-4-stellen"
+      ],
+      "headcount": 4,
+      "level": "Fachkraft",
+      "name": "Forderungsmanager",
+      "purpose": "Ordnet Zahlungseingänge zu, klärt offene Posten und steuert das Mahnwesen.",
       "skills": [
-        {"name": "Führung", "kind": "competence", "level": 4, "importance": "core"},
-        {"name": "Risikoeinschätzung", "kind": "competence", "level": 4, "importance": "core"},
-        {"name": "Prozesssteuerung", "kind": "knowledge", "level": 3, "importance": "core"}
+        {
+          "importance": "core",
+          "kind": "knowledge",
+          "level": 4,
+          "name": "Offene-Posten-Verwaltung"
+        },
+        {
+          "importance": "core",
+          "kind": "skill",
+          "level": 3,
+          "name": "Kundenkommunikation"
+        },
+        {
+          "importance": "supporting",
+          "kind": "competence",
+          "level": 3,
+          "name": "Verhandlungsführung"
+        }
       ],
       "tasks": [
-        {"name": "Ausnahmen und Eskalationen entscheiden", "share_of_time": 35, "frequency": "daily", "nature": "cognitive", "confidence": "inferred",
-         "description": "Limitüberschreitungen, Kulanz, Stundungen und Mahnstopps entscheiden.",
-         "skills": [{"name": "Risikoeinschätzung"}]},
-        {"name": "Kennzahlen berichten", "share_of_time": 25, "frequency": "monthly", "nature": "cognitive", "confidence": "inferred",
-         "description": "Durchlaufzeiten, Außenstände und Fehlerquoten aufbereiten und berichten.",
-         "skills": [{"name": "Prozesssteuerung"}]},
-        {"name": "Team steuern und einarbeiten", "share_of_time": 25, "frequency": "weekly", "nature": "cognitive", "confidence": "inferred",
-         "description": "Kapazität planen, einarbeiten, Gespräche führen.",
-         "skills": [{"name": "Führung"}]},
-        {"name": "Prozessänderungen abstimmen", "share_of_time": 15, "frequency": "monthly", "nature": "cognitive", "confidence": "inferred",
-         "description": "Änderungen mit angrenzenden Bereichen, Revision und IT abstimmen.",
-         "skills": [{"name": "Prozesssteuerung"}]}
-      ]
+        {
+          "confidence": "source",
+          "description": "Kontoauszüge gegen offene Posten abgleichen, Teilzahlungen aufteilen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#forderungsmanager-4-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Zahlungseingänge zuordnen",
+          "nature": "cognitive",
+          "share_of_time": 30,
+          "skills": [
+            {
+              "name": "Offene-Posten-Verwaltung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Differenzen recherchieren und mit Kunde oder Vertrieb klären.",
+          "evidence": [
+            "src-2c6249b3bd2f@#forderungsmanager-4-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Offene Posten klären",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "Kundenkommunikation"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Mahnvorschlagsliste durchsehen, Ausnahmen herausnehmen, Stufen festlegen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#forderungsmanager-4-stellen"
+          ],
+          "frequency": "weekly",
+          "name": "Mahnlauf vorbereiten und prüfen",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "Offene-Posten-Verwaltung"
+            }
+          ]
+        },
+        {
+          "confidence": "source",
+          "description": "Ratenpläne und Stundungen mit Kunden verhandeln und dokumentieren.",
+          "evidence": [
+            "src-2c6249b3bd2f@#forderungsmanager-4-stellen"
+          ],
+          "frequency": "weekly",
+          "name": "Zahlungsvereinbarungen abstimmen",
+          "nature": "cognitive",
+          "share_of_time": 20,
+          "skills": [
+            {
+              "name": "Verhandlungsführung"
+            }
+          ]
+        }
+      ],
+      "time_shares_source": "source"
+    },
+    {
+      "archetype": "relationship-heavy",
+      "description": "Entscheidet Eskalationen, berichtet Kennzahlen, führt und entwickelt das Team.",
+      "evidence": [
+        "src-2c6249b3bd2f@#teamleitung-order-to-cash-1-stelle"
+      ],
+      "headcount": 1,
+      "level": "Führung",
+      "name": "Teamleitung Order-to-Cash",
+      "purpose": "Verantwortet den Prozess, entscheidet Ausnahmen und steuert das Team.",
+      "skills": [
+        {
+          "importance": "core",
+          "kind": "competence",
+          "level": 4,
+          "name": "Führung"
+        },
+        {
+          "importance": "core",
+          "kind": "competence",
+          "level": 4,
+          "name": "Risikoeinschätzung"
+        },
+        {
+          "importance": "core",
+          "kind": "knowledge",
+          "level": 3,
+          "name": "Prozesssteuerung"
+        }
+      ],
+      "tasks": [
+        {
+          "confidence": "inferred",
+          "description": "Limitüberschreitungen, Kulanz, Stundungen und Mahnstopps entscheiden.",
+          "frequency": "daily",
+          "name": "Ausnahmen und Eskalationen entscheiden",
+          "nature": "cognitive",
+          "share_of_time": 35,
+          "skills": [
+            {
+              "name": "Risikoeinschätzung"
+            }
+          ]
+        },
+        {
+          "confidence": "inferred",
+          "description": "Durchlaufzeiten, Außenstände und Fehlerquoten aufbereiten und berichten.",
+          "frequency": "monthly",
+          "name": "Kennzahlen berichten",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "Prozesssteuerung"
+            }
+          ]
+        },
+        {
+          "confidence": "inferred",
+          "description": "Kapazität planen, einarbeiten, Gespräche führen.",
+          "frequency": "weekly",
+          "name": "Team steuern und einarbeiten",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "Führung"
+            }
+          ]
+        },
+        {
+          "confidence": "inferred",
+          "description": "Änderungen mit angrenzenden Bereichen, Revision und IT abstimmen.",
+          "frequency": "monthly",
+          "name": "Prozessänderungen abstimmen",
+          "nature": "cognitive",
+          "share_of_time": 15,
+          "skills": [
+            {
+              "name": "Prozesssteuerung"
+            }
+          ]
+        }
+      ],
+      "time_shares_source": "estimated"
     }
-  ]
+  ],
+  "source": "Stellenbeschreibungen Order-to-Cash, anonymisiert, Stand 2026-01"
 }
