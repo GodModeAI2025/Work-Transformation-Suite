@@ -59,6 +59,34 @@
       "ERP-System"
     ]
   },
+  "banken": {
+    "aufgaben": 40,
+    "beschreibung": "Kreditinstitute, Sparkassen und Genossenschaftsbanken: Kundenberatung, Kreditgeschäft, Zahlungsverkehr, Risikocontrolling, Compliance und Geldwäscheprävention, Meldewesen.",
+    "familien": [
+      "Markt",
+      "Marktfolge",
+      "Steuerung und Compliance"
+    ],
+    "label": "Banken",
+    "rechtsthemen": [
+      "bankaufsicht",
+      "geldwaesche",
+      "wertpapier",
+      "verbraucherkredit",
+      "datenschutz",
+      "mitbestimmung",
+      "informationssicherheit",
+      "ki_verordnung",
+      "dora"
+    ],
+    "rollen": 8,
+    "systeme": [
+      "Kernbankensystem",
+      "CRM-System",
+      "Dokumentenmanagementsystem",
+      "Business-Intelligence-Werkzeug"
+    ]
+  },
   "bauwirtschaft": {
     "aufgaben": 45,
     "beschreibung": "Bauunternehmen und Planungsbüros im Hoch-, Tief- und Ingenieurbau: Kalkulation, Arbeitsvorbereitung, Bauleitung, Abrechnung, Nachträge, Arbeitsschutz.",
@@ -83,6 +111,34 @@
       "CAD-/BIM-Software",
       "Bautagebuch-App",
       "ERP-System"
+    ]
+  },
+  "chemie_pharma": {
+    "aufgaben": 45,
+    "beschreibung": "Chemie- und Pharmaunternehmen: Produktion nach GMP, Qualitätskontrolle und Qualitätssicherung, Zulassung, Pharmakovigilanz, Anlagensicherheit, Gefahrstoffe, Supply Chain.",
+    "familien": [
+      "Produktion",
+      "Qualität",
+      "Regulatory, Sicherheit und Umwelt"
+    ],
+    "label": "Chemie und Pharma",
+    "rechtsthemen": [
+      "gmp",
+      "arzneimittel",
+      "chemikalien",
+      "anlagensicherheit",
+      "gefahrstoffe",
+      "arbeitsschutz",
+      "mitbestimmung",
+      "datenschutz",
+      "umweltrecht"
+    ],
+    "rollen": 9,
+    "systeme": [
+      "ERP-System",
+      "Laborinformationssystem (LIMS)",
+      "Manufacturing Execution System (MES)",
+      "Dokumentenmanagementsystem"
     ]
   },
   "energieversorgung": {
@@ -111,6 +167,171 @@
       "Netzleitsystem (SCADA)",
       "Geoinformationssystem (GIS)",
       "Zählerfernauslesung (GWA/SMGW)"
+    ]
+  },
+  "gesundheitswesen": {
+    "aufgaben": 45,
+    "beschreibung": "Krankenhäuser, Medizinische Versorgungszentren und Pflegeeinrichtungen: Patientenaufnahme, Pflege, ärztlicher Dienst, Medizincontrolling, Hygiene, Medizintechnik, Apotheke.",
+    "familien": [
+      "Medizintechnik und Apotheke",
+      "Patientenmanagement und Erlöse",
+      "Patientenversorgung"
+    ],
+    "label": "Gesundheitswesen",
+    "rechtsthemen": [
+      "patientendaten",
+      "krankenhausrecht",
+      "medizinprodukte",
+      "hygiene",
+      "arbeitsschutz",
+      "mitbestimmung",
+      "datenschutz",
+      "ki_verordnung"
+    ],
+    "rollen": 9,
+    "systeme": [
+      "Krankenhausinformationssystem (KIS)",
+      "Dokumentenmanagementsystem",
+      "HR-System"
+    ]
+  },
+  "handel": {
+    "aufgaben": 35,
+    "beschreibung": "Einzel-, Groß- und Onlinehandel: Einkauf und Category Management, Filialbetrieb, E-Commerce, Warenwirtschaft, Kundenservice, Retouren.",
+    "familien": [
+      "E-Commerce und Kundenservice",
+      "Einkauf und Sortiment",
+      "Vertrieb stationär"
+    ],
+    "label": "Handel",
+    "rechtsthemen": [
+      "verbraucherrecht",
+      "preisangaben",
+      "lebensmittelrecht",
+      "verpackung",
+      "kassensicherung",
+      "datenschutz",
+      "mitbestimmung",
+      "arbeitsschutz",
+      "lieferkette"
+    ],
+    "rollen": 7,
+    "systeme": [
+      "Warenwirtschaftssystem",
+      "Shopsystem",
+      "Kassensystem (TSE)",
+      "CRM-System",
+      "ERP-System"
+    ]
+  },
+  "logistik": {
+    "aufgaben": 35,
+    "beschreibung": "Speditionen, Kontraktlogistiker und Werkslogistik: Disposition, Lager, Zoll, Gefahrgut, Fuhrpark, Kundenservice.",
+    "familien": [
+      "Lager",
+      "Transport",
+      "Zoll und Kundenservice"
+    ],
+    "label": "Logistik und Transport",
+    "rechtsthemen": [
+      "transportrecht",
+      "gefahrgut",
+      "zoll",
+      "fahrpersonal",
+      "arbeitsschutz",
+      "mitbestimmung",
+      "datenschutz",
+      "lieferkette"
+    ],
+    "rollen": 7,
+    "systeme": [
+      "Transportmanagementsystem (TMS)",
+      "Lagerverwaltungssystem (WMS)",
+      "ERP-System",
+      "CRM-System"
+    ]
+  },
+  "maschinenbau": {
+    "aufgaben": 50,
+    "beschreibung": "Hersteller von Maschinen, Anlagen und Komponenten: Vertrieb erklärungsbedürftiger Güter, Konstruktion, Automatisierung, Fertigung, Montage, Inbetriebnahme, Service, Exportkontrolle.",
+    "familien": [
+      "Engineering",
+      "Fertigung und Service",
+      "Vertrieb und Projektabwicklung"
+    ],
+    "label": "Maschinen- und Anlagenbau",
+    "rechtsthemen": [
+      "maschinensicherheit",
+      "exportkontrolle",
+      "produktsicherheit",
+      "arbeitsschutz",
+      "mitbestimmung",
+      "datenschutz",
+      "lieferkette",
+      "vertragsrecht_anlagenbau"
+    ],
+    "rollen": 10,
+    "systeme": [
+      "ERP-System",
+      "Produktlebenszyklus-Management (PLM)",
+      "CAD-/BIM-Software",
+      "Manufacturing Execution System (MES)",
+      "CRM-System"
+    ]
+  },
+  "oeffentliche_verwaltung": {
+    "aufgaben": 35,
+    "beschreibung": "Kommunen, Landkreise und Landesbehörden: Bürgerservice, Sozialleistungen, Bauaufsicht, Ordnungswesen, Kämmerei, Personal, Digitalisierung.",
+    "familien": [
+      "Bürgerdienste und Ordnung",
+      "Soziales und Bauen",
+      "Steuerung und Querschnitt"
+    ],
+    "label": "Öffentliche Verwaltung",
+    "rechtsthemen": [
+      "verwaltungsverfahren",
+      "ozg",
+      "kommunalhaushalt",
+      "sozialrecht",
+      "datenschutz",
+      "vergabe",
+      "mitbestimmung_oeffentlich",
+      "ki_verordnung",
+      "informationssicherheit"
+    ],
+    "rollen": 7,
+    "systeme": [
+      "Fachverfahren der Verwaltung",
+      "Dokumentenmanagementsystem",
+      "ERP-System"
+    ]
+  },
+  "versicherungen": {
+    "aufgaben": 35,
+    "beschreibung": "Erst- und Rückversicherer sowie Vermittlerorganisationen: Antrag und Underwriting, Bestandsführung, Schaden- und Leistungsbearbeitung, Aktuariat, Vertriebsunterstützung, Compliance.",
+    "familien": [
+      "Betrieb",
+      "Schaden und Leistung",
+      "Steuerung und Vertrieb"
+    ],
+    "label": "Versicherungen",
+    "rechtsthemen": [
+      "versicherungsvertrag",
+      "versicherungsaufsicht",
+      "vermittler",
+      "datenschutz",
+      "mitbestimmung",
+      "geldwaesche",
+      "informationssicherheit",
+      "ki_verordnung",
+      "dora"
+    ],
+    "rollen": 7,
+    "systeme": [
+      "Bestandsführungssystem Versicherung",
+      "CRM-System",
+      "Dokumentenmanagementsystem",
+      "Business-Intelligence-Werkzeug"
     ]
   },
   "wasserversorgung": {

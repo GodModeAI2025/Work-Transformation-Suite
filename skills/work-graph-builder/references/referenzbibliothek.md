@@ -11,8 +11,25 @@ damit ein Projekt nicht bei null beginnt; was am Haus gilt, bestätigt das Haus.
 
 ## Branchen
 
-`library_catalog.py` zeigt den Bestand. Ausgeliefert werden `allgemein` (Querschnitt: Finanzen, Personal, Einkauf, IT, Recht
-und Compliance), `bauwirtschaft`, `energieversorgung`, `wasserversorgung` und `automobilindustrie`. Jede Rolle hat einen Zweck,
+`library_catalog.py` zeigt den Bestand. Ausgeliefert werden dreizehn Pakete:
+
+| Paket | Inhalt |
+|---|---|
+| `allgemein` | Querschnitt: Finanzen, Personal, Einkauf, IT, Recht und Compliance |
+| `bauwirtschaft` | Kalkulation, Bauleitung, Planung, Abrechnung |
+| `energieversorgung` | Netzbetrieb, Marktkommunikation, Messwesen, Handel, Regulierung |
+| `wasserversorgung` | Wasserwerk, Rohrnetz, Labor, Abwasser |
+| `automobilindustrie` | Entwicklung, Fertigungsplanung, Qualität, Lieferkette |
+| `maschinenbau` | Vertrieb und Kalkulation, Konstruktion, Steuerungstechnik, Fertigung, Service, Exportkontrolle |
+| `chemie_pharma` | Produktion, Qualitätskontrolle, Validierung, Sachkundige Person, Regulatory Affairs, Pharmakovigilanz |
+| `gesundheitswesen` | Station, Patientenaufnahme, Medizincontrolling, Abrechnung, Hygiene, Medizintechnik, Apotheke |
+| `oeffentliche_verwaltung` | Bürgerbüro, Ordnungsamt, Sozialleistungen, Bauaufsicht, Kämmerei, Personal, Digitalisierung |
+| `handel` | Category Management, Disposition, Filiale, E-Commerce, Kundenservice, Retouren |
+| `logistik` | Disposition, Fuhrpark, Lager, Gefahrgut, Zoll, Kundenbetreuung |
+| `banken` | Privat- und Firmenkunden, Kredit, Zahlungsverkehr, Risikocontrolling, Meldewesen, Geldwäscheprävention |
+| `versicherungen` | Underwriting, Bestand, Schaden, Leistung, Aktuariat, Vermittlerbetreuung, Compliance |
+
+Jede Rolle hat einen Zweck,
 eine Beschreibung, einen Archetyp, die Einstufung „reguliert“, fünf typische Aufgaben mit Zeitanteilen und Skills, und in
 `quelle.md` die Rechtsgrundlagen (Deutschland) und typischen Systeme.
 

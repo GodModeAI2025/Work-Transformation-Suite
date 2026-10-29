@@ -54,7 +54,7 @@
       "stichwoerter": [
         "bewerb",
         "recruit",
-        "bonität",
+        "bonitat",
         "kredit",
         "netzfuehrer",
         "leitstelle",
@@ -351,7 +351,7 @@
       "stichwoerter": [
         "regulierung",
         "netzentgelt",
-        "erlös",
+        "erlos",
         "anreiz"
       ],
       "thema": "Anreizregulierung und Netzentgelte"
@@ -499,7 +499,7 @@
         "software",
         "funktion",
         "sicherheit",
-        "e/e",
+        "e e",
         "entwickl"
       ],
       "thema": "Funktionale Sicherheit und Automotive SPICE"
@@ -556,6 +556,801 @@
         "grosshandel"
       ],
       "thema": "Energiegroßhandel"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 12 ff., 8, 11, 16, 17, 36 HinSchG",
+      "gesetz": "HinSchG",
+      "gilt": "Compliance, Recht, Personal, interne Revision",
+      "id": "hinweisgeber",
+      "pflicht": "Interne Meldestelle ab 50 Beschäftigten, Vertraulichkeit der Identität, Eingangsbestätigung binnen sieben Tagen, Rückmeldung binnen drei Monaten, Dokumentation und Löschfristen; Repressalienverbot mit Beweislastumkehr. Ein Agent darf Meldungen nur in diesem Kanal verarbeiten.",
+      "stichwoerter": [
+        "compliance",
+        "hinweisgeb",
+        "meldestelle",
+        "whistleblow",
+        "syndikus",
+        "rechtsabteilung",
+        "jurist",
+        "revision"
+      ],
+      "thema": "Hinweisgeberschutz"
+    },
+    {
+      "branchen": [
+        "energieversorgung"
+      ],
+      "fundstelle": "§§ 3, 19 ff., 29 ff., 49 ff. MsbG; §§ 31 ff. MessEG; § 37 MessEV",
+      "gesetz": "MsbG, MessEG, MessEV",
+      "gilt": "Messstellenbetrieb, Abrechnung, Netzanschluss",
+      "id": "messwesen",
+      "pflicht": "Rollout intelligenter Messsysteme nach § 29 ff. MsbG mit Pflichteinbaufällen, Datenverarbeitung nur über das Smart-Meter-Gateway (§§ 49 ff. MsbG), Verwendungspflicht geeichter Messgeräte und Eichfristen; Abrechnung nur mit konformen Messwerten.",
+      "stichwoerter": [
+        "messstell",
+        "zahler",
+        "ablesung",
+        "messwert",
+        "smart meter",
+        "gateway",
+        "abrechnung"
+      ],
+      "thema": "Messstellenbetrieb und Eichrecht"
+    },
+    {
+      "branchen": [
+        "gesundheitswesen"
+      ],
+      "fundstelle": "§ 203 StGB; § 630f BGB; Art. 9 DSGVO; § 22 BDSG; §§ 341 ff. SGB V; Datenschutzvorschriften der Landeskrankenhausgesetze",
+      "gesetz": "StGB, BGB, DSGVO, BDSG, SGB V, Landeskrankenhausgesetze",
+      "gilt": "alle Rollen mit Zugriff auf Behandlungs- oder Abrechnungsdaten",
+      "id": "patientendaten",
+      "pflicht": "Schweigepflicht gilt auch für Hilfspersonen und mitwirkende Dienstleister (§ 203 Abs. 3 StGB), Gesundheitsdaten sind besondere Kategorien mit Verarbeitungsverbot und engen Ausnahmen, Behandlungsdokumentation ist zeitnah und fälschungssicher zu führen. Ein Agent mit Zugriff auf Patientendaten braucht Rechtsgrundlage, Zweckbindung, Rollenkonzept und Protokollierung; Verarbeitung außerhalb der Einrichtung nur mit Auftragsverarbeitung und Schweigepflichtverpflichtung.",
+      "stichwoerter": [
+        "patient",
+        "station",
+        "aufnahme",
+        "arzt",
+        "pflege",
+        "behandl",
+        "befund",
+        "medizin",
+        "abrechnung",
+        "apothek"
+      ],
+      "thema": "Patientengeheimnis und Gesundheitsdaten"
+    },
+    {
+      "branchen": [
+        "gesundheitswesen"
+      ],
+      "fundstelle": "§ 17b KHG; § 17c KHG; §§ 7 ff. KHEntgG; § 301 SGB V; § 275c SGB V; Fallpauschalenkatalog und Deutsche Kodierrichtlinien",
+      "gesetz": "KHG, KHEntgG, SGB V",
+      "gilt": "Medizincontrolling, Patientenabrechnung, Aufnahme",
+      "id": "krankenhausrecht",
+      "pflicht": "Abrechnung über Fallpauschalen und Zusatzentgelte, Kodierung nach ICD-10-GM und OPS gemäß Deutschen Kodierrichtlinien, Datenübermittlung nach § 301 SGB V, Prüfungen durch den Medizinischen Dienst mit Prüfquoten und Aufschlägen bei Fehlabrechnung. Kodiervorschläge eines Agenten sind durch die verantwortliche Stelle freizugeben.",
+      "stichwoerter": [
+        "abrechnung",
+        "medizincontroll",
+        "kodier",
+        "drg",
+        "fallpauschal",
+        "aufnahme",
+        "entlass",
+        "verweildauer"
+      ],
+      "thema": "Krankenhausfinanzierung und Abrechnung"
+    },
+    {
+      "branchen": [
+        "gesundheitswesen"
+      ],
+      "fundstelle": "VO (EU) 2017/745; §§ 2 ff., 83 ff. MPDG; §§ 4, 5, 7, 10, 11, 12 MPBetreibV",
+      "gesetz": "MDR, MPDG, MPBetreibV",
+      "gilt": "Medizintechnik, Station, Qualitätsmanagement",
+      "id": "medizinprodukte",
+      "pflicht": "Betreiberpflichten: Einweisung vor Anwendung, Medizinproduktebuch und Bestandsverzeichnis, sicherheitstechnische und messtechnische Kontrollen in festen Fristen, Meldung von Vorkommnissen an das BfArM; Beauftragter für Medizinproduktesicherheit ab 20 Beschäftigten (§ 6 MPBetreibV). Software mit medizinischer Zweckbestimmung ist selbst Medizinprodukt.",
+      "stichwoerter": [
+        "medizintechn",
+        "gerat",
+        "wartung",
+        "prufung",
+        "einweisung",
+        "instandhalt",
+        "vorkommnis"
+      ],
+      "thema": "Medizinprodukte und Betreiberpflichten"
+    },
+    {
+      "branchen": [
+        "gesundheitswesen"
+      ],
+      "fundstelle": "§§ 23, 36 IfSG; Hygieneverordnungen der Länder; KRINKO-Empfehlungen nach § 23 Abs. 1 IfSG",
+      "gesetz": "IfSG, Landeshygieneverordnungen, KRINKO-Empfehlungen",
+      "gilt": "Hygienefachkraft, Station, Pflege",
+      "id": "hygiene",
+      "pflicht": "Hygieneplan, Aufzeichnung nosokomialer Infektionen und Erreger mit Resistenzen, Bewertung und Ableitung von Maßnahmen, Hygienefachpersonal in vorgeschriebener Besetzung, Meldepflichten nach §§ 6 ff. IfSG. Auswertungen eines Agenten ersetzen nicht die Bewertung durch Hygienefachkraft und Krankenhaushygieniker.",
+      "stichwoerter": [
+        "hygiene",
+        "infektion",
+        "desinfekt",
+        "station",
+        "pflege",
+        "erreger",
+        "ausbruch"
+      ],
+      "thema": "Infektionsschutz und Krankenhaushygiene"
+    },
+    {
+      "branchen": [
+        "oeffentliche_verwaltung"
+      ],
+      "fundstelle": "§§ 9, 10, 24, 28, 35, 35a, 37, 39, 41, 45, 46 VwVfG",
+      "gesetz": "VwVfG (Bund und Länder)",
+      "gilt": "alle Sachbearbeitungen mit Außenwirkung",
+      "id": "verwaltungsverfahren",
+      "pflicht": "Untersuchungsgrundsatz, Anhörung vor belastenden Verwaltungsakten, Begründungspflicht, Bekanntgabe; vollautomatisierter Erlass eines Verwaltungsakts nur, wenn eine Rechtsvorschrift ihn zulässt und kein Ermessen und kein Beurteilungsspielraum besteht (§ 35a VwVfG). Ein Agent bereitet vor, die Entscheidung trifft die zuständige Person.",
+      "stichwoerter": [
+        "sachbearbeit",
+        "bescheid",
+        "antrag",
+        "burgerburo",
+        "ordnungsamt",
+        "bauaufsicht",
+        "anhorung",
+        "genehmig",
+        "verwaltung"
+      ],
+      "thema": "Verwaltungsverfahren und automatisierte Entscheidung"
+    },
+    {
+      "branchen": [
+        "oeffentliche_verwaltung"
+      ],
+      "fundstelle": "§§ 1 ff. OZG; OZGÄndG 2024; §§ 2, 5, 6 EGovG; VO (EU) 910/2014; Registermodernisierungsgesetz",
+      "gesetz": "OZG, OZG-Änderungsgesetz, EGovG, eIDAS-VO",
+      "gilt": "Digitalisierung, Bürgerservice, Antragsbearbeitung",
+      "id": "ozg",
+      "pflicht": "Verwaltungsleistungen sind elektronisch über Verwaltungsportale anzubieten, Schriftformersatz durch elektronische Identifizierung, Nutzerkonten (BundID, Organisationskonto), Einmal-Erhebung von Nachweisen nach dem Once-Only-Prinzip, Barrierefreiheit nach BITV 2.0. Digitale Antragswege dürfen den schriftlichen Weg nicht ausschließen.",
+      "stichwoerter": [
+        "digitalisierung",
+        "online",
+        "portal",
+        "antrag",
+        "burgerburo",
+        "verwaltungsleistung",
+        "nutzerkonto",
+        "formular"
+      ],
+      "thema": "Digitale Verwaltungsleistungen"
+    },
+    {
+      "branchen": [
+        "oeffentliche_verwaltung"
+      ],
+      "fundstelle": "Haushaltsgrundsätze, Haushaltssatzung, Bewirtschaftung, Jahresabschluss und Kassenvorschriften nach Landesrecht (z. B. GO und KomHVO)",
+      "gesetz": "Gemeindeordnung und Kommunalhaushaltsverordnung des jeweiligen Landes",
+      "gilt": "Kämmerei, Zuwendungsstellen, Fachämter mit Budget",
+      "id": "kommunalhaushalt",
+      "pflicht": "Haushaltsplan mit Ermächtigungen, Vier-Augen-Prinzip bei Anordnung und Auszahlung (Trennung von Anordnung und Kasse), Sperren und Nachtragshaushalt, überörtliche Prüfung. Ein Agent darf Buchungen und Anordnungen vorbereiten, Anordnungsbefugnis bleibt bei der Person.",
+      "stichwoerter": [
+        "kammerei",
+        "haushalt",
+        "haushaltsmittel",
+        "buchung",
+        "jahresabschluss",
+        "fordermittel",
+        "auszahlungsanordnung",
+        "anordnungsbefug",
+        "kasse",
+        "zuwendung"
+      ],
+      "thema": "Kommunales Haushalts- und Kassenrecht"
+    },
+    {
+      "branchen": [
+        "oeffentliche_verwaltung"
+      ],
+      "fundstelle": "§§ 14 ff. SGB I; §§ 20, 24, 31a, 33, 35, 67 ff. SGB X; Leistungsvoraussetzungen in SGB II und SGB XII",
+      "gesetz": "SGB I, SGB II, SGB X, SGB XII",
+      "gilt": "Sozialleistungen, Jobcenter, Sozialamt",
+      "id": "sozialrecht",
+      "pflicht": "Beratungs- und Auskunftspflichten, Amtsermittlung, Sozialgeheimnis mit eigenständigem Datenschutzregime (§§ 67 ff. SGB X), vollautomatisierte Entscheidungen nur ohne Ermessen (§ 31a SGB X), Bescheide mit Begründung und Rechtsbehelfsbelehrung. Bedarfsprüfungen eines Agenten sind Vorschläge.",
+      "stichwoerter": [
+        "sozialleist",
+        "sozialamt",
+        "jobcenter",
+        "sozialhilfe",
+        "bedarfsgemeinschaft",
+        "bewilligung",
+        "unterhalt",
+        "wohngeld",
+        "grundsicherung",
+        "burgergeld"
+      ],
+      "thema": "Sozialleistungen und Sozialdatenschutz"
+    },
+    {
+      "branchen": [
+        "oeffentliche_verwaltung"
+      ],
+      "fundstelle": "§§ 78 ff., 80 Abs. 1 Nr. 21 BPersVG 2021; entsprechende Vorschriften der Landespersonalvertretungsgesetze",
+      "gesetz": "BPersVG, Landespersonalvertretungsgesetze",
+      "gilt": "jede Rolle, in der ein Agent Arbeitsergebnisse oder Nutzung protokolliert",
+      "id": "mitbestimmung_oeffentlich",
+      "pflicht": "Statt des BetrVG gilt das Personalvertretungsrecht: Einführung und Anwendung technischer Einrichtungen, die Verhalten oder Leistung überwachen können, sowie Gestaltung von Arbeitsplätzen und Arbeitsverfahren sind mitbestimmungspflichtig; Dienstvereinbarung vor Einführung eines Agenten, Beteiligung bei Fortbildungsfragen.",
+      "stichwoerter": [
+        "*"
+      ],
+      "thema": "Personalvertretung im öffentlichen Dienst"
+    },
+    {
+      "branchen": [
+        "maschinenbau"
+      ],
+      "fundstelle": "VO (EU) 2023/1230 (anwendbar ab 20.01.2027); RL 2006/42/EG mit 9. ProdSV bis dahin; §§ 3 ff. ProdSG; §§ 3 ff., 10 ff. BetrSichV; EN ISO 12100, EN ISO 13849-1",
+      "gesetz": "Maschinenverordnung, Maschinenrichtlinie, ProdSG, BetrSichV",
+      "gilt": "Konstruktion, Steuerungstechnik, Technische Redaktion, Service",
+      "id": "maschinensicherheit",
+      "pflicht": "Risikobeurteilung über den Lebenszyklus, grundlegende Sicherheits- und Gesundheitsschutzanforderungen, technische Unterlagen und Betriebsanleitung in Landessprache, Konformitätserklärung und CE-Kennzeichnung; die Maschinenverordnung nennt erstmals Anforderungen an Steuerungen mit selbstentwickelndem Verhalten. Konstruktions- und Dokumentationsvorschläge eines Agenten sind durch die verantwortliche Fachkraft freizugeben.",
+      "stichwoerter": [
+        "konstrukt",
+        "steuerung",
+        "inbetriebnahme",
+        "service",
+        "risikobeurteil",
+        "betriebsanleitung",
+        "technische redak",
+        "sicherheitsfunktion",
+        "ce kennzeichn",
+        "konformitat"
+      ],
+      "thema": "Maschinensicherheit und CE-Kennzeichnung"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§§ 4, 17, 18 AWG; §§ 8 ff., 74 ff. AWV; VO (EU) 2021/821 mit Anhang I; länderbezogene Sanktionsverordnungen der EU",
+      "gesetz": "AWG, AWV, EU-Dual-Use-Verordnung, EU-Sanktionsverordnungen",
+      "gilt": "Exportkontrolle, Vertrieb, Versand, Projektleitung mit Auslandsbezug",
+      "id": "exportkontrolle",
+      "pflicht": "Prüfung von Gut, Verwendungszweck, Empfänger und Land vor jeder Ausfuhr und jedem technischen Datentransfer, Genehmigungspflichten für gelistete Güter und Catch-all-Fälle, Sanktionslistenprüfung bei Geschäftspartnern, Ausfuhrverantwortlicher auf Leitungsebene; Verstöße sind Straftaten. Ein Agent darf Listen vorprüfen, die Freigabe trifft der Exportkontrollbeauftragte.",
+      "stichwoerter": [
+        "export",
+        "ausfuhrgenehmig",
+        "zoll",
+        "versand",
+        "sanktion",
+        "embargo",
+        "dual use",
+        "guterliste",
+        "endverbleib"
+      ],
+      "thema": "Exportkontrolle und Sanktionen"
+    },
+    {
+      "branchen": [
+        "maschinenbau"
+      ],
+      "fundstelle": "§§ 631 ff., 640, 634a, 642, 650 BGB; § 377 HGB; VOB/B oder FIDIC bei Vereinbarung; Orgalim-Lieferbedingungen",
+      "gesetz": "BGB, HGB, VOB/B, FIDIC (vertraglich)",
+      "gilt": "Vertrieb, Kalkulation, Projektleitung",
+      "id": "vertragsrecht_anlagenbau",
+      "pflicht": "Leistungsbeschreibung und Nachtragsregeln, Abnahme als Fälligkeits- und Gefahrübergangstatbestand, Mängelrechte mit Verjährung ab Abnahme, Untersuchungs- und Rügepflicht im Handelskauf, Haftungs- und Pönaleregelungen; Angebote und Nachträge eines Agenten sind kaufmännisch und rechtlich freizugeben.",
+      "stichwoerter": [
+        "projektleit",
+        "angebot",
+        "kalkulat",
+        "vertrieb",
+        "abnahme",
+        "anlagenbau",
+        "nachtrag",
+        "claim",
+        "vertragsverhandl"
+      ],
+      "thema": "Werkvertrag und Abnahme im Anlagenbau"
+    },
+    {
+      "branchen": [
+        "handel"
+      ],
+      "fundstelle": "§§ 312 ff., 355 ff., 327 ff., 434 ff., 474 ff. BGB; Art. 246a EGBGB",
+      "gesetz": "BGB, EGBGB",
+      "gilt": "Kundenservice, Retouren, E-Commerce, Filiale",
+      "id": "verbraucherrecht",
+      "pflicht": "Informationspflichten im Fernabsatz, Widerrufsrecht mit Belehrung und Musterformular, Gewährleistung mit Beweislastumkehr im ersten Jahr beim Verbrauchsgüterkauf, Aktualisierungspflicht bei digitalen Produkten, Buttonlösung und Kündigungsbutton bei Online-Verträgen. Antworten eines Agenten im Kundenservice dürfen keine Rechte verkürzen.",
+      "stichwoerter": [
+        "kunde",
+        "retoure",
+        "widerruf",
+        "e commerce",
+        "online",
+        "verkauf",
+        "service",
+        "reklamation",
+        "gewahrleist",
+        "garantie"
+      ],
+      "thema": "Verbraucherverträge und Gewährleistung"
+    },
+    {
+      "branchen": [
+        "handel"
+      ],
+      "fundstelle": "§§ 3, 4, 11 PAngV; §§ 5, 5a UWG; Anhang zu § 3 Abs. 3 UWG",
+      "gesetz": "PAngV, UWG",
+      "gilt": "Category Management, E-Commerce, Filiale, Marketing",
+      "id": "preisangaben",
+      "pflicht": "Gesamtpreise mit Umsatzsteuer, Grundpreise je Mengeneinheit, bei Preisermäßigungen Angabe des niedrigsten Preises der letzten 30 Tage, Verbot irreführender Werbung und versteckter Werbung. Automatisch erzeugte Preisauszeichnungen und Aktionen sind vor Veröffentlichung zu prüfen.",
+      "stichwoerter": [
+        "preis",
+        "category",
+        "sortiment",
+        "aktion",
+        "werbung",
+        "filial",
+        "e commerce",
+        "rabatt",
+        "angebot"
+      ],
+      "thema": "Preisangaben und Werbung"
+    },
+    {
+      "branchen": [
+        "handel"
+      ],
+      "fundstelle": "§§ 5, 11, 17 LFGB; VO (EU) 1169/2011; VO (EG) 852/2004 Art. 4, 5; §§ 3, 4 LMHV",
+      "gesetz": "LFGB, LMIV, EU-Hygieneverordnung, LMHV",
+      "gilt": "Lebensmittelhandel, Filiale, Category Management",
+      "id": "lebensmittelrecht",
+      "pflicht": "Verkehrsfähigkeit, Kennzeichnung mit Zutaten, Allergenen, Nährwerten und Mindesthaltbarkeit, Rückverfolgbarkeit eine Stufe vor- und rückwärts, HACCP-basierte Eigenkontrolle, Kühlkette, Schulungspflicht; bei Rückrufen Meldung an die Behörde. Sortiments- und Kennzeichnungsdaten eines Agenten sind gegen Herstellerangaben zu prüfen.",
+      "stichwoerter": [
+        "lebensmittel",
+        "frische",
+        "filial",
+        "kennzeichn",
+        "mhd",
+        "haccp",
+        "sortiment",
+        "kuhlkette",
+        "ruckruf"
+      ],
+      "thema": "Lebensmittelsicherheit und Kennzeichnung"
+    },
+    {
+      "branchen": [
+        "handel",
+        "logistik"
+      ],
+      "fundstelle": "§§ 7, 9, 10, 11, 15 VerpackG; VO (EU) 2025/40 (PPWR, gestuft anwendbar ab 12.08.2026); §§ 7 ff. EWKFondsG",
+      "gesetz": "VerpackG, EU-Verpackungsverordnung, EWKFondsG",
+      "gilt": "Eigenmarken, Import, E-Commerce, Versandlogistik",
+      "id": "verpackung",
+      "pflicht": "Registrierung im Verpackungsregister LUCID vor Inverkehrbringen, Systembeteiligung für Verkaufs- und Umverpackungen, Mengenmeldungen, Vollständigkeitserklärung ab Schwellenwerten, Rücknahmepflichten für Transportverpackungen; Online-Marktplätze dürfen nur registrierte Hersteller listen. Die PPWR bringt Mindestrezyklatquoten und Kennzeichnungsvorgaben.",
+      "stichwoerter": [
+        "verpack",
+        "e commerce",
+        "versand",
+        "sortiment",
+        "category",
+        "eigenmarke",
+        "import",
+        "lager"
+      ],
+      "thema": "Verpackungen und Produktverantwortung"
+    },
+    {
+      "branchen": [
+        "handel"
+      ],
+      "fundstelle": "§§ 146, 146a, 146b, 147 AO; §§ 1 ff. KassenSichV; BMF-Schreiben zur Einzelaufzeichnungspflicht",
+      "gesetz": "AO, KassenSichV",
+      "gilt": "Filiale, Kasse, Buchhaltung Handel",
+      "id": "kassensicherung",
+      "pflicht": "Einzelaufzeichnung jedes Geschäftsvorfalls, zertifizierte technische Sicherheitseinrichtung an elektronischen Kassen, Belegausgabepflicht, Meldung der Kassensysteme an das Finanzamt, Aufbewahrung zehn Jahre, Kassen-Nachschau ohne Ankündigung. Auswertungen eines Agenten dürfen Kassendaten nicht verändern.",
+      "stichwoerter": [
+        "kasse",
+        "filial",
+        "verkauf",
+        "beleg",
+        "tagesabschluss",
+        "bargeld",
+        "bon"
+      ],
+      "thema": "Kassenführung und Belegausgabe"
+    },
+    {
+      "branchen": [
+        "logistik"
+      ],
+      "fundstelle": "§§ 407 ff., 425 ff., 431, 435, 453 ff. HGB; CMR Art. 17 ff., 23; ADSp 2017 (bei Vereinbarung)",
+      "gesetz": "HGB, CMR, ADSp",
+      "gilt": "Disposition, Kundenbetreuung Spedition, Schadenbearbeitung",
+      "id": "transportrecht",
+      "pflicht": "Obhutshaftung des Frachtführers mit Haftungsgrenze von 8,33 Sonderziehungsrechten je Kilogramm, Durchbrechung bei qualifiziertem Verschulden, Reklamationsfristen, Speditionsvertrag mit Pflicht zur Organisation der Versendung, Frachtbrief als Beweisurkunde, Standgeld und Lieferfristen. Tourenpläne und Zusagen eines Agenten binden vertraglich.",
+      "stichwoerter": [
+        "disponent",
+        "transport",
+        "spedition",
+        "fracht",
+        "kunde",
+        "tour",
+        "schaden",
+        "sendung",
+        "lieferfrist"
+      ],
+      "thema": "Fracht- und Speditionsrecht"
+    },
+    {
+      "branchen": [
+        "logistik",
+        "chemie_pharma"
+      ],
+      "fundstelle": "§§ 3 ff. GGBefG; §§ 17 ff. GGVSEB; ADR Teile 1, 5, 7, 8; §§ 3 ff. GbV",
+      "gesetz": "GGBefG, GGVSEB, ADR/RID/ADN, IMDG-Code, GbV",
+      "gilt": "Gefahrgutbeauftragter, Disposition, Lager, Versand",
+      "id": "gefahrgut",
+      "pflicht": "Klassifizierung, Verpackung, Kennzeichnung und Beförderungspapiere nach ADR, Pflichten von Absender, Verlader, Verpacker und Beförderer, Gefahrgutbeauftragter mit Jahresbericht, Schulung beteiligter Personen, Fahrerschein nach ADR 8.2, Unfallberichte. Ein Agent darf Beförderungspapiere vorbereiten, die Richtigkeit verantwortet der Absender.",
+      "stichwoerter": [
+        "gefahrgut",
+        "transport",
+        "lager",
+        "versand",
+        "verlad",
+        "beforderung",
+        "adr",
+        "fuhrpark"
+      ],
+      "thema": "Gefahrguttransport"
+    },
+    {
+      "branchen": [
+        "logistik",
+        "maschinenbau",
+        "automobilindustrie",
+        "chemie_pharma",
+        "handel"
+      ],
+      "fundstelle": "VO (EU) 952/2013 Art. 15, 22 ff., 38 ff., 158 ff., 170 ff., 211 ff.; ATLAS-Verfahrensanweisung; § 12 ZollVG",
+      "gesetz": "UZK, UZK-DA, UZK-IA, ZollVG",
+      "gilt": "Zolldeklaration, Versand, Einkauf mit Drittlandbezug",
+      "id": "zoll",
+      "pflicht": "Zollanmeldung elektronisch über ATLAS mit Warentarifnummer, Zollwert und Ursprung, Verantwortung des Anmelders für Richtigkeit, zugelassener Wirtschaftsbeteiligter (AEO) mit Zollvereinfachungen, Präferenznachweise, Aufbewahrung der Unterlagen, Einfuhrumsatzsteuer; Nachforderungen und Bußgelder bei Fehlanmeldungen. Tarifierungsvorschläge eines Agenten sind durch den Zolldeklaranten zu prüfen.",
+      "stichwoerter": [
+        "zoll",
+        "export",
+        "import",
+        "ausfuhr",
+        "einfuhr",
+        "verzollung",
+        "tarifier",
+        "ursprung",
+        "spedition"
+      ],
+      "thema": "Zollabwicklung"
+    },
+    {
+      "branchen": [
+        "logistik"
+      ],
+      "fundstelle": "§§ 1 ff. FPersV; Art. 6 ff. VO (EG) 561/2006; VO (EU) 165/2014 (Fahrtenschreiber); § 21a ArbZG; §§ 1 ff. BKrFQG",
+      "gesetz": "FPersG, FPersV, VO (EG) 561/2006, ArbZG, BKrFQG",
+      "gilt": "Disposition, Fuhrparkleitung",
+      "id": "fahrpersonal",
+      "pflicht": "Lenkzeiten höchstens 9 Stunden täglich (zweimal wöchentlich 10), Pausen nach 4,5 Stunden, tägliche und wöchentliche Ruhezeiten, Fahrtenschreiberpflicht mit Datenauslesung und Aufbewahrung, Unternehmerpflichten zur Organisation und Kontrolle, Grundqualifikation und Weiterbildung der Fahrer. Tourenplanung eines Agenten muss diese Grenzen einhalten.",
+      "stichwoerter": [
+        "fuhrpark",
+        "disponent",
+        "fahrer",
+        "tour",
+        "lenkzeit",
+        "fahrzeug",
+        "fahrtenschreiber",
+        "ruhezeit"
+      ],
+      "thema": "Lenk- und Ruhezeiten, Fahrpersonal"
+    },
+    {
+      "branchen": [
+        "banken"
+      ],
+      "fundstelle": "§§ 18, 25a, 25b, 25c, 25d KWG; MaRisk AT 4, AT 7, AT 9, BTO 1, BTR; VO (EU) 575/2013",
+      "gesetz": "KWG, MaRisk, CRR",
+      "gilt": "Kreditgeschäft, Risikocontrolling, Meldewesen, Beratung",
+      "id": "bankaufsicht",
+      "pflicht": "Ordnungsgemäße Geschäftsorganisation mit Risikomanagement, Funktionstrennung zwischen Markt und Marktfolge, Offenlegung wirtschaftlicher Verhältnisse bei Krediten ab 750.000 Euro, Anforderungen an Auslagerungen und IT (BAIT), Modellvalidierung; Kreditentscheidungen brauchen zwei Voten. Ein Agent darf Analysen liefern, das Votum gibt die Person.",
+      "stichwoerter": [
+        "kredit",
+        "risiko",
+        "meldewesen",
+        "berater",
+        "bank",
+        "zahlungsverkehr",
+        "controll",
+        "votum",
+        "limit"
+      ],
+      "thema": "Bankaufsicht und Risikomanagement"
+    },
+    {
+      "branchen": [
+        "banken",
+        "versicherungen"
+      ],
+      "fundstelle": "§§ 4 ff., 7, 8, 10 ff., 15, 43 ff. GwG; § 25h KWG; § 53 VAG",
+      "gesetz": "GwG, KWG, VAG",
+      "gilt": "Geldwäschestelle, Kundenberatung, Zahlungsverkehr, Bestand und Leistung",
+      "id": "geldwaesche",
+      "pflicht": "Risikoanalyse und interne Sicherungsmaßnahmen, Geldwäschebeauftragter, Identifizierung und Abklärung des wirtschaftlich Berechtigten, verstärkte Sorgfalt bei politisch exponierten Personen und Hochrisikoländern, laufende Transaktionsüberwachung, Verdachtsmeldung an die FIU mit Tipping-off-Verbot, Aufzeichnung fünf Jahre. Automatisierte Alarme sind durch die Geldwäschestelle zu bewerten.",
+      "stichwoerter": [
+        "geldwasche",
+        "kunde",
+        "konto",
+        "zahlungsverkehr",
+        "berater",
+        "bestand",
+        "leistung",
+        "vermittler",
+        "kredit",
+        "transaktion"
+      ],
+      "thema": "Geldwäscheprävention"
+    },
+    {
+      "branchen": [
+        "banken"
+      ],
+      "fundstelle": "§§ 63, 64, 80, 83, 84 WpHG; RL 2014/65/EU; Delegierte VO (EU) 2017/565; §§ 1 ff. WpDVerOV",
+      "gesetz": "WpHG, MiFID II, WpDVerOV",
+      "gilt": "Privatkundenberatung, Wertpapiergeschäft",
+      "id": "wertpapier",
+      "pflicht": "Geeignetheitsprüfung mit Erfahrung, Kenntnissen, finanziellen Verhältnissen und Anlagezielen, Geeignetheitserklärung vor Ausführung, Kosteninformation ex ante und ex post, Aufzeichnung von Telefongesprächen und elektronischer Kommunikation, Produktfreigabeverfahren, Zuwendungsregeln. Empfehlungen eines Agenten gelten als Anlageberatung und unterliegen denselben Pflichten.",
+      "stichwoerter": [
+        "privatkunde",
+        "berater",
+        "anlage",
+        "wertpapier",
+        "depot",
+        "beratung",
+        "fonds",
+        "geeignetheit"
+      ],
+      "thema": "Anlageberatung und Wohlverhaltensregeln"
+    },
+    {
+      "branchen": [
+        "banken"
+      ],
+      "fundstelle": "§§ 491 ff., 505a ff., 505e BGB; § 18a KWG; § 6 PAngV; RL (EU) 2023/2225 (Anwendung ab 20.11.2026)",
+      "gesetz": "BGB, KWG, PAngV, EU-Verbraucherkredit-Richtlinie",
+      "gilt": "Privatkundenberatung, Kreditsachbearbeitung, Kreditanalyse",
+      "id": "verbraucherkredit",
+      "pflicht": "Vorvertragliche Information, Kreditwürdigkeitsprüfung vor Vertragsschluss mit Dokumentation, Erläuterungspflicht, effektiver Jahreszins, Widerrufsrecht; bei automatisierter Bonitätsbewertung Anspruch auf menschliche Überprüfung und Erläuterung (§ 505e BGB in Verbindung mit Art. 22 DSGVO). Scoring eines Agenten ist Entscheidungsgrundlage, nicht Entscheidung.",
+      "stichwoerter": [
+        "kredit",
+        "darlehen",
+        "privatkunde",
+        "finanzier",
+        "bonitat",
+        "scoring",
+        "baufinanz"
+      ],
+      "thema": "Verbraucherdarlehen und Kreditwürdigkeit"
+    },
+    {
+      "branchen": [
+        "banken",
+        "versicherungen"
+      ],
+      "fundstelle": "VO (EU) 2022/2554 Art. 5 ff., 17 ff., 24 ff., 28 ff.; § 25a KWG; § 32 VAG",
+      "gesetz": "DORA, KWG, VAG",
+      "gilt": "jede Rolle, deren Agent einen externen IKT-Dienst nutzt",
+      "id": "dora",
+      "pflicht": "IKT-Risikomanagementrahmen mit Verantwortung des Leitungsorgans, Klassifizierung und Meldung schwerwiegender IKT-Vorfälle an die Aufsicht, Tests der Resilienz, Informationsregister aller IKT-Drittdienstleister mit vertraglichen Mindestinhalten. Ein Agent, der über einen externen Dienst läuft, ist ein IKT-Drittdienst und gehört in das Register und das Risikomanagement.",
+      "stichwoerter": [
+        "*"
+      ],
+      "thema": "Digitale operationale Resilienz im Finanzsektor"
+    },
+    {
+      "branchen": [
+        "versicherungen"
+      ],
+      "fundstelle": "§§ 6, 7, 14, 19 ff., 28, 30, 31, 100 ff., 192 ff. VVG; §§ 1 ff. VVG-InfoV",
+      "gesetz": "VVG, VVG-InfoV",
+      "gilt": "Underwriting, Bestandsführung, Schaden, Leistung",
+      "id": "versicherungsvertrag",
+      "pflicht": "Beratungs- und Dokumentationspflicht vor Vertragsschluss, Informationspflichten, vorvertragliche Anzeigepflicht des Kunden mit Belehrung, Obliegenheiten und Rechtsfolgen, Fälligkeit der Leistung nach Abschluss der Erhebungen, Auskunfts- und Belegpflichten im Leistungsfall. Entscheidungen zu Annahme und Leistung bleiben beim verantwortlichen Sachbearbeiter.",
+      "stichwoerter": [
+        "underwrit",
+        "bestand",
+        "schaden",
+        "leistung",
+        "antrag",
+        "police",
+        "vertrag",
+        "kunde",
+        "risikoprufung"
+      ],
+      "thema": "Versicherungsvertrag, Beratung und Leistung"
+    },
+    {
+      "branchen": [
+        "versicherungen"
+      ],
+      "fundstelle": "§§ 23, 26 ff., 29, 30, 31, 32, 47 VAG; RL 2009/138/EG; Delegierte VO (EU) 2015/35; MaGo der BaFin",
+      "gesetz": "VAG, Solvency II, MaGo",
+      "gilt": "Aktuariat, Risikomanagement, Compliance, Underwriting",
+      "id": "versicherungsaufsicht",
+      "pflicht": "Geschäftsorganisation mit vier Schlüsselfunktionen (Risikomanagement, Compliance, Revision, versicherungsmathematische Funktion), eigene Risiko- und Solvabilitätsbeurteilung, Anforderungen an Ausgliederungen, Anzeigepflichten, Berichtswesen an die Aufsicht. Tarif- und Reservierungsmodelle eines Agenten sind durch die versicherungsmathematische Funktion zu verantworten.",
+      "stichwoerter": [
+        "aktuar",
+        "risiko",
+        "compliance",
+        "underwrit",
+        "reserve",
+        "solvenz",
+        "tarif",
+        "ruckstellung"
+      ],
+      "thema": "Versicherungsaufsicht und Solvency II"
+    },
+    {
+      "branchen": [
+        "versicherungen"
+      ],
+      "fundstelle": "§ 34d GewO; §§ 1 ff., 7 VersVermV; §§ 59 ff., 61, 62 VVG; RL (EU) 2016/97",
+      "gesetz": "GewO, VersVermV, VVG, IDD",
+      "gilt": "Vermittlerbetreuung, Vertrieb",
+      "id": "vermittler",
+      "pflicht": "Erlaubnis und Registereintrag der Vermittler, Sachkunde und jährliche Weiterbildung von 15 Stunden, Beratungs- und Dokumentationspflicht gegenüber dem Kunden, Vergütungstransparenz, Provisionsabgabeverbot, Anforderungen an Vertriebsvergütung ohne Fehlanreize. Vertriebsunterstützung eines Agenten darf Beratungspflichten nicht umgehen.",
+      "stichwoerter": [
+        "vermittler",
+        "vertrieb",
+        "courtage",
+        "provision",
+        "makler",
+        "agentur",
+        "ausschliesslichkeit"
+      ],
+      "thema": "Versicherungsvermittlung"
+    },
+    {
+      "branchen": [
+        "chemie_pharma"
+      ],
+      "fundstelle": "§§ 13, 14 AMG; §§ 3 ff., 10 ff. AMWHV; EudraLex Vol. 4 Kapitel 1 bis 9, Annex 11 (computergestützte Systeme), Annex 15 (Qualifizierung und Validierung)",
+      "gesetz": "AMG, AMWHV, EU-GMP-Leitfaden",
+      "gilt": "Produktion, Qualitätskontrolle, Validierung, Sachkundige Person",
+      "id": "gmp",
+      "pflicht": "Pharmazeutisches Qualitätssystem, qualifiziertes Personal, qualifizierte Anlagen und validierte Prozesse, Chargendokumentation mit Datenintegrität (ALCOA+), Abweichungs- und Änderungsmanagement, Lieferantenqualifizierung; computergestützte Systeme mit Validierung, Audit-Trail und Zugriffskontrolle. Ein Agent im GMP-Umfeld ist ein zu validierendes System.",
+      "stichwoerter": [
+        "produktion",
+        "chemikant",
+        "validier",
+        "qualitat",
+        "labor",
+        "sachkundig",
+        "chargen",
+        "herstell",
+        "abweichung",
+        "reinraum"
+      ],
+      "thema": "Gute Herstellungspraxis"
+    },
+    {
+      "branchen": [
+        "chemie_pharma",
+        "gesundheitswesen"
+      ],
+      "fundstelle": "§§ 13, 14, 19, 21 ff., 29, 63a ff., 84 AMG; § 16 AMWHV; VO (EG) 726/2004; RL 2001/83/EG",
+      "gesetz": "AMG, AMWHV, EU-Arzneimittelrecht",
+      "gilt": "Sachkundige Person, Regulatory Affairs, Pharmakovigilanz, Krankenhausapotheke",
+      "id": "arzneimittel",
+      "pflicht": "Herstellungserlaubnis, Chargenfreigabe durch die Sachkundige Person, Zulassung und Änderungsanzeigen, Stufenplanbeauftragter mit Meldung von Nebenwirkungen in festen Fristen, Pharmakovigilanzsystem mit Stammdokumentation, Gefährdungshaftung des pharmazeutischen Unternehmers. Signale eines Agenten sind durch die Pharmakovigilanz zu bewerten.",
+      "stichwoerter": [
+        "sachkundig",
+        "regulatory",
+        "zulassung",
+        "pharmakovig",
+        "apothek",
+        "chargen",
+        "chargenfreigabe",
+        "nebenwirk",
+        "arzneimittel"
+      ],
+      "thema": "Arzneimittelrecht und Pharmakovigilanz"
+    },
+    {
+      "branchen": [
+        "chemie_pharma"
+      ],
+      "fundstelle": "VO (EG) 1907/2006 Art. 5 ff., 31 ff., 56 ff.; VO (EG) 1272/2008 Art. 4 ff., 17 ff.; §§ 16 ff. ChemG; §§ 1 ff. ChemVerbotsV",
+      "gesetz": "REACH, CLP, ChemG, ChemVerbotsV",
+      "gilt": "Regulatory Affairs, Gefahrstoffmanagement, Labor, Einkauf",
+      "id": "chemikalien",
+      "pflicht": "Registrierung von Stoffen ab einer Tonne pro Jahr, Sicherheitsdatenblatt in der Lieferkette mit Expositionsszenarien, Einstufung und Kennzeichnung nach CLP, Zulassungs- und Beschränkungspflichten, Sachkunde für Abgabe bestimmter Stoffe, Meldung an das Giftinformationszentrum. Einstufungsvorschläge eines Agenten sind fachlich zu prüfen.",
+      "stichwoerter": [
+        "gefahrstoff",
+        "chemikal",
+        "sicherheitsdatenblatt",
+        "regulatory",
+        "einstufung",
+        "kennzeichn",
+        "labor",
+        "rohstoff",
+        "reach"
+      ],
+      "thema": "Chemikalienrecht"
+    },
+    {
+      "branchen": [
+        "chemie_pharma"
+      ],
+      "fundstelle": "§§ 4 ff., 52a BImSchG; §§ 3 ff., 8 ff. 12. BImSchV; §§ 14 ff. BetrSichV; TRAS",
+      "gesetz": "BImSchG, Störfall-Verordnung, BetrSichV",
+      "gilt": "Instandhaltung, Produktion, Anlagensicherheit",
+      "id": "anlagensicherheit",
+      "pflicht": "Genehmigungspflicht für Anlagen, Betreiberpflichten zur Verhinderung von Störfällen, Sicherheitsbericht und Alarm- und Gefahrenabwehrplan bei Betriebsbereichen der oberen Klasse, Störfallbeauftragter, Prüfpflichten für überwachungsbedürftige Anlagen durch zugelassene Überwachungsstellen, Meldung von Ereignissen. Wartungs- und Freigabeentscheidungen eines Agenten sind durch die verantwortliche Person zu bestätigen.",
+      "stichwoerter": [
+        "anlage",
+        "instandhalt",
+        "produktion",
+        "storfall",
+        "genehmig",
+        "sicherheitsbeauftragt",
+        "druck",
+        "freigabe",
+        "wartung"
+      ],
+      "thema": "Anlagensicherheit und Störfallvorsorge"
+    },
+    {
+      "branchen": [
+        "chemie_pharma"
+      ],
+      "fundstelle": "§§ 6, 7 ff., 14 GefStoffV; §§ 5, 12 ArbSchG; TRGS 400, 500, 510, 555",
+      "gesetz": "GefStoffV, ArbSchG, TRGS",
+      "gilt": "Produktion, Labor, Lager, Arbeitssicherheit",
+      "id": "gefahrstoffe",
+      "pflicht": "Gefahrstoffverzeichnis, Gefährdungsbeurteilung je Tätigkeit mit Substitutionsprüfung, Rangfolge der Schutzmaßnahmen, Betriebsanweisungen und jährliche Unterweisung, Lagerung nach TRGS 510, arbeitsmedizinische Vorsorge, Expositionsverzeichnis bei krebserzeugenden Stoffen. Auswertungen eines Agenten ersetzen nicht die Gefährdungsbeurteilung durch die Fachkraft.",
+      "stichwoerter": [
+        "gefahrstoff",
+        "chemikant",
+        "labor",
+        "produktion",
+        "instandhalt",
+        "unterweis",
+        "lager",
+        "exposition"
+      ],
+      "thema": "Gefahrstoffe am Arbeitsplatz"
+    },
+    {
+      "branchen": [
+        "chemie_pharma",
+        "maschinenbau",
+        "automobilindustrie"
+      ],
+      "fundstelle": "§§ 5, 22, 26 ff. BImSchG; §§ 62 ff. WHG; §§ 1 ff. AwSV; §§ 7 ff., 49, 50 KrWG; §§ 2 ff. NachwV; §§ 4 ff. TEHG",
+      "gesetz": "BImSchG, WHG, AwSV, KrWG, NachwV, TEHG",
+      "gilt": "Umweltbeauftragte, Produktion, Instandhaltung",
+      "id": "umweltrecht",
+      "pflicht": "Emissionsbegrenzung und Messpflichten, Anlagen zum Umgang mit wassergefährdenden Stoffen mit Prüfpflichten und Fachbetriebspflicht, Abfallhierarchie mit Nachweis- und Registerpflichten für gefährliche Abfälle, Emissionshandel mit Überwachungsplan und Berichterstattung, Betriebsbeauftragte für Immissionsschutz, Gewässerschutz und Abfall. Berichte eines Agenten sind durch die Beauftragten freizugeben.",
+      "stichwoerter": [
+        "umwelt",
+        "abfall",
+        "emission",
+        "abwasser",
+        "entsorg",
+        "immission",
+        "gewasser",
+        "storfall",
+        "wassergefahrd"
+      ],
+      "thema": "Industrielles Umweltrecht"
     }
   ]
 }

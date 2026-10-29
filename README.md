@@ -159,7 +159,8 @@ python3 skills/work-graph-builder/scripts/seed_from_library.py --project projekt
 
 Branche, Plattformprofil und Rechtsraum stehen in `project.json`. Die Referenzbibliothek
 (`skills/work-graph-builder/library/`) liefert dazu einen Vorrat: Branchenpakete mit typischen Rollen und Aufgaben
-(`allgemein`, `bauwirtschaft`, `energieversorgung`, `wasserversorgung`, `automobilindustrie`), den Rechtsrahmen Deutschland
+(`allgemein`, `bauwirtschaft`, `energieversorgung`, `wasserversorgung`, `automobilindustrie`, `maschinenbau`, `chemie_pharma`,
+`gesundheitswesen`, `oeffentliche_verwaltung`, `handel`, `logistik`, `banken`, `versicherungen`), den Rechtsrahmen Deutschland
 als Themen mit Gesetz und Fundstelle, und vier Plattformprofile (`microsoft`, `google`, `mischbetrieb`, `unabhaengig`) mit den
 Diensten je Agentenmuster. `seed_from_library.py` kopiert ausgewählte Rollen als Seiten ins Projekt, registriert die Quelle des
 Pakets als „reference“ und überschreibt nie, was schon da ist. Übernommene Einträge haben den Belegstand „reference“; sie
