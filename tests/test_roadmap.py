@@ -275,10 +275,17 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(texts, {})
         self.assertTrue(any("E-Mail" in n for n in notes))
 
-    def test_tone_flags_are_reported(self):
-        texts, _, tone = self.texts({"entscheidungsvorlage": {"anlass": {"text": "Wir sind der Auftragnehmer.", "quelle": "x"}}})
+    def test_flag_words_are_reported_only_when_configured(self):
+        data = {"entscheidungsvorlage": {"anlass": {"text": "Das ist ein Sondermodell.", "quelle": "x"}}}
+        texts, _, flagged = self.texts(data)
+        self.assertEqual(flagged, [])
+        self.assertEqual(cfg()["flag_words"], [])
+        c = cfg()
+        c["flag_words"] = ["Sondermodell"]
+        (self.proj / "30_review" / "dokumente" / "texte.json").write_text(json.dumps(data), encoding="utf-8")
+        texts, _, flagged = docs.load_texts(self.proj, c)
         self.assertIn(("entscheidungsvorlage", "anlass"), texts)
-        self.assertEqual(len(tone), 1)
+        self.assertEqual(len(flagged), 1)
 
     def test_open_slot_is_visible_and_document_is_a_draft(self):
         p = plan_of()
@@ -353,7 +360,6 @@ class TestCli(unittest.TestCase):
 
     def test_example_shows_partial_confirmation_and_filled_text(self):
         md = (self.proj / "40_output" / "dokumente" / "entscheidungsvorlage.md").read_text(encoding="utf-8")
-        self.assertIn("gemeinsam", md)
         self.assertIn("Quelle:", md)
         self.assertIn("**Stand: Entwurf**", md)
         data = json.loads((self.proj / "40_output" / "roadmap_v012.json").read_text(encoding="utf-8"))

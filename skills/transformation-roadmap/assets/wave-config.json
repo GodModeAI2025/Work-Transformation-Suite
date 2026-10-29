@@ -1,5 +1,5 @@
 {
-  "_hint": "Regeln für das Wellenraster. Kopie anlegen, Werte ändern, mit --config <datei> übergeben. Zeiträume bleiben leer, solange niemand sie festgelegt hat; das Raster erfindet keine Termine.",
+  "_hint": "Regeln für das Wellenraster. Kopie anlegen, Werte ändern, mit --config <datei> übergeben. Zeiträume bleiben leer, solange niemand sie festgelegt hat; das Raster erfindet keine Termine. flag_words: Wörter, die in den Textfeldern der Unterlagen nicht vorkommen sollen (eine hausinterne Sprachregelung); das Skript meldet Funde, es streicht nichts.",
   "version": "1.0",
   "waves": [
     {"id": 1, "label": "Welle 1: Referenz und Grundlagen", "capacity": 3, "period": ""},
@@ -12,5 +12,5 @@
   "running_statuses": ["pilot", "live"],
   "max_complexity_first_wave": 3,
   "min_components": 2,
-  "tone_flags": ["Auftragnehmer", "Auftraggeber", "Dienstleister"]
+  "flag_words": []
 }

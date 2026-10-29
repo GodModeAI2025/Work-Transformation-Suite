@@ -85,8 +85,8 @@ versandfertig ist.
 
 - Stimmt jede Zahl mit dem Graphen überein? Die Tabellen kommen von dort; Texte nur lesen, nicht nachrechnen.
 - Steht „geschätzt“ nirgends als „gemessen“? Beobachtete Werte stammen nur aus Piloten.
-- Passt der Ton zur Runde? Das Skill meldet Formulierungen einer Auftragsbeziehung (`tone_flags` in der
-  Konfiguration), wenn das Vorhaben als gemeinsames gedacht ist.
+- Passt die Sprache zur Runde? Wörter, die in den Textfeldern nicht vorkommen sollen, trägt die Konfiguration unter
+  `flag_words` ein; das Skript meldet Funde und streicht nichts.
 - Sagt die Unterlage etwas über einzelne Personen? Sie darf es nicht.
 
 ## Was das Skill nicht tut

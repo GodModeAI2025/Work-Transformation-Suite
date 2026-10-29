@@ -19,7 +19,8 @@ Die Texte schreibt Claude oder ein Mensch, jeder mit Quelle:
 
 Ein Textfeld ohne Text oder ohne Quelle bleibt als „❓ offen“ stehen. Der Kopf jedes Dokuments
 nennt den Stand: Entwurf, solange Textfelder offen sind oder Wellen nur Vorschlag sind.
-Mit --strict endet der Lauf mit Code 1, wenn ein Dokument nicht versandfertig ist.
+Mit --strict endet der Lauf mit Code 1, wenn ein Dokument nicht versandfertig ist oder ein Textfeld ein Wort
+aus `flag_words` (Konfiguration) enthält.
 """
 
 from __future__ import annotations
@@ -41,11 +42,11 @@ EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 # Textfelder: Dokument -> (Schlüssel, Überschrift, Auftrag an den Verfasser)
 SLOTS = {
     "entscheidungsvorlage": [
-        ("anlass", "Anlass und gemeinsames Ziel",
-         "Warum jetzt, und was soll gemeinsam erreicht werden? Als gemeinsames Vorhaben formulieren, nicht als Auftrag."),
+        ("anlass", "Anlass und Ziel",
+         "Warum jetzt, und was soll erreicht werden? Ein bis drei Sätze, mit Verweis auf das Material."),
         ("pilot", "Pilot und Referenz",
          "Was aus dem laufenden Pilot gelernt wurde und was davon gezeigt werden darf. Namen Dritter nur mit Einverständnis."),
-        ("vorgehen", "Gemeinsames Vorgehen",
+        ("vorgehen", "Vorgehen",
          "Wer verantwortet was, in welchen Schritten, mit welchen Zwischenentscheidungen."),
         ("beschluss", "Gewünschter Beschluss",
          "Was soll die Runde beschließen? Ein bis drei konkrete Sätze."),
@@ -76,7 +77,7 @@ def load_texts(project: Path, cfg: dict) -> tuple[dict, list[str], list[str]]:
     except ValueError as e:
         return {}, [f"{TEXT_FILE.as_posix()} nicht lesbar: {e}"], []
     texts, notes, tone = {}, [], []
-    flags = [f.lower() for f in cfg.get("tone_flags", [])]
+    flags = [f.lower() for f in cfg.get("flag_words", [])]
     for doc, slots in SLOTS.items():
         for key, title, _ in slots:
             entry = (raw.get(doc) or {}).get(key)
@@ -94,7 +95,7 @@ def load_texts(project: Path, cfg: dict) -> tuple[dict, list[str], list[str]]:
                 continue
             for f in flags:
                 if f in text.lower():
-                    tone.append(f"{doc}/{key}: enthält „{f}“ (Ton prüfen: gemeinsames Vorhaben statt Auftragsbeziehung)")
+                    tone.append(f"{doc}/{key}: enthält „{f}“ (laut flag_words der Konfiguration zu vermeiden)")
             texts[(doc, key)] = {"text": text, "quelle": source, "von": (entry.get("verfasst_von") or "").strip()}
     return texts, notes, tone
 

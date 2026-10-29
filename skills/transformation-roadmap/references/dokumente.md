@@ -41,15 +41,14 @@ Ein Feld gilt als gefüllt, wenn `text` und `quelle` gesetzt sind. Fehlt die Que
 
 Das Skript prüft die Quelle, nicht die Wahrheit. Ob ein Text stimmt, entscheidet, wer ihn freigibt.
 
-## Ton
+## Sprache
 
-Die Unterlagen sind für ein gemeinsames Vorhaben geschrieben: „wir klären“, „wir einigen uns“, nicht
-„wir liefern“. Wo eine Runde ausdrücklich keine Auftragsbeziehung will, sollte weder
-„Auftraggeber“ noch „Auftragnehmer“ vorkommen. `tone_flags` in der Konfiguration listet Wörter, die das
-Skript meldet; die Liste ist anpassbar und ersetzt kein Lesen.
+Die Textfelder sind für Menschen geschrieben, die die Analyse nicht kennen: kurze Sätze, keine Abkürzungen ohne
+Erklärung, Zahlen nur, wenn die Tabelle sie trägt. Für die Personalseite ohne Fachbegriffe wie FTE oder Disruption im
+Fließtext; die Tabelle trägt die Zahlen, der Text sagt, was sie für die Rollen bedeuten.
 
-Für HR: einfache Sprache, keine Fachbegriffe wie FTE oder Disruption im Fließtext. Die Tabelle trägt die
-Zahlen; der Text sagt, was sie für die Rollen bedeuten.
+Eine hausinterne Sprachregelung lässt sich als `flag_words` in die Konfiguration schreiben. Das Skript meldet jeden
+Fund mit Dokument und Feld und streicht nichts. Die Liste ist standardmäßig leer.
 
 ## Personen und Namen
 
