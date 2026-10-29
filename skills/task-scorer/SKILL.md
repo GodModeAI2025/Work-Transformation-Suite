@@ -51,6 +51,10 @@ Was eine gute Bewertung ausmacht:
 - Bei mehr als etwa 60 Aufgaben: in Blöcken je Rolle arbeiten, nach jedem Block speichern,
   damit nichts verloren geht. Das Skript nimmt Teilstände an (`--force` nur bei Neubewertung).
 
+**Mit Seiten** (`05_pages/` vorhanden): Die Bewertung gehört in den Kopf der Aufgabenseite (`score_automation_ai`
+… `score_consequence_of_error`, alle sechs) und die Begründung in den Abschnitt „Begründung der Bewertung“.
+`scores.json` entsteht daraus beim nächsten Lauf; eine Änderung dort ginge verloren.
+
 ### 3. Rechnen
 
 ```

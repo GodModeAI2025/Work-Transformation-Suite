@@ -12,6 +12,7 @@ projects/
 40_output/
 50_snapshots/
 .wts-lock/
+05_pages/.compiled.json
 
 # Beim Release erzeugt, nicht eingecheckt
 dist/SHA256SUMS

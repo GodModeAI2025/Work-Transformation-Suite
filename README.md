@@ -167,6 +167,16 @@ geschätzt und unbelegt und prüft jede Fundstelle gegen den Quelltext (`30_revi
 `evidence_policy: strict` in `project.json` hält die Pipeline an, solange eine Aussage ohne Herkunft im
 Graphen steht; der Standard `warn` meldet sie nur.
 
+### Schritt 0c: Seiten statt Register
+
+Seit Schema 1.3 kann ein Projekt Rollen, Aufgaben, Skills, Bewertungen und Agenten als Markdown-Seiten unter
+`05_pages/` führen (Format: `skills/work-graph-builder/references/seiten-format.md`). Liegen Seiten vor, sind sie
+die Wahrheit: `compile_pages.py` übersetzt sie vor jedem Pipeline-Lauf in die JSON-Register, und die Register sind
+nur noch abgeleitet. Der Kopf jeder Seite ist flach (eine Ebene, keine Objekte), der Rumpf trägt Zweck,
+Beschreibung, Skills, Schritte, Begründung und beim Agenten den Vertrag als JSON-Block. Fehler meldet der Compiler
+mit Datei und Zeile, geraten wird nicht. `export_pages.py` holt ein bestehendes Projekt einmalig auf Seiten.
+Prozesse, Blueprints und Experimente bleiben JSON, weil ihre Struktur verschachtelt ist.
+
 ### Schritt 1: work-graph-builder (Claude)
 
 Sagen: „Bau den Arbeitsgraphen für projekte/kundenservice aus den Dateien in 00_input.“

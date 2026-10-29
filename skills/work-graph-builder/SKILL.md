@@ -51,7 +51,14 @@ liefert die Fundstelle zu einem Zitat. Trage je Rolle, Aufgabe, Prozess, Schritt
 die Belege in die Extraktion ein (`evidence`, bei Kontrollen `source_evidence`). Was du aus dem Berufsbild
 ergänzt, bleibt ohne Beleg und trägt `confidence: inferred`; das ist eine Schätzung, keine Lücke.
 
-### 2. Quellen lesen und Extraktionsdateien schreiben
+### 2. Quellen lesen und Seiten oder Extraktionsdateien schreiben
+
+Zwei Wege, ein Ergebnis. **Seiten** (`05_pages/`, Format in `references/seiten-format.md`): je Jobcluster,
+Rolle und Aufgabe eine Markdown-Seite mit flachem Kopf und Textabschnitten; `compile_pages.py` erzeugt daraus
+die Extraktionsdateien, die Pipeline tut das vor jedem Lauf. Das ist der Standard für neue Projekte: Die Seite
+ist die Wahrheit, lesbar und mit Fundstelle je Aussage. **Extraktionsdateien** (`10_extraction/extract_*.json`,
+Format unten) bleiben für Projekte ohne Seiten gültig; `export_pages.py` holt sie einmalig auf Seiten.
+Nie beides pflegen: Sobald Seiten existieren, werden die Extraktionsdateien überschrieben.
 
 Lies `references/extraction-format.md` (Format, Pflichtfelder) und
 `references/skill-taxonomy.md` (kanonische Skillnamen). Dann je Quelle eine Datei

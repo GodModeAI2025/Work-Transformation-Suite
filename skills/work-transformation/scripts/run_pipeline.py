@@ -90,6 +90,15 @@ def main() -> int:
     order = ["builder", "processes", "scorer", "mapper", "redesign", "dashboard", "roadmap"]
     stop = order.index(args.until)
 
+    # 0 Seiten: Liegen Markdown-Seiten unter 05_pages/, sind sie die Wahrheit und die Register
+    # (Extraktionen, Bewertungen, Agenten) entstehen vor jedem Lauf neu aus ihnen.
+    pages = (project / "05_pages").is_dir() and any((project / "05_pages").rglob("*.md"))
+    if pages:
+        if run([py, script("work-graph-builder", "compile_pages.py"), "--project", proj], cwd):
+            print("STOPP: Die Seiten unter 05_pages/ lassen sich nicht übersetzen. Nächster Schritt für Claude: "
+                  "die gemeldeten Seiten korrigieren (Datei und Zeile stehen oben).")
+            return 3
+
     # 1 Architekt
     ex = sorted((project / wl.DIR_EXTRACTION).glob("extract_*.json"))
     if not ex:
@@ -139,8 +148,10 @@ def main() -> int:
     missing = [t for t in unscored if t["id"] not in covered]
     if missing:
         run([py, script("task-scorer", "export_scoring_sheet.py"), "--project", proj], cwd)
+        where = ("die sechs score_-Felder und die Begründung in den Aufgabenseiten unter 05_pages/tasks/ eintragen"
+                 if pages else "20_graph/scores_todo.json ausfüllen und die Einträge in scores.json ergänzen")
         print(f"STOPP: {len(missing)} Aufgaben ohne Bewertung, die auch nicht in {wl.relpath(scores)} stehen. "
-              "Nächster Schritt für Claude: Skill task-scorer, 20_graph/scores_todo.json ausfüllen und die Einträge in scores.json ergänzen.")
+              f"Nächster Schritt für Claude: Skill task-scorer, {where}.")
         return 3
     if run([py, script("task-scorer", "score_roles.py"), "--project", proj], cwd):
         return 2
@@ -165,8 +176,9 @@ def main() -> int:
     if not agents.exists() or open_tasks:
         run([py, script("agent-mapper", "export_agent_candidates.py"), "--project", proj], cwd)
         what = f"keine {wl.relpath(agents)}" if not agents.exists() else f"{len(open_tasks)} automatisierbare Aufgaben ohne Agent in {wl.relpath(agents)}"
-        print(f"STOPP: {what}. Nächster Schritt für Claude: Skill agent-mapper, "
-              "Kandidaten aus 20_graph/agents_todo.json zu Agenten bündeln bzw. bestehenden Agenten zuordnen.")
+        where = ("je Agent eine Seite unter 05_pages/agents/ anlegen" if pages
+                 else "Kandidaten aus 20_graph/agents_todo.json zu Agenten bündeln bzw. bestehenden Agenten zuordnen")
+        print(f"STOPP: {what}. Nächster Schritt für Claude: Skill agent-mapper, {where}.")
         return 3
     graph = wl.load_latest_graph(project)
     cmd = [py, script("agent-mapper", "compute_coverage.py"), "--project", proj]

@@ -11,23 +11,28 @@
         "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
       ],
       "headcount": 9,
+      "is_new": false,
       "level": "Fachkraft",
       "name": "Auftragssachbearbeiter",
       "purpose": "Nimmt Kundenaufträge auf, prüft sie gegen Vertrag und Stammdaten und bestätigt sie.",
+      "regulated": false,
       "skills": [
         {
+          "category": "",
           "importance": "core",
           "kind": "tool",
           "level": 4,
           "name": "ERP-Auftragsabwicklung"
         },
         {
+          "category": "",
           "importance": "core",
           "kind": "knowledge",
           "level": 3,
           "name": "Vertragsauslegung"
         },
         {
+          "category": "",
           "importance": "supporting",
           "kind": "skill",
           "level": 3,
@@ -49,55 +54,8 @@
             {
               "name": "ERP-Auftragsabwicklung"
             }
-          ]
-        },
-        {
-          "confidence": "source",
-          "description": "Preise, Konditionen und Lieferbedingungen gegen den gültigen Rahmenvertrag abgleichen.",
-          "evidence": [
-            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
           ],
-          "frequency": "daily",
-          "name": "Auftragsdaten gegen Rahmenvertrag prüfen",
-          "nature": "cognitive",
-          "share_of_time": 20,
-          "skills": [
-            {
-              "name": "Vertragsauslegung"
-            }
-          ]
-        },
-        {
-          "confidence": "source",
-          "description": "Abweichungen zwischen Bestellung und Vertrag mit dem zuständigen Vertrieb abstimmen.",
-          "evidence": [
-            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
-          ],
-          "frequency": "daily",
-          "name": "Rückfragen mit Vertrieb klären",
-          "nature": "cognitive",
-          "share_of_time": 20,
-          "skills": [
-            {
-              "name": "Kundenkommunikation"
-            }
-          ]
-        },
-        {
-          "confidence": "source",
-          "description": "Bestätigung erzeugen, prüfen und an den Kunden senden.",
-          "evidence": [
-            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
-          ],
-          "frequency": "daily",
-          "name": "Auftragsbestätigung versenden",
-          "nature": "cognitive",
-          "share_of_time": 15,
-          "skills": [
-            {
-              "name": "ERP-Auftragsabwicklung"
-            }
-          ]
+          "workflow_steps": []
         },
         {
           "confidence": "source",
@@ -113,106 +71,59 @@
             {
               "name": "ERP-Auftragsabwicklung"
             }
-          ]
-        }
-      ],
-      "time_shares_source": "source"
-    },
-    {
-      "archetype": "control-heavy",
-      "description": "Holt Auskünfte ein, bewertet sie, legt Limits fest und dokumentiert die Entscheidung.",
-      "evidence": [
-        "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
-      ],
-      "headcount": 3,
-      "level": "Fachkraft",
-      "name": "Kreditprüfer",
-      "purpose": "Bewertet die Bonität von Kunden und legt Kreditlimits fest.",
-      "regulated": true,
-      "skills": [
-        {
-          "importance": "core",
-          "kind": "knowledge",
-          "level": 4,
-          "name": "Bonitätsbewertung"
+          ],
+          "workflow_steps": []
         },
-        {
-          "importance": "core",
-          "kind": "competence",
-          "level": 4,
-          "name": "Risikoeinschätzung"
-        },
-        {
-          "importance": "supporting",
-          "kind": "tool",
-          "level": 3,
-          "name": "ERP-Auftragsabwicklung"
-        }
-      ],
-      "tasks": [
         {
           "confidence": "source",
-          "description": "Auskunft beim externen Dienstleister anfragen und mit internen Zahlungserfahrungen zusammenführen.",
+          "description": "Bestätigung erzeugen, prüfen und an den Kunden senden.",
           "evidence": [
-            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
           ],
           "frequency": "daily",
-          "name": "Bonitätsauskunft einholen",
+          "name": "Auftragsbestätigung versenden",
           "nature": "cognitive",
-          "share_of_time": 30,
-          "skills": [
-            {
-              "name": "Bonitätsbewertung"
-            }
-          ]
-        },
-        {
-          "confidence": "source",
-          "description": "Limit aus Auskunft, Historie und Auftragsvolumen ableiten.",
-          "evidence": [
-            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
-          ],
-          "frequency": "daily",
-          "name": "Kreditlimit festlegen",
-          "nature": "cognitive",
-          "share_of_time": 25,
-          "skills": [
-            {
-              "name": "Risikoeinschätzung"
-            }
-          ]
-        },
-        {
-          "confidence": "source",
-          "description": "Aufträge über dem Limit mit Begründung an die Teamleitung geben.",
-          "evidence": [
-            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
-          ],
-          "frequency": "weekly",
-          "name": "Limitüberschreitung eskalieren",
-          "nature": "cognitive",
-          "share_of_time": 20,
-          "skills": [
-            {
-              "name": "Risikoeinschätzung"
-            }
-          ]
-        },
-        {
-          "confidence": "source",
-          "description": "Entscheidung, Grundlage und Gültigkeit revisionssicher festhalten.",
-          "evidence": [
-            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
-          ],
-          "frequency": "daily",
-          "name": "Kreditakte dokumentieren",
-          "nature": "cognitive",
-          "share_of_time": 25,
+          "share_of_time": 15,
           "skills": [
             {
               "name": "ERP-Auftragsabwicklung"
             }
-          ]
+          ],
+          "workflow_steps": []
+        },
+        {
+          "confidence": "source",
+          "description": "Preise, Konditionen und Lieferbedingungen gegen den gültigen Rahmenvertrag abgleichen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Auftragsdaten gegen Rahmenvertrag prüfen",
+          "nature": "cognitive",
+          "share_of_time": 20,
+          "skills": [
+            {
+              "name": "Vertragsauslegung"
+            }
+          ],
+          "workflow_steps": []
+        },
+        {
+          "confidence": "source",
+          "description": "Abweichungen zwischen Bestellung und Vertrag mit dem zuständigen Vertrieb abstimmen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#auftragssachbearbeiter-9-stellen"
+          ],
+          "frequency": "daily",
+          "name": "Rückfragen mit Vertrieb klären",
+          "nature": "cognitive",
+          "share_of_time": 20,
+          "skills": [
+            {
+              "name": "Kundenkommunikation"
+            }
+          ],
+          "workflow_steps": []
         }
       ],
       "time_shares_source": "source"
@@ -224,23 +135,28 @@
         "src-2c6249b3bd2f@#fakturierungssachbearbeiter-6-stellen"
       ],
       "headcount": 6,
+      "is_new": false,
       "level": "Fachkraft",
       "name": "Fakturierungssachbearbeiter",
       "purpose": "Erstellt, prüft und versendet Rechnungen.",
+      "regulated": false,
       "skills": [
         {
+          "category": "",
           "importance": "core",
           "kind": "knowledge",
           "level": 4,
           "name": "Rechnungslegung"
         },
         {
+          "category": "",
           "importance": "core",
           "kind": "tool",
           "level": 4,
           "name": "ERP-Auftragsabwicklung"
         },
         {
+          "category": "",
           "importance": "core",
           "kind": "skill",
           "level": 3,
@@ -262,7 +178,8 @@
             {
               "name": "Belegprüfung"
             }
-          ]
+          ],
+          "workflow_steps": []
         },
         {
           "confidence": "source",
@@ -278,7 +195,8 @@
             {
               "name": "Rechnungslegung"
             }
-          ]
+          ],
+          "workflow_steps": []
         },
         {
           "confidence": "source",
@@ -294,7 +212,8 @@
             {
               "name": "Belegprüfung"
             }
-          ]
+          ],
+          "workflow_steps": []
         },
         {
           "confidence": "source",
@@ -310,7 +229,8 @@
             {
               "name": "ERP-Auftragsabwicklung"
             }
-          ]
+          ],
+          "workflow_steps": []
         }
       ],
       "time_shares_source": "source"
@@ -322,23 +242,28 @@
         "src-2c6249b3bd2f@#forderungsmanager-4-stellen"
       ],
       "headcount": 4,
+      "is_new": false,
       "level": "Fachkraft",
       "name": "Forderungsmanager",
       "purpose": "Ordnet Zahlungseingänge zu, klärt offene Posten und steuert das Mahnwesen.",
+      "regulated": false,
       "skills": [
         {
+          "category": "",
           "importance": "core",
           "kind": "knowledge",
           "level": 4,
           "name": "Offene-Posten-Verwaltung"
         },
         {
+          "category": "",
           "importance": "core",
           "kind": "skill",
           "level": 3,
           "name": "Kundenkommunikation"
         },
         {
+          "category": "",
           "importance": "supporting",
           "kind": "competence",
           "level": 3,
@@ -348,19 +273,20 @@
       "tasks": [
         {
           "confidence": "source",
-          "description": "Kontoauszüge gegen offene Posten abgleichen, Teilzahlungen aufteilen.",
+          "description": "Mahnvorschlagsliste durchsehen, Ausnahmen herausnehmen, Stufen festlegen.",
           "evidence": [
             "src-2c6249b3bd2f@#forderungsmanager-4-stellen"
           ],
-          "frequency": "daily",
-          "name": "Zahlungseingänge zuordnen",
+          "frequency": "weekly",
+          "name": "Mahnlauf vorbereiten und prüfen",
           "nature": "cognitive",
-          "share_of_time": 30,
+          "share_of_time": 25,
           "skills": [
             {
               "name": "Offene-Posten-Verwaltung"
             }
-          ]
+          ],
+          "workflow_steps": []
         },
         {
           "confidence": "source",
@@ -376,23 +302,25 @@
             {
               "name": "Kundenkommunikation"
             }
-          ]
+          ],
+          "workflow_steps": []
         },
         {
           "confidence": "source",
-          "description": "Mahnvorschlagsliste durchsehen, Ausnahmen herausnehmen, Stufen festlegen.",
+          "description": "Kontoauszüge gegen offene Posten abgleichen, Teilzahlungen aufteilen.",
           "evidence": [
             "src-2c6249b3bd2f@#forderungsmanager-4-stellen"
           ],
-          "frequency": "weekly",
-          "name": "Mahnlauf vorbereiten und prüfen",
+          "frequency": "daily",
+          "name": "Zahlungseingänge zuordnen",
           "nature": "cognitive",
-          "share_of_time": 25,
+          "share_of_time": 30,
           "skills": [
             {
               "name": "Offene-Posten-Verwaltung"
             }
-          ]
+          ],
+          "workflow_steps": []
         },
         {
           "confidence": "source",
@@ -408,7 +336,115 @@
             {
               "name": "Verhandlungsführung"
             }
-          ]
+          ],
+          "workflow_steps": []
+        }
+      ],
+      "time_shares_source": "source"
+    },
+    {
+      "archetype": "control-heavy",
+      "description": "Holt Auskünfte ein, bewertet sie, legt Limits fest und dokumentiert die Entscheidung.",
+      "evidence": [
+        "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+      ],
+      "headcount": 3,
+      "is_new": false,
+      "level": "Fachkraft",
+      "name": "Kreditprüfer",
+      "purpose": "Bewertet die Bonität von Kunden und legt Kreditlimits fest.",
+      "regulated": true,
+      "skills": [
+        {
+          "category": "",
+          "importance": "core",
+          "kind": "knowledge",
+          "level": 4,
+          "name": "Bonitätsbewertung"
+        },
+        {
+          "category": "",
+          "importance": "core",
+          "kind": "competence",
+          "level": 4,
+          "name": "Risikoeinschätzung"
+        },
+        {
+          "category": "",
+          "importance": "supporting",
+          "kind": "tool",
+          "level": 3,
+          "name": "ERP-Auftragsabwicklung"
+        }
+      ],
+      "tasks": [
+        {
+          "confidence": "source",
+          "description": "Auskunft beim externen Dienstleister anfragen und mit internen Zahlungserfahrungen zusammenführen.",
+          "evidence": [
+            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+          ],
+          "frequency": "daily",
+          "name": "Bonitätsauskunft einholen",
+          "nature": "cognitive",
+          "share_of_time": 30,
+          "skills": [
+            {
+              "name": "Bonitätsbewertung"
+            }
+          ],
+          "workflow_steps": []
+        },
+        {
+          "confidence": "source",
+          "description": "Entscheidung, Grundlage und Gültigkeit revisionssicher festhalten.",
+          "evidence": [
+            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+          ],
+          "frequency": "daily",
+          "name": "Kreditakte dokumentieren",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "ERP-Auftragsabwicklung"
+            }
+          ],
+          "workflow_steps": []
+        },
+        {
+          "confidence": "source",
+          "description": "Limit aus Auskunft, Historie und Auftragsvolumen ableiten.",
+          "evidence": [
+            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+          ],
+          "frequency": "daily",
+          "name": "Kreditlimit festlegen",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "Risikoeinschätzung"
+            }
+          ],
+          "workflow_steps": []
+        },
+        {
+          "confidence": "source",
+          "description": "Aufträge über dem Limit mit Begründung an die Teamleitung geben.",
+          "evidence": [
+            "src-2c6249b3bd2f@#kreditprufer-3-stellen-regulierter-bereich"
+          ],
+          "frequency": "weekly",
+          "name": "Limitüberschreitung eskalieren",
+          "nature": "cognitive",
+          "share_of_time": 20,
+          "skills": [
+            {
+              "name": "Risikoeinschätzung"
+            }
+          ],
+          "workflow_steps": []
         }
       ],
       "time_shares_source": "source"
@@ -420,23 +456,28 @@
         "src-2c6249b3bd2f@#teamleitung-order-to-cash-1-stelle"
       ],
       "headcount": 1,
+      "is_new": false,
       "level": "Führung",
       "name": "Teamleitung Order-to-Cash",
       "purpose": "Verantwortet den Prozess, entscheidet Ausnahmen und steuert das Team.",
+      "regulated": false,
       "skills": [
         {
+          "category": "",
           "importance": "core",
           "kind": "competence",
           "level": 4,
           "name": "Führung"
         },
         {
+          "category": "",
           "importance": "core",
           "kind": "competence",
           "level": 4,
           "name": "Risikoeinschätzung"
         },
         {
+          "category": "",
           "importance": "core",
           "kind": "knowledge",
           "level": 3,
@@ -447,6 +488,7 @@
         {
           "confidence": "inferred",
           "description": "Limitüberschreitungen, Kulanz, Stundungen und Mahnstopps entscheiden.",
+          "evidence": [],
           "frequency": "daily",
           "name": "Ausnahmen und Eskalationen entscheiden",
           "nature": "cognitive",
@@ -455,11 +497,13 @@
             {
               "name": "Risikoeinschätzung"
             }
-          ]
+          ],
+          "workflow_steps": []
         },
         {
           "confidence": "inferred",
           "description": "Durchlaufzeiten, Außenstände und Fehlerquoten aufbereiten und berichten.",
+          "evidence": [],
           "frequency": "monthly",
           "name": "Kennzahlen berichten",
           "nature": "cognitive",
@@ -468,24 +512,13 @@
             {
               "name": "Prozesssteuerung"
             }
-          ]
-        },
-        {
-          "confidence": "inferred",
-          "description": "Kapazität planen, einarbeiten, Gespräche führen.",
-          "frequency": "weekly",
-          "name": "Team steuern und einarbeiten",
-          "nature": "cognitive",
-          "share_of_time": 25,
-          "skills": [
-            {
-              "name": "Führung"
-            }
-          ]
+          ],
+          "workflow_steps": []
         },
         {
           "confidence": "inferred",
           "description": "Änderungen mit angrenzenden Bereichen, Revision und IT abstimmen.",
+          "evidence": [],
           "frequency": "monthly",
           "name": "Prozessänderungen abstimmen",
           "nature": "cognitive",
@@ -494,7 +527,23 @@
             {
               "name": "Prozesssteuerung"
             }
-          ]
+          ],
+          "workflow_steps": []
+        },
+        {
+          "confidence": "inferred",
+          "description": "Kapazität planen, einarbeiten, Gespräche führen.",
+          "evidence": [],
+          "frequency": "weekly",
+          "name": "Team steuern und einarbeiten",
+          "nature": "cognitive",
+          "share_of_time": 25,
+          "skills": [
+            {
+              "name": "Führung"
+            }
+          ],
+          "workflow_steps": []
         }
       ],
       "time_shares_source": "estimated"

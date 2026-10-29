@@ -33,7 +33,8 @@ REQUIRED = {
                            "validate_graph.py", "import_positions.py", "import_process_house.py",
                            "import_levels.py", "inventory_sources.py", "dedupe_tasks.py",
                            "check_completeness.py", "derive_collaboration.py",
-                           "register_source.py", "locate_source.py", "check_evidence.py"],
+                           "register_source.py", "locate_source.py", "check_evidence.py",
+                           "pages_lib.py", "export_pages.py", "compile_pages.py"],
     "task-scorer": ["export_scoring_sheet.py", "score_roles.py", "calibrate.py", "build_target_roles.py"],
     "agent-mapper": ["export_agent_candidates.py", "compute_coverage.py", "validate_contracts.py",
                      "export_contracts.py", "export_skill.py", "export_reach.py",
@@ -53,7 +54,7 @@ REQUIRED = {
 REQUIRED_FILES = {
     "work-graph-builder": ["references/extraction-format.md", "references/process-format.md",
                            "references/glossar.md", "references/interview-leitfaden.md",
-                           "references/datenaufbereitung.md", "assets/role-template.json"],
+                           "references/datenaufbereitung.md", "references/seiten-format.md", "assets/role-template.json"],
     "task-scorer": ["references/rubric.md"],
     "agent-mapper": ["references/agent-patterns.md", "references/contract-format.md",
                      "references/rollen-setup.md", "references/kontext-aus-dokumenten.md"],
