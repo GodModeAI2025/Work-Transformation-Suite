@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Work-Transformation-Suite</title>
-<meta name="description" content="Sechs Claude-Skills: aus Stellenbeschreibungen ein bewerteter Arbeitsgraph, daraus KI-native Soll-Prozesse mit gerechneten Deltas und eine Rollen.md, die einem Agenten den Kontext seiner Rolle gibt.">
+<meta name="description" content="Sieben Claude-Skills: aus Stellenbeschreibungen oder der Referenzbibliothek ein bewerteter Arbeitsgraph mit Belegen, daraus KI-native Soll-Prozesse mit gerechneten Deltas, ein Wellenraster für die Entscheidungsrunde und eine Rollen.md, die einem Agenten den Kontext seiner Rolle gibt.">
 <meta property="og:title" content="Work-Transformation-Suite">
 <meta property="og:description" content="Welche Arbeit kann KI übernehmen, wie sähe der Prozess vom Ergebnis her neu gebaut aus, und was muss ein Agent über seine Rolle wissen? Claude urteilt, Skripte rechnen.">
 <meta property="og:type" content="website">
@@ -122,7 +122,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
 
 <header>
   <div class="wrap">
-    <p class="kicker">Sechs Claude-Skills · Python 3.9+ · keine Abhängigkeiten</p>
+    <p class="kicker">Sieben Claude-Skills · Python 3.9+ · keine Abhängigkeiten · Version 0.11.0</p>
     <h1>Vom <b>bewerteten Arbeitsgraphen</b> zum <b>Agenten, der seine Rolle kennt</b>.</h1>
     <p class="lead">
       Rollen, Aufgaben und Skills eines Bereichs, jede Aufgabe auf KI-Automatisierbarkeit bewertet, jede Rolle als
@@ -140,6 +140,11 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       Und für jede Rolle lässt sich die Datei erzeugen, die ein Agent braucht, um zu wissen, wer hier arbeitet:
       die <b>Rollen.md</b>. Und für die Runde, die über die Reihenfolge entscheidet, ein <b>Wellenraster</b> mit
       Entscheidungsvorlage und Einseiter für HR.
+    </p>
+    <p class="lead">
+      Wer nicht bei null anfangen will, nimmt den Vorrat: eine <b>Referenzbibliothek</b> mit 119 typischen Rollen aus
+      13 Branchen, 66 Rechtsthemen für Deutschland und vier Plattformprofilen. Jede Zahl im Projekt trägt einen Beleg, und
+      jeder Stand lässt sich wiederherstellen.
     </p>
     <ul class="anchors" aria-label="Auf dieser Seite">
       <li><a href="#idee">Idee</a></li>
@@ -166,6 +171,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <span class="badge">offline</span>
       <span class="badge">HAS H1–H5</span>
       <span class="badge">ESCO-kompatible Skills</span>
+      <span class="badge">13 Branchenpakete</span>
       <span class="badge">Apache 2.0</span>
     </div>
   </div>
@@ -211,7 +217,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <div class="step">
         <p class="who">Claude + Skript</p>
         <h3>work-graph-builder</h3>
-        <p>Liest Stellenbeschreibungen aus <code>00_input/</code>, extrahiert Rollen, Aufgaben, Zeitanteile und Skills, erzeugt den Graphen und die Review-Liste für Fachexperten.</p>
+        <p>Registriert Quellen, spielt auf Wunsch typische Rollen der Branche aus der Referenzbibliothek ein, extrahiert aus Stellenbeschreibungen Rollen, Aufgaben, Zeitanteile und Skills als Seiten mit Belegen, erzeugt den Graphen und die Review-Liste für Fachexperten.</p>
       </div>
       <div class="step">
         <p class="who">Claude + Skript</p>
@@ -239,8 +245,10 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
         <p>Verteilt Agenten und Use Cases auf Wellen und baut Entscheidungsvorlage, Einseiter für HR, Anhang und Methodik. Zahlen aus dem Graphen, Texte mit Quelle, Offenes bleibt offen.</p>
       </div>
     </div>
-<div class="flow">00_input/              Quellen (Mensch)
-   │  Claude extrahiert     → 10_extraction/extract_*.json
+<div class="flow">00_input/              Quellen (Mensch) · register_source.py → 00_input/sources/
+   │  seed_from_library.py  → 05_pages/ (Vorrat je Branche, Belegstand „Referenz“)   [optional]
+   │  Claude extrahiert     → 05_pages/ (Rollen, Aufgaben, Agenten als Seiten mit Belegen)
+   ▼  compile_pages.py      → 10_extraction/extract_*.json
    ▼  build_graph.py        → 20_graph/work-graph_vNNN_builder.json
    │  make_review_list.py   → 30_review/review_vNNN.md ← Fachexperten → overrides.csv
    ▼  apply_overrides.py
@@ -261,7 +269,10 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
    ▼  plan_waves.py · build_documents.py → 40_output/fahrplan.*, dokumente/
 
 Optional, auf Zuruf oder bei Bedarf:
+   library_catalog.py        → Bestand der Referenzbibliothek: Branchen, Rechtsthemen, Plattformen
    inventory_sources.py      → Quellen sichten, Methoden vorschlagen
+   check_evidence.py         → Belegbericht: belegt, Referenz, geschätzt, unbelegt
+   snapshot_project.py · release_project.py · verify_release.py → Stände, Manifest, Prüfung
    check_completeness.py · dedupe_tasks.py · derive_collaboration.py · import_levels.py
    build_target_roles.py     → Zielbild je Rolle (Entwurf)
    import_usecases.py · import_adoption.py · export_reach.py
@@ -731,7 +742,12 @@ python3 skills/work-transformation/scripts/run_pipeline.py --project examples/or
 python3 skills/work-graph-builder/scripts/init_project.py \
   --project projekte/kundenservice \
   --name "Kundenservice Pilot" --organization "Meine Firma" \
-  --scope "Kundenservice – Vertrag und Abrechnung"</pre>
+  --scope "Kundenservice – Vertrag und Abrechnung" \
+  --branche energieversorgung --plattform microsoft --rechtsraum DE
+
+# Vorrat einspielen: typische Rollen der Branche als Seiten, Belegstand „Referenz“
+python3 skills/work-graph-builder/scripts/seed_from_library.py \
+  --project projekte/kundenservice --branche energieversorgung --cluster "Marktprozesse und Abrechnung"</pre>
     <div class="note">
       <p>Der Ablauf läuft mit Bereichen von 20 bis über 200 Rollen. Projektdaten liegen außerhalb des Repositories, dort stehen nur die Skills.</p>
     </div>
