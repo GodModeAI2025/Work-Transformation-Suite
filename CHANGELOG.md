@@ -4,6 +4,75 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.9.0] — Quellenregister, Belege, Stände und Seiten als Wahrheit (Schema 1.3)
+
+Ein Projektordner soll für sich stehen: Jede Aussage im Graphen nennt ihre Quelle und Fundstelle, der Stand lässt
+sich sichern, freigeben und nachprüfen, mehrere Personen können ihn pflegen, und was Claude und Menschen
+festhalten, steht als lesbares Markdown da, nicht als JSON. Diese Version baut das in vier Teilen nach.
+
+### Quellenregister und Belege
+
+- **`register_source.py`** nimmt eine Quelle treu als Markdown nach `00_input/sources/` auf: `source_id` ist der Hash des
+  Inhalts, Titel, Herkunft, Datum und Hash stehen in `register.jsonl`. Nichts wird zusammengefasst oder übersetzt; das
+  Original bleibt, wo es ist (`--original` hält seinen Hash fest). Zugangsdaten und absolute Pfade stoppen die Aufnahme,
+  dieselben Bytes werden nicht zweimal geführt.
+- **Belege** `src-<hash>@<fundstelle>` (Überschriftenanker, Zeile, Bereich, Freitext) an Rollen, Aufgaben, Prozessen,
+  Schritten, Kennzahlen und Kontrollen (`evidence`, bei Kontrollen `source_evidence`). Der Validator prüft Form und
+  Register; `evidence_status` je Eintrag: belegt, geschätzt, unbelegt.
+- **`check_evidence.py`** zählt je Sammlung und prüft jede Fundstelle gegen den Quelltext (`30_review/belege_vNNN.md`).
+  `locate_source.py` zeigt Anker und findet Zitate. `evidence_policy` in `project.json`: `warn` meldet, `strict` hält
+  die Pipeline an.
+
+### Stände
+
+- **`snapshot_project.py` / `restore_project.py`**: Wiederherstellungspunkte unter `50_snapshots/` mit Hash je Datei;
+  Restore ist byteidentisch und sichert vorher den jetzigen Stand.
+- **`release_project.py` / `verify_release.py`**: ein Freigabestand ist ein Manifest unter `60_releases/<version>/` plus
+  eine verkettete Zeile in `releases.jsonl`. Ohne fehlerfreien Validator, ohne Ausgaben, bei fremdem Pflegeanspruch
+  oder nicht steigender Version entsteht keiner. Die Prüfung nennt jede veränderte, fehlende und neue Datei.
+- **`project_lock.py`**: Pflegeanspruch in `.wts-lock/` mit Token außerhalb des Projekts (0600, nie im Klartext
+  irgendwo). `run_pipeline.py` hält bei fremdem gültigem Anspruch an; abgelaufene Ansprüche werden nur mit
+  `--take-over --reason` übernommen und protokolliert.
+
+### Seiten als Wahrheit
+
+- **`05_pages/`**: Jobcluster, Rollen, Aufgaben (mit Bewertung) und Agenten (mit Vertrag als JSON-Block) als
+  Markdown-Seiten mit flachem Kopf. **`compile_pages.py`** übersetzt sie deterministisch in `10_extraction/`,
+  `scores.json` und `agents.json`; die Pipeline tut das vor jedem Lauf, Fehler werden mit Datei und Zeile gemeldet.
+  **`export_pages.py`** holt bestehende Projekte einmalig auf Seiten. Format: `references/seiten-format.md`.
+- Das Beispielprojekt führt Seiten und registrierte Quellen; der Graph daraus ist byteidentisch mit dem hinterlegten Stand.
+
+### Grenzen
+
+- Prozesse, Blueprints und Experimente bleiben JSON: verschachtelte Struktur, die ein flacher Kopf verfälschen würde.
+- PDF, Word und Excel liest weiter Claude; das Register nimmt die treue Markdown-Fassung und den Hash des Originals.
+- Das Lock ersetzt keine Absprache. Es verhindert, dass zwei Läufe denselben Graphen gleichzeitig schreiben.
+
+## [0.8.0] — Fahrplan-Raster und Unterlagen für die Entscheidungsrunde
+
+Nach der Analyse stellen sich zwei Fragen: In welcher Reihenfolge gehen wir die Vorhaben an, und was legen wir der Runde vor, die
+darüber entscheidet? Ein siebtes Skill beantwortet beide aus dem Arbeitsgraphen.
+
+### Neu
+
+- **Skill `transformation-roadmap`** mit `plan_waves.py` und `build_documents.py`.
+- **Wellenraster** (`fahrplan_vNNN.md/.html/.csv`, `roadmap_vNNN.json`): Agenten und Use Cases erhalten einen Score aus Wert, Reichweite,
+  Umsetzbarkeit, Reifegrad und Prozessrang und werden auf Wellen verteilt. Laufende Vorhaben liegen in Welle 1, schwere beginnen dort
+  nicht, Orchestratoren folgen den Agenten, die sie steuern. Betroffene Rollen und FTE je Welle zählen jede Aufgabe einmal.
+- **Entscheidungen** in `30_review/wellen.csv`: Eine Zuordnung gilt erst mit benannter Person. Zeiträume setzt das Raster nicht selbst.
+- **Unterlagen** in `40_output/dokumente/`: Entscheidungsvorlage, Einseiter für HR, Anhang mit allen Vorhaben, Methodik, je Markdown und
+  HTML. Zahlen aus dem Graphen (Jobarchitektur heute und künftig, betroffene Rollen, Wert, Pilotstand), Erzählendes aus
+  `30_review/dokumente/texte.json` mit Quelle. Offene Felder bleiben „❓ offen“; jedes Dokument nennt seinen Stand (Entwurf oder
+  versandfertig), `--strict` macht einen Entwurf zum Fehler.
+- **Pipeline:** `run_pipeline.py` rechnet als letzten Schritt Raster und Unterlagen (`--until roadmap`), hält dabei aber nie an.
+- Beispielprojekt um zwei Wellenentscheidungen und vier Textfelder erweitert.
+
+### Grenzen
+
+- Der Score ordnet, er misst nicht. Abhängigkeiten kennt das Raster nur zwischen Orchestrator und Agenten.
+- Wert und FTE beschreiben gebundene Arbeit, nicht Einsparung.
+- Kein Word-Ausgabeformat; Markdown und druckbares HTML.
+
 ## [0.7.0] — Kontext aus Dokumenten statt aus Fragen
 
 Eine Rollen.md hat Felder, die ein Graph nicht kennt: Prioritäten, Ton, Zeitfresser aus Sicht der Person. Sie müssen nicht alle per Frage und Antwort kommen. Diese Version holt Vorschläge

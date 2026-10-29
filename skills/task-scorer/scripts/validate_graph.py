@@ -58,7 +58,49 @@ def _num(value, default=None):
     return default
 
 
-def validate(graph: dict) -> tuple[list[str], list[str]]:
+# Sammlungen, deren Einträge Aussagen über die Wirklichkeit sind und deshalb Belege tragen.
+# Agenten, Blueprints und Experimente sind Entwürfe und Urteile; sie stehen nicht hier.
+EVIDENCE_COLLECTIONS = {"roles": "evidence", "tasks": "evidence", "processes": "evidence",
+                        "process_steps": "evidence", "metrics": "evidence", "controls": "source_evidence"}
+
+
+def _check_evidence(graph: dict, errors: list, warnings: list, strict: bool) -> None:
+    """Belege: Form src-…@…, bekannte Quelle, Belegstand. Unbelegt ist eine Warnung je Sammlung,
+    bei strenger Belegpflicht ein Fehler je Eintrag."""
+    known = {s.get("source_id") for s in (graph.get("meta", {}).get("sources") or []) if isinstance(s, dict)}
+    for coll, field in EVIDENCE_COLLECTIONS.items():
+        unsourced = []
+        for it in graph.get(coll, []):
+            w = f"{coll[:-1] if coll.endswith('s') else coll} {it['id']} ({it.get('name')})"
+            refs = it.get(field) or []
+            if not isinstance(refs, list):
+                errors.append(f"{w}: '{field}' muss eine Liste sein")
+                refs = []
+            for ref in refs:
+                ev = wl.parse_evidence(ref)
+                if not ev:
+                    errors.append(f"{w}: Beleg {ref!r} hat nicht die Form src-<hash>@<fundstelle>")
+                elif ev[0] not in known:
+                    errors.append(f"{w}: Beleg {ref!r} verweist auf eine nicht registrierte Quelle "
+                                  "(register_source.py, dann Graph neu bauen)")
+            status = it.get("evidence_status")
+            check_enum(errors, w, "evidence_status", status, wl.ENUM_EVIDENCE_STATUS, required=False)
+            if status == "unsourced":
+                unsourced.append(w)
+        if unsourced and strict:
+            errors.extend(f"{w}: ohne Beleg und nicht als Schätzung gekennzeichnet (Belegpflicht strict)"
+                          for w in unsourced)
+        elif unsourced:
+            warnings.append(f"{coll}: {len(unsourced)} von {len(graph.get(coll, []))} Einträgen ohne Beleg "
+                            "(check_evidence.py nennt sie)")
+    for pv in graph.get("provenance", []):
+        ev = wl.parse_evidence(pv.get("source_ref"))
+        if ev and ev[0] not in known:
+            errors.append(f"provenance {pv.get('id')}: source_ref {pv.get('source_ref')!r} verweist auf eine "
+                          "nicht registrierte Quelle")
+
+
+def validate(graph: dict, strict_evidence: bool = False) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -208,6 +250,7 @@ def validate(graph: dict) -> tuple[list[str], list[str]]:
             errors.append(f"position {p.get('id')}: role_id unbekannt")
 
     validate_process_layer(graph, ids, errors, warnings)
+    _check_evidence(graph, errors, warnings, strict_evidence)
     return errors, warnings
 
 
@@ -885,6 +928,8 @@ def main() -> int:
     ap.add_argument("--project", help="Projektordner (relativ)")
     ap.add_argument("--file", help="Alternativ: konkrete Graph-Datei")
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument("--strict-evidence", action="store_true",
+                    help="unbelegte Aussagen sind Fehler, nicht Warnungen (Standard: Belegpflicht aus project.json)")
     args = ap.parse_args()
 
     if args.file:
@@ -902,7 +947,8 @@ def main() -> int:
     for note in wl.migrate_graph(graph):
         if not args.quiet:
             print(f"MIGRATION {note}")
-    errors, warnings = validate(graph)
+    strict = args.strict_evidence or (bool(args.project) and wl.evidence_policy(wl.resolve_project(args.project)) == "strict")
+    errors, warnings = validate(graph, strict_evidence=strict)
     if not args.quiet:
         for e in errors:
             print(f"FEHLER   {e}")

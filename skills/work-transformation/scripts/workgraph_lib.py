@@ -33,8 +33,8 @@ import unicodedata
 from pathlib import Path
 from typing import Any, Iterable
 
-SCHEMA_VERSION = "1.2"
-SCHEMA_VERSIONS_SUPPORTED = ("1.0", "1.1", "1.2")
+SCHEMA_VERSION = "1.3"
+SCHEMA_VERSIONS_SUPPORTED = ("1.0", "1.1", "1.2", "1.3")
 
 # Feste Ordnerstruktur eines Projekts (relativ zum Projektordner)
 DIR_INPUT = "00_input"
@@ -44,6 +44,26 @@ DIR_REVIEW = "30_review"
 DIR_OUTPUT = "40_output"
 PROJECT_FILE = "project.json"
 LATEST_GRAPH = "work-graph_latest.json"
+# Quellenregister (Schema 1.3): treue Markdown-Fassung jeder Quelle unter 00_input/sources/,
+# Register als JSON-Zeilen. Belege im Graphen verweisen als "src-<hash>@<fundstelle>" darauf.
+DIR_SOURCES = "sources"
+SOURCE_REGISTER = "register.jsonl"
+# Stände (Schema 1.3): Wiederherstellungspunkte, verifizierte Freigabestände, Pflege-Lock.
+DIR_SNAPSHOTS = "50_snapshots"
+DIR_RELEASES = "60_releases"
+LOCK_DIR = ".wts-lock"
+RELEASE_LOG = "releases.jsonl"
+# Was zu einem Stand gehört: alles, was Menschen oder Claude geschrieben haben, plus der
+# aktuelle Graph. Erzeugte Ausgaben (40_output) nur in Freigabeständen, nie in Snapshots.
+CONTROLLED_DIRS = (DIR_INPUT, DIR_EXTRACTION, DIR_GRAPH, DIR_REVIEW)
+CONTROLLED_SKIP_PARTS = ("__pycache__", ".DS_Store", DIR_SNAPSHOTS, DIR_RELEASES, LOCK_DIR)
+SOURCE_ID_RE = re.compile(r"^src-[0-9a-f]{12}$")
+EVIDENCE_RE = re.compile(r"^(src-[0-9a-f]{12})@(\S.*)$")
+# Belegstand einer Aussage: belegt (mindestens ein gültiger Beleg), geschätzt (ausdrücklich
+# als Schätzung oder Vorschlag gekennzeichnet), unbelegt (weder noch). Unbelegt ist nicht
+# falsch, aber sichtbar: Der Validator warnt, bei strenger Belegpflicht lehnt er ab.
+ENUM_EVIDENCE_STATUS = ["sourced", "estimated", "unsourced"]
+ENUM_EVIDENCE_POLICY = ["warn", "strict"]
 
 # Erlaubte Aufzählungswerte (Validator prüft dagegen)
 ENUM_FREQUENCY = ["daily", "weekly", "monthly", "quarterly", "adhoc"]
@@ -405,6 +425,8 @@ SORTED_LIST_KEYS = {
     "tools", "read_permissions", "write_permissions", "audit_events", "blueprint_ids",
     # Schema 1.2
     "retained_task_ids", "delegated_task_ids", "merge_with_role_ids", "agent_ids_covered",
+    # Schema 1.3
+    "evidence", "source_evidence",
 }
 
 
@@ -816,6 +838,183 @@ def collaboration_pairs(graph: dict[str, Any]) -> list[dict[str, Any]]:
         })
     out.sort(key=lambda r: (-r["strength"], r["role_a"], r["role_b"]))
     return out
+
+
+# ---------------------------------------------------------------------------
+# Schema 1.3: Quellenregister und Belege
+# ---------------------------------------------------------------------------
+
+def sources_dir(project: Path) -> Path:
+    return project / DIR_INPUT / DIR_SOURCES
+
+
+def load_source_register(project: Path) -> dict[str, dict[str, Any]]:
+    """Registrierte Quellen je source_id. Fehlt das Register, ist das Ergebnis leer."""
+    path = sources_dir(project) / SOURCE_REGISTER
+    if not path.exists():
+        return {}
+    out: dict[str, dict[str, Any]] = {}
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        if not line.strip():
+            continue
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError as e:
+            fail(f"{relpath(path)} Zeile {n}: kein gültiges JSON ({e})")
+        if isinstance(rec, dict) and rec.get("source_id"):
+            out[rec["source_id"]] = rec
+    return out
+
+
+def parse_evidence(ref: Any):
+    """Gibt (source_id, locator) zurück oder None, wenn der Beleg nicht die Form src-…@… hat."""
+    if not isinstance(ref, str):
+        return None
+    m = EVIDENCE_RE.match(ref.strip())
+    return (m.group(1), m.group(2).strip()) if m else None
+
+
+def evidence_status(entity: dict[str, Any], estimated: bool = False) -> str:
+    """Belegstand einer Aussage aus ihren Belegen und ihrer Kennzeichnung."""
+    refs = [r for r in (entity.get("evidence") or []) if parse_evidence(r)]
+    if refs:
+        return "sourced"
+    return "estimated" if estimated else "unsourced"
+
+
+def anchor_slug(heading: str) -> str:
+    """Anker einer Überschrift für Fundstellen: „Auftragssachbearbeiter (9 Stellen)“ → auftragssachbearbeiter-9-stellen."""
+    return normalize_name(heading).replace(" ", "-")
+
+
+def source_headings(body: str) -> list[tuple[int, int, str, str]]:
+    """(Zeile, Ebene, Überschrift, Anker) für jede Markdown-Überschrift; Codeblöcke werden übersprungen."""
+    out = []
+    fenced = False
+    for n, line in enumerate(body.splitlines(), start=1):
+        if line.strip().startswith("```"):
+            fenced = not fenced
+            continue
+        if fenced:
+            continue
+        m = re.match(r"^(#{1,6})\s+(.+?)\s*#*\s*$", line)
+        if m:
+            out.append((n, len(m.group(1)), m.group(2).strip(), anchor_slug(m.group(2))))
+    return out
+
+
+def split_frontmatter(text: str) -> tuple[list[str], str]:
+    """Trennt den YAML-Kopf (Zeilen zwischen den ersten beiden ---) vom Rumpf; der Rumpf bleibt byteidentisch."""
+    m = re.match(r"^---[ \t]*\n(.*?)\n---[ \t]*\n", text, re.S)
+    if not m:
+        return [], text
+    return m.group(1).split("\n"), text[m.end():].lstrip("\n")
+
+
+def resolve_locator(body: str, locator: str) -> tuple[bool, str]:
+    """Prüft eine Fundstelle gegen den Quelltext: #anker, Ln, La-b. Freitext gilt als nicht prüfbar."""
+    lines = body.splitlines()
+    if locator.startswith("#"):
+        anchors = {a for _, _, _, a in source_headings(body)}
+        want = locator[1:]
+        return (want in anchors, "" if want in anchors else f"Anker {locator!r} nicht in der Quelle")
+    m = re.match(r"^L(\d+)(?:-(\d+))?$", locator)
+    if m:
+        a = int(m.group(1))
+        b = int(m.group(2) or a)
+        ok = 1 <= a <= b <= len(lines)
+        return ok, "" if ok else f"Zeilen {locator} außerhalb der Quelle ({len(lines)} Zeilen)"
+    return True, "Fundstelle ist Freitext und wird nicht geprüft"
+
+
+# Zugangsdaten gehören in keine Quelle und in keinen Bericht. Die Muster sind bewusst eng:
+# Formen, die in Fließtext praktisch nie zufällig vorkommen. Gemeldet wird Zeile und Art,
+# nie der Treffer selbst, damit der Bericht ihn nicht ein zweites Mal verbreitet.
+CREDENTIAL_PATTERNS = (
+    ("private-key", re.compile(r"-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----")),
+    ("aws-access-key", re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b")),
+    ("github-token", re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{40,})")),
+    ("api-key", re.compile(r"(?<![\w-])sk-(?:ant-|proj-)?[A-Za-z0-9_-]{32,}")),
+    ("slack-token", re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{20,}")),
+    ("json-web-token", re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}")),
+    ("url-credentials", re.compile(r"\b[a-z][a-z0-9+.-]*://[^/\s:@<>\"'`]+:[^/\s:@<>\"'`]+@")),
+)
+_PLACEHOLDER_PASSWORDS = {"pass", "passwd", "password", "passwort", "pw", "pwd", "secret", "geheim", "token", "changeme"}
+
+
+def _credential_placeholder(kind: str, match: str) -> bool:
+    if kind == "url-credentials":
+        password = match.rsplit("@", 1)[0].split("://", 1)[1].split(":", 1)[1]
+        return password.lower() in _PLACEHOLDER_PASSWORDS or password[:1] in "${%*" or len(set(password.lower())) == 1
+    if "example" in match.lower():
+        return True
+    body = max(re.split(r"[_.-]", match[4:]) or [""], key=len)
+    return len(body) >= 12 and len(set(body.lower())) <= 2
+
+
+def credential_findings(text: str) -> list[tuple[int, str]]:
+    """(Zeile, Art) je Zeile, die wie ein Zugangsdatum aussieht."""
+    out = []
+    for n, line in enumerate(text.splitlines(), start=1):
+        for kind, pat in CREDENTIAL_PATTERNS:
+            if any(not _credential_placeholder(kind, m.group(0)) for m in pat.finditer(line)):
+                out.append((n, kind))
+                break
+    return out
+
+
+def portable_reference(value: str) -> bool:
+    """Darf ein Verweis in einer Projektdatei stehen? Keine absoluten Pfade, kein Home, kein .. ."""
+    v = (value or "").strip()
+    if not v or v.lower().startswith("file:"):
+        return False
+    if re.match(r"^[a-z][a-z0-9+.-]+://", v, re.I):
+        return True
+    if v.startswith(("~/", "~\\")) or v.startswith(("/", "\\")) or re.match(r"^[A-Za-z]:[\\/]", v):
+        return False
+    return ".." not in v.replace("\\", "/").split("/")
+
+
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def controlled_files(project: Path, with_output: bool = False) -> list[str]:
+    """Relative Pfade aller Dateien, die einen Stand ausmachen, stabil sortiert.
+
+    Ältere Graph-Versionen (work-graph_vNNN_*.json) gehören nicht dazu: Sie sind Geschichte,
+    der Stand ist work-graph_latest.json plus alles, woraus er entstand.
+    """
+    out = [PROJECT_FILE] if (project / PROJECT_FILE).exists() else []
+    dirs = list(CONTROLLED_DIRS) + ([DIR_OUTPUT] if with_output else [])
+    for d in dirs:
+        base = project / d
+        if not base.is_dir():
+            continue
+        for p in sorted(base.rglob("*")):
+            if not p.is_file():
+                continue
+            rel = p.relative_to(project)
+            if any(part in CONTROLLED_SKIP_PARTS for part in rel.parts):
+                continue
+            if d == DIR_GRAPH and re.match(r"^work-graph_v\d{3}_", p.name):
+                continue
+            out.append(rel.as_posix())
+    return out
+
+
+def manifest_of(project: Path, files: list[str]) -> dict[str, str]:
+    return {rel: sha256_file(project / rel) for rel in files}
+
+
+def evidence_policy(project: Path) -> str:
+    """Belegpflicht des Projekts (project.json: evidence_policy). Standard: warn."""
+    pol = str(load_project_meta(project).get("evidence_policy") or "warn")
+    return pol if pol in ENUM_EVIDENCE_POLICY else "warn"
 
 
 def fail(msg: str, code: int = 2) -> None:

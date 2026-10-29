@@ -1,0 +1,31 @@
+{
+  "entscheidungsvorlage": {
+    "anlass": {
+      "text": "Der Bereich Order-to-Cash baut seit dem Frühjahr einzelne Automatisierungen. Wir wollen klären, welche Rollen sich dadurch verändern und in welcher Reihenfolge weitere Vorhaben folgen. Grundlage ist ein Bild der heutigen und der künftigen Aufgabenverteilung.",
+      "quelle": "Gesprächsnotiz Lenkungskreis Order-to-Cash, Juni 2026 (fiktiv)",
+      "verfasst_von": "Teamleitung Order-to-Cash"
+    },
+    "pilot": {
+      "text": "Im Pilot zur Zahlungszuordnung sank die Durchlaufzeit bis zur geklärten Zuordnung von 36 auf 11,4 Stunden, ohne dass mehr Kunden zu Unrecht gemahnt wurden. Der Rahmen war mit dem Betriebsrat abgestimmt. Der Schattenbetrieb für Auftragserfassung und Rechnungsvorbereitung ist bereit, aber noch nicht gestartet.",
+      "quelle": "Auswertung Pilot Zahlungszuordnung, Mai 2026 (fiktiv)",
+      "verfasst_von": "Teamleitung Order-to-Cash"
+    },
+    "vorgehen": {
+      "text": "Die Vorhaben werden Welle für Welle festgelegt, die Automatisierung startet dort, wo der Pilot trägt, und die betroffenen Rollen werden erst danach neu geschnitten. Die Fachseite entscheidet über Zuschnitt und Auffangweg der Rollen, die Technik über Umsetzung und Reihenfolge der Schnittstellen.",
+      "quelle": "Gesprächsnotiz Lenkungskreis Order-to-Cash, Juni 2026 (fiktiv)",
+      "verfasst_von": "Teamleitung Order-to-Cash"
+    },
+    "beschluss": {
+      "text": "Die Runde bestätigt die Reihenfolge der drei Wellen oder ändert sie, legt Zeiträume fest und benennt je Rolle den Auffangweg.",
+      "quelle": "Entwurf für den Lenkungskreis (fiktiv)",
+      "verfasst_von": "Teamleitung Order-to-Cash"
+    }
+  },
+  "hr_einseiter": {
+    "botschaft": {
+      "text": "Vier von fünf Rollen sind in der ersten Welle betroffen. Die Arbeit bleibt, aber ihr Zuschnitt ändert sich: weniger Erfassen und Abgleichen, mehr Klären und Entscheiden. Die Zahlen sind Schätzungen und betreffen Rollen, nicht Personen.",
+      "quelle": "Auswertung des Arbeitsgraphen Order-to-Cash, Version 12 (fiktiv)",
+      "verfasst_von": "Teamleitung Order-to-Cash"
+    }
+  }
+}

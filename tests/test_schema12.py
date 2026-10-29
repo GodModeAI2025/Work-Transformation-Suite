@@ -337,7 +337,7 @@ class TestMigration12(unittest.TestCase):
             old[c] = []
         old["roles"] = [{"id": "ro_x", "name": "Bestand"}]
         notes = wl.migrate_graph(old)
-        self.assertEqual(old["meta"]["schema_version"], "1.2")
+        self.assertEqual(old["meta"]["schema_version"], wl.SCHEMA_VERSION)
         for c in wl.COLLECTIONS_ADOPTION:
             self.assertEqual(old[c], [])
         self.assertEqual(old["roles"], [{"id": "ro_x", "name": "Bestand"}])

@@ -22,7 +22,7 @@ from pathlib import Path
 
 SHARED = {
     "workgraph_lib.py": ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner",
-                         "transformation-dashboard", "work-transformation"],
+                         "transformation-dashboard", "transformation-roadmap", "work-transformation"],
     "validate_graph.py": ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner",
                           "transformation-dashboard"],
     "apply_overrides.py": ["work-graph-builder", "task-scorer"],
@@ -32,7 +32,9 @@ REQUIRED = {
                            "make_review_list.py", "apply_overrides.py", "apply_governance.py",
                            "validate_graph.py", "import_positions.py", "import_process_house.py",
                            "import_levels.py", "inventory_sources.py", "dedupe_tasks.py",
-                           "check_completeness.py", "derive_collaboration.py"],
+                           "check_completeness.py", "derive_collaboration.py",
+                           "register_source.py", "locate_source.py", "check_evidence.py",
+                           "pages_lib.py", "export_pages.py", "compile_pages.py"],
     "task-scorer": ["export_scoring_sheet.py", "score_roles.py", "calibrate.py", "build_target_roles.py"],
     "agent-mapper": ["export_agent_candidates.py", "compute_coverage.py", "validate_contracts.py",
                      "export_contracts.py", "export_skill.py", "export_reach.py",
@@ -43,13 +45,16 @@ REQUIRED = {
                            "validate_blueprints.py", "compare_scenarios.py", "score_processes.py",
                            "make_experiments.py", "redesign_lib.py"],
     "transformation-dashboard": ["build_dashboard.py", "capacity_views.py", "task_views.py"],
-    "work-transformation": ["run_pipeline.py", "check_suite.py"],
+    "transformation-roadmap": ["plan_waves.py", "build_documents.py", "roadmap_lib.py", "roadmap_views.py",
+                               "render_lib.py"],
+    "work-transformation": ["run_pipeline.py", "check_suite.py", "project_lock.py", "snapshot_project.py",
+                            "restore_project.py", "release_project.py", "verify_release.py"],
 }
 # Dateien, die ein Skill zusätzlich zu scripts/ braucht (Referenzen, Konfiguration).
 REQUIRED_FILES = {
     "work-graph-builder": ["references/extraction-format.md", "references/process-format.md",
                            "references/glossar.md", "references/interview-leitfaden.md",
-                           "references/datenaufbereitung.md", "assets/role-template.json"],
+                           "references/datenaufbereitung.md", "references/seiten-format.md", "assets/role-template.json"],
     "task-scorer": ["references/rubric.md"],
     "agent-mapper": ["references/agent-patterns.md", "references/contract-format.md",
                      "references/rollen-setup.md", "references/kontext-aus-dokumenten.md"],
@@ -57,6 +62,7 @@ REQUIRED_FILES = {
                            "references/experiment-format.md", "references/value-rubric.md",
                            "assets/value-weights.json"],
     "transformation-dashboard": ["assets/theme.json"],
+    "transformation-roadmap": ["references/wellenlogik.md", "references/dokumente.md", "assets/wave-config.json"],
 }
 
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")

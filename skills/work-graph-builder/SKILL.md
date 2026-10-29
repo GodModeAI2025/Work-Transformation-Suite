@@ -31,7 +31,34 @@ Existiert das Projekt schon, meldet das Skript den aktuellen Versionsstand. Quel
 gehören nach `00_input/`. Wenn der Nutzer Dateien im Chat hochgeladen hat, kopiere sie dorthin
 (Dateiname beibehalten), damit `source` in der Extraktion auf etwas Nachvollziehbares zeigt.
 
-### 2. Quellen lesen und Extraktionsdateien schreiben
+### 1b. Quellen registrieren
+
+Jede Quelle, auf die sich der Graph berufen soll, kommt treu als Markdown ins Register:
+
+```
+python3 <skill>/scripts/register_source.py --project ./projekte/<name> --file 00_input/<datei>.md --title "<Titel>" [--kind document|interview|system_export|observation]
+```
+
+`.md`, `.txt`, `.csv`, `.tsv` und `.json` registriert das Skript selbst. PDF, Word, Excel und Bilder liest
+du: Lege die treue Markdown-Fassung ab (Überschriften, Listen, Tabellen, Seiten- oder Folienmarken
+erhalten, nichts zusammenfassen, nichts übersetzen) und registriere sie mit `--original <datei>`
+und `--extractor claude`. Das Skript hasht den Inhalt zur `source_id`, lehnt Zugangsdaten und
+absolute Pfade ab und nennt die Anker der Überschriften. Was nicht lesbar war, bekommt `--status partial`.
+
+Ein Beleg hat dann die Form `src-<hash>@<fundstelle>`: Überschriftenanker (`#auftragssachbearbeiter-9-stellen`),
+Zeile (`L12`), Bereich (`L12-18`) oder Freitext (Seite, Folie). `locate_source.py --source src-… --find "Zitat"`
+liefert die Fundstelle zu einem Zitat. Trage je Rolle, Aufgabe, Prozess, Schritt, Kennzahl und Kontrolle
+die Belege in die Extraktion ein (`evidence`, bei Kontrollen `source_evidence`). Was du aus dem Berufsbild
+ergänzt, bleibt ohne Beleg und trägt `confidence: inferred`; das ist eine Schätzung, keine Lücke.
+
+### 2. Quellen lesen und Seiten oder Extraktionsdateien schreiben
+
+Zwei Wege, ein Ergebnis. **Seiten** (`05_pages/`, Format in `references/seiten-format.md`): je Jobcluster,
+Rolle und Aufgabe eine Markdown-Seite mit flachem Kopf und Textabschnitten; `compile_pages.py` erzeugt daraus
+die Extraktionsdateien, die Pipeline tut das vor jedem Lauf. Das ist der Standard für neue Projekte: Die Seite
+ist die Wahrheit, lesbar und mit Fundstelle je Aussage. **Extraktionsdateien** (`10_extraction/extract_*.json`,
+Format unten) bleiben für Projekte ohne Seiten gültig; `export_pages.py` holt sie einmalig auf Seiten.
+Nie beides pflegen: Sobald Seiten existieren, werden die Extraktionsdateien überschrieben.
 
 Lies `references/extraction-format.md` (Format, Pflichtfelder) und
 `references/skill-taxonomy.md` (kanonische Skillnamen). Dann je Quelle eine Datei
@@ -182,7 +209,13 @@ Quelle nicht hergibt.
 
 ```
 python3 <skill>/scripts/validate_graph.py --project ./projekte/<name>
+python3 <skill>/scripts/check_evidence.py --project ./projekte/<name>
 ```
+
+`check_evidence.py` schreibt `30_review/belege_vNNN.md`: je Sammlung belegt, geschätzt, unbelegt, dazu jede
+Fundstelle, die im Quelltext nicht aufgeht. Bei `evidence_policy: strict` in `project.json` hält die
+Pipeline an, solange etwas unbelegt ist. Erfinde dann keinen Beleg: Registriere die Quelle, trage die
+Fundstelle ein, oder kennzeichne den Eintrag als Schätzung.
 
 Nenne dem Nutzer: Version, Anzahl Rollen/Aufgaben/Skills, Anteil `inferred`, offene Warnungen,
 und dass der nächste Schritt der Skill `task-scorer` ist. Wenn Prozesse erfasst sind, nenne

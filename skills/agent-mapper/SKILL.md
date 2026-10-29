@@ -72,6 +72,11 @@ Worauf es ankommt:
   sich energiewirtschaftlich anfühlt. `proprietary` ist es erst, wenn es an eigenen Prozessen
   oder Systemen hängt.
 
+**Mit Seiten** (`05_pages/` vorhanden): Je Agent eine Seite unter `05_pages/agents/` (Format in
+`work-graph-builder/references/seiten-format.md`): Kopf mit `name`, `pattern`, `status`, `complexity`,
+`prerequisites`, `tasks` als `"Rolle > Aufgabe"`; Rumpf mit „Fähigkeit“, „Aufsicht“ und dem Vertrag als
+JSON-Block. `agents.json` entsteht daraus beim nächsten Lauf.
+
 ### 4. Abdeckung rechnen
 
 ```

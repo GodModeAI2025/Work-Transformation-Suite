@@ -23,6 +23,7 @@ gewinnt die alphabetisch erste Datei für Texte, Aufgaben und Skills werden vere
       "regulated": true,
       "is_new": false,
       "time_shares_source": "estimated",
+      "evidence": ["src-2c6249b3bd2f@#sachbearbeiter-vertragsmanagement"],
       "skills": [
         {"name": "Energiewirtschaftliche Marktprozesse (GPKE/GeLi Gas)", "kind": "knowledge", "category": "Energiewirtschaft", "level": 4, "importance": "core"},
         {"name": "SAP IS-U", "kind": "tool", "category": "IT-Systeme", "level": 3, "importance": "core"},
@@ -42,6 +43,7 @@ gewinnt die alphabetisch erste Datei für Texte, Aufgaben und Skills werden vere
           "frequency": "daily",
           "nature": "cognitive",
           "confidence": "source",
+          "evidence": ["src-2c6249b3bd2f@#sachbearbeiter-vertragsmanagement"],
           "skills": ["SAP IS-U", "Energiewirtschaftliche Marktprozesse (GPKE/GeLi Gas)"]
         }
       ]
@@ -65,6 +67,7 @@ gewinnt die alphabetisch erste Datei für Texte, Aufgaben und Skills werden vere
 | roles[].regulated | ja | true, wenn gesetzliche/aufsichtliche Anforderungen die Ausführung binden |
 | roles[].is_new | ja | true nur für Rollen, die es heute noch nicht gibt (z. B. vorgeschlagene Agent-Manager-Rolle) |
 | roles[].time_shares_source | ja | source, wenn die Zeitanteile aus der Quelle oder vom Nutzer stammen; estimated, wenn du sie aus dem Berufsbild geschätzt hast. Bestimmt die Belastbarkeitsstufe der Rolle. |
+| roles[].evidence | empfohlen | Belege `src-<hash>@<fundstelle>` auf registrierte Quellen (`register_source.py`). Ohne Beleg gilt die Rolle als unbelegt; `is_new: true` als Vorschlag (geschätzt). |
 | roles[].skills[] | ja | 5–12 Einträge; name aus references/skill-taxonomy.md, wenn dort vorhanden |
 | skills[].kind | ja | knowledge, skill, competence, tool |
 | skills[].level | ja | 1 Grundkenntnisse … 5 Experte |
@@ -76,6 +79,7 @@ gewinnt die alphabetisch erste Datei für Texte, Aufgaben und Skills werden vere
 | tasks[].frequency | ja | daily, weekly, monthly, quarterly, adhoc |
 | tasks[].nature | ja | cognitive (Bildschirmarbeit, Kommunikation), physical (vor Ort, Handarbeit), mixed |
 | tasks[].confidence | ja | source (steht so in der Quelle) oder inferred (aus Berufsbild ergänzt) |
+| tasks[].evidence | bei confidence source | Belege `src-<hash>@<fundstelle>`; eine Aufgabe mit `source` ohne Beleg gilt als unbelegt, eine mit `inferred` als geschätzt |
 | tasks[].skills | ja | 1–4 Skillnamen, exakt wie in roles[].skills geschrieben |
 
 ## Was das Skript daraus macht

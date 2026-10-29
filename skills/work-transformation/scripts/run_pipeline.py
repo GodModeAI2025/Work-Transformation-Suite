@@ -5,10 +5,11 @@ Reihenfolge aus und meldet, wo Claude (oder ein Mensch) als Nächstes eingreifen
 
 Aufruf:
     python3 <skill>/scripts/run_pipeline.py --project ./mein-projekt --skills ../
-        [--until builder|processes|scorer|mapper|redesign|dashboard] [--stamp "..."]
+        [--until builder|processes|scorer|mapper|redesign|dashboard|roadmap] [--stamp "..."]
 
 --skills  Ordner, in dem die Skills liegen (work-graph-builder, task-scorer, agent-mapper,
-          process-redesigner, transformation-dashboard). Standard: Elternordner dieses Skills.
+          process-redesigner, transformation-dashboard, transformation-roadmap). Standard:
+          Elternordner dieses Skills.
 
 Der Ablauf hält an, wenn ein Eingabe-Artefakt fehlt, das nur Claude erzeugen kann
 (Extraktionsdateien, scores.json, agents.json, blueprints.json, process_value.json), und
@@ -46,12 +47,15 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", required=True)
     ap.add_argument("--skills", default=None, help="Ordner mit den Skills (Standard: ../ relativ zu diesem Skill)")
-    ap.add_argument("--until", choices=["builder", "processes", "scorer", "mapper", "redesign", "dashboard"],
-                    default="dashboard")
+    ap.add_argument("--until", choices=["builder", "processes", "scorer", "mapper", "redesign", "dashboard", "roadmap"],
+                    default="roadmap")
     ap.add_argument("--skip-redesign", action="store_true",
                     help="Prozessredesign überspringen, auch wenn Prozesse erfasst sind")
     ap.add_argument("--stamp", default=None)
     ap.add_argument("--title", default=None)
+    ap.add_argument("--token-file", default=None,
+                    help="Tokendatei eines eigenen Pflegeanspruchs (project_lock.py acquire); ohne Angabe läuft die "
+                         "Pipeline nur, wenn niemand anderes einen gültigen Anspruch hält")
     args = ap.parse_args()
 
     here = Path(__file__).resolve().parent.parent  # Skill-Ordner work-transformation
@@ -67,8 +71,33 @@ def main() -> int:
         return wl.relpath(p, cwd)
 
     proj = wl.relpath(project, cwd)
-    order = ["builder", "processes", "scorer", "mapper", "redesign", "dashboard"]
+
+    # Pflege-Lock: Ein Projekt auf einem geteilten Laufwerk gehört in einem Lauf einer Person oder
+    # einem Agenten. Hält jemand anderes einen gültigen Anspruch, wird nichts geschrieben.
+    import project_lock as pl  # noqa: WPS433
+    token = pl.read_token(Path(args.token_file)) if args.token_file else None
+    if token is not None:
+        mine = pl.own_claim(project, token)
+        if mine is None or mine.get("_expired"):
+            print("STOPP: Der Pflegeanspruch zu dieser Tokendatei ist nicht gültig (verdrängt oder abgelaufen). "
+                  "project_lock.py acquire, dann erneut starten.")
+            return 3
+    holders = pl.foreign_holders(project, token=token)
+    if holders:
+        print("STOPP: Das Projekt wird gerade gepflegt von " + "; ".join(pl.describe(c) for c in holders)
+              + ". Warten, oder mit eigenem Anspruch und --token-file starten (project_lock.py).")
+        return 3
+    order = ["builder", "processes", "scorer", "mapper", "redesign", "dashboard", "roadmap"]
     stop = order.index(args.until)
+
+    # 0 Seiten: Liegen Markdown-Seiten unter 05_pages/, sind sie die Wahrheit und die Register
+    # (Extraktionen, Bewertungen, Agenten) entstehen vor jedem Lauf neu aus ihnen.
+    pages = (project / "05_pages").is_dir() and any((project / "05_pages").rglob("*.md"))
+    if pages:
+        if run([py, script("work-graph-builder", "compile_pages.py"), "--project", proj], cwd):
+            print("STOPP: Die Seiten unter 05_pages/ lassen sich nicht übersetzen. Nächster Schritt für Claude: "
+                  "die gemeldeten Seiten korrigieren (Datei und Zeile stehen oben).")
+            return 3
 
     # 1 Architekt
     ex = sorted((project / wl.DIR_EXTRACTION).glob("extract_*.json"))
@@ -103,6 +132,11 @@ def main() -> int:
         return 2
     run([py, script("work-graph-builder", "check_completeness.py"), "--project", proj], cwd)
     run([py, script("work-graph-builder", "derive_collaboration.py"), "--project", proj], cwd)
+    # Belege: Bericht immer; bei strenger Belegpflicht hält die Pipeline an, solange Aussagen ohne
+    # Herkunft im Graphen stehen. Die Quelle registrieren und die Fundstelle eintragen ist Claudes
+    # Schritt, das Skript kann das nicht erfinden.
+    if run([py, script("work-graph-builder", "check_evidence.py"), "--project", proj], cwd) == 3:
+        return 3
     if stop == 1:
         return 0
 
@@ -114,8 +148,10 @@ def main() -> int:
     missing = [t for t in unscored if t["id"] not in covered]
     if missing:
         run([py, script("task-scorer", "export_scoring_sheet.py"), "--project", proj], cwd)
+        where = ("die sechs score_-Felder und die Begründung in den Aufgabenseiten unter 05_pages/tasks/ eintragen"
+                 if pages else "20_graph/scores_todo.json ausfüllen und die Einträge in scores.json ergänzen")
         print(f"STOPP: {len(missing)} Aufgaben ohne Bewertung, die auch nicht in {wl.relpath(scores)} stehen. "
-              "Nächster Schritt für Claude: Skill task-scorer, 20_graph/scores_todo.json ausfüllen und die Einträge in scores.json ergänzen.")
+              f"Nächster Schritt für Claude: Skill task-scorer, {where}.")
         return 3
     if run([py, script("task-scorer", "score_roles.py"), "--project", proj], cwd):
         return 2
@@ -140,8 +176,9 @@ def main() -> int:
     if not agents.exists() or open_tasks:
         run([py, script("agent-mapper", "export_agent_candidates.py"), "--project", proj], cwd)
         what = f"keine {wl.relpath(agents)}" if not agents.exists() else f"{len(open_tasks)} automatisierbare Aufgaben ohne Agent in {wl.relpath(agents)}"
-        print(f"STOPP: {what}. Nächster Schritt für Claude: Skill agent-mapper, "
-              "Kandidaten aus 20_graph/agents_todo.json zu Agenten bündeln bzw. bestehenden Agenten zuordnen.")
+        where = ("je Agent eine Seite unter 05_pages/agents/ anlegen" if pages
+                 else "Kandidaten aus 20_graph/agents_todo.json zu Agenten bündeln bzw. bestehenden Agenten zuordnen")
+        print(f"STOPP: {what}. Nächster Schritt für Claude: Skill agent-mapper, {where}.")
         return 3
     graph = wl.load_latest_graph(project)
     cmd = [py, script("agent-mapper", "compute_coverage.py"), "--project", proj]
@@ -225,7 +262,23 @@ def main() -> int:
         cmd += ["--stamp", args.stamp]
     if args.title:
         cmd += ["--title", args.title]
-    return run(cmd, cwd)
+    rc = run(cmd, cwd)
+    if rc or stop == 5:
+        return rc
+
+    # 6 Fahrplan und Unterlagen. Hält die Pipeline nie an: Texte und Wellenentscheidungen
+    # sind Eingaben von Menschen, das Raster ist auch ohne sie ein gültiger Entwurf.
+    graph = wl.load_latest_graph(project)
+    if not (graph.get("agents") or graph.get("usecases")):
+        print("HINWEIS: Ohne Agenten und Use Cases gibt es kein Fahrplan-Raster.")
+        return 0
+    if not (skills / "transformation-roadmap" / "scripts" / "plan_waves.py").exists():
+        print("HINWEIS: Skill transformation-roadmap nicht gefunden, Fahrplan übersprungen (--skills prüfen).")
+        return 0
+    for name in ("plan_waves.py", "build_documents.py"):
+        if run([py, script("transformation-roadmap", name), "--project", proj], cwd):
+            return 2
+    return 0
 
 
 if __name__ == "__main__":

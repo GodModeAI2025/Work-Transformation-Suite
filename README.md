@@ -1,6 +1,6 @@
 # Work-Transformation-Suite
 
-Sechs Claude-Skills mit zwei Betriebsarten.
+Sieben Claude-Skills mit zwei Betriebsarten.
 
 **Diagnose.** Aus Stellenbeschreibungen eines Bereichs entsteht ein bewerteter Arbeitsgraph: Rollen,
 Aufgaben, Skills, KI-Automatisierbarkeit je Aufgabe, Disruptionstyp je Rolle, Agentenbibliothek mit
@@ -40,7 +40,8 @@ Work-Transformation-Suite/
 │   ├── task-scorer/              Schritt 2: Aufgabenbewertung → Modus, HAS, Horizont, Disruptionstyp
 │   ├── agent-mapper/             Schritt 3: Agentenbibliothek → Abdeckung, Capability Contracts
 │   ├── process-redesigner/       Schritt 4: Soll-Szenarien, Prozesswert, Piloten
-│   └── transformation-dashboard/ Schritt 5: HTML-Dashboard, CSV, Bericht
+│   ├── transformation-dashboard/ Schritt 5: HTML-Dashboard, CSV, Bericht
+│   └── transformation-roadmap/   Schritt 6: Wellenraster, Entscheidungsvorlage, HR-Einseiter
 ├── examples/order-to-cash/       vollständiges Referenzprojekt mit erwartetem Ergebnis
 ├── tests/                        Testsuite (python -m unittest discover)
 ├── tools/                        Bibliothekskopien abgleichen, Pakete bauen, Beispiel auffrischen
@@ -63,7 +64,7 @@ Voraussetzung: Python 3.9 oder neuer, keine zusätzlichen Pakete.
 
 ### In Claude (Cowork oder claude.ai)
 
-Die sechs `.skill`-Dateien aus `dist/` einzeln in den Chat ziehen und auf „Skill speichern“ klicken.
+Die sieben `.skill`-Dateien aus `dist/` einzeln in den Chat ziehen und auf „Skill speichern“ klicken.
 Reihenfolge egal.
 
 ### In Claude Code
@@ -75,7 +76,7 @@ Als Plugin, direkt aus diesem Repository:
 /plugin install work-transformation-suite@work-transformation-suite
 ```
 
-Oder von Hand: Den Ordner `skills/` (oder die sechs Unterordner) nach `~/.claude/skills/` kopieren,
+Oder von Hand: Den Ordner `skills/` (oder die sieben Unterordner) nach `~/.claude/skills/` kopieren,
 projektbezogen auch nach `<repo>/.claude/skills/`. Die Skills finden sich gegenseitig über den
 Geschwister-Pfad `../<skillname>`, deshalb zusammen in einen Ordner legen.
 
@@ -92,7 +93,7 @@ deterministisch neu. `python3 tools/sync_shared.py` gleicht die Bibliothekskopie
 
 Release: Ein Tag `vX.Y.Z` löst `.github/workflows/release.yml` aus. Der Workflow lässt die
 gesamte Prüfung laufen, vergleicht Tag, Version in `.claude-plugin/plugin.json` und den
-Changelog-Abschnitt (`tools/check_release.py`), und hängt die sechs `.skill`-Pakete mit
+Changelog-Abschnitt (`tools/check_release.py`), und hängt die sieben `.skill`-Pakete mit
 einer `SHA256SUMS`-Datei an das Release. Die Prüfsummen sind der einzige Beleg dafür, dass
 eine heruntergeladene Paketdatei dem Stand des Tags entspricht.
 
@@ -147,6 +148,34 @@ python3 skills/work-graph-builder/scripts/init_project.py --project projekte/kun
 
 Quellen (Stellenbeschreibungen als PDF/Word/Markdown, Organigramme, SAP-Exporte) nach
 `projekte/kundenservice/00_input/`.
+
+### Schritt 0b: Quellen registrieren
+
+```
+python3 skills/work-graph-builder/scripts/register_source.py --project projekte/kundenservice \
+  --file 00_input/stellenbeschreibungen.md --title "Stellenbeschreibungen Kundenservice"
+```
+
+Jede Quelle, auf die sich der Graph berufen soll, liegt danach treu als Markdown unter `00_input/sources/`,
+mit `source_id` (Hash des Inhalts), Titel, Herkunft und Datum in `register.jsonl`. PDF, Word und Excel liest
+Claude und legt die treue Fassung ab (`--original <datei>` hält den Hash des Originals fest, kopiert es
+aber nicht). Der Inhalt wird nicht verändert; Zugangsdaten und absolute Pfade stoppen die Aufnahme.
+
+Belege im Graphen haben die Form `src-<hash>@<fundstelle>` (Überschriftenanker, Zeile, Bereich oder
+Freitext). `locate_source.py` zeigt Anker und findet Zitate, `check_evidence.py` zählt je Sammlung belegt,
+geschätzt und unbelegt und prüft jede Fundstelle gegen den Quelltext (`30_review/belege_vNNN.md`). Mit
+`evidence_policy: strict` in `project.json` hält die Pipeline an, solange eine Aussage ohne Herkunft im
+Graphen steht; der Standard `warn` meldet sie nur.
+
+### Schritt 0c: Seiten statt Register
+
+Seit Schema 1.3 kann ein Projekt Rollen, Aufgaben, Skills, Bewertungen und Agenten als Markdown-Seiten unter
+`05_pages/` führen (Format: `skills/work-graph-builder/references/seiten-format.md`). Liegen Seiten vor, sind sie
+die Wahrheit: `compile_pages.py` übersetzt sie vor jedem Pipeline-Lauf in die JSON-Register, und die Register sind
+nur noch abgeleitet. Der Kopf jeder Seite ist flach (eine Ebene, keine Objekte), der Rumpf trägt Zweck,
+Beschreibung, Skills, Schritte, Begründung und beim Agenten den Vertrag als JSON-Block. Fehler meldet der Compiler
+mit Datei und Zeile, geraten wird nicht. `export_pages.py` holt ein bestehendes Projekt einmalig auf Seiten.
+Prozesse, Blueprints und Experimente bleiben JSON, weil ihre Struktur verschachtelt ist.
 
 ### Schritt 1: work-graph-builder (Claude)
 
@@ -250,6 +279,28 @@ Governance-Abschnitt, der zeigt, welche Zahl geschätzt, welche bestätigt und w
 Die Rollenansicht bleibt vollständig erhalten, rückt aber dahinter — als Folgenansicht des
 Prozessredesigns. Das ist Absicht: Sobald Organisationskästchen zuerst kommen, wird das Organigramm
 zum Designobjekt, und genau das verhindert ein Redesign vom Ergebnis her.
+
+### Schritt 6: transformation-roadmap (Skript, Texte von Claude)
+
+Verteilt Agenten und Use Cases auf Wellen und baut daraus die Unterlagen für eine Entscheidungsrunde.
+
+```
+python3 skills/transformation-roadmap/scripts/plan_waves.py --project projekte/kundenservice
+python3 skills/transformation-roadmap/scripts/build_documents.py --project projekte/kundenservice
+```
+
+- **Raster:** `fahrplan_vNNN.md/.html/.csv` und `roadmap_vNNN.json`. Jedes Vorhaben erhält einen Score aus Wert, Reichweite,
+  Umsetzbarkeit, Reifegrad und Prozessrang; fehlende Größen fehlen auch im Score und werden benannt. Laufende Vorhaben
+  liegen in Welle 1, Orchestratoren folgen den Agenten, die sie steuern. Betroffene Rollen und FTE je Welle zählen
+  jede Aufgabe einmal.
+- **Entscheidungen:** `30_review/wellen.csv` (`eintrag;welle;begruendung;entschieden_von;datum`). Ohne benannte Person
+  bleibt eine Zuordnung Vorschlag. Zeiträume setzt das Raster nicht selbst.
+- **Unterlagen** in `40_output/dokumente/`: Entscheidungsvorlage, Einseiter für HR, Anhang mit allen Vorhaben, Methodik, je als
+  Markdown und HTML. Tabellen kommen aus dem Graphen; Anlass, Pilot, Vorgehen, Beschluss und Kernbotschaft stehen als
+  Textfelder in `30_review/dokumente/texte.json`, jedes mit Quelle. Was das Material nicht hergibt, bleibt „❓ offen“.
+  Jedes Dokument nennt oben seinen Stand (Entwurf oder versandfertig); mit `--strict` wird ein Entwurf zum Fehler.
+
+Regeln und Grenzen: `skills/transformation-roadmap/references/wellenlogik.md` und `dokumente.md`.
 
 ### Alles auf einmal
 
@@ -397,6 +448,7 @@ Suite bietet sie an und wählt nicht still. Katalog mit Eingaben, Ergebnissen un
 
 | Methode | Skript | Zweck |
 |---|---|---|
+| Quellenregister | `register_source.py`, `locate_source.py`, `check_evidence.py` | Quellen treu als Markdown mit `source_id` führen, Belege `src-…@…` je Aussage, Belegbericht mit Fundstellenprüfung |
 | Vollständigkeitsprüfung | `check_completeness.py` | Rolle gegen eine anpassbare Vorlage prüfen; Lücken nennen, woher sie zu füllen sind. Füllt nichts auf |
 | Aufgabencluster | `dedupe_tasks.py` | Dieselbe Arbeit in mehreren Rollen finden. Kandidaten, bis ein Fachexperte mit Namen bestätigt |
 | Zusammenarbeit | `derive_collaboration.py` | Rollenpaare mit Belegen: Übergabe im Prozess, gemeinsame Stelle, gleiche Einheit |
@@ -482,6 +534,22 @@ Das Dashboard schreibt neben `report_vNNN.md` zwei Fassungen: `report_hr_vNNN.md
 Weitere Hilfen: `import_process_house.py` übernimmt ein vorhandenes Prozesshaus als Prozessextraktion;
 die Review-Liste markiert Rollen mit zehn und mehr Aufgaben oder auffällig fremden Aufgabenpaaren mit „Split prüfen“; jeder Agent
 trägt einen Evidenzgrad (`heuristic`, `expert_confirmed`, `proven`), weil ein Vorschlag aus Mustern keine geprüfte Passung ist.
+
+## Stände: Snapshots, Freigaben, Pflege-Lock
+
+Ein Projektordner ist der ganze Stand. Damit er auf einem geteilten Laufwerk belastbar bleibt, gibt es im
+Orchestrator vier Skripte (alle `--project <ordner>`):
+
+| Skript | Was es tut |
+|---|---|
+| `snapshot_project.py [--label …]` | Wiederherstellungspunkt unter `50_snapshots/`: Eingaben, Extraktionen, Review, aktueller Graph, mit Hash je Datei. Ausgaben nicht, die entstehen neu |
+| `restore_project.py --snapshot <ordner> [--dry-run]` | stellt einen Snapshot byteidentisch wieder her; sichert vorher den jetzigen Stand |
+| `release_project.py --version X.Y.Z` | friert einen geprüften Stand ein: Manifest unter `60_releases/<version>/`, verkettete Zeile in `releases.jsonl`. Vorbedingungen: Validator ohne Fehler, bei Belegpflicht strict nichts unbelegt, Ausgaben vorhanden, kein fremder Pflegeanspruch, Version höher als die letzte |
+| `verify_release.py [--version …]` | prüft, ob der Ordner noch dem Freigabestand entspricht: verändert, fehlt, neu; und ob die Kette der Freigaben geschlossen ist |
+| `project_lock.py acquire\|verify\|heartbeat\|release\|withdraw\|status` | Pflegeanspruch in `.wts-lock/`: wer ihn hält, darf schreiben; `run_pipeline.py` hält bei fremdem Anspruch an. Abgelaufene Ansprüche werden nur mit `--take-over --reason` übernommen und protokolliert. Der Token liegt außerhalb des Projekts (0600) und steht nirgends im Klartext |
+
+Allein arbeitend braucht niemand das Lock. In einem Team ersetzt es nicht die Absprache, aber es verhindert, dass
+zwei Läufe denselben Graphen gleichzeitig schreiben.
 
 ## Versionierung
 

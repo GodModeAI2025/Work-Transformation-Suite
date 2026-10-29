@@ -59,12 +59,16 @@ Skript-Pfade sind relativ zum jeweiligen Skill-Ordner, Projektpfade relativ zum 
 
 ```
 00_input/            Quellen (Mensch)
-   │  work-graph-builder: Claude extrahiert → 10_extraction/extract_*.json
+   │  register_source.py → 00_input/sources/ (treues Markdown, source_id, Register)
+   │  05_pages/: Claude schreibt Seiten je Cluster, Rolle, Aufgabe, Agent (die Wahrheit)
+   ▼  compile_pages.py → 10_extraction/extract_*.json, 20_graph/scores.json, agents.json
+   │  (ohne Seiten: Claude schreibt die Register direkt, wie bisher)
    ▼  build_graph.py → 20_graph/work-graph_vNNN_builder.json
    │  make_review_list.py → 30_review/review_vNNN.md  ← Fachexperten → overrides.csv
    ▼  apply_overrides.py (nur wenn overrides.csv Zeilen enthält)
    │  work-graph-builder: Claude nimmt Prozesse auf → 10_extraction/process_*.json   [optional]
    ▼  build_processes.py → Prozesse, Schritte, Kanten, Systeme, Kontrollen, Kennzahlen
+   │  check_evidence.py → 30_review/belege_vNNN.md (hält bei evidence_policy strict an)
    │  task-scorer: export_scoring_sheet.py → Claude bewertet → 20_graph/scores.json
    ▼  score_roles.py → Modus, HAS, Horizont, Disruptionstyp je Rolle
    │  agent-mapper: export_agent_candidates.py → Claude bündelt → 20_graph/agents.json
@@ -78,7 +82,10 @@ Skript-Pfade sind relativ zum jeweiligen Skill-Ordner, Projektpfade relativ zum 
    ▼  make_experiments.py · compare_scenarios.py → 40_output/scenarios_vNNN.md
    │  apply_governance.py ← 30_review/decisions.csv (Freigaben, zuletzt angewendet)
    ▼  transformation-dashboard: build_dashboard.py
-      40_output/dashboard_vNNN.html, CSV-Exporte, report_vNNN.md
+   │  40_output/dashboard_vNNN.html, CSV-Exporte, report_vNNN.md
+   ▼  transformation-roadmap: plan_waves.py · build_documents.py
+      40_output/fahrplan_vNNN.*, roadmap_vNNN.json, dokumente/ (Entscheidungsvorlage, HR-Einseiter, Anhang, Methodik)
+      ← 30_review/wellen.csv (Entscheidungen) und 30_review/dokumente/texte.json (Textfelder, Claude)
 ```
 
 ## Wie du vorgehst
@@ -119,6 +126,14 @@ Stellenbeschreibungen ein Soll-Betriebsmodell fällt.
 
 Mehr Fragen braucht es nicht; alles Weitere klärt das Expertenreview.
 
+### Fahrplan und Unterlagen
+
+Hat das Projekt Agenten oder Use Cases, rechnet die Pipeline am Ende ein Wellenraster und baut die Unterlagen
+für eine Entscheidungsrunde (`../transformation-roadmap/SKILL.md`). Sie hält dabei nie an: Das Raster ist ein
+Vorschlag, die Textfelder bleiben „❓ offen“, bis Claude sie aus Material mit Quelle füllt und eine benannte Person
+die Wellen entscheidet. Sag dem Nutzer, welche Felder offen sind, und frag nach Material, statt zu formulieren,
+was nicht belegt ist.
+
 ### Qualität statt Geschwindigkeit an drei Stellen
 
 - Extraktion: 5–12 Aufgaben je Rolle, Verb-Objekt-Form, Zeitanteile in 5er-Schritten,
@@ -150,6 +165,24 @@ nachvollziehbar, was Maschine und was Mensch entschieden hat.
 
 `python3 <skill>/scripts/check_suite.py` prüft, ob alle Skills vorhanden, die gemeinsamen
 Bibliotheksdateien identisch und die Frontmatter-Blöcke gültig sind.
+
+### Stände, Freigaben und Zusammenarbeit
+
+Ein Projektordner ist der ganze Stand; welches Laufwerk ihn trägt, ist egal. Vier Skripte halten ihn belastbar:
+
+- `snapshot_project.py --project … [--label "…"]` legt einen Wiederherstellungspunkt unter `50_snapshots/` an
+  (alles Geschriebene plus der aktuelle Graph, mit Hash je Datei). `restore_project.py --snapshot <ordner>` stellt
+  ihn wieder her und sichert vorher den jetzigen Stand. Mach einen Snapshot vor jedem Review-Import und vor jeder
+  Massenänderung.
+- `release_project.py --project … --version X.Y.Z` friert einen geprüften Stand ein: ein Manifest mit dem Hash jeder
+  Datei unter `60_releases/<version>/` und eine unveränderliche Zeile in `releases.jsonl`, verkettet mit dem Vorgänger.
+  Ohne fehlerfreien Validator, ohne Ausgaben und bei fremdem Pflegeanspruch entsteht kein Stand.
+  `verify_release.py` sagt später, ob ein weitergegebener Ordner noch dem Stand entspricht und was sich geändert hat.
+- `project_lock.py acquire --owner <du> --operation "…" --token-file <außerhalb des Projekts>` meldet an, dass du
+  gerade am Projekt arbeitest. Hält jemand anderes einen gültigen Anspruch, hält `run_pipeline.py` an. Ein abgelaufener
+  Anspruch wird nie still übernommen (`--take-over --reason`). Allein arbeitend brauchst du das Lock nicht.
+
+Der Token steht nie in der Anspruchsdatei und nie im Chat. Nenne ihn nicht, auch wenn der Nutzer fragt; nenne die Datei.
 
 ### Was du am Ende lieferst
 

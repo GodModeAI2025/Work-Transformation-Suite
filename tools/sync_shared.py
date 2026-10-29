@@ -27,7 +27,8 @@ SKILLS = ROOT / "skills"
 SHARED = {
     "workgraph_lib.py": (
         "work-transformation",
-        ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner", "transformation-dashboard"],
+        ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner", "transformation-dashboard",
+         "transformation-roadmap"],
     ),
     "validate_graph.py": (
         "work-graph-builder",

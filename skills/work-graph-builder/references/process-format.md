@@ -25,6 +25,13 @@ schlechter als eine ehrliche Schätzung, weil sie sich nicht widerlegen lässt.
 Ohne Prozessbeobachtung, Systemexport oder Interview bleibt `estimated` korrekt.
 Die Suite rechnet damit weiter, markiert die Ergebnisse aber sichtbar als Schätzung.
 
+## Belege auf registrierte Quellen
+
+Neben `provenance` (Herkunft eines einzelnen Werts) tragen Prozesse, Schritte, Kennzahlen und Kontrollen
+Belege auf das Quellenregister: `"evidence": ["src-<hash>@#anker"]`, bei Kontrollen `"source_evidence"`,
+weil `evidence` dort schon den Nachweis im System bezeichnet. Ein Eintrag ohne Beleg gilt als unbelegt;
+eine Kennzahl mit `baseline.basis: estimated` als geschätzt. `check_evidence.py` zählt beides.
+
 ## Minimalbeispiel
 
 ```json
@@ -152,6 +159,7 @@ eine namentliche Freigabe vorliegen.
 | Feld | Pflicht | Bedeutung |
 |---|---|---|
 | `name` | ja | Von Auslöser bis Ergebnis benennen („Reklamation bis Lösung") |
+| `evidence` | empfohlen | Belege `src-<hash>@<fundstelle>` auf registrierte Quellen |
 | `trigger` | ja | Das Ereignis, das den Prozess startet |
 | `outcome` | ja | Name eines Eintrags aus `outcomes` (wird sonst angelegt) |
 | `owner_role` | empfohlen | Rollenname aus dem Arbeitsgraphen |
