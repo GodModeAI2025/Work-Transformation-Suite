@@ -31,6 +31,24 @@ Existiert das Projekt schon, meldet das Skript den aktuellen Versionsstand. Quel
 gehören nach `00_input/`. Wenn der Nutzer Dateien im Chat hochgeladen hat, kopiere sie dorthin
 (Dateiname beibehalten), damit `source` in der Extraktion auf etwas Nachvollziehbares zeigt.
 
+### 1a. Mit der Referenzbibliothek beginnen (optional)
+
+Kennt die Bibliothek die Branche des Hauses, beginnt das Projekt nicht bei null:
+
+```
+python3 <skill>/scripts/library_catalog.py                                  # Branchen, Rollen, Rechtsthemen, Plattformen
+python3 <skill>/scripts/seed_from_library.py --project ./projekte/<name> --branche energieversorgung [--cluster …] [--rollen "A;B"]
+python3 <skill>/scripts/seed_from_library.py --project ./projekte/<name> --branche allgemein --rollen "Datenschutzbeauftragter"
+```
+
+Das Skript registriert die Quelle des Pakets als „reference“ und kopiert Cluster, Rollen und Aufgaben als Seiten nach
+`05_pages/`. Diese Einträge haben den Belegstand „reference“: ein Vorrat mit typischen Zeitanteilen, keine Aufnahme am
+Haus. Passe die Seiten an das Haus an (Rollen streichen oder umbenennen, Aufgaben ergänzen, Zeitanteile und Stellen aus
+Quellen eintragen) und lass die Fachexperten über die Review-Liste bestätigen. Eine schon vorhandene Seite wird nie
+überschrieben. Wenn das Haus `--branche`, `--plattform` und `--rechtsraum` bei `init_project.py` gesetzt hat, nennen
+Review-Liste und Rollen.md je Rolle die berührten Rechtsthemen, und Verträge und Tool-Anbindungen die Umsetzung auf
+dem Plattformprofil. Regeln und Grenzen: `references/referenzbibliothek.md`.
+
 ### 1b. Quellen registrieren
 
 Jede Quelle, auf die sich der Graph berufen soll, kommt treu als Markdown ins Register:

@@ -146,7 +146,8 @@ footer .cols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between}
       <li><a href="#ablauf">Ablauf</a></li>
       <li><a href="#ergebnisse">Ergebnisse</a></li>
       <li><a href="#aufbereitung">Datenaufbereitung</a></li>
-      <li><a href="#quellen">Quellen und Stände</a></li>
+      <li><a href="#belege">Quellen und Stände</a></li>
+      <li><a href="#bibliothek">Referenzbibliothek</a></li>
       <li><a class="here" href="#rollen-md">Rollen.md</a></li>
       <li><a href="#fahrplan">Fahrplan</a></li>
       <li><a href="#skills">Skills</a></li>
@@ -321,7 +322,7 @@ Optional, auf Zuruf oder bei Bedarf:
   </div>
 </section>
 
-<section id="quellen">
+<section id="belege">
   <div class="wrap">
     <h2>Ein Ordner, der für sich steht</h2>
     <p class="sub">Ein Projekt ist ein Ordner mit relativen Pfaden, auf jedem Laufwerk dasselbe. Damit er belastbar bleibt, nennt jede Aussage ihre Quelle, lässt sich jeder Stand sichern und freigeben, und was Menschen und Claude festhalten, steht als Markdown da. Die Register sind nur abgeleitet.</p>
@@ -374,6 +375,55 @@ python3 skills/work-transformation/scripts/release_project.py --project projekte
 python3 skills/work-transformation/scripts/verify_release.py --project projekte/kundenservice</pre>
     <div class="note">
       <p>Prozesse, Blueprints und Experimente bleiben JSON: Ihre Struktur ist verschachtelt, ein flacher Seitenkopf würde sie verfälschen. PDF, Word und Excel liest Claude; das Register nimmt die treue Markdown-Fassung und den Hash des Originals.</p>
+    </div>
+  </div>
+</section>
+
+<section id="bibliothek">
+  <div class="wrap">
+    <h2>Referenzbibliothek: allgemein beginnen, kundenspezifisch enden</h2>
+    <p class="sub">Ein Projekt soll nicht bei null anfangen und trotzdem das Haus beschreiben. Die Bibliothek liefert den Vorrat: typische Rollen je Branche, den Rechtsrahmen Deutschland und die Dienste je Plattformprofil. Was davon im Projekt landet, gilt als „Referenz“, bis das Haus es bestätigt oder ersetzt.</p>
+
+    <div class="grid g3">
+      <div class="card">
+        <p class="num">BRANCHEN</p>
+        <h3>Fünf Pakete, 55 Rollen</h3>
+        <p>Querschnittsfunktionen (Finanzen, Personal, Einkauf, IT, Recht und Compliance), Bauwirtschaft, Energieversorgung, Wasserversorgung und Abwasser, Automobilindustrie. Je Rolle Zweck, Archetyp, fünf typische Aufgaben mit Zeitanteilen, Skills, Rechtsgrundlagen und Systeme.</p>
+      </div>
+      <div class="card">
+        <p class="num">EINSPIELEN</p>
+        <h3>Seiten, die man anpasst</h3>
+        <p><code>seed_from_library.py</code> kopiert ausgewählte Cluster oder Rollen als Seiten ins Projekt und registriert die Quelle des Pakets als Referenz. Eine Seite, die es schon gibt, bleibt unverändert. Danach ändert das Haus, was bei ihm anders ist: Zeitanteile, Stellen, Aufgaben, Namen.</p>
+      </div>
+      <div class="card">
+        <p class="num">BELEGSTAND</p>
+        <h3>Referenz ist kein Befund</h3>
+        <p>Übernommene Einträge zählen im Belegbericht als „Referenz“, nicht als belegt. Die Review-Liste markiert sie; bestätigt wird über den Status oder einen Beleg aus eigenem Material. So bleibt sichtbar, was noch aus dem Vorrat stammt.</p>
+      </div>
+      <div class="card">
+        <p class="num">RECHTSRAUM DE</p>
+        <h3>Prüfaufträge mit Fundstelle</h3>
+        <p>29 Themen mit Gesetz, Paragraf und Pflicht, von der Mitbestimmung nach § 87 BetrVG über DSGVO und KI-Verordnung bis zu EnWG, TrinkwV, VOB/B und IATF 16949. Review-Liste und Rollen.md nennen je Rolle, was sie berührt. Keine Rechtsberatung, aber eine Liste, die niemand vergisst.</p>
+      </div>
+      <div class="card">
+        <p class="num">PLATTFORMPROFIL</p>
+        <h3>Microsoft, Google, Mischbetrieb, unabhängig</h3>
+        <p>Je Agentenmuster die Dienste eines Profils und die Zuordnung abstrakter Werkzeuge wie <code>mail.*</code> oder <code>document.*</code>. Verträge und Tool-Anbindungen nennen die Umsetzung auf dem Profil des Hauses. Der Vertrag bleibt anbieterneutral; der Vorschlag ist eine Beschaffungsgrundlage.</p>
+      </div>
+      <div class="card">
+        <p class="num">PROFIL</p>
+        <h3>Drei Angaben in project.json</h3>
+        <p>Branche, Plattformprofil und Rechtsraum stehen einmal im Projekt. Daraus folgen Vorrat, Rechtsthemen und Dienste. Weitere Branchen und Rechtsräume kommen als Pakete dazu; die Bibliothek ist Teil des Skills und braucht kein System.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 10px">Befehle</h3>
+<pre>python3 skills/work-graph-builder/scripts/library_catalog.py
+python3 skills/work-graph-builder/scripts/init_project.py --project projekte/netz --name "Netz" --branche energieversorgung --plattform microsoft --rechtsraum DE
+python3 skills/work-graph-builder/scripts/seed_from_library.py --project projekte/netz --branche energieversorgung --cluster Netzbetrieb
+python3 skills/work-graph-builder/scripts/seed_from_library.py --project projekte/netz --branche allgemein --rollen "Datenschutzbeauftragter;Controller"</pre>
+    <div class="note">
+      <p>Die Bibliothek kennt typische Rollen, nicht die des Hauses. Zeitanteile sind typische Verteilungen, Stellenzahlen bleiben leer, Rechtsgrundlagen haben den Stand ihrer Erstellung, Dienstnamen ändern sich. Prozesse enthält sie nicht; Abläufe sind zu hausspezifisch für einen Vorrat.</p>
     </div>
   </div>
 </section>
@@ -694,6 +744,7 @@ python3 skills/work-graph-builder/scripts/init_project.py \
     <p class="sub">Was die Suite nicht kann, steht hier, damit niemand es im Piloten herausfinden muss.</p>
     <ul class="plain">
       <li>Kein Freigabeworkflow mit Rollen und Rechten. Freigaben sind ein nachvollziehbares Log mit Name, Datum und Begründung, mehr gibt es nicht.</li>
+      <li>Die Referenzbibliothek liefert typische Rollen und Rechtsthemen als Vorrat. Was sie sagt, gilt im Projekt als Referenz, bis das Haus es bestätigt; die Rechtsthemen sind Prüfaufträge, keine Rechtsberatung.</li>
       <li>Das Quellenregister liest nur Textformate selbst. Belege sind Fundstellen, keine Wahrheitsprüfung: Ob eine Quelle stimmt, entscheidet, wer sie freigibt. Das Lock ersetzt keine Absprache.</li>
       <li>Das Wellenraster ordnet, es optimiert nicht. Abhängigkeiten kennt es nur zwischen Orchestrator und Agenten, Zeiträume, Budgets und Teamkapazität gar nicht. Die Unterlagen entstehen als Markdown und HTML, nicht als Word-Datei.</li>
       <li>Keine Integration in SuccessFactors oder andere HR-Systeme.</li>

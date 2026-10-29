@@ -4,6 +4,40 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.10.0] — Referenzbibliothek: Branchen, Rechtsraum Deutschland, Plattformprofile
+
+Ein Projekt soll nicht bei null beginnen und trotzdem das Haus beschreiben. Die Referenzbibliothek liefert den Vorrat,
+das Haus die Wahrheit: Allgemeine Daten aus der Bibliothek, kundenspezifische Daten aus Quellen und Review, daraus
+kundenspezifische Ausgaben.
+
+### Neu
+
+- **Profil des Hauses** in `project.json` (`init_project.py --branche … --plattform … --rechtsraum …`): Branche,
+  Plattformprofil (`microsoft`, `google`, `mischbetrieb`, `unabhaengig`), Rechtsraum (Standard `DE`). Der Graph trägt es in
+  `meta.profile`.
+- **Branchenpakete** unter `library/branchen/`: `allgemein` (Finanzen, Personal, Einkauf, IT, Recht und Compliance),
+  `bauwirtschaft`, `energieversorgung`, `wasserversorgung`, `automobilindustrie`; 55 Rollen mit 275 Aufgaben als Seiten plus
+  `quelle.md` mit Rollenprofilen, Rechtsgrundlagen und Systemen. **`seed_from_library.py`** registriert die Quelle als
+  „reference“ und kopiert Cluster, Rollen und Aufgaben nach `05_pages/`; vorhandene Seiten bleiben unverändert.
+- **Belegstand „reference“**: Einträge, deren Belege nur auf die Bibliothek zeigen. Der Belegbericht zählt sie getrennt,
+  die Review-Liste markiert sie; bestätigt wird über `status;reviewed` oder einen Beleg aus eigenem Material.
+- **Rechtsraum Deutschland** (`library/rechtsraeume/DE.json`): 29 Themen mit Gesetz, Fundstelle, Pflicht und Stichwörtern
+  (Mitbestimmung, Datenschutz, KI-Verordnung, GoBD, Arbeitsschutz, Vergabe, HinSchG, LkSG, EnWG und Marktkommunikation,
+  TrinkwV und WHG, VOB/B, Typgenehmigung, ISO 26262, IATF 16949 u. a.). Review-Liste und Rollen.md nennen je Rolle die
+  berührten Themen als Prüfaufträge.
+- **Plattformprofile** (`library/plattformen/`): je Agentenmuster die Dienste des Profils und die Zuordnung abstrakter
+  Werkzeuge (`mail.*`, `document.*` …). `contracts_vNNN.md` und `tools/anbindungen.md` nennen die Umsetzung auf dem Profil
+  des Hauses; die Verträge bleiben anbieterneutral.
+- **`library_catalog.py`** zeigt Branchen, Rollen, Rechtsthemen und Plattformdienste.
+- Das Beispielprojekt trägt das Profil `allgemein` / `mischbetrieb` / `DE`.
+
+### Grenzen
+
+- Die Bibliothek kennt typische Rollen, nicht die des Hauses; Zeitanteile sind typische Verteilungen, Stellenzahlen leer.
+- Rechtsthemen sind Hinweise mit Fundstelle, keine Rechtsberatung; Stand der Erstellung, Änderungen sind nachzuhalten.
+- Plattformvorschläge nennen Dienste, keine Architektur; Dienstnamen ändern sich, Zulässigkeit je Datenklasse prüft das Haus.
+- Prozesse enthält die Bibliothek nicht.
+
 ## [0.9.0] — Quellenregister, Belege, Stände und Seiten als Wahrheit (Schema 1.3)
 
 Ein Projektordner soll für sich stehen: Jede Aussage im Graphen nennt ihre Quelle und Fundstelle, der Stand lässt

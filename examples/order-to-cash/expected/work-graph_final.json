@@ -2870,6 +2870,11 @@
       }
     ],
     "organization": "Beispiel GmbH",
+    "profile": {
+      "branche": "allgemein",
+      "plattform": "mischbetrieb",
+      "rechtsraum": "DE"
+    },
     "project": "Order-to-Cash (Referenzbeispiel)",
     "schema_version": "1.3",
     "scope": "Order-to-Cash",

@@ -149,6 +149,24 @@ python3 skills/work-graph-builder/scripts/init_project.py --project projekte/kun
 Quellen (Stellenbeschreibungen als PDF/Word/Markdown, Organigramme, SAP-Exporte) nach
 `projekte/kundenservice/00_input/`.
 
+### Schritt 0a: Profil des Hauses und Referenzbibliothek
+
+```
+python3 skills/work-graph-builder/scripts/init_project.py --project projekte/netz --name "Netz" \
+  --branche energieversorgung --plattform microsoft --rechtsraum DE
+python3 skills/work-graph-builder/scripts/seed_from_library.py --project projekte/netz --branche energieversorgung --cluster Netzbetrieb
+```
+
+Branche, Plattformprofil und Rechtsraum stehen in `project.json`. Die Referenzbibliothek
+(`skills/work-graph-builder/library/`) liefert dazu einen Vorrat: Branchenpakete mit typischen Rollen und Aufgaben
+(`allgemein`, `bauwirtschaft`, `energieversorgung`, `wasserversorgung`, `automobilindustrie`), den Rechtsrahmen Deutschland
+als Themen mit Gesetz und Fundstelle, und vier Plattformprofile (`microsoft`, `google`, `mischbetrieb`, `unabhaengig`) mit den
+Diensten je Agentenmuster. `seed_from_library.py` kopiert ausgewählte Rollen als Seiten ins Projekt, registriert die Quelle des
+Pakets als „reference“ und überschreibt nie, was schon da ist. Übernommene Einträge haben den Belegstand „reference“; sie
+werden am Haus angepasst und bestätigt. Review-Liste und Rollen.md nennen je Rolle die berührten Rechtsthemen (Prüfaufträge,
+keine Rechtsberatung), Verträge und Tool-Anbindungen die Umsetzung auf dem Plattformprofil (Vorschlag, kein
+Beschaffungsentscheid). `library_catalog.py` zeigt den Bestand. Regeln: `skills/work-graph-builder/references/referenzbibliothek.md`.
+
 ### Schritt 0b: Quellen registrieren
 
 ```

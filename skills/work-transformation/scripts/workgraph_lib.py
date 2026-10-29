@@ -62,7 +62,9 @@ EVIDENCE_RE = re.compile(r"^(src-[0-9a-f]{12})@(\S.*)$")
 # Belegstand einer Aussage: belegt (mindestens ein gültiger Beleg), geschätzt (ausdrücklich
 # als Schätzung oder Vorschlag gekennzeichnet), unbelegt (weder noch). Unbelegt ist nicht
 # falsch, aber sichtbar: Der Validator warnt, bei strenger Belegpflicht lehnt er ab.
-ENUM_EVIDENCE_STATUS = ["sourced", "estimated", "unsourced"]
+# "reference": alle Belege zeigen auf die Referenzbibliothek, nicht auf Material des Hauses.
+ENUM_EVIDENCE_STATUS = ["sourced", "reference", "estimated", "unsourced"]
+ENUM_PLATFORM = ["microsoft", "google", "mischbetrieb", "unabhaengig"]
 ENUM_EVIDENCE_POLICY = ["warn", "strict"]
 
 # Erlaubte Aufzählungswerte (Validator prüft dagegen)
@@ -333,6 +335,8 @@ def save_graph_version(project: Path, graph: dict[str, Any], stage: str) -> tupl
     graph["meta"]["organization"] = meta.get("organization", "")
     graph["meta"]["scope"] = meta.get("scope", "")
     graph["meta"]["language"] = meta.get("language", "de")
+    if meta.get("profile"):
+        graph["meta"]["profile"] = dict(meta["profile"])
     sort_graph(graph)
     gdir = project / DIR_GRAPH
     path = gdir / f"work-graph_v{version:03d}_{stage}.json"
@@ -874,12 +878,85 @@ def parse_evidence(ref: Any):
     return (m.group(1), m.group(2).strip()) if m else None
 
 
-def evidence_status(entity: dict[str, Any], estimated: bool = False) -> str:
-    """Belegstand einer Aussage aus ihren Belegen und ihrer Kennzeichnung."""
-    refs = [r for r in (entity.get("evidence") or []) if parse_evidence(r)]
+def evidence_status(entity: dict[str, Any], estimated: bool = False, reference_ids: set | None = None) -> str:
+    """Belegstand einer Aussage aus ihren Belegen und ihrer Kennzeichnung.
+
+    Zeigen alle Belege auf Quellen der Art „reference“ (Referenzbibliothek), ist die Aussage
+    „reference“: ein Vorrat, der am Haus noch bestätigt werden muss, kein Befund.
+    """
+    refs = [parse_evidence(r) for r in (entity.get("evidence") or []) if parse_evidence(r)]
     if refs:
+        if reference_ids and all(sid in reference_ids for sid, _ in refs):
+            return "reference"
         return "sourced"
     return "estimated" if estimated else "unsourced"
+
+
+def reference_source_ids(project: Path) -> set:
+    return {sid for sid, rec in load_source_register(project).items() if rec.get("kind") == "reference"}
+
+
+def project_profile(project: Path) -> dict[str, str]:
+    """Branche, Plattformprofil und Rechtsraum des Projekts (project.json: profile)."""
+    prof = load_project_meta(project).get("profile") or {}
+    return {"branche": str(prof.get("branche") or ""), "plattform": str(prof.get("plattform") or ""),
+            "rechtsraum": str(prof.get("rechtsraum") or "")}
+
+
+def library_dir() -> Path | None:
+    """Referenzbibliothek: im eigenen Skill oder im Geschwister-Skill work-graph-builder."""
+    skill = Path(__file__).resolve().parent.parent
+    for cand in (skill / "library", skill.parent / "work-graph-builder" / "library"):
+        if (cand / "branchen" / "index.json").exists():
+            return cand
+    return None
+
+
+def legal_topics(graph: dict[str, Any], role: dict[str, Any], limit: int = 6) -> list[dict[str, Any]]:
+    """Themen des Rechtsrahmens, die eine Rolle berühren: Stichwörter gegen Rolle, Cluster, Familie,
+    Aufgaben und Skills; Branchenfilter aus dem Projektprofil. Ein Treffer ist ein Prüfauftrag."""
+    profile = (graph.get("meta") or {}).get("profile") or {}
+    raum = profile.get("rechtsraum") or "DE"
+    data = load_library_json("rechtsraeume", f"{raum}.json")
+    if not data:
+        return []
+    branche = profile.get("branche") or ""
+    clusters = index_by_id(graph.get("job_clusters", []))
+    families = index_by_id(graph.get("job_families", []))
+    skills = index_by_id(graph.get("skills", []))
+    cl = clusters.get(role.get("cluster_id")) or {}
+    fam = families.get(cl.get("family_id")) or {}
+    words = [role.get("name", ""), cl.get("name", ""), fam.get("name", "")]
+    words += [t.get("name", "") for t in graph.get("tasks", []) if t.get("role_id") == role.get("id")]
+    words += [skills.get(s.get("skill_id"), {}).get("name", "") for s in role.get("skills", [])]
+    haystack = " " + normalize_name(" | ".join(words)) + " "
+    out = []
+    for t in data.get("themen", []):
+        if "*" not in t.get("branchen", ["*"]) and branche not in t.get("branchen", []):
+            continue
+        kws = t.get("stichwoerter", [])
+        if "*" in kws or any(normalize_name(k) and normalize_name(k) in haystack for k in kws):
+            out.append(t)
+    return out[:limit]
+
+
+def platform_profile(graph: dict[str, Any]) -> dict[str, Any] | None:
+    pid = ((graph.get("meta") or {}).get("profile") or {}).get("plattform") or ""
+    return load_library_json("plattformen", f"{pid}.json") if pid in ENUM_PLATFORM else None
+
+
+def platform_tool(profile: dict[str, Any], tool: str) -> str | None:
+    """Dienst für ein abstraktes Werkzeug eines Vertrags (mail.send → Mail-Dienst des Profils)."""
+    ns = str(tool).split(".")[0].strip().lower()
+    return (profile.get("werkzeuge") or {}).get(ns)
+
+
+def load_library_json(*parts: str) -> Any:
+    base = library_dir()
+    if base is None:
+        return None
+    p = base.joinpath(*parts)
+    return read_json(p) if p.exists() else None
 
 
 def anchor_slug(heading: str) -> str:

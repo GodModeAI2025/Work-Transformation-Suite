@@ -1,147 +1,169 @@
-"""Einheiten der gemeinsamen Bibliothek: IDs, Sortierung, Migration, Prozessrechnung."""
+"""Referenzbibliothek: Branchenpakete, Rechtsraum, Plattformprofile.
+
+Geprüft wird, dass jedes Branchenpaket fehlerfrei übersetzbar ist und zu einem gültigen Graphen führt,
+dass übernommene Einträge als „reference“ und nicht als Befund gelten, dass vorhandene Seiten nie
+überschrieben werden, und dass Rechtsrahmen und Plattformvorschläge nur aus der Bibliothek kommen.
+"""
 
 from __future__ import annotations
 
+import json
 import os
+import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from context import wl  # noqa: E402
+from context import EXAMPLE, ROOT, SKILLS, load, validate_graph, wl  # noqa: E402
+
+pl = load("work-graph-builder", "pages_lib")
+cp = load("work-graph-builder", "compile_pages")
+B = SKILLS / "work-graph-builder" / "scripts"
+LIB = SKILLS / "work-graph-builder" / "library"
 
 
-class TestIdentifiers(unittest.TestCase):
-    def test_normalize_name_is_stable_across_umlauts_and_spacing(self):
-        self.assertEqual(wl.normalize_name("Prüfung  der   Fälle"), "prufung der falle")
-        self.assertEqual(wl.normalize_name("Straße"), "strasse")
-        self.assertEqual(wl.normalize_name(None), "")
-
-    def test_same_name_gives_same_id(self):
-        a = wl.make_id("role", "Finanzen", "Order-to-Cash", "Kreditprüfer")
-        b = wl.make_id("role", "Finanzen", "Order-to-Cash", "Kreditprufer")
-        self.assertEqual(a, b, "Die Normalisierung muss Umlautschreibweisen zusammenführen")
-        self.assertTrue(a.startswith("ro_"))
-
-    def test_every_collection_has_an_id_prefix(self):
-        # Ohne Präfix könnte eine Sammlung keine deterministischen IDs bilden.
-        singular = {
-            "job_families": "job_family", "job_clusters": "job_cluster", "roles": "role",
-            "tasks": "task", "skills": "skill", "agents": "agent", "positions": "position",
-            "courses": "course", "outcomes": "outcome", "systems": "system",
-            "controls": "control", "metrics": "metric", "processes": "process",
-            "process_steps": "process_step", "process_edges": "process_edge",
-            "blueprints": "blueprint", "experiments": "experiment",
-            "provenance": "provenance", "decisions": "decision",
-            "target_roles": "target_role", "usecases": "usecase", "adoption": "adoption", "task_clusters": "task_cluster",
-        }
-        self.assertEqual(set(singular), set(wl.COLLECTIONS))
-        for kind in singular.values():
-            self.assertIn(kind, wl.ID_PREFIX)
-        prefixes = [wl.ID_PREFIX[k] for k in singular.values()]
-        self.assertEqual(len(prefixes), len(set(prefixes)), "Präfixe müssen eindeutig sein")
+def run(script, *args):
+    skill = "work-transformation" if script in ("run_pipeline.py",) else "work-graph-builder"
+    return subprocess.run([sys.executable, str(SKILLS / skill / "scripts" / script), *args],
+                          cwd=str(ROOT), capture_output=True, text=True)
 
 
-class TestMigration(unittest.TestCase):
-    def test_schema_10_migrates_losslessly(self):
-        old = {"meta": {"schema_version": "1.0"}}
-        for c in wl.COLLECTIONS_CORE:
-            old[c] = []
-        old["roles"] = [{"id": "ro_x", "name": "Bestand"}]
-        notes = wl.migrate_graph(old)
-        self.assertEqual(old["meta"]["schema_version"], wl.SCHEMA_VERSION)
-        self.assertEqual(old["roles"], [{"id": "ro_x", "name": "Bestand"}],
-                         "Migration darf vorhandene Inhalte nicht anfassen")
-        for c in wl.COLLECTIONS:
-            self.assertIsInstance(old[c], list)
-        self.assertTrue(any("processes" in n for n in notes))
+class TestLibraryContent(unittest.TestCase):
+    def test_index_matches_packages(self):
+        index = wl.read_json(LIB / "branchen" / "index.json")
+        self.assertGreaterEqual(len(index), 5)
+        for bid, b in index.items():
+            d = LIB / "branchen" / bid
+            self.assertTrue((d / "quelle.md").exists(), bid)
+            roles = list((d / "roles").glob("*.md"))
+            tasks = list((d / "tasks").glob("*.md"))
+            self.assertEqual(len(roles), b["rollen"], bid)
+            self.assertEqual(len(tasks), b["aufgaben"], bid)
 
-    def test_migration_is_idempotent(self):
-        g = wl.empty_graph()
-        self.assertEqual(wl.migrate_graph(g), [])
+    def test_every_package_compiles_and_builds_a_valid_graph(self):
+        for bid in wl.read_json(LIB / "branchen" / "index.json"):
+            with tempfile.TemporaryDirectory(prefix="wts-lib-") as tmp:
+                proj = Path(tmp) / "p"
+                self.assertEqual(run("init_project.py", "--project", str(proj), "--name", "t", "--branche", bid).returncode, 0, bid)
+                r = run("seed_from_library.py", "--project", str(proj), "--branche", bid, "--date", "2026-01-01")
+                self.assertEqual(r.returncode, 0, bid + r.stdout + r.stderr)
+                r = run("run_pipeline.py", "--project", str(proj), "--until", "processes")
+                self.assertEqual(r.returncode, 0, bid + r.stdout + r.stderr)
+                self.assertNotIn("FEHLER", r.stdout, bid)
+                g = wl.read_json(proj / "20_graph" / "work-graph_latest.json")
+                errors, _ = validate_graph.validate(g, strict_evidence=True)
+                self.assertEqual(errors, [], bid)
+                self.assertEqual({x["evidence_status"] for x in g["roles"]}, {"reference"}, bid)
+                self.assertEqual({x["evidence_status"] for x in g["tasks"]}, {"reference"}, bid)
+                for role in g["roles"]:
+                    total = sum(t["share_of_time"] for t in g["tasks"] if t["role_id"] == role["id"])
+                    self.assertAlmostEqual(total, 100.0, delta=0.6, msg=f"{bid}/{role['name']}")
+
+    def test_every_locator_of_every_package_resolves(self):
+        for bid in wl.read_json(LIB / "branchen" / "index.json"):
+            body = (LIB / "branchen" / bid / "quelle.md").read_text(encoding="utf-8")
+            anchors = {a for *_, a in wl.source_headings(body)}
+            for p in (LIB / "branchen" / bid / "roles").glob("*.md"):
+                meta, _ = pl.parse_frontmatter(p.read_text(encoding="utf-8"), p.name)
+                for ev in meta["evidence"]:
+                    self.assertTrue(ev.startswith("lib@#"), ev)
+                    self.assertIn(ev[len("lib@#"):], anchors, f"{bid}/{p.name}")
+
+    def test_legal_catalog_and_platforms_are_well_formed(self):
+        de = wl.read_json(LIB / "rechtsraeume" / "DE.json")
+        ids = [t["id"] for t in de["themen"]]
+        self.assertEqual(len(ids), len(set(ids)))
+        for t in de["themen"]:
+            for k in ("thema", "gesetz", "fundstelle", "pflicht", "stichwoerter", "branchen"):
+                self.assertTrue(t.get(k), f"{t['id']}: {k}")
+        patterns = set()
+        for pid in wl.ENUM_PLATFORM:
+            prof = wl.read_json(LIB / "plattformen" / f"{pid}.json")
+            self.assertEqual(prof["id"], pid)
+            self.assertTrue(prof["grundsaetze"])
+            patterns.add(frozenset(prof["muster"]))
+            for v in prof["muster"].values():
+                self.assertTrue(v["dienste"], pid)
+        self.assertEqual(len(patterns), 1)  # alle Profile kennen dieselben Muster
 
 
-class TestSorting(unittest.TestCase):
-    def test_reference_lists_are_sorted_recursively(self):
-        g = wl.empty_graph()
-        g["blueprints"] = [{"id": "bp_b", "steps": [{"from_step_ids": ["ps_c", "ps_a", "ps_a"]}]},
-                           {"id": "bp_a"}]
-        wl.sort_graph(g)
-        self.assertEqual([b["id"] for b in g["blueprints"]], ["bp_a", "bp_b"])
-        self.assertEqual(g["blueprints"][1]["steps"][0]["from_step_ids"], ["ps_a", "ps_c"])
-
-    def test_ordered_lists_keep_their_order(self):
-        g = wl.empty_graph()
-        g["processes"] = [{"id": "pr_a", "step_ids": ["ps_z", "ps_a"]}]
-        wl.sort_graph(g)
-        self.assertEqual(g["processes"][0]["step_ids"], ["ps_z", "ps_a"],
-                         "step_ids ist die fachliche Reihenfolge und darf nicht sortiert werden")
-
-
-class TestMetricStages(unittest.TestCase):
-    def test_observed_does_not_overwrite_the_baseline(self):
-        # Ein Pilotwert beschreibt den veränderten Prozess, nicht den heutigen.
-        m = {"baseline": {"value": 42, "basis": "observed"},
-             "observed": {"value": 3, "basis": "observed"}}
-        self.assertEqual(wl.metric_value(m, "baseline")[0], 42)
-        self.assertEqual(wl.metric_value(m, "observed")[0], 3)
-
-    def test_missing_stage_returns_none(self):
-        self.assertEqual(wl.metric_value({}, "baseline"), (None, None))
-
-    def test_best_known_prefers_the_measurement(self):
-        m = {"baseline": {"value": 42, "basis": "estimated"},
-             "observed": {"value": 3, "basis": "observed"}}
-        self.assertEqual(wl.metric_best_known(m), (3, "observed", "observed"))
-
-
-class TestProcessArithmetic(unittest.TestCase):
+class TestSeeding(unittest.TestCase):
     def setUp(self):
-        self.g = wl.empty_graph()
-        self.g["processes"] = [{"id": "pr_1", "name": "P", "step_ids": ["ps_1", "ps_2"],
-                                "baseline_metric_ids": ["me_1"]}]
-        self.g["process_steps"] = [
-            {"id": "ps_1", "process_id": "pr_1", "name": "A", "executor": {"type": "human", "id": "ro_1"},
-             "handling_time_min": 10, "wait_time_min": 50, "rework_pct": 10, "value_type": "waste"},
-            {"id": "ps_2", "process_id": "pr_1", "name": "B", "executor": {"type": "agent", "id": "ag_1"},
-             "handling_time_min": 2, "wait_time_min": 8, "rework_pct": 0,
-             "human_gate": {"when": "x", "role_id": "ro_1"}},
-        ]
-        self.g["process_edges"] = [{"id": "pe_1", "process_id": "pr_1", "from_step_id": "ps_1",
-                                    "to_step_id": "ps_2", "handover": "email"}]
+        self.tmp = tempfile.mkdtemp(prefix="wts-seed-")
+        self.proj = Path(self.tmp) / "p"
+        self.assertEqual(run("init_project.py", "--project", str(self.proj), "--name", "t", "--branche", "energieversorgung",
+                             "--plattform", "microsoft").returncode, 0)
 
-    def test_totals(self):
-        t = wl.process_totals(self.g, "pr_1")
-        self.assertEqual(t["steps"], 2)
-        self.assertEqual(t["handling_time_min"], 12.0)
-        self.assertEqual(t["wait_time_min"], 58.0)
-        self.assertEqual(t["lead_time_hours"], 1.2)
-        self.assertEqual(t["handovers"], 1)
-        self.assertEqual(t["waste_steps"], 1)
-        self.assertEqual(t["automated_steps"], 1)
-        self.assertEqual(t["human_touches"], 2,
-                         "Ein Agentenschritt mit Human Gate bindet trotzdem einen Menschen")
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def test_lead_time_gap_reports_an_incomplete_model(self):
-        self.g["metrics"] = [{"id": "me_1", "name": "Durchlauf", "kind": "time", "unit": "Stunden",
-                              "direction": "lower_is_better",
-                              "baseline": {"value": 10, "basis": "observed"}}]
-        gap = wl.lead_time_gap(self.g, "pr_1")
-        self.assertIsNotNone(gap, "1,2 h modelliert gegenüber 10 h gemessen muss auffallen")
-        self.assertEqual(gap["measured_hours"], 10.0)
-        self.assertLess(gap["deviation_pct"], -50)
+    def test_unknown_branch_is_refused_at_init(self):
+        r = run("init_project.py", "--project", str(Path(self.tmp) / "q"), "--name", "t", "--branche", "gibtsnicht")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("Bekannt", r.stdout + r.stderr)
 
-    def test_lead_time_gap_silent_when_model_matches(self):
-        self.g["metrics"] = [{"id": "me_1", "name": "Durchlauf", "kind": "time", "unit": "Stunden",
-                              "direction": "lower_is_better",
-                              "baseline": {"value": 1.2, "basis": "observed"}}]
-        self.assertIsNone(wl.lead_time_gap(self.g, "pr_1"))
+    def test_selection_by_cluster_and_role(self):
+        r = run("seed_from_library.py", "--project", str(self.proj), "--branche", "energieversorgung", "--cluster", "Netzbetrieb",
+                "--date", "2026-01-01")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual(len(list((self.proj / "05_pages" / "roles").glob("*.md"))), 4)
+        r = run("seed_from_library.py", "--project", str(self.proj), "--branche", "allgemein", "--rollen", "Controller;Datenschutzbeauftragter",
+                "--date", "2026-01-01")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual(len(list((self.proj / "05_pages" / "roles").glob("*.md"))), 6)
+        self.assertEqual(len(wl.load_source_register(self.proj)), 2)
+        self.assertEqual({rec["kind"] for rec in wl.load_source_register(self.proj).values()}, {"reference"})
 
-    def test_lead_time_gap_ignores_unknown_units(self):
-        self.g["metrics"] = [{"id": "me_1", "name": "Durchlauf", "kind": "time", "unit": "Mondphasen",
-                              "direction": "lower_is_better",
-                              "baseline": {"value": 99, "basis": "observed"}}]
-        self.assertIsNone(wl.lead_time_gap(self.g, "pr_1"),
-                          "Eine unbekannte Einheit wird nicht geraten")
+    def test_existing_page_is_never_overwritten(self):
+        run("seed_from_library.py", "--project", str(self.proj), "--branche", "energieversorgung", "--rollen", "Netzplaner", "--date", "2026-01-01")
+        page = self.proj / "05_pages" / "roles" / "netzplaner.md"
+        edited = page.read_text(encoding="utf-8").replace("headcount: null", "headcount: 7")
+        page.write_text(edited, encoding="utf-8")
+        r = run("seed_from_library.py", "--project", str(self.proj), "--branche", "energieversorgung", "--rollen", "Netzplaner", "--date", "2026-01-01")
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("unverändert", r.stdout)
+        self.assertEqual(page.read_text(encoding="utf-8"), edited)
+
+    def test_registers_without_pages_must_be_exported_first(self):
+        other = Path(self.tmp) / "legacy"
+        shutil.copytree(EXAMPLE, other)
+        shutil.rmtree(other / "05_pages")
+        r = run("seed_from_library.py", "--project", str(other), "--branche", "allgemein", "--rollen", "Controller")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("export_pages.py", r.stdout + r.stderr)
+
+    def test_review_list_marks_reference_roles_once_and_names_legal_topics(self):
+        run("seed_from_library.py", "--project", str(self.proj), "--branche", "energieversorgung", "--cluster", "Netzbetrieb", "--date", "2026-01-01")
+        self.assertEqual(run("run_pipeline.py", "--project", str(self.proj), "--until", "builder").returncode, 0)
+        review = next((self.proj / "30_review").glob("review_v*.md")).read_text(encoding="utf-8")
+        self.assertEqual(review.count("Aus der Referenzbibliothek übernommen"), 4)
+        self.assertIn("### Rechtsrahmen", review)
+        self.assertIn("EnWG", review)
+        self.assertIn("keine Rechtsberatung", review)
+
+
+class TestExampleProfile(unittest.TestCase):
+    def test_example_graph_carries_profile_and_contracts_name_platform(self):
+        g = wl.read_json(EXAMPLE / "expected" / "work-graph_final.json")
+        self.assertEqual(g["meta"]["profile"]["plattform"], "mischbetrieb")
+        contracts = (EXAMPLE / "expected" / "contracts_v011.md").read_text(encoding="utf-8")
+        self.assertIn("Umsetzung auf Plattformprofil", contracts)
+        self.assertIn("kein Beschaffungsentscheid", contracts)
+
+    def test_legal_topics_need_library_and_match_keywords(self):
+        g = wl.read_json(EXAMPLE / "expected" / "work-graph_final.json")
+        role = next(r for r in g["roles"] if r["name"] == "Forderungsmanager")
+        topics = wl.legal_topics(g, role)
+        ids = [t["id"] for t in topics]
+        self.assertIn("mitbestimmung", ids)
+        self.assertIn("handelsrecht", ids)
+        self.assertNotIn("trinkwasser", ids)
+        g2 = json.loads(json.dumps(g))
+        g2["meta"]["profile"] = {"branche": "wasserversorgung", "rechtsraum": "XX"}
+        self.assertEqual(wl.legal_topics(g2, role), [])
 
 
 if __name__ == "__main__":

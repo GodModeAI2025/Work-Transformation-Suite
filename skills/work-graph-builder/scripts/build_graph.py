@@ -108,6 +108,7 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                 skills[sid]["category"] = category.strip()
         return sid
 
+    reference_ids = wl.reference_source_ids(project)
     for fname, ex in load_extractions(project):
         stats["files"] += 1
         fam_name = _str(ex.get("job_family")) or "Ohne Zuordnung"
@@ -129,7 +130,7 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                 stats["roles_merged"] += 1
                 role["source_refs"] = sorted(set(role["source_refs"] + [source]))
                 role["evidence"] = sorted(set(role.get("evidence", []) + _evidence(r)))
-                role["evidence_status"] = wl.evidence_status(role, estimated=bool(role.get("is_new")))
+                role["evidence_status"] = wl.evidence_status(role, estimated=bool(role.get("is_new")), reference_ids=reference_ids)
             else:
                 stats["roles_new"] += 1
                 archetype = _str(r.get("archetype")) or None
@@ -151,7 +152,7 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                     "skills": [],
                     "task_ids": [],
                 }
-                role["evidence_status"] = wl.evidence_status(role, estimated=bool(r.get("is_new", False)))
+                role["evidence_status"] = wl.evidence_status(role, estimated=bool(r.get("is_new", False)), reference_ids=reference_ids)
                 prev = prev_roles.get(rid)
                 if prev:
                     # Reviewstatus und Analyse aus Vorversion behalten
@@ -223,7 +224,7 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                     "status": "generated",
                     "agent_ids": [],
                 }
-                task["evidence_status"] = wl.evidence_status(task, estimated=task["confidence"] == "inferred")
+                task["evidence_status"] = wl.evidence_status(task, estimated=task["confidence"] == "inferred", reference_ids=reference_ids)
                 prev = prev_tasks.get(tid)
                 if prev:
                     task["status"] = prev.get("status", "generated")

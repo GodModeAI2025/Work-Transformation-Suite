@@ -30,6 +30,7 @@ entfernt sie.
 | Datei | Wer schreibt sie | Inhalt |
 |---|---|---|
 | `00_input/*.md` | Mensch | Stellenbeschreibungen und Prozessaufnahme |
+| `project.json` | Mensch | Profil des Hauses: Branche `allgemein`, Plattformprofil `mischbetrieb`, Rechtsraum `DE`; daraus die Plattformvorschläge in den Verträgen und die Rechtsthemen in Review-Liste und Rollen.md |
 | `05_pages/` | Claude | 35 Seiten (Cluster, 5 Rollen, 21 Aufgaben mit Bewertung, 8 Agenten mit Vertrag); die Register darunter sind daraus übersetzt |
 | `00_input/sources/` | `register_source.py` | Beide Quellen registriert; alle Rollen, Aufgaben aus der Quelle, Prozesse, Schritte, gemessenen Kennzahlen und Kontrollen tragen Belege darauf, die vier ergänzten Aufgaben gelten als geschätzt |
 | `10_extraction/extract_*.json` | Claude | 5 Rollen, 21 Aufgaben, 11 Skills |

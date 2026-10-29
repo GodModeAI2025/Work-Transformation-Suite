@@ -32,7 +32,7 @@ import workgraph_lib as wl  # noqa: E402
 COLLECTIONS = [("roles", "evidence", "Rollen"), ("tasks", "evidence", "Aufgaben"), ("processes", "evidence", "Prozesse"),
                ("process_steps", "evidence", "Prozessschritte"), ("metrics", "evidence", "Kennzahlen"),
                ("controls", "source_evidence", "Kontrollen")]
-LABEL = {"sourced": "belegt", "estimated": "geschätzt", "unsourced": "unbelegt"}
+LABEL = {"sourced": "belegt", "reference": "Referenz", "estimated": "geschätzt", "unsourced": "unbelegt"}
 
 
 def analyse(project: Path, graph: dict) -> dict:
@@ -44,7 +44,7 @@ def analyse(project: Path, graph: dict) -> dict:
             bodies[sid] = wl.split_frontmatter(path.read_text(encoding="utf-8"))[1]
     rows, bad_locators, free_locators = [], [], 0
     for coll, field, label in COLLECTIONS:
-        counts = {"sourced": 0, "estimated": 0, "unsourced": 0}
+        counts = {"sourced": 0, "reference": 0, "estimated": 0, "unsourced": 0}
         unsourced = []
         for it in graph.get(coll, []):
             st = it.get("evidence_status") or wl.evidence_status({"evidence": it.get(field) or []})
@@ -76,9 +76,12 @@ def render(a: dict, version: int, policy: str) -> str:
              f"Belegpflicht: {policy}. {a['sources']} registrierte Quelle(n). "
              "„belegt“ hat eine Fundstelle in einer registrierten Quelle, „geschätzt“ ist als Schätzung "
              "gekennzeichnet, „unbelegt“ steht ohne Herkunft im Graphen.", "",
-             "| Sammlung | Einträge | belegt | geschätzt | unbelegt |", "|---|---:|---:|---:|---:|"]
+             "| Sammlung | Einträge | belegt | Referenz | geschätzt | unbelegt |", "|---|---:|---:|---:|---:|---:|"]
     for r in a["rows"]:
-        lines.append(f"| {r['label']} | {r['total']} | {r['sourced']} | {r['estimated']} | {r['unsourced']} |")
+        lines.append(f"| {r['label']} | {r['total']} | {r['sourced']} | {r['reference']} | {r['estimated']} | {r['unsourced']} |")
+    if any(r["reference"] for r in a["rows"]):
+        lines += ["", "„Referenz“ heißt: aus der Referenzbibliothek übernommen und am Haus noch nicht bestätigt. "
+                  "Bestätigt wird über die Review-Liste (Status reviewed) oder durch einen Beleg aus eigenem Material."]
     lines.append("")
     open_rows = [r for r in a["rows"] if r["unsourced_names"]]
     if open_rows:

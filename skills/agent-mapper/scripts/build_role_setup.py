@@ -417,6 +417,25 @@ def tool_table(graph: dict[str, Any], role: dict[str, Any], groups: list[dict[st
     else:
         L += ["Der Graph nennt für diese Rolle keine Systeme. Typische Startpunkte nach dem Playbook (allgemein, nicht aus dem Graphen abgeleitet): "
               + ", ".join(GENERIC_TOOLS) + ". Wähle die, in denen diese Rolle tatsächlich arbeitet.", ""]
+    profile = wl.platform_profile(graph)
+    if profile:
+        L += ["", f"## Plattformprofil: {profile['label']}", "",
+              "Vorschlag aus der Referenzbibliothek für die Umsetzung; Dienstnamen und Verfügbarkeit vor der Umsetzung prüfen. "
+              "Fachsysteme (ERP, CRM, Marktkommunikation) werden über ihre eigenen Schnittstellen angebunden.", ""]
+        L += [f"- {g}" for g in profile.get("grundsaetze", [])]
+        seen = set()
+        for g in groups:
+            a = g["agent"]
+            if not a or a.get("pattern") in seen:
+                continue
+            seen.add(a.get("pattern"))
+            dienste = (profile.get("muster") or {}).get(a.get("pattern") or "", {}).get("dienste") or []
+            if dienste:
+                L.append(f"- Muster `{a['pattern']}` ({a['name']}): " + ", ".join(dienste))
+            for t in (a.get("contract") or {}).get("tools") or []:
+                d = wl.platform_tool(profile, t)
+                if d:
+                    L.append(f"  - `{t}` → {d}")
     L += ["", "## Reihenfolge", "",
           "1. Erst lesend anbinden, dann schreibend, und schreibend nur für Skills, die live-reif sind.",
           "2. Native Integrationen vor MCP-Verbindungen; für Standardsysteme gibt es meist fertige Wege.",

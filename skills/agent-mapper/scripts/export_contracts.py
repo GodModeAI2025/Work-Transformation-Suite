@@ -106,7 +106,17 @@ def collect(graph: dict[str, Any], statuses: set) -> list[dict[str, Any]]:
     return out
 
 
-def to_markdown(entries: list[dict[str, Any]]) -> str:
+def platform_proposal(entry: dict[str, Any], profile: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Dienste des Plattformprofils für dieses Agentenmuster und die abstrakten Werkzeuge des Vertrags."""
+    if not profile:
+        return None
+    muster = (profile.get("muster") or {}).get(entry.get("pattern") or "", {})
+    tools = {t: wl.platform_tool(profile, t) for t in (entry.get("contract") or {}).get("tools") or []}
+    return {"profil": profile.get("label"), "dienste": list(muster.get("dienste") or []),
+            "werkzeuge": {t: d for t, d in tools.items() if d}}
+
+
+def to_markdown(entries: list[dict[str, Any]], profile: dict[str, Any] | None = None) -> str:
     out = ["# Capability Contracts", "",
            "Je Agent: was ihn auslöst, worauf er zugreifen darf, wo ein Mensch entscheidet, "
            "was passiert, wenn er scheitert, und woran man merkt, dass er schlechter wird.",
@@ -156,6 +166,18 @@ def to_markdown(entries: list[dict[str, Any]]) -> str:
         if e.get("oversight"):
             out.append(f"**Aufsicht im Betrieb:** {e['oversight']}")
             out.append("")
+        pp = platform_proposal(e, profile)
+        if pp:
+            out.append(f"**Umsetzung auf Plattformprofil „{pp['profil']}“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**")
+            out.append("")
+            if pp["dienste"]:
+                out.append("- Dienste für dieses Muster: " + ", ".join(pp["dienste"]))
+            for t, d in pp["werkzeuge"].items():
+                out.append(f"- `{t}` → {d}")
+            out.append("")
+    if profile:
+        out += ["## Plattformprofil: Grundsätze", ""] + [f"- {g}" for g in profile.get("grundsaetze", [])] + [""]
+        out += [f"- {h}" for h in profile.get("hinweise", [])] + [""]
     return "\n".join(out) + "\n"
 
 
@@ -170,13 +192,18 @@ def main() -> int:
         wl.fail("Kein Graph gefunden")
     statuses = {s.strip() for s in args.status.split(",") if s.strip()}
     entries = collect(graph, statuses)
+    profile = wl.platform_profile(graph)
+    for e in entries:
+        pp = platform_proposal(e, profile)
+        if pp:
+            e["platform_proposal"] = pp
     version = int(graph.get("meta", {}).get("version", 0))
     outdir = project / wl.DIR_OUTPUT
     json_path = outdir / f"contracts_v{version:03d}.json"
     wl.write_json(json_path, entries)
     md_path = outdir / f"contracts_v{version:03d}.md"
     md_path.parent.mkdir(parents=True, exist_ok=True)
-    wl.write_text(md_path, to_markdown(entries))
+    wl.write_text(md_path, to_markdown(entries, profile))
     without = sum(1 for a in graph["agents"] if not isinstance(a.get("contract"), dict))
     print(f"Geschrieben: {wl.relpath(json_path)}, {wl.relpath(md_path)} | "
           f"Verträge={len(entries)} ohne Vertrag={without}")

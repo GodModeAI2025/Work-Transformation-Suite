@@ -1,0 +1,306 @@
+{
+  "grundsaetze": [
+    "Jede Datenart hat ein führendes System (System of Record); Agenten lesen und schreiben dort, nicht in Kopien.",
+    "Je Muster ein Dienst festlegen, nicht beide; die Wahl richtet sich nach dem System, das die Daten hält.",
+    "Identität föderieren (Entra ID als IdP oder Cloud Identity), damit Berechtigungen an einer Stelle gepflegt werden.",
+    "Protokolle an einer Stelle zusammenführen (SIEM), sonst sind Audits lückenhaft."
+  ],
+  "hinweise": [
+    "Die Listen nennen beide Optionen je Muster; die Entscheidung je Agent gehört in den Vertrag (Feld tools).",
+    "Doppelte Lizenzierung von Copilot-Funktionen vermeiden."
+  ],
+  "id": "mischbetrieb",
+  "label": "Mischbetrieb (Microsoft und Google)",
+  "muster": {
+    "analysis-copilot": {
+      "dienste": [
+        "Microsoft Fabric / Power BI Copilot",
+        "Azure OpenAI Service",
+        "Excel über Graph",
+        "BigQuery",
+        "Looker",
+        "Vertex AI",
+        "Sheets API"
+      ]
+    },
+    "anomaly-detection": {
+      "dienste": [
+        "Azure Machine Learning",
+        "Microsoft Fabric (Real-Time Intelligence)",
+        "Azure Monitor (Betriebsdaten)",
+        "Vertex AI (AutoML Tabular / Forecasting)",
+        "BigQuery ML",
+        "Cloud Monitoring"
+      ]
+    },
+    "classification-routing": {
+      "dienste": [
+        "Azure OpenAI Service",
+        "Azure AI Language",
+        "Power Automate",
+        "Microsoft Graph (Mail)",
+        "Vertex AI (Gemini)",
+        "Natural Language API",
+        "Gmail API",
+        "Workflows"
+      ]
+    },
+    "compliance-check": {
+      "dienste": [
+        "Azure OpenAI Service",
+        "Azure AI Search (Regelwerke)",
+        "Microsoft Purview (Datenklassen)",
+        "Vertex AI",
+        "Vertex AI Search (Regelwerke)",
+        "Dataplex / DLP API"
+      ]
+    },
+    "contract-change-handling": {
+      "dienste": [
+        "Dataverse / Power Apps",
+        "Azure Functions",
+        "Azure OpenAI Service",
+        "Fachsystem-API (CRM, ERP)",
+        "Cloud Run",
+        "Workflows",
+        "Vertex AI",
+        "Fachsystem-API (CRM, ERP)"
+      ]
+    },
+    "conversational-assistant": {
+      "dienste": [
+        "Copilot Studio",
+        "Azure AI Bot Service",
+        "Azure OpenAI Service",
+        "Teams als Kanal",
+        "Dialogflow CX",
+        "Vertex AI Agent Builder",
+        "Google Chat oder Web als Kanal"
+      ]
+    },
+    "data-reconciliation": {
+      "dienste": [
+        "Azure Functions",
+        "Azure Data Factory",
+        "Microsoft Fabric / Dataflows",
+        "Azure OpenAI Service für Erklärungen",
+        "Cloud Functions",
+        "BigQuery",
+        "Dataflow",
+        "Vertex AI für Erklärungen"
+      ]
+    },
+    "dispatch-optimization": {
+      "dienste": [
+        "Azure Maps",
+        "Azure Machine Learning",
+        "Dynamics 365 Field Service",
+        "Google Maps Platform (Route Optimization API)",
+        "Vertex AI",
+        "AppSheet"
+      ]
+    },
+    "document-extraction": {
+      "dienste": [
+        "Azure AI Document Intelligence",
+        "Azure OpenAI Service (EU-Region)",
+        "Power Automate (Eingangsverarbeitung)",
+        "Document AI",
+        "Vertex AI (Gemini, EU-Region)",
+        "Workflows oder Apps Script"
+      ]
+    },
+    "drafting-assistant": {
+      "dienste": [
+        "Microsoft 365 Copilot",
+        "Azure OpenAI Service",
+        "Word und PowerPoint über Graph",
+        "Gemini for Google Workspace",
+        "Vertex AI",
+        "Docs und Slides API"
+      ]
+    },
+    "forecasting": {
+      "dienste": [
+        "Azure Machine Learning",
+        "Microsoft Fabric",
+        "Vertex AI Forecasting",
+        "BigQuery ML"
+      ]
+    },
+    "inspection-support": {
+      "dienste": [
+        "Azure AI Vision",
+        "Azure Machine Learning",
+        "Azure IoT Hub",
+        "Vertex AI Vision",
+        "Vertex AI",
+        "Cloud IoT über Pub/Sub"
+      ]
+    },
+    "invoice-verification": {
+      "dienste": [
+        "Azure AI Document Intelligence (Rechnungsmodell)",
+        "Azure Functions",
+        "ERP-API",
+        "Document AI (Invoice Parser)",
+        "Cloud Functions",
+        "ERP-API"
+      ]
+    },
+    "knowledge-qa": {
+      "dienste": [
+        "Azure AI Search (hybride Suche)",
+        "Azure OpenAI Service",
+        "Copilot Studio",
+        "SharePoint als Quelle",
+        "Vertex AI Search",
+        "Vertex AI (Gemini)",
+        "Dialogflow CX",
+        "Google Drive als Quelle"
+      ]
+    },
+    "market-communication": {
+      "dienste": [
+        "Azure Logic Apps (EDIFACT über Integration Account)",
+        "Azure Functions",
+        "Fachsystem der Marktkommunikation",
+        "Cloud Run",
+        "Workflows",
+        "Fachsystem der Marktkommunikation (EDIFACT-Adapter)"
+      ]
+    },
+    "master-data-maintenance": {
+      "dienste": [
+        "Dataverse",
+        "Power Apps",
+        "Azure Functions",
+        "Microsoft Purview (Datenqualität)",
+        "Cloud Run",
+        "AppSheet",
+        "BigQuery",
+        "Dataplex"
+      ]
+    },
+    "meeting-assistant": {
+      "dienste": [
+        "Teams-Transkription und Microsoft 365 Copilot",
+        "Microsoft Graph (Kalender, Aufgaben)",
+        "Planner / To Do",
+        "Google Meet (Gemini-Notizen)",
+        "Google Calendar API",
+        "Google Tasks API"
+      ]
+    },
+    "meter-data-processing": {
+      "dienste": [
+        "Azure Data Explorer / Fabric",
+        "Azure Functions",
+        "Azure Machine Learning (Ersatzwerte)",
+        "BigQuery",
+        "Dataflow",
+        "Vertex AI (Ersatzwerte)"
+      ]
+    },
+    "onboarding-guide": {
+      "dienste": [
+        "Copilot Studio",
+        "SharePoint als Wissensquelle",
+        "Microsoft Graph",
+        "Dialogflow CX",
+        "Google Sites und Drive als Wissensquelle",
+        "Workspace APIs"
+      ]
+    },
+    "quality-review": {
+      "dienste": [
+        "Azure OpenAI Service",
+        "Azure AI Content Safety",
+        "GitHub Advanced Security bei Code",
+        "Vertex AI",
+        "Cloud DLP",
+        "Cloud Build bei Code"
+      ]
+    },
+    "regulatory-monitor": {
+      "dienste": [
+        "Azure AI Search",
+        "Azure OpenAI Service",
+        "Power Automate (Abonnements)",
+        "Vertex AI Search",
+        "Vertex AI (Gemini)",
+        "Cloud Scheduler"
+      ]
+    },
+    "report-generation": {
+      "dienste": [
+        "Microsoft Fabric / Power BI",
+        "Azure OpenAI Service",
+        "Microsoft Graph (SharePoint)",
+        "BigQuery",
+        "Looker Studio",
+        "Vertex AI",
+        "Google Drive API"
+      ]
+    },
+    "scheduling-coordination": {
+      "dienste": [
+        "Microsoft Graph (Kalender, Bookings)",
+        "Power Automate",
+        "Azure OpenAI Service",
+        "Google Calendar API",
+        "Apps Script",
+        "Vertex AI"
+      ]
+    },
+    "standard-correspondence": {
+      "dienste": [
+        "Azure OpenAI Service",
+        "Microsoft Graph (Mail, Teams)",
+        "Word-Vorlagen über Graph",
+        "Vertex AI (Gemini)",
+        "Gmail API",
+        "Google Docs API"
+      ]
+    },
+    "ticket-resolution": {
+      "dienste": [
+        "Dynamics 365 Customer Service oder Ticketsystem-API",
+        "Azure OpenAI Service",
+        "Azure AI Search",
+        "Ticketsystem-API",
+        "Vertex AI (Gemini)",
+        "Vertex AI Search"
+      ]
+    },
+    "workflow-orchestration": {
+      "dienste": [
+        "Azure Logic Apps",
+        "Power Automate",
+        "Azure Functions",
+        "Azure Service Bus",
+        "Workflows",
+        "Cloud Run",
+        "Pub/Sub",
+        "Eventarc"
+      ]
+    }
+  },
+  "werkzeuge": {
+    "calendar": "Microsoft Graph (Kalender) oder Google Calendar API",
+    "chat": "Microsoft Graph (Teams) oder Google Chat API",
+    "crm": "Dynamics 365 oder Schnittstelle des CRM oder Schnittstelle des CRM",
+    "data": "Microsoft Fabric / Azure SQL oder BigQuery / Cloud SQL",
+    "document": "Azure AI Document Intelligence oder Document AI",
+    "erp": "Schnittstelle des ERP-Systems (unabhängig vom Plattformprofil)",
+    "files": "Microsoft Graph (SharePoint, OneDrive) oder Google Drive API",
+    "identity": "Microsoft Entra ID oder Cloud Identity / IAM",
+    "llm": "Azure OpenAI Service (EU-Region, kein Training mit Kundendaten) oder Vertex AI (EU-Region, kein Training mit Kundendaten)",
+    "log": "Azure Monitor / Log Analytics oder Cloud Logging",
+    "mail": "Microsoft Graph (Mail) oder Gmail API",
+    "search": "Azure AI Search oder Vertex AI Search",
+    "secrets": "Azure Key Vault oder Secret Manager",
+    "ticket": "Schnittstelle des Ticketsystems",
+    "workflow": "Power Automate oder Logic Apps oder Workflows oder Apps Script"
+  }
+}
