@@ -17,5 +17,11 @@
     "manual": "#0F5F57",
     "ai_assisted": "#2287A0",
     "agent_delegated": "#852BCA"
+  },
+  "zone_colors": {
+    "green": "#2E7D32",
+    "red": "#B3261E",
+    "opportunity": "#B26A00",
+    "low": "#8A8A8A"
   }
 }

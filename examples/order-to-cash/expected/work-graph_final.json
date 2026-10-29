@@ -2876,7 +2876,7 @@
       "rechtsraum": "DE"
     },
     "project": "Order-to-Cash (Referenzbeispiel)",
-    "schema_version": "1.3",
+    "schema_version": "1.4",
     "scope": "Order-to-Cash",
     "sources": [
       {
@@ -2895,7 +2895,7 @@
       }
     ],
     "stage": "governance",
-    "version": 12
+    "version": 13
   },
   "metrics": [
     {
@@ -4210,6 +4210,37 @@
   "roles": [
     {
       "absorption": "growth",
+      "agency": {
+        "coverage_pct": 100.0,
+        "desire": 4.2,
+        "friction": "low",
+        "gap_mean": 0.0,
+        "has_desired_dist": [
+          0.55,
+          0.25,
+          0.2,
+          0.0,
+          0.0
+        ],
+        "has_desired_dominant": 1,
+        "has_required_dist": [
+          0.55,
+          0.25,
+          0.2,
+          0.0,
+          0.0
+        ],
+        "has_required_dominant": 1,
+        "jsd": 0.0,
+        "respondents": 6,
+        "share_rated_pct": 100.0,
+        "tasks_rated": 4,
+        "tasks_total": 4,
+        "zone_shares": {
+          "green": 80.0,
+          "opportunity": 20.0
+        }
+      },
       "analysis": {
         "absorption": "growth",
         "automation_ai": 7.4,
@@ -4239,6 +4270,7 @@
         "flip_share": 4.2,
         "fte_realisable": 3.6,
         "fte_released_technical": 3.6,
+        "has_dominant": 1,
         "headcount_basis": 6.0,
         "horizon": "near",
         "horizon_label": "kurzfristig (0–2 Jahre)",
@@ -4329,6 +4361,7 @@
         "flip_share": 0.0,
         "fte_realisable": 1.6,
         "fte_released_technical": 1.6,
+        "has_dominant": 1,
         "headcount_basis": 4.0,
         "horizon": "near",
         "horizon_label": "kurzfristig (0–2 Jahre)",
@@ -4401,6 +4434,38 @@
     {
       "absorption": "attrition",
       "absorption_pct": 70,
+      "agency": {
+        "coverage_pct": 88.9,
+        "desire": 3.2,
+        "friction": "medium",
+        "gap_mean": 0.4,
+        "has_desired_dist": [
+          0.45,
+          0.15,
+          0.2,
+          0.2,
+          0.0
+        ],
+        "has_desired_dominant": 1,
+        "has_required_dist": [
+          0.45,
+          0.35,
+          0.2,
+          0.0,
+          0.0
+        ],
+        "has_required_dominant": 1,
+        "jsd": 0.36,
+        "respondents": 8,
+        "share_rated_pct": 100.0,
+        "tasks_rated": 5,
+        "tasks_total": 5,
+        "zone_shares": {
+          "green": 60.0,
+          "low": 20.0,
+          "red": 20.0
+        }
+      },
       "analysis": {
         "absorption": "attrition",
         "automation_ai": 6.9,
@@ -4443,6 +4508,7 @@
         "flip_share": 23.3,
         "fte_realisable": 4.6,
         "fte_released_technical": 6.5,
+        "has_dominant": 1,
         "headcount_basis": 9.0,
         "horizon": "near",
         "horizon_label": "kurzfristig (0–2 Jahre)",
@@ -4535,6 +4601,7 @@
         "flip_share": 0.0,
         "fte_realisable": 0.0,
         "fte_released_technical": 0.6,
+        "has_dominant": 1,
         "headcount_basis": 3.0,
         "horizon": "near",
         "horizon_label": "kurzfristig (0–2 Jahre)",
@@ -4627,6 +4694,7 @@
         "flip_share": 0.0,
         "fte_realisable": null,
         "fte_released_technical": 0.1,
+        "has_dominant": 4,
         "headcount_basis": 1.0,
         "horizon": "mid",
         "horizon_label": "mittelfristig (2–5 Jahre)",
@@ -4697,6 +4765,12 @@
   ],
   "skills": [
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 1.7,
+        "human_agency": 3.4,
+        "tasks": 3
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_009d75c35252",
@@ -4704,6 +4778,12 @@
       "name": "Risikoeinschätzung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 7.7,
+        "human_agency": 1.1,
+        "tasks": 5
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_23f02c5b21dd",
@@ -4711,6 +4791,12 @@
       "name": "ERP-Auftragsabwicklung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 1.8,
+        "human_agency": 1.0,
+        "tasks": 1
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_3595f9f57352",
@@ -4718,6 +4804,12 @@
       "name": "Rechnungslegung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 1.8,
+        "human_agency": 2.0,
+        "tasks": 1
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_4f8e409f7642",
@@ -4725,6 +4817,12 @@
       "name": "Vertragsauslegung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 0.9,
+        "human_agency": 1.0,
+        "tasks": 1
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_5066ba6ab485",
@@ -4732,6 +4830,12 @@
       "name": "Bonitätsbewertung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 2.2,
+        "human_agency": 1.5,
+        "tasks": 2
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_82e5a551a9f1",
@@ -4739,6 +4843,12 @@
       "name": "Offene-Posten-Verwaltung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 0.3,
+        "human_agency": 5.0,
+        "tasks": 1
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_a0390b8ce36d",
@@ -4746,6 +4856,12 @@
       "name": "Führung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 0.8,
+        "human_agency": 4.0,
+        "tasks": 1
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_a57d78fd4f90",
@@ -4753,6 +4869,12 @@
       "name": "Verhandlungsführung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 0.4,
+        "human_agency": 2.8,
+        "tasks": 2
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_acc2944b50de",
@@ -4760,6 +4882,12 @@
       "name": "Prozesssteuerung"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 2.8,
+        "human_agency": 3.0,
+        "tasks": 2
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_b344bb960e72",
@@ -4767,6 +4895,12 @@
       "name": "Kundenkommunikation"
     },
     {
+      "analysis": {
+        "bound_basis": "fte",
+        "bound_work": 2.7,
+        "human_agency": 2.4,
+        "tasks": 2
+      },
       "category": "",
       "esco_uri": null,
       "id": "sk_bc03f56b0365",
@@ -5019,6 +5153,41 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 4.4,
+        "desire": 3.6,
+        "desire_positive_pct": 57.1,
+        "enjoyment": 1.6,
+        "has_desired": 2,
+        "has_desired_counts": [
+          0,
+          6,
+          1,
+          0,
+          0
+        ],
+        "has_desired_mean": 2.1,
+        "has_gap": 0,
+        "job_worry": 1.7,
+        "reasons_automation": {
+          "belastung": 4,
+          "qualitaet": 5,
+          "wiederholung": 1,
+          "zeit": 4
+        },
+        "reasons_collab": {
+          "pruefung": 1
+        },
+        "respondents": 7,
+        "time_share_survey": 30.0,
+        "traits": {
+          "expertise": 2.9,
+          "interpersonal": 1.4,
+          "physical": 1.0,
+          "uncertainty": 2.0
+        },
+        "zone": "green"
+      },
       "agent_ids": [
         "ag_3f598ad08e40"
       ],
@@ -5127,6 +5296,39 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 3.6,
+        "desire": 4.6,
+        "desire_positive_pct": 100.0,
+        "enjoyment": 2.1,
+        "has_desired": 1,
+        "has_desired_counts": [
+          7,
+          0,
+          0,
+          0,
+          0
+        ],
+        "has_desired_mean": 1.0,
+        "has_gap": 0,
+        "job_worry": 2.7,
+        "reasons_automation": {
+          "belastung": 1,
+          "qualitaet": 3,
+          "wiederholung": 4,
+          "zeit": 6
+        },
+        "reasons_collab": {},
+        "respondents": 7,
+        "time_share_survey": 35.7,
+        "traits": {
+          "expertise": 1.7,
+          "interpersonal": 1.4,
+          "physical": 1.0,
+          "uncertainty": 1.1
+        },
+        "zone": "green"
+      },
       "agent_ids": [
         "ag_3f598ad08e40"
       ],
@@ -5163,6 +5365,39 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 4.0,
+        "desire": 4.2,
+        "desire_positive_pct": 83.3,
+        "enjoyment": 1.5,
+        "has_desired": 1,
+        "has_desired_counts": [
+          5,
+          1,
+          0,
+          0,
+          0
+        ],
+        "has_desired_mean": 1.2,
+        "has_gap": 0,
+        "job_worry": 3.0,
+        "reasons_automation": {
+          "belastung": 3,
+          "qualitaet": 3,
+          "wiederholung": 4,
+          "zeit": 2
+        },
+        "reasons_collab": {},
+        "respondents": 6,
+        "time_share_survey": 36.7,
+        "traits": {
+          "expertise": 1.3,
+          "interpersonal": 1.7,
+          "physical": 1.0,
+          "uncertainty": 1.2
+        },
+        "zone": "green"
+      },
       "agent_ids": [
         "ag_b079cdca74c4"
       ],
@@ -5235,6 +5470,39 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 3.7,
+        "desire": 1.0,
+        "desire_positive_pct": 0.0,
+        "enjoyment": 3.7,
+        "has_desired": 4,
+        "has_desired_counts": [
+          0,
+          0,
+          0,
+          6,
+          0
+        ],
+        "has_desired_mean": 4.0,
+        "has_gap": 1,
+        "job_worry": 2.2,
+        "reasons_automation": {},
+        "reasons_collab": {
+          "entscheidung": 4,
+          "fachwissen": 3,
+          "kommunikation": 3,
+          "pruefung": 2
+        },
+        "respondents": 6,
+        "time_share_survey": 23.3,
+        "traits": {
+          "expertise": 3.7,
+          "interpersonal": 4.0,
+          "physical": 1.0,
+          "uncertainty": 2.8
+        },
+        "zone": "low"
+      },
       "agent_ids": [
         "ag_161c9e695503"
       ],
@@ -5305,6 +5573,42 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 3.0,
+        "desire": 4.8,
+        "desire_positive_pct": 100.0,
+        "enjoyment": 2.0,
+        "has_desired": 3,
+        "has_desired_counts": [
+          0,
+          0,
+          3,
+          2,
+          0
+        ],
+        "has_desired_mean": 3.4,
+        "has_gap": 0,
+        "job_worry": 1.8,
+        "reasons_automation": {
+          "belastung": 2,
+          "qualitaet": 4,
+          "wiederholung": 1,
+          "zeit": 3
+        },
+        "reasons_collab": {
+          "dynamik": 4,
+          "pruefung": 1
+        },
+        "respondents": 5,
+        "time_share_survey": 26.0,
+        "traits": {
+          "expertise": 3.0,
+          "interpersonal": 1.6,
+          "physical": 1.0,
+          "uncertainty": 1.6
+        },
+        "zone": "opportunity"
+      },
       "agent_ids": [
         "ag_b079cdca74c4"
       ],
@@ -5443,6 +5747,42 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 2.8,
+        "desire": 1.9,
+        "desire_positive_pct": 0.0,
+        "enjoyment": 3.6,
+        "has_desired": 3,
+        "has_desired_counts": [
+          0,
+          0,
+          5,
+          3,
+          0
+        ],
+        "has_desired_mean": 3.4,
+        "has_gap": 1,
+        "job_worry": 3.4,
+        "reasons_automation": {
+          "belastung": 1,
+          "zeit": 1
+        },
+        "reasons_collab": {
+          "entscheidung": 6,
+          "fachwissen": 3,
+          "kommunikation": 5,
+          "pruefung": 2
+        },
+        "respondents": 8,
+        "time_share_survey": 32.5,
+        "traits": {
+          "expertise": 2.4,
+          "interpersonal": 4.0,
+          "physical": 1.0,
+          "uncertainty": 1.8
+        },
+        "zone": "red"
+      },
       "agent_ids": [
         "ag_3f598ad08e40"
       ],
@@ -5479,6 +5819,39 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 3.2,
+        "desire": 4.7,
+        "desire_positive_pct": 100.0,
+        "enjoyment": 2.7,
+        "has_desired": 1,
+        "has_desired_counts": [
+          4,
+          2,
+          0,
+          0,
+          0
+        ],
+        "has_desired_mean": 1.3,
+        "has_gap": 0,
+        "job_worry": 3.5,
+        "reasons_automation": {
+          "belastung": 1,
+          "qualitaet": 5,
+          "wiederholung": 2,
+          "zeit": 4
+        },
+        "reasons_collab": {},
+        "respondents": 6,
+        "time_share_survey": 30.0,
+        "traits": {
+          "expertise": 1.0,
+          "interpersonal": 1.3,
+          "physical": 1.0,
+          "uncertainty": 1.0
+        },
+        "zone": "green"
+      },
       "agent_ids": [
         "ag_3f598ad08e40"
       ],
@@ -5515,6 +5888,42 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 3.5,
+        "desire": 3.8,
+        "desire_positive_pct": 83.3,
+        "enjoyment": 2.5,
+        "has_desired": 2,
+        "has_desired_counts": [
+          1,
+          3,
+          2,
+          0,
+          0
+        ],
+        "has_desired_mean": 2.2,
+        "has_gap": 0,
+        "job_worry": 3.0,
+        "reasons_automation": {
+          "belastung": 4,
+          "qualitaet": 1,
+          "wiederholung": 3,
+          "zeit": 4
+        },
+        "reasons_collab": {
+          "dynamik": 1,
+          "pruefung": 1
+        },
+        "respondents": 6,
+        "time_share_survey": 30.0,
+        "traits": {
+          "expertise": 2.5,
+          "interpersonal": 1.7,
+          "physical": 1.0,
+          "uncertainty": 2.3
+        },
+        "zone": "green"
+      },
       "agent_ids": [
         "ag_b079cdca74c4"
       ],
@@ -5551,6 +5960,39 @@
       "workflow_steps": []
     },
     {
+      "agency": {
+        "core_skill": 3.5,
+        "desire": 4.3,
+        "desire_positive_pct": 100.0,
+        "enjoyment": 2.2,
+        "has_desired": 1,
+        "has_desired_counts": [
+          6,
+          0,
+          0,
+          0,
+          0
+        ],
+        "has_desired_mean": 1.0,
+        "has_gap": 0,
+        "job_worry": 2.7,
+        "reasons_automation": {
+          "belastung": 3,
+          "qualitaet": 2,
+          "wiederholung": 3,
+          "zeit": 4
+        },
+        "reasons_collab": {},
+        "respondents": 6,
+        "time_share_survey": 23.3,
+        "traits": {
+          "expertise": 1.0,
+          "interpersonal": 1.3,
+          "physical": 1.0,
+          "uncertainty": 1.0
+        },
+        "zone": "green"
+      },
       "agent_ids": [
         "ag_b079cdca74c4"
       ],

@@ -46,6 +46,7 @@ entfernt sie.
 | `00_input/referenzautomatisierungen.csv` | Mensch | Vier Referenzen, eine ohne Quelle (wird übersprungen) und eine als `heuristic` |
 | `00_input/usecases.csv` | Mensch | Zwei eigene Use Cases mit Zuordnung zu Aufgaben |
 | `00_input/adoption.csv` | Mensch | Nutzungsstand je Rolle und Agent; die Rolle mit vier Stellen wird unterdrückt |
+| `00_input/befragung/antworten_2026-03.csv` | Beschäftigte (erfunden) | Befragung nach dem Auditrahmen des Skills agency-audit: 22 Codes, keine Namen. Ausgewertet werden nur Auftragssachbearbeitung und Fakturierung; Forderungsmanagement (4), Kreditprüfung (3) und Teamleitung (1) liegen unter der Mindestgruppe von 5 und bleiben unsichtbar. Eine Aufgabe landet in der Vorsichtszone, eine in der Entwicklungszone |
 | `expected/` | Testlauf | Erwartetes Endergebnis mit Prüfsummen |
 
 ## Was das Beispiel zeigen soll

@@ -18,6 +18,7 @@ from __future__ import annotations
 import html
 from typing import Any
 
+import agency_views as av
 import workgraph_lib as wl
 
 # Sprache für HR-Leser: Eine Rolle „verändert sich“, sie „entfällt“ nicht. Die Typen sind
@@ -51,7 +52,7 @@ def has_capacity_data(graph: dict[str, Any]) -> bool:
 
 def has_any(graph: dict[str, Any]) -> bool:
     return bool(has_capacity_data(graph) or graph.get("target_roles") or graph.get("adoption")
-                or graph.get("usecases"))
+                or graph.get("usecases") or av.has_agency(graph))
 
 
 # ---------------------------------------------------------------------------
@@ -190,7 +191,39 @@ def hr_report(graph: dict[str, Any], title: str) -> str:
         for x in sorted(exps, key=lambda e: e["id"]):
             lines.append(f"| {x.get('name')} | {x.get('status')} | {'ja' if x.get('frame_confirmed') else 'nein'} | {x.get('frame_note') or '–'} |")
         lines.append("")
+    extra = av.hr_lines(graph)
+    if extra:
+        lines += extra[1:] + [""]
+    lines += skill_shift_lines(graph)
     return "\n".join(lines) + "\n"
+
+
+SHIFT_RANK_GAP = 3
+
+
+def skill_shift_lines(graph: dict[str, Any]) -> list[str]:
+    """Kompetenzverschiebung: Skills nach nötiger Human Agency gegen Skills nach gebundener Arbeit."""
+    sk = [s for s in graph.get("skills", []) if s.get("analysis") and s.get("kind") != "tool"]
+    if len(sk) < 4:
+        return []
+    by_agency = sorted(sk, key=lambda s: (-s["analysis"]["human_agency"], s["name"]))
+    by_work = sorted(sk, key=lambda s: (-s["analysis"]["bound_work"], s["name"]))
+    ra = {s["id"]: i + 1 for i, s in enumerate(by_agency)}
+    rw = {s["id"]: i + 1 for i, s in enumerate(by_work)}
+    unit = "FTE" if all(s["analysis"]["bound_basis"] == "fte" for s in sk) else "% Zeitanteil"
+    lines = ["## Kompetenzverschiebung", "",
+             "Welche Fähigkeiten an Arbeit hängen, die Menschen auch mit Agenten tragen (hohe Human Agency), und welche heute "
+             "viel Arbeit binden. Steht ein Skill bei der Human Agency weit vor seinem heutigen Gewicht, gewinnt er an Bedeutung; "
+             "umgekehrt verliert er. Grundlage ist die Bewertung, nicht die Befragung. Nach Shao et al. 2025 (Lohn gegen Human Agency), "
+             "hier mit gebundener Arbeit als Wertmaß.", "",
+             f"| Skill | Human Agency (1–5) | Rang | gebundene Arbeit ({unit}) | Rang | Tendenz |", "|---|---:|---:|---:|---:|---|"]
+    for s in by_agency:
+        gap = rw[s["id"]] - ra[s["id"]]
+        trend = "gewinnt an Gewicht" if gap >= SHIFT_RANK_GAP else "verliert an Gewicht" if gap <= -SHIFT_RANK_GAP else "–"
+        lines.append(f"| {s['name']} | {s['analysis']['human_agency']:.1f} | {ra[s['id']]} | {s['analysis']['bound_work']:.1f} "
+                     f"| {rw[s['id']]} | {trend} |")
+    lines.append("")
+    return lines
 
 
 def it_backlog(graph: dict[str, Any], title: str, agents: list[dict[str, Any]]) -> str:
@@ -225,5 +258,6 @@ def it_backlog(graph: dict[str, Any], title: str, agents: list[dict[str, Any]]) 
     lines += ["", "## Blindflecken", ""]
     lines += ([f"- **{s['name']}** ({BAND_LABEL[s['band']]}, Wert {f1(s['score'])}) — weder Agent noch Use Case deckt Aufgaben ab" for s in spots]
               or ["Keine."])
+    lines += av.it_lines(graph)
     lines.append("")
     return "\n".join(lines) + "\n"

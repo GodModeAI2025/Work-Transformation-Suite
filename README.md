@@ -1,6 +1,6 @@
 # Work-Transformation-Suite
 
-Sieben Claude-Skills mit zwei Betriebsarten.
+Acht Claude-Skills mit zwei Betriebsarten und einer zweiten Stimme.
 
 **Diagnose.** Aus Stellenbeschreibungen eines Bereichs entsteht ein bewerteter Arbeitsgraph: Rollen,
 Aufgaben, Skills, KI-Automatisierbarkeit je Aufgabe, Disruptionstyp je Rolle, Agentenbibliothek mit
@@ -18,6 +18,11 @@ Prüfungen, drei Übergaben und zwei Datenumformungen — und der Rest braucht g
 Wert entsteht auf der Ebene des Ablaufs, nicht der Einzelaufgabe.
 
 Der Diagnosemodus bleibt für sich vollständig. Ein Projekt darf darin bleiben.
+
+**Beschäftigtensicht.** Die Bewertung sagt, was Technik kann. Eine Befragung der Beschäftigten sagt, was sie
+abgeben wollen und wie viel sie beteiligt bleiben wollen (Skill `agency-audit`, Auditrahmen nach Shao et al. 2025).
+Beides nebeneinander ergibt vier Zonen je Aufgabe: Freigabe, Vorsicht, Entwicklung, Nachrang. Dashboard, Berichte,
+Fahrplan, Verträge und Rollen.md nutzen sie. Ausgewertet wird nur ab fünf Antworten je Aufgabe.
 
 **Zwei Spuren, ein Graph.** Spur B ist das Prozessredesign: Ketten, Übergaben, Wert je Prozess. Das ist der
 belastbarere Weg, weil eine einzelne Rolle nur Teile eines Ablaufs sieht — fünfmal 2,8 gesparte Stunden sind keine
@@ -38,6 +43,7 @@ Work-Transformation-Suite/
 │   ├── work-transformation/      Orchestrator: Pipeline, Suite-Check
 │   ├── work-graph-builder/       Schritt 1: Extraktion → work-graph.json, Prozessebene, Review, Governance
 │   ├── task-scorer/              Schritt 2: Aufgabenbewertung → Modus, HAS, Horizont, Disruptionstyp
+│   ├── agency-audit/             Schritt 2a: Beschäftigtenbefragung → Zonen, Agency-Lücke, Reibung
 │   ├── agent-mapper/             Schritt 3: Agentenbibliothek → Abdeckung, Capability Contracts
 │   ├── process-redesigner/       Schritt 4: Soll-Szenarien, Prozesswert, Piloten
 │   ├── transformation-dashboard/ Schritt 5: HTML-Dashboard, CSV, Bericht
@@ -64,7 +70,7 @@ Voraussetzung: Python 3.9 oder neuer, keine zusätzlichen Pakete.
 
 ### In Claude (Cowork oder claude.ai)
 
-Die sieben `.skill`-Dateien aus `dist/` einzeln in den Chat ziehen und auf „Skill speichern“ klicken.
+Die acht `.skill`-Dateien aus `dist/` einzeln in den Chat ziehen und auf „Skill speichern“ klicken.
 Reihenfolge egal.
 
 ### In Claude Code
@@ -76,7 +82,7 @@ Als Plugin, direkt aus diesem Repository:
 /plugin install work-transformation-suite@work-transformation-suite
 ```
 
-Oder von Hand: Den Ordner `skills/` (oder die sieben Unterordner) nach `~/.claude/skills/` kopieren,
+Oder von Hand: Den Ordner `skills/` (oder die acht Unterordner) nach `~/.claude/skills/` kopieren,
 projektbezogen auch nach `<repo>/.claude/skills/`. Die Skills finden sich gegenseitig über den
 Geschwister-Pfad `../<skillname>`, deshalb zusammen in einen Ordner legen.
 
@@ -93,7 +99,7 @@ deterministisch neu. `python3 tools/sync_shared.py` gleicht die Bibliothekskopie
 
 Release: Ein Tag `vX.Y.Z` löst `.github/workflows/release.yml` aus. Der Workflow lässt die
 gesamte Prüfung laufen, vergleicht Tag, Version in `.claude-plugin/plugin.json` und den
-Changelog-Abschnitt (`tools/check_release.py`), und hängt die sieben `.skill`-Pakete mit
+Changelog-Abschnitt (`tools/check_release.py`), und hängt die acht `.skill`-Pakete mit
 einer `SHA256SUMS`-Datei an das Release. Die Prüfsummen sind der einzige Beleg dafür, dass
 eine heruntergeladene Paketdatei dem Stand des Tags entspricht.
 
@@ -232,6 +238,32 @@ nach der Rubrik (`task-scorer/references/rubric.md`: sechs Werte 0–10 plus Beg
 Alle Schwellen stehen als Konstanten am Kopf von `task-scorer/scripts/score_roles.py` und sind in der
 Rubrik erklärt. Wer kalibrieren will, ändert sie dort, nicht in den Bewertungen.
 
+Zwei optionale Merkmale je Aufgabe, `interpersonal` und `tacit_expertise` (auf Seiten `score_interpersonal`,
+`score_tacit_expertise`), heben die HAS-Stufe auf mindestens H4 beziehungsweise H3. Je Skill entsteht die
+**Kompetenzverschiebung** (nötige Human Agency gegen heute gebundene Arbeit), der HR-Bericht stellt sie gegenüber.
+`score_roles.py` meldet, wenn auffällig viele Rollen überwiegend H1 sind. Für eine **Zweitbewertung** füllt eine
+zweite Person oder ein zweiter, unabhängiger Lauf dieselbe Vorlage aus; `compare_scores.py` zeigt Übereinstimmung je
+Feld (Anteil innerhalb ±1, Krippendorffs Alpha) und die Aufgaben, die eine Klärung brauchen.
+
+### Schritt 2a: agency-audit (Befragung, optional)
+
+Sagen: „Bereite eine Befragung der Beschäftigten vor.“ Vorher klären: Zweck, Beteiligung der
+Beschäftigtenvertretung (ein solcher Fragebogen ist ein Personalfragebogen nach § 94 BetrVG), Rohdaten und Löschfrist.
+
+```
+python3 skills/agency-audit/scripts/export_audit_sheet.py --project projekte/kundenservice
+# Antworten als CSV nach 00_input/befragung/ legen, dann
+python3 skills/agency-audit/scripts/import_audit.py --project projekte/kundenservice
+python3 skills/agency-audit/scripts/score_agency.py --project projekte/kundenservice
+```
+
+Der Fragebogen fragt je Aufgabe Vertrautheit, Sorge um den Arbeitsplatz, Freude, den Wunsch nach Automatisierung,
+vier Merkmale und die gewünschte Beteiligung auf der Human Agency Scale. Der Import weist Spalten mit Namen,
+E-Mail oder Personalnummer zurück, zählt nur Aufgaben, die jemand selbst erledigt, und schreibt nur Zusammenfassungen
+ab fünf Antworten. `score_agency.py` legt je Aufgabe Zone und Agency-Lücke an (gewünschte minus nötige Stufe), je
+Rolle die Reibung (Jensen-Shannon-Distanz der beiden Verteilungen), und schreibt `30_review/beschaeftigtensicht_vNNN.md`.
+`run_pipeline.py` macht das selbst, sobald Antworten vorliegen. Format: `skills/agency-audit/references/befragung.md`.
+
 ### Schritt 2b: Prozesse aufnehmen (Claude, optional)
 
 Für den Redesignmodus braucht die Suite, was in Stellenbeschreibungen nicht steht: den Fluss eines
@@ -299,6 +331,9 @@ Die Rollenansicht bleibt vollständig erhalten, rückt aber dahinter — als Fol
 Prozessredesigns. Das ist Absicht: Sobald Organisationskästchen zuerst kommen, wird das Organigramm
 zum Designobjekt, und genau das verhindert ein Redesign vom Ergebnis her.
 
+Liegt eine Befragung vor, kommt der Abschnitt „Sicht der Beschäftigten“ dazu: Landschaft aus Wunsch und
+Automatisierungspotenzial je Aufgabe, Matrix der Beteiligung (gewünscht gegen nötig), Reibung je Rolle, Zonen je Cluster.
+
 ### Schritt 6: transformation-roadmap (Skript, Texte von Claude)
 
 Verteilt Agenten und Use Cases auf Wellen und baut daraus die Unterlagen für eine Entscheidungsrunde.
@@ -311,7 +346,8 @@ python3 skills/transformation-roadmap/scripts/build_documents.py --project proje
 - **Raster:** `fahrplan_vNNN.md/.html/.csv` und `roadmap_vNNN.json`. Jedes Vorhaben erhält einen Score aus Wert, Reichweite,
   Umsetzbarkeit, Reifegrad und Prozessrang; fehlende Größen fehlen auch im Score und werden benannt. Laufende Vorhaben
   liegen in Welle 1, Orchestratoren folgen den Agenten, die sie steuern. Betroffene Rollen und FTE je Welle zählen
-  jede Aufgabe einmal.
+  jede Aufgabe einmal. Liegt eine Befragung vor, beginnt ein Vorhaben, dessen Arbeit überwiegend in der Vorsichtszone
+  liegt, nicht in Welle 1, außer jemand entscheidet es.
 - **Entscheidungen:** `30_review/wellen.csv` (`eintrag;welle;begruendung;entschieden_von;datum`). Ohne benannte Person
   bleibt eine Zuordnung Vorschlag. Zeiträume setzt das Raster nicht selbst.
 - **Unterlagen** in `40_output/dokumente/`: Entscheidungsvorlage, Einseiter für HR, Anhang mit allen Vorhaben, Methodik, je als
@@ -547,7 +583,9 @@ Lauf überschreibt keine bearbeitete Datei, der neue Stand liegt als `.vorschlag
 ### Zwei Berichte, ein Graph
 
 Das Dashboard schreibt neben `report_vNNN.md` zwei Fassungen: `report_hr_vNNN.md` (Kapazität, Zielbild, Rahmen — in der Sprache
-„Rolle verändert sich“) und `report_it_vNNN.md` (Backlog nach Wert, Use Cases, Prozessbänder, Blindflecken). Ein Glossar in
+„Rolle verändert sich“) und `report_it_vNNN.md` (Backlog nach Wert, Use Cases, Prozessbänder, Blindflecken). Mit Befragung nennt der HR-Bericht die Vorsichtszone und die
+Aufgaben, bei denen mehr Beteiligung gewünscht ist, der IT-Bericht die latente Nachfrage (gewünscht, ohne Vorhaben),
+Agenten auf ungewollter Arbeit und Nutzung gegen Wunsch. Der HR-Bericht enthält außerdem die Kompetenzverschiebung. Ein Glossar in
 `work-graph-builder/references/glossar.md` legt fest, wie die Wörter von HR und IT zueinander stehen.
 
 Weitere Hilfen: `import_process_house.py` übernimmt ein vorhandenes Prozesshaus als Prozessextraktion;
@@ -634,7 +672,9 @@ Begründung — nicht als Workflow mit Rollen, Rechten und Benachrichtigungen.
 ## Methodische Quellen
 
 **Diagnose.** Stanford, „Future of Work with AI Agents“ (Shao et al. 2025, WORKBank, Human Agency
-Scale H1–H5, arXiv 2506.06576). Anthropic Economic Index, Automation gegen Augmentation auf
+Scale H1–H5, arXiv 2506.06576). Daraus stammen auch der Auditrahmen des Skills `agency-audit` (Befragung je
+Aufgabe, Wunsch gegen Machbarkeit, vier Zonen, Jensen-Shannon-Distanz zwischen gewünschter und nötiger
+Beteiligung), die Zweitbewertung und die Kompetenzverschiebung. Anthropic Economic Index, Automation gegen Augmentation auf
 O*NET-Task-Ebene. ESCO v1.2, die EU-Skill-Taxonomie. Dazu die Metriken kommerzieller
 AI-Transformation-Dashboards: Automation Potential, Human Judgment, Disruption Score, Rollen-Typen.
 

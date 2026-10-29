@@ -81,6 +81,9 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
     prev_tasks = wl.index_by_id(previous.get("tasks", [])) if previous else {}
     prev_roles = wl.index_by_id(previous.get("roles", [])) if previous else {}
     prev_agents = previous.get("agents", []) if previous else []
+    # Die Beschäftigtensicht gilt nur, solange Antworten vorliegen. Ohne sie wird nichts übernommen.
+    audit_dir = project / wl.DIR_INPUT / "befragung"
+    keep_agency = audit_dir.is_dir() and any(audit_dir.glob("*.csv"))
 
     graph = wl.empty_graph()
     families: dict[str, dict] = {}
@@ -159,6 +162,9 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                     role["status"] = prev.get("status", "generated")
                     if prev.get("analysis"):
                         role["analysis"] = prev["analysis"]
+                    # Beschäftigtensicht (Schema 1.4) bleibt stehen, bis score_agency.py sie neu rechnet.
+                    if keep_agency and prev.get("agency"):
+                        role["agency"] = prev["agency"]
                     # Werte, die ein Import nach dem Builder gesetzt hat (Positionen, Level), bleiben stehen.
                     # Sonst baute jeder Lauf die Rolle ohne sie auf, der Import setzte sie wieder, und ein
                     # zweiter Lauf legte zwei neue Graph-Versionen an, obwohl sich nichts geändert hat.
@@ -236,6 +242,8 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
                         stats["scores_kept"] += 1
                     if prev.get("agent_ids"):
                         task["agent_ids"] = prev["agent_ids"]
+                    if keep_agency and prev.get("agency"):
+                        task["agency"] = prev["agency"]
                 tasks[tid] = task
                 role["task_ids"].append(tid)
                 stats["tasks"] += 1
@@ -272,6 +280,12 @@ def build(project: Path, keep_scores: bool = True) -> tuple[dict[str, Any], dict
     graph["job_clusters"] = list(clusters.values())
     graph["roles"] = list(roles.values())
     graph["tasks"] = list(tasks.values())
+    # Kompetenzverschiebung (Schema 1.4) wie die Rollenanalyse aus der Vorversion übernehmen; score_roles.py
+    # rechnet sie neu. Sonst legte jeder Lauf eine neue Version an, obwohl sich nichts geändert hat.
+    prev_skills = wl.index_by_id(previous.get("skills", [])) if previous else {}
+    for sid, sk in skills.items():
+        if (prev_skills.get(sid) or {}).get("analysis"):
+            sk["analysis"] = prev_skills[sid]["analysis"]
     graph["skills"] = list(skills.values())
     graph["agents"] = agents
     graph["positions"] = list(previous.get("positions", [])) if previous else []

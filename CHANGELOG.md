@@ -4,6 +4,54 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.12.0] — Sicht der Beschäftigten: Skill agency-audit, Zonen in allen Ausgaben, Zweitbewertung
+
+Die Bewertung sagt, was Technik kann. Diese Version holt die zweite Stimme dazu: was die Menschen wollen, die die Arbeit
+tun. Methodische Grundlage ist der Auditrahmen von Shao et al. 2025 (Stanford, „Future of Work with AI Agents“, WORKBank),
+übertragen von einem Arbeitsmarkt auf ein Haus. Schema 1.4, rein additiv.
+
+### Neu
+
+- **Skill `agency-audit`** (achter Skill).
+  - `export_audit_sheet.py`: Fragebogen je Rolle mit Rahmen (freiwillig, Codes statt Namen, Mindestgruppe), fünf offenen
+    Fragen zur eigenen Arbeit und je Aufgabe Vertrautheit, Erfahrung, Zeitanteil, Kernfähigkeit, Sorge, Freude,
+    Automatisierungswunsch mit Gründen, vier Merkmalen und gewünschter Beteiligung auf der Human Agency Scale mit Gründen;
+    dazu eine Antwortvorlage.
+  - `import_audit.py`: liest `00_input/befragung/*.csv`, weist Spalten mit Namen, E-Mail oder Personalnummer und
+    Codes in Adressform zurück, zählt nur Aufgaben, die jemand selbst erledigt, und schreibt nach `20_graph/agency.json`
+    nur Zusammenfassungen ab fünf Antworten je Aufgabe und fünf Teilnehmenden je Rolle.
+  - `score_agency.py`: je Aufgabe **Zone** (Freigabe, Vorsicht, Entwicklung, Nachrang aus Wunsch und
+    Automatisierungspotenzial) und **Agency-Lücke** (gewünschte minus nötige HAS-Stufe); je Rolle Wunsch, dominante Stufen,
+    **Reibung** (Jensen-Shannon-Distanz der beiden Verteilungen), Zonenanteile und Abdeckung; Prüfliste
+    `30_review/beschaeftigtensicht_vNNN.md`.
+  - `run_pipeline.py` wertet die Befragung selbst aus, sobald Antworten vorliegen.
+- **Rechtsthema `beschaeftigtenbefragung`** im Rechtsraum DE (§ 94 und § 87 Abs. 1 Nr. 6 BetrVG, Personalvertretungsrecht,
+  DSGVO, § 26 BDSG). Fragebogen und Prüfliste zitieren es. Rechtsraum DE: 67 Themen.
+- **Dashboard:** Abschnitt „Sicht der Beschäftigten“ mit Landschaft (Wunsch gegen Potenzial), Matrix der Beteiligung
+  (gewünscht gegen nötig), Reibung je Rolle und Zonen je Cluster. Zonenfarben in `theme.json`.
+- **Berichte:** HR-Bericht mit Vorsichtszone, Aufgaben mit gewünschter Mehrbeteiligung und **Kompetenzverschiebung** je Skill;
+  IT-Bericht mit latenter Nachfrage (gewünscht, ohne Vorhaben), Agenten auf ungewollter Arbeit und Nutzung gegen Wunsch.
+- **Fahrplan:** Zone je Vorhaben in Raster, Tafel und CSV (`beschaeftigte`). Ein Vorhaben mit mehr als 50 % seiner befragten
+  Arbeit in der Vorsichtszone beginnt nicht in Welle 1, außer jemand entscheidet es (`max_red_zone_share_first_wave`).
+- **Verträge und Rollen.md:** je Agent die Sicht der Beschäftigten; je Rolle „Was die Rolle selbst will“ (gern abgeben, lieber
+  behalten, gewünschte Beteiligung, wo ein Mensch laufend beteiligt sein will).
+- **Validator:** lehnt Befragungswerte unter der Mindestgruppe ab und warnt, wenn ein ausführender Agent ohne Kontrollpunkt
+  auf Aufgaben arbeitet, für die die Beschäftigten H4 oder H5 wünschen, oder wenn mehr Teilnehmende als Stellen gezählt sind.
+- **task-scorer:** zwei optionale Merkmale je Aufgabe, `interpersonal` (hebt auf mindestens H4) und `tacit_expertise`
+  (mindestens H3), auch als `score_interpersonal`, `score_tacit_expertise` auf Seiten; `has_dominant` je Rolle;
+  Kompetenzverschiebung je Skill (`skills[].analysis`); Plausibilitätshinweis bei mehr als 25 % Rollen mit überwiegend H1.
+- **`compare_scores.py`:** Zweitbewertung. Vergleicht zwei unabhängige Bewertungsläufe je Feld (Anteil innerhalb ±1,
+  mittlerer Abstand, Krippendorffs Alpha) und listet Aufgaben mit größerem Abstand oder anderer HAS-Stufe.
+
+### Geändert
+
+- `calibrate.py` läuft auch ohne `overrides.csv` und enthält einen Abschnitt „Plausibilität“.
+- `build_graph.py` übernimmt Beschäftigtensicht und Skill-Analyse aus der Vorversion, solange Antworten vorliegen; ein
+  zweiter Lauf legt weiter keine neue Version an.
+- Referenzbeispiel: erfundene Befragung mit 22 Codes. Zwei Rollen werden ausgewertet, drei liegen unter der Mindestgruppe.
+  Der erwartete Stand ist neu erzeugt (Graph-Version 13).
+- Tests ohne fest eingetragene Versionsnummern des Beispiels.
+
 ## [0.11.0] — Acht weitere Branchenpakete, Rechtsraum Deutschland auf 66 Themen
 
 Die Referenzbibliothek deckt jetzt dreizehn Branchen ab. Jedes neue Paket folgt demselben Muster wie die ersten fünf:

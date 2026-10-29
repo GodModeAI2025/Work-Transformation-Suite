@@ -144,6 +144,12 @@ Sieh dir `agents[]` im Graphen an. Nenne dem Nutzer die fünf Agenten mit höchs
 FTE-Äquivalent (oder Abdeckungspunkten), Sourcing, Horizont und der wichtigsten Vorbedingung. Weise auf nicht zugeordnete Aufgaben hin. Wenn ein einzelner Agent mehr als die
 Hälfte aller Abdeckungspunkte trägt, ist er vermutlich zu breit geschnitten; schlage eine Teilung vor.
 
+Liegt eine Befragung vor (Skill `agency-audit`), prüfe zusätzlich die Zonen: Ein Agent, dessen Aufgaben überwiegend in der
+Vorsichtszone liegen (machbar, aber von den Beschäftigten nicht gewünscht), ist ein Gesprächsthema, bevor er gebaut wird; oft
+reicht Unterstützen statt Übernehmen. Bei Aufgaben, für die die Beschäftigten H4 oder H5 wünschen, setze
+`decision_scope: recommend` oder einen `human_checkpoint`; sonst warnt der Validator. Die Verträge nennen je Agent die Sicht der
+Beschäftigten, Rollen.md den Abschnitt „Was die Rolle selbst will“.
+
 Nächster Schritt: `process-redesigner`, wenn Prozesse erfasst sind — sonst
 `transformation-dashboard`.
 

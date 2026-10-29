@@ -43,6 +43,9 @@ Bereitet Rückfragen an den Vertrieb vor: fasst die Abweichung zusammen, schläg
 
 **Aufsicht im Betrieb:** Jede Nachricht wird vom Sachbearbeiter vor dem Versand freigegeben
 
+**Sicht der Beschäftigten** (1 befragte Aufgaben): 1 × Nachrang.
+Laufende Beteiligung (H4/H5) gewünscht bei: Rückfragen mit Vertrieb klären. Der Agent schlägt nur vor.
+
 **Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
 
 - Dienste für dieses Muster: Microsoft 365 Copilot, Azure OpenAI Service, Word und PowerPoint über Graph, Gemini for Google Workspace, Vertex AI, Docs und Slides API
@@ -85,6 +88,8 @@ Liest Bestellungen aus E-Mail, Portal und EDI, legt den Auftrag im ERP an, gleic
 - Schreibzugriff ERP über Schnittstelle
 
 **Aufsicht im Betrieb:** Stichprobe 10 Prozent durch die Auftragssachbearbeitung; alle Aufträge ohne Rahmenvertrag im Gate
+
+**Sicht der Beschäftigten** (4 befragte Aufgaben): 3 × Freigabe, 1 × Vorsicht.
 
 **Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
 
@@ -281,6 +286,8 @@ Stellt Leistungsnachweise zu einer Abrechnungsgrundlage zusammen, erzeugt den Re
 - Schreibzugriff ERP Faktura
 
 **Aufsicht im Betrieb:** Die Freigabe der Rechnung bleibt beim Menschen; der Agent liefert Entwurf und Prüfbefund
+
+**Sicht der Beschäftigten** (4 befragte Aufgaben): 3 × Freigabe, 1 × Entwicklung.
 
 **Umsetzung auf Plattformprofil „Mischbetrieb (Microsoft und Google)“ (Vorschlag aus der Referenzbibliothek, kein Beschaffungsentscheid):**
 

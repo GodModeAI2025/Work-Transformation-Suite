@@ -102,6 +102,18 @@ def collect(graph: dict[str, Any], statuses: set) -> list[dict[str, Any]]:
             entry["contract"]["human_checkpoint"] = dict(hcp, role=roles[hcp["role_id"]]["name"])
         if c.get("system_ids"):
             entry["contract"]["systems"] = [systems[s]["name"] for s in c["system_ids"] if s in systems]
+        rated = [tasks[t] for t in a.get("task_ids", []) if t in tasks and tasks[t].get("agency")]
+        if rated:
+            zones: dict[str, int] = {}
+            for t in rated:
+                z = t["agency"].get("zone")
+                if z:
+                    zones[z] = zones.get(z, 0) + 1
+            entry["employees"] = {
+                "tasks_rated": len(rated),
+                "zones": dict(sorted(zones.items())),
+                "involved_tasks": sorted(t["name"] for t in rated if t["agency"]["has_desired"] >= 4),
+            }
         out.append(entry)
     return out
 
@@ -165,6 +177,16 @@ def to_markdown(entries: list[dict[str, Any]], profile: dict[str, Any] | None = 
             out.append("")
         if e.get("oversight"):
             out.append(f"**Aufsicht im Betrieb:** {e['oversight']}")
+            out.append("")
+        emp = e.get("employees")
+        if emp:
+            zs = ", ".join(f"{n} × {wl.AGENCY_ZONE_SHORT[z]}" for z, n in emp["zones"].items()) or "keine Zone"
+            out.append(f"**Sicht der Beschäftigten** ({emp['tasks_rated']} befragte Aufgaben): {zs}.")
+            if emp["involved_tasks"]:
+                scope = e["contract"].get("decision_scope")
+                hint = ("Kontrollpunkt ist vorgesehen." if e["contract"].get("human_checkpoint")
+                        else "Rückfrage statt Ausführung vorsehen." if scope != "recommend" else "Der Agent schlägt nur vor.")
+                out.append(f"Laufende Beteiligung (H4/H5) gewünscht bei: {', '.join(emp['involved_tasks'])}. {hint}")
             out.append("")
         pp = platform_proposal(e, profile)
         if pp:

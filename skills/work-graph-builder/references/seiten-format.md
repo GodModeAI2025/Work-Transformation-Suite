@@ -62,7 +62,9 @@ Kopf: `type: "task"`, `name`, `role` (Name der Rolle, Pflicht), `share_of_time`,
 `confidence` (`source` oder `inferred`), `skills` (Liste von Skillnamen der Rolle), `evidence`. Die Bewertung
 steht als sechs Felder `score_automation_ai`, `score_automation_physical`, `score_human_judgment`,
 `score_productivity_boost`, `score_data_readiness`, `score_consequence_of_error` (ganze Zahlen 0 bis 10) im Kopf;
-entweder alle sechs oder keines. Rumpf: `## Beschreibung`, `## Schritte` (nummerierte Liste),
+entweder alle sechs oder keines. Optional zwei Merkmale als `true`/`false`: `score_interpersonal` (die Aufgabe lebt von
+Beziehung, Einfühlung oder Verhandlung) und `score_tacit_expertise` (sie hängt an Erfahrung, die nirgends
+aufgeschrieben ist). Rumpf: `## Beschreibung`, `## Schritte` (nummerierte Liste),
 `## Begründung der Bewertung` (Pflicht, sobald Bewertungen gesetzt sind).
 
 ### Agent `agents/<slug>.md`

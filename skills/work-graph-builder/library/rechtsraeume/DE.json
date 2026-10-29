@@ -1351,6 +1351,23 @@
         "wassergefahrd"
       ],
       "thema": "Industrielles Umweltrecht"
+    },
+    {
+      "branchen": [
+        "*"
+      ],
+      "fundstelle": "§ 94 Abs. 1 BetrVG; § 87 Abs. 1 Nr. 6 BetrVG; § 80 Abs. 2 BetrVG; Art. 5, 6, 88 DSGVO; § 26 BDSG; Personalvertretungsrecht für den öffentlichen Dienst",
+      "gesetz": "BetrVG, BPersVG und Landespersonalvertretungsgesetze, DSGVO, BDSG",
+      "gilt": "jedes Projekt, das Beschäftigte zu ihren Aufgaben befragt",
+      "id": "beschaeftigtenbefragung",
+      "pflicht": "Ein Fragebogen zu Tätigkeiten, Sorgen und Wünschen ist ein Personalfragebogen und braucht die Zustimmung des Betriebsrats; läuft er über ein elektronisches Werkzeug, kommt die Mitbestimmung bei technischen Einrichtungen hinzu. Teilnahme freiwillig, Zweck vorher benannt, keine Namen oder Personalnummern, Auswertung nur ab Mindestgruppe, keine Rückführbarkeit auf Einzelne, Rohdaten getrennt und befristet aufbewahrt. Ergebnisse dürfen nicht zur Leistungs- oder Verhaltenskontrolle dienen.",
+      "stichwoerter": [
+        "befragung",
+        "mitarbeiterbefragung",
+        "personalfragebogen",
+        "umfrage"
+      ],
+      "thema": "Befragung der Beschäftigten zu ihrer Arbeit und zu KI"
     }
   ]
 }

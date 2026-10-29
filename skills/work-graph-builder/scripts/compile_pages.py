@@ -148,6 +148,14 @@ def compile_pages(project: Path) -> tuple[dict[str, Any], list[str]]:
                 continue
             entry = {k: _int(m.get(f"score_{k}"), w, f"score_{k}", problems, 0, 10) for k in SCORE_KEYS}
             entry["rationale"] = pl.prose(s.get("Begründung der Bewertung", ""))
+            for flag in ("interpersonal", "tacit_expertise"):
+                v = m.get(f"score_{flag}")
+                if v is None:
+                    continue
+                if isinstance(v, bool):
+                    entry[flag] = v
+                else:
+                    problems.append(f"{w}: score_{flag} muss true oder false sein")
             if not entry["rationale"]:
                 problems.append(f"{w}: Bewertung ohne Begründung (Abschnitt „Begründung der Bewertung“)")
             scores[wl.make_id("task", rname, name)] = entry

@@ -157,7 +157,7 @@ class TestExampleProfile(unittest.TestCase):
     def test_example_graph_carries_profile_and_contracts_name_platform(self):
         g = wl.read_json(EXAMPLE / "expected" / "work-graph_final.json")
         self.assertEqual(g["meta"]["profile"]["plattform"], "mischbetrieb")
-        contracts = (EXAMPLE / "expected" / "contracts_v011.md").read_text(encoding="utf-8")
+        contracts = sorted((EXAMPLE / "expected").glob("contracts_v*.md"))[-1].read_text(encoding="utf-8")
         self.assertIn("Umsetzung auf Plattformprofil", contracts)
         self.assertIn("kein Beschaffungsentscheid", contracts)
 

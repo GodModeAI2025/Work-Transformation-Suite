@@ -35,10 +35,22 @@ Reihenfolge der Zuordnung:
 2. **Laufende Vorhaben** (Status `pilot`, `live`): Welle 1. Sie sind bereits Referenz. Sie zählen in die
    Kapazität, auch wenn sie sie überschreiten; das Raster meldet das.
 3. **Der Rest nach Score**, in die früheste Welle mit freier Kapazität. Vorhaben mit Komplexität über
-   `max_complexity_first_wave` (Standard 3) beginnen nicht in Welle 1.
+   `max_complexity_first_wave` (Standard 3) beginnen nicht in Welle 1. Liegt mehr als
+   `max_red_zone_share_first_wave` (Standard 50 %) der befragten Zeit eines Vorhabens in der
+   **Vorsichtszone** der Beschäftigtenbefragung (machbar, aber nicht gewünscht; Skill `agency-audit`),
+   beginnt es ebenfalls nicht in Welle 1. Eine Entscheidung in `wellen.csv` hebt das auf; das Raster
+   vermerkt es dann unter „Noch offen“.
 4. **Orchestratoren** frühestens eine Welle nach den Agenten, die sie steuern (`orchestrates`).
 
 Eine bestätigte Entscheidung, die eine Abhängigkeit verletzt, wird nicht geändert, sondern gemeldet.
+
+## Sicht der Beschäftigten
+
+Liegt eine Befragung vor, trägt jedes Vorhaben die Verteilung seiner Arbeit auf die vier Zonen
+(Freigabe, Vorsicht, Entwicklung, Nachrang), gewichtet mit dem Zeitanteil der befragten Aufgaben. Raster,
+Tafel und CSV nennen die überwiegende Zone. Ohne befragte Aufgabe steht „nicht befragt“; das ist keine
+Freigabe. Die Zone fließt nicht in den Score: Wert und Wunsch sind verschiedene Fragen, und ein Score,
+der beides mischt, ließe sich nicht mehr erklären.
 
 ## Betroffene Rollen je Welle
 

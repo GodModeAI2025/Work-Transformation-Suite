@@ -28,11 +28,11 @@ SHARED = {
     "workgraph_lib.py": (
         "work-transformation",
         ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner", "transformation-dashboard",
-         "transformation-roadmap"],
+         "transformation-roadmap", "agency-audit"],
     ),
     "validate_graph.py": (
         "work-graph-builder",
-        ["task-scorer", "agent-mapper", "process-redesigner", "transformation-dashboard"],
+        ["task-scorer", "agent-mapper", "process-redesigner", "transformation-dashboard", "agency-audit"],
     ),
     "apply_overrides.py": ("work-graph-builder", ["task-scorer"]),
 }

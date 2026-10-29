@@ -223,6 +223,9 @@ def validate(graph: dict, strict_evidence: bool = False) -> tuple[list[str], lis
                 check_range(errors, w, f"scores.{f}", sc.get(f), 0, 10, required=True)
             if not sc.get("rationale"):
                 warnings.append(f"{w}: scores.rationale fehlt")
+            for f in ("interpersonal", "tacit_expertise"):
+                if f in sc and not isinstance(sc[f], bool):
+                    errors.append(f"{w}: scores.{f} muss true oder false sein")
         check_enum(errors, w, "mode", t.get("mode"), wl.ENUM_MODE, required=False)
         check_enum(errors, w, "horizon", t.get("horizon"), wl.ENUM_HORIZON, required=False)
         if t.get("has_level") is not None:
@@ -250,8 +253,74 @@ def validate(graph: dict, strict_evidence: bool = False) -> tuple[list[str], lis
             errors.append(f"position {p.get('id')}: role_id unbekannt")
 
     validate_process_layer(graph, ids, errors, warnings)
+    _validate_agency(graph, errors, warnings)
     _check_evidence(graph, errors, warnings, strict_evidence)
     return errors, warnings
+
+
+def _validate_agency(graph: dict, errors: list, warnings: list) -> None:
+    """Schema 1.4: Beschäftigtensicht an Aufgaben und Rollen.
+
+    Die Befragung ist eine Aussage von Menschen über ihre Arbeit. Unter der Mindestgruppe ist ein
+    Mittelwert eine Aussage über Einzelne; der Validator lehnt ihn ab, statt ihn zu zeigen.
+    """
+    tasks = {t["id"]: t for t in graph["tasks"]}
+    for t in graph["tasks"]:
+        ag = t.get("agency")
+        if ag is None:
+            continue
+        w = f"task {t['id']} ({t.get('name')})"
+        if not isinstance(ag, dict):
+            errors.append(f"{w}: agency muss ein Objekt sein")
+            continue
+        n = ag.get("respondents")
+        if not isinstance(n, int) or n < wl.AUDIT_MIN_GROUP:
+            errors.append(f"{w}: agency.respondents={n!r} unter der Mindestgruppe {wl.AUDIT_MIN_GROUP} — "
+                          "hätte unterdrückt werden müssen")
+        for f in ("desire", "has_desired_mean", "job_worry", "enjoyment", "core_skill"):
+            check_range(errors, w, f"agency.{f}", ag.get(f), 1, 5)
+        check_range(errors, w, "agency.has_desired", ag.get("has_desired"), 1, 5, required=True)
+        for f, v in (ag.get("traits") or {}).items():
+            check_range(errors, w, f"agency.traits.{f}", v, 1, 5)
+        check_enum(errors, w, "agency.zone", ag.get("zone"), wl.ENUM_AGENCY_ZONE, required=False)
+        check_range(errors, w, "agency.has_gap", ag.get("has_gap"), -4, 4)
+        for key, allowed in (("reasons_automation", wl.AUDIT_REASONS_AUTOMATION),
+                             ("reasons_collab", wl.AUDIT_REASONS_COLLAB)):
+            for code in (ag.get(key) or {}):
+                if code not in allowed:
+                    errors.append(f"{w}: agency.{key} kennt den Code {code!r} nicht")
+    for r in graph["roles"]:
+        ag = r.get("agency")
+        if ag is None:
+            continue
+        w = f"role {r['id']} ({r.get('name')})"
+        n = ag.get("respondents")
+        if not isinstance(n, int) or n < wl.AUDIT_MIN_GROUP:
+            errors.append(f"{w}: agency.respondents={n!r} unter der Mindestgruppe {wl.AUDIT_MIN_GROUP}")
+        check_range(errors, w, "agency.desire", ag.get("desire"), 1, 5)
+        check_range(errors, w, "agency.jsd", ag.get("jsd"), 0, 1)
+        check_enum(errors, w, "agency.friction", ag.get("friction"), wl.ENUM_FRICTION, required=False)
+        shares = ag.get("zone_shares") or {}
+        for z in shares:
+            if z not in wl.ENUM_AGENCY_ZONE:
+                errors.append(f"{w}: agency.zone_shares kennt die Zone {z!r} nicht")
+        if shares and abs(sum(float(v) for v in shares.values()) - 100.0) > 1.0:
+            warnings.append(f"{w}: agency.zone_shares ergeben nicht 100 %")
+        if (ag.get("coverage_pct") or 0) > 100.0:
+            warnings.append(f"{w}: mehr Teilnehmende ({n}) als Stellen — Rollenzuordnung der Antworten oder Headcount prüfen")
+    # Ein Agent, der selbst ausführt, auf Arbeit, bei der die Beschäftigten laufend beteiligt sein
+    # wollen (H4/H5), ohne Kontrollpunkt: Das ist kein Fehler im Vertrag, aber ein Konflikt mit
+    # denen, die damit arbeiten sollen.
+    for a in graph["agents"]:
+        c = a.get("contract") if isinstance(a.get("contract"), dict) else {}
+        if c.get("decision_scope") not in ("execute_reversible", "execute_irreversible") or c.get("human_checkpoint"):
+            continue
+        wanted = sorted({tasks[tid].get("name") or tid for tid in a.get("task_ids", [])
+                         if tid in tasks and ((tasks[tid].get("agency") or {}).get("has_desired") or 0) >= 4})
+        if wanted:
+            warnings.append(f"agent {a['id']} ({a.get('name')}): führt selbst aus, die Beschäftigten wünschen bei "
+                            f"{', '.join(wanted)} aber laufende Beteiligung (H4/H5) — human_checkpoint vorsehen "
+                            "oder decision_scope 'recommend'")
 
 
 # Konkrete Modellnamen gehören nicht in einen Capability Contract. Ein Vertrag beschreibt

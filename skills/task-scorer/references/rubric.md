@@ -112,6 +112,10 @@ Ausführungsmodus je Aufgabe, erste zutreffende Regel gewinnt:
 HAS-Level (Human Agency Scale nach Stanford WORKBank, 1 = Agent allein, 5 = Mensch unverzichtbar):
 H1: AP ≥ 8 und HJ ≤ 2 · H2: AP ≥ 6 und HJ ≤ 4 · H3: AP ≥ 4 und HJ ≤ 6 · H4: AP ≥ 2 · H5: sonst.
 
+Merkmale (optional, Schema 1.4): `interpersonal = true` hebt die HAS-Stufe auf mindestens H4,
+`tacit_expertise = true` auf mindestens H3. Grundlage: In der Stanford-Befragung kennzeichnen zwischenmenschliche
+Kommunikation und Fachwissen die Aufgaben mit H5. Modus, Horizont und Delegation bleiben unberührt.
+
 Zeithorizont (nur für nicht-manuelle Aufgaben): near = data_readiness ≥ 6 und
 consequence_of_error ≤ 5 · mid = data_readiness ≥ 3 · long = sonst.
 
@@ -157,6 +161,13 @@ werdende Zeit auffängt. Beides steht je Rolle in `roles[].analysis`:
 Belastbarkeit (`evidence`): Punkte für Zeitanteile aus Quelle (+2), Expertenreview (+2, freigegeben
 +3), weniger als 20 % der Zeit aus abgeleiteten Aufgaben (+1), Headcount bekannt (+1);
 high ≥ 5, medium ≥ 2, sonst low.
+
+Dominante HAS-Stufe je Rolle (`has_dominant`): die Stufe mit dem größten Zeitanteil, bei Gleichstand die höhere.
+Plausibilität: Sind bei mindestens vier bewerteten Rollen mehr als 25 % überwiegend H1, meldet das Skript das.
+
+Kompetenzverschiebung je Skill (`skills[].analysis`): `human_agency` = zeitanteilgewichtete HAS-Stufe der Aufgaben
+mit diesem Skill, `bound_work` = gebundene Arbeit (FTE, wenn alle beteiligten Rollen einen Headcount haben, sonst
+Summe der Zeitanteile), `tasks` = Anzahl Aufgaben.
 
 Kipp-Analyse (`stability`): Für jede Aufgabe werden Maschinenanteil, Urteilsbedarf und
 Fehlergewicht einzeln um ±1 verändert und die Rollenwirkung neu berechnet. Anteil der

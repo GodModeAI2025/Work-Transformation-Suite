@@ -22,9 +22,9 @@ from pathlib import Path
 
 SHARED = {
     "workgraph_lib.py": ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner",
-                         "transformation-dashboard", "transformation-roadmap", "work-transformation"],
+                         "transformation-dashboard", "transformation-roadmap", "work-transformation", "agency-audit"],
     "validate_graph.py": ["work-graph-builder", "task-scorer", "agent-mapper", "process-redesigner",
-                          "transformation-dashboard"],
+                          "transformation-dashboard", "agency-audit"],
     "apply_overrides.py": ["work-graph-builder", "task-scorer"],
 }
 REQUIRED = {
@@ -36,7 +36,9 @@ REQUIRED = {
                            "register_source.py", "locate_source.py", "check_evidence.py",
                            "pages_lib.py", "export_pages.py", "compile_pages.py",
                            "seed_from_library.py", "library_catalog.py"],
-    "task-scorer": ["export_scoring_sheet.py", "score_roles.py", "calibrate.py", "build_target_roles.py"],
+    "task-scorer": ["export_scoring_sheet.py", "score_roles.py", "calibrate.py", "build_target_roles.py",
+                    "compare_scores.py"],
+    "agency-audit": ["export_audit_sheet.py", "import_audit.py", "score_agency.py"],
     "agent-mapper": ["export_agent_candidates.py", "compute_coverage.py", "validate_contracts.py",
                      "export_contracts.py", "export_skill.py", "export_reach.py",
                      "import_usecases.py", "import_adoption.py", "build_role_setup.py", "build_rollen_md.py",
@@ -45,7 +47,7 @@ REQUIRED = {
     "process-redesigner": ["export_process_candidates.py", "build_blueprints.py",
                            "validate_blueprints.py", "compare_scenarios.py", "score_processes.py",
                            "make_experiments.py", "redesign_lib.py"],
-    "transformation-dashboard": ["build_dashboard.py", "capacity_views.py", "task_views.py"],
+    "transformation-dashboard": ["build_dashboard.py", "capacity_views.py", "task_views.py", "agency_views.py"],
     "transformation-roadmap": ["plan_waves.py", "build_documents.py", "roadmap_lib.py", "roadmap_views.py",
                                "render_lib.py"],
     "work-transformation": ["run_pipeline.py", "check_suite.py", "project_lock.py", "snapshot_project.py",
@@ -60,6 +62,7 @@ REQUIRED_FILES = {
                            "library/plattformen/microsoft.json", "library/plattformen/google.json",
                            "library/plattformen/mischbetrieb.json", "library/plattformen/unabhaengig.json"],
     "task-scorer": ["references/rubric.md"],
+    "agency-audit": ["references/befragung.md"],
     "agent-mapper": ["references/agent-patterns.md", "references/contract-format.md",
                      "references/rollen-setup.md", "references/kontext-aus-dokumenten.md"],
     "process-redesigner": ["references/redesign-rules.md", "references/blueprint-format.md",

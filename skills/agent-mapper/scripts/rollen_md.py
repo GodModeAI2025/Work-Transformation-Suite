@@ -28,6 +28,7 @@ import extract_context_evidence as xe
 OPEN = "❓ offen"
 PROPOSED = "✎ Vorschlag aus Dokument, bitte bestätigen"
 GRAPH = "✓ Graph"
+SURVEY = "✓ Befragung, zusammengefasst"
 DERIVED = "✓ abgeleitet, bitte bestätigen"
 FREQ_LABEL = {"daily": "täglich", "weekly": "wöchentlich", "monthly": "monatlich", "quarterly": "quartalsweise", "adhoc": "bei Bedarf"}
 MODE_LABEL = {"manual": "manuell", "ai_assisted": "KI-unterstützt", "agent_delegated": "an Agent delegiert"}
@@ -184,6 +185,31 @@ def rechtsrahmen(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
     return out
 
 
+def wunsch_der_rolle(graph: dict[str, Any], role: dict[str, Any]) -> list[str]:
+    """Was die Befragten der Rolle selbst wollen (Schema 1.4). Ohne Befragung im Projekt: nichts."""
+    if not any(t.get("agency") for t in graph.get("tasks", [])):
+        return []
+    ag = role.get("agency")
+    if not ag:
+        return [f"- **Was die Rolle selbst will:** {OPEN} (nicht befragt oder unter der Mindestgruppe von "
+                f"{wl.AUDIT_MIN_GROUP} Teilnehmenden)"]
+    tasks = [t for t in role_tasks(graph, role) if t.get("agency")]
+    give = sorted((t for t in tasks if (t["agency"].get("desire") or 0) > wl.ZONE_DESIRE_MIN),
+                  key=lambda t: (-(t["agency"]["desire"]), t["name"]))[:3]
+    keep = sorted((t for t in tasks if t["agency"].get("desire") is not None and t["agency"]["desire"] <= wl.ZONE_DESIRE_MIN),
+                  key=lambda t: (t["agency"]["desire"], t["name"]))[:3]
+    involved = sorted((t for t in tasks if t["agency"]["has_desired"] >= 4), key=lambda t: t["name"])
+    out = [f"- **Was die Rolle selbst will ({ag['respondents']} Teilnehmende):**"]
+    out.append(f"  - Gern an KI abgeben: {'; '.join(t['name'] for t in give) or 'keine Aufgabe mit klarem Wunsch'} _({SURVEY})_")
+    out.append(f"  - Lieber selbst behalten: {'; '.join(t['name'] for t in keep) or 'keine'} _({SURVEY})_")
+    out.append(f"  - Gewünschte Beteiligung überwiegend {wl.HAS_LABEL.get(ag.get('has_desired_dominant'), '–')}; "
+               f"technisch nötig {wl.HAS_LABEL.get(ag.get('has_required_dominant'), '–')} _({SURVEY})_")
+    if involved:
+        out.append(f"  - Hier will ein Mensch laufend beteiligt sein (H4/H5), also rückfragen statt selbst handeln: "
+                   f"{'; '.join(t['name'] for t in involved)} _({SURVEY})_")
+    return out
+
+
 def firmenprofil(graph: dict[str, Any], roles: list[dict[str, Any]], ev: list[dict[str, Any]] | None = None) -> list[str]:
     meta = graph["meta"]
     profile = meta.get("profile") or {}
@@ -223,6 +249,7 @@ def rollenprofil(graph: dict[str, Any], role: dict[str, Any], ev: list[dict[str,
               else "nein (Annahme, ggf. vom Fachexperten bestätigt)"),
          line("Tools und Systeme", "; ".join(systems_of(graph, role))), line("Kern-Skills", "; ".join(core)),
          *rechtsrahmen(graph, role),
+         *wunsch_der_rolle(graph, role),
          "- **Wiederkehrende Aufgaben:**"]
     if tasks:
         for t in tasks:

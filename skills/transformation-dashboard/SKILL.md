@@ -109,5 +109,18 @@ Neben `report_vNNN.md` entstehen zwei Berichte aus demselben Graphen: `report_hr
 `report_it_vNNN.md` (Backlog nach Wert, Use Cases, Prozessbänder, Blindflecken — für IT). Die Sprache im HR-Bericht ist bewusst:
 „Rolle verändert sich“, nie „Rolle entfällt“. Alle Zahlen sind Schätzungen; wo etwas nicht bewertet ist, steht „nicht bewertet“.
 
+## Ab Schema 1.4: Sicht der Beschäftigten
+
+Liegt eine Befragung vor (Skill `agency-audit`), zeigt der Abschnitt **Sicht der Beschäftigten** die Landschaft aus Wunsch (1–5)
+und Automatisierungspotenzial (0–10) je Aufgabe mit den vier Zonen, die Matrix der Beteiligung (gewünschte gegen nötige HAS-Stufe),
+Reibung und Abdeckung je Rolle und die Zonen je Cluster. Farben der Zonen stehen in `assets/theme.json` (`zone_colors`).
+
+Der HR-Bericht nennt die Vorsichtszone und die Aufgaben, bei denen mehr Beteiligung gewünscht ist, der IT-Bericht die latente
+Nachfrage (gewünscht, ohne Vorhaben), Agenten auf überwiegend ungewollter Arbeit und Nutzung gegen Wunsch. Der HR-Bericht enthält
+außerdem die **Kompetenzverschiebung** je Skill (nötige Human Agency gegen heute gebundene Arbeit) aus `task-scorer`.
+
+Ohne Befragung bleibt das Dashboard, wie es war. Berichte nie über einzelne Personen: Alle Zahlen sind Zusammenfassungen ab fünf
+Antworten.
+
 Unter der Aufgabenkarte steht, sobald Aufgabencluster vorliegen, die Tabelle **Wiederkehrende Aufgaben über Rollen**. Kandidaten sind als
 solche gekennzeichnet; verworfene Cluster erscheinen nicht.

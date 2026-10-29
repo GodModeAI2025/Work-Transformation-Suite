@@ -51,6 +51,15 @@ ROLE_HORIZON_SHARE = 30.0
 # Realisierbarkeit (Schema 1.2): Delegierte Arbeit wird voll als frei werdende Zeit gezählt,
 # assistierte nur zu einem Fünftel — KI-Unterstützung verkürzt eine Aufgabe, ersetzt sie nicht.
 ASSIST_FREED_FACTOR = wl.ASSIST_FREED_FACTOR
+# Schema 1.4: zwei Merkmale der Aufgabe, die die Stanford-Befragung als Kennzeichen hoher Human Agency
+# zeigt. Zwischenmenschliche Arbeit (Beziehung, Einfühlung, Verhandlung) landet nicht unter H4;
+# Arbeit, die an nirgends aufgeschriebener Erfahrung hängt, nicht unter H3. Beide sind optional.
+HAS_FLOOR_INTERPERSONAL = 4
+HAS_FLOOR_TACIT = 3
+FLAGS = ["interpersonal", "tacit_expertise"]
+# Plausibilität: Mehr als dieser Anteil der Rollen mit überwiegend H1 ist ungewöhnlich (in der
+# Stanford-Erhebung 16 von 104 Berufen) und spricht eher für zu optimistische Bewertungen.
+H1_DOMINANT_MAX_SHARE = 25.0
 
 TRANSFORMATION_LOGIC = {
     "eliminated": ("Redesign-Potenzial → Eliminiert → Retire-Critical",
@@ -99,15 +108,8 @@ def classify_role(role: dict[str, Any], ap: float, hj: float, pb: float, s_del: 
     return "stable"
 
 
-def derive_task(t: dict[str, Any], role: dict[str, Any]) -> None:
-    sc = t["scores"]
-    ap = automation_potential(sc, t["nature"])
-    hj = float(sc["human_judgment"])
-    pb = float(sc["productivity_boost"])
-    dr = float(sc["data_readiness"])
-    coe = float(sc["consequence_of_error"])
-    mode = derive_mode(ap, hj, pb, coe, bool(role.get("regulated")))
-
+def derive_has(ap: float, hj: float, sc: dict[str, Any]) -> int:
+    """HAS-Stufe aus Potenzial und Urteilsbedarf, angehoben durch die Merkmale der Aufgabe."""
     if ap >= 8 and hj <= 2:
         has = 1
     elif ap >= 6 and hj <= 4:
@@ -118,6 +120,22 @@ def derive_task(t: dict[str, Any], role: dict[str, Any]) -> None:
         has = 4
     else:
         has = 5
+    if sc.get("interpersonal") is True:
+        has = max(has, HAS_FLOOR_INTERPERSONAL)
+    if sc.get("tacit_expertise") is True:
+        has = max(has, HAS_FLOOR_TACIT)
+    return has
+
+
+def derive_task(t: dict[str, Any], role: dict[str, Any]) -> None:
+    sc = t["scores"]
+    ap = automation_potential(sc, t["nature"])
+    hj = float(sc["human_judgment"])
+    pb = float(sc["productivity_boost"])
+    dr = float(sc["data_readiness"])
+    coe = float(sc["consequence_of_error"])
+    mode = derive_mode(ap, hj, pb, coe, bool(role.get("regulated")))
+    has = derive_has(ap, hj, sc)
 
     if mode == "manual":
         horizon = None
@@ -314,6 +332,12 @@ def aggregate_role(role: dict[str, Any], tasks: list[dict[str, Any]], skills: di
         elif (d["manual"] + d["ai_assisted"]) / tot >= 0.6:
             retained_skills.append(name)
 
+    has_weight: dict[int, float] = {}
+    for t in scored:
+        has_weight[int(t["has_level"])] = has_weight.get(int(t["has_level"]), 0.0) + float(t["share_of_time"])
+    best = max(has_weight.values())
+    has_dominant = max(k for k, v in has_weight.items() if v == best)
+
     logic, action = TRANSFORMATION_LOGIC[dtype]
     evidence = evidence_level(role, scored, total)
     tipping = tipping_analysis(role, scored, total, dtype)
@@ -339,6 +363,7 @@ def aggregate_role(role: dict[str, Any], tasks: list[dict[str, Any]], skills: di
         "share_human_core": s_man,
         "disruption_score": disruption,
         "disruption_type": dtype,
+        "has_dominant": has_dominant,
         "horizon": rhorizon,
         "horizon_label": HORIZON_LABEL.get(rhorizon, "nicht anwendbar"),
         "readiness": readiness,
@@ -349,6 +374,54 @@ def aggregate_role(role: dict[str, Any], tasks: list[dict[str, Any]], skills: di
         "retained_skills": sorted(retained_skills),
         "declining_skills": sorted(declining_skills),
     }
+
+
+def skill_shift(graph: dict[str, Any]) -> None:
+    """Kompetenzverschiebung je Skill (Schema 1.4): mittlere nötige Human Agency der Aufgaben, an denen
+    der Skill hängt, und die Arbeit, die heute an ihm gebunden ist.
+
+    Gebundene Arbeit ist FTE (Zeitanteil × Stellen), wo alle beteiligten Rollen einen Headcount haben,
+    sonst die Summe der Zeitanteile in Prozent. Die Stanford-Auswertung stellt Lohn gegen Human Agency;
+    ein Haus hat Löhne selten freigegeben, gebundene Arbeit ist hier das Wertmaß.
+    """
+    roles = wl.index_by_id(graph["roles"])
+    use: dict[str, list[tuple[float, float, Any]]] = {}
+    for t in graph["tasks"]:
+        if t.get("has_level") is None:
+            continue
+        r = roles.get(t["role_id"]) or {}
+        for sid in t.get("skill_ids", []):
+            use.setdefault(sid, []).append((float(t["has_level"]), float(t.get("share_of_time") or 0), wl.role_headcount(r)))
+    for sk in graph["skills"]:
+        sk.pop("analysis", None)
+        rows = use.get(sk["id"])
+        if not rows:
+            continue
+        weight = sum(w for _, w, _ in rows) or 1.0
+        fte_known = all(hc is not None for _, _, hc in rows)
+        bound = (wl.round1(sum(w * float(hc) / 100.0 for _, w, hc in rows)) if fte_known
+                 else wl.round1(sum(w for _, w, _ in rows)))
+        sk["analysis"] = {"human_agency": wl.round1(sum(h * w for h, w, _ in rows) / weight),
+                          "bound_work": bound, "bound_basis": "fte" if fte_known else "share_pct", "tasks": len(rows)}
+
+
+def plausibility(graph: dict[str, Any]) -> list[str]:
+    """Hinweise auf auffällige Bewertungsmuster; keine Fehler, nur Anlass zum Gegenlesen."""
+    scored = [r for r in graph["roles"] if (r.get("analysis") or {}).get("scored")]
+    notes = []
+    if len(scored) >= 4:
+        h1 = [r for r in scored if r["analysis"].get("has_dominant") == 1]
+        share = 100.0 * len(h1) / len(scored)
+        if share > H1_DOMINANT_MAX_SHARE:
+            notes.append(f"{len(h1)} von {len(scored)} Rollen ({share:.0f} %) überwiegend H1 (Agent allein). In der Stanford-Erhebung "
+                         f"sind es 16 von 104 Berufen; Bewertungen von Urteilsbedarf und Fehlerfolge gegenlesen: "
+                         + ", ".join(sorted(r["name"] for r in h1)))
+    flagged = [t for t in graph["tasks"] if (t.get("scores") or {}).get("interpersonal") or (t.get("scores") or {}).get("tacit_expertise")]
+    delegated = [t["name"] for t in flagged if t.get("mode") == "agent_delegated"]
+    if delegated:
+        notes.append("An Agenten delegiert, obwohl als zwischenmenschlich oder erfahrungsgebunden markiert: "
+                      + ", ".join(sorted(delegated)) + ". Delegation und Merkmal widersprechen sich; eins von beiden prüfen.")
+    return notes
 
 
 def merge_scores(graph: dict[str, Any], scores: dict[str, Any], force: bool) -> tuple[int, list[str]]:
@@ -378,6 +451,11 @@ def merge_scores(graph: dict[str, Any], scores: dict[str, Any], force: bool) -> 
         if bad:
             continue
         sc["rationale"] = str(entry.get("rationale", "")).strip()
+        for f in FLAGS:
+            if isinstance(entry.get(f), bool):
+                sc[f] = entry[f]
+            elif entry.get(f) is not None:
+                problems.append(f"{tid} ({t['name']}): {f}={entry[f]!r} ist kein true/false, ignoriert")
         t["scores"] = sc
         n += 1
     return n, problems
@@ -420,8 +498,11 @@ def main() -> int:
         if not r["analysis"]["scored"]:
             unscored_roles += 1
 
+    skill_shift(graph)
     for p in problems:
         print(f"HINWEIS  {p}")
+    for n in plausibility(graph):
+        print(f"PLAUSIBILITÄT  {n}")
     errors, warnings = validate(graph)
     for e in errors:
         print(f"FEHLER   {e}")

@@ -29,6 +29,8 @@ TEMPLATE = {
     "data_readiness": None,
     "consequence_of_error": None,
     "rationale": "",
+    "interpersonal": False,
+    "tacit_expertise": False,
 }
 
 
