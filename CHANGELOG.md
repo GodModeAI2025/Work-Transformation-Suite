@@ -4,6 +4,33 @@ Alle nennenswerten Änderungen an der Work-Transformation-Suite. Die Versionen f
 [Semantic Versioning](https://semver.org/lang/de/); die Version steht in
 `.claude-plugin/plugin.json`.
 
+## [0.11.0] — Acht weitere Branchenpakete, Rechtsraum Deutschland auf 66 Themen
+
+Die Referenzbibliothek deckt jetzt dreizehn Branchen ab. Jedes neue Paket folgt demselben Muster wie die ersten fünf:
+Cluster, Rollen und fünf typische Aufgaben je Rolle als Seiten, `quelle.md` mit Rollenprofil, Rechtsgrundlagen und
+Systemen, Belege auf die Quelle, Belegstand „reference“ im Projekt.
+
+### Neu
+
+- **Branchenpakete** `maschinenbau` (10 Rollen), `chemie_pharma` (9), `gesundheitswesen` (9), `oeffentliche_verwaltung` (7),
+  `handel` (7), `logistik` (7), `banken` (8), `versicherungen` (7): zusammen 64 Rollen mit 320 Aufgaben. Der Bestand wächst
+  damit auf 119 Rollen und 595 Aufgaben in 13 Paketen.
+- **Rechtsraum Deutschland**: 37 weitere Themen, darunter Hinweisgeberschutz (HinSchG), Messstellenbetrieb (MsbG),
+  Patientengeheimnis und Krankenhausabrechnung, Medizinprodukte (MDR, MPBetreibV), Verwaltungsverfahren mit § 35a VwVfG,
+  OZG, Sozialrecht, Personalvertretung (BPersVG), Maschinenverordnung, Exportkontrolle, Werkvertrag im Anlagenbau,
+  Verbraucherverträge, Preisangaben, Lebensmittelrecht, Verpackungsgesetz, Kassensicherung, Fracht- und Speditionsrecht,
+  Gefahrgut, Zoll, Lenk- und Ruhezeiten, Bankaufsicht (KWG, MaRisk), Geldwäsche (GwG), Wertpapierberatung (WpHG),
+  Verbraucherkredit, DORA, Versicherungsvertrag (VVG), Versicherungsaufsicht (VAG, Solvency II), Vermittlerrecht, GMP,
+  Arzneimittelrecht, REACH und CLP, Störfallrecht, Gefahrstoffe, industrielles Umweltrecht. Zusammen 66 Themen.
+
+### Geändert
+
+- Stichwörter des Rechtsrahmens stehen jetzt in der Normalform des Abgleichs (`qualitat` statt `qualitaet`, `netzfuhr`
+  statt `netzfuehr`). Dreizehn Stichwörter der ersten Fassung konnten deshalb nie treffen; ihre Themen erscheinen jetzt bei
+  den Rollen, die sie berühren.
+- `tests/test_library.py` prüft zusätzlich, dass jedes Stichwort in Normalform steht, jede Branchenangabe eines Themas ein
+  Paket ist und jedes Paket nur Rechtsthemen nennt, die der Rechtsraum kennt.
+
 ## [0.10.0] — Referenzbibliothek: Branchen, Rechtsraum Deutschland, Plattformprofile
 
 Ein Projekt soll nicht bei null beginnen und trotzdem das Haus beschreiben. Die Referenzbibliothek liefert den Vorrat,

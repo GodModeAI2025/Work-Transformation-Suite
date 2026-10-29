@@ -76,9 +76,17 @@ class TestLibraryContent(unittest.TestCase):
         de = wl.read_json(LIB / "rechtsraeume" / "DE.json")
         ids = [t["id"] for t in de["themen"]]
         self.assertEqual(len(ids), len(set(ids)))
+        index = wl.read_json(LIB / "branchen" / "index.json")
         for t in de["themen"]:
             for k in ("thema", "gesetz", "fundstelle", "pflicht", "stichwoerter", "branchen"):
                 self.assertTrue(t.get(k), f"{t['id']}: {k}")
+            for k in t["stichwoerter"]:  # nur Normalform trifft beim Abgleich (qualitat, nicht qualitaet)
+                self.assertTrue(k == "*" or wl.normalize_name(k) == k, f"{t['id']}: {k}")
+            for b in t["branchen"]:
+                self.assertTrue(b == "*" or b in index, f"{t['id']}: {b}")
+        for bid, entry in index.items():  # jedes Paket nennt nur Themen, die der Rechtsraum kennt
+            for rid in entry.get("rechtsthemen", []):
+                self.assertIn(rid, ids, f"{bid}: {rid}")
         patterns = set()
         for pid in wl.ENUM_PLATFORM:
             prof = wl.read_json(LIB / "plattformen" / f"{pid}.json")
